@@ -1,4 +1,4 @@
-module SmartRecipes.App
+module SmartRecipes.Api
 
 open System
 open System.IO
@@ -8,7 +8,7 @@ open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
-open HttpHandlers
+open SmartRecipes.Api.HttpHandlers
 
 // ---------------------------------
 // Web app

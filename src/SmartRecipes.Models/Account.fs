@@ -1,7 +1,6 @@
-﻿module Account
+﻿namespace SmartRecipes.Models
 
 open System
-open Recipe
 
 type Email = string
 type Password = string

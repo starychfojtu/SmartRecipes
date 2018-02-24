@@ -1,4 +1,4 @@
-module Foodstuff
+namespace SmartRecipes.Models
 
 type MetricUnit = 
     | Liter 

@@ -1,5 +1,6 @@
 namespace SmartRecipes.DataAccess
 
+[<RequireQualifiedAccess>]
 module Recipes =
     open System
     open SmartRecipes.Models
@@ -8,8 +9,8 @@ module Recipes =
         withId: Guid -> Recipe option;
     }
 
-    let SqlQuery = {
+    let sqlQuery = {
         withId = (fun id -> None)
     }
 
-    let query = SqlQuery
+    let query = sqlQuery

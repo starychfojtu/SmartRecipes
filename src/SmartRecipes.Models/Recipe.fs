@@ -1,4 +1,4 @@
-module Recipe
+namespace SmartRecipes.Models
 
 open System
 
