@@ -7,6 +7,11 @@
   <ItemGroup>
     <Compile Include="Foodstuff.fs" />
     <Compile Include="Recipe.fs" />
+    <Compile Include="Account.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
 
 </Project>

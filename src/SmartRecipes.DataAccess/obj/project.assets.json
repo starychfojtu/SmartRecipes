@@ -299,11 +299,11 @@
       "hideWarningsAndErrors": true
     },
     "restore": {
-      "projectUniqueName": "C:\\Users\\Pepa\\repos\\SmartRecipes.Api\\src\\SmartRecipes.Models\\SmartRecipes.Models.fsproj",
-      "projectName": "SmartRecipes.Models",
-      "projectPath": "C:\\Users\\Pepa\\repos\\SmartRecipes.Api\\src\\SmartRecipes.Models\\SmartRecipes.Models.fsproj",
+      "projectUniqueName": "C:\\Users\\Pepa\\repos\\SmartRecipes.Api\\src\\SmartRecipes.DataAccess\\SmartRecipes.DataAccess.fsproj",
+      "projectName": "SmartRecipes.DataAccess",
+      "projectPath": "C:\\Users\\Pepa\\repos\\SmartRecipes.Api\\src\\SmartRecipes.DataAccess\\SmartRecipes.DataAccess.fsproj",
       "packagesPath": "C:\\Users\\Pepa\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Pepa\\repos\\SmartRecipes.Api\\src\\SmartRecipes.Models\\obj\\",
+      "outputPath": "C:\\Users\\Pepa\\repos\\SmartRecipes.Api\\src\\SmartRecipes.DataAccess\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
