@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SmartRecipes", "SmartRecipes\SmartRecipes.fsproj", "{45B2E56F-1E55-4EA9-964A-CF240C75B7A2}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SmartRecipes.Models", "SmartRecipes.Models\SmartRecipes.Models.fsproj", "{AA3725B5-6248-4564-AD73-3BA2051A9D9E}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SmartRecipes.Persistence", "SmartRecipes.Persistence\SmartRecipes.Persistence.fsproj", "{FA738DBF-1B74-4C3E-AAB1-13ECDEAE5519}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{45B2E56F-1E55-4EA9-964A-CF240C75B7A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45B2E56F-1E55-4EA9-964A-CF240C75B7A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45B2E56F-1E55-4EA9-964A-CF240C75B7A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45B2E56F-1E55-4EA9-964A-CF240C75B7A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA3725B5-6248-4564-AD73-3BA2051A9D9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA3725B5-6248-4564-AD73-3BA2051A9D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA3725B5-6248-4564-AD73-3BA2051A9D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA3725B5-6248-4564-AD73-3BA2051A9D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA738DBF-1B74-4C3E-AAB1-13ECDEAE5519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA738DBF-1B74-4C3E-AAB1-13ECDEAE5519}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA738DBF-1B74-4C3E-AAB1-13ECDEAE5519}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA738DBF-1B74-4C3E-AAB1-13ECDEAE5519}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

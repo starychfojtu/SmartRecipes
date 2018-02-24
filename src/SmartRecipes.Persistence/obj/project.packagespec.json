@@ -1,0 +1,50 @@
+﻿{
+  "version": "1.0.0",
+  "restore": {
+    "projectUniqueName": "/Users/pepa/Projects/SmartRecipes/src/SmartRecipes.Persistence/SmartRecipes.Persistence.fsproj",
+    "projectName": "SmartRecipes.Persistence",
+    "projectPath": "/Users/pepa/Projects/SmartRecipes/src/SmartRecipes.Persistence/SmartRecipes.Persistence.fsproj",
+    "outputPath": "/Users/pepa/Projects/SmartRecipes/src/SmartRecipes.Persistence/obj/",
+    "projectStyle": "PackageReference",
+    "fallbackFolders": [
+      "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+    ],
+    "originalTargetFrameworks": [
+      "netstandard2.0"
+    ],
+    "frameworks": {
+      "netstandard2.0": {
+        "projectReferences": {
+          "/Users/pepa/Projects/SmartRecipes/src/SmartRecipes.Models/SmartRecipes.Models.fsproj": {
+            "projectPath": "/Users/pepa/Projects/SmartRecipes/src/SmartRecipes.Models/SmartRecipes.Models.fsproj"
+          }
+        }
+      }
+    }
+  },
+  "frameworks": {
+    "netstandard2.0": {
+      "dependencies": {
+        "FSharp.Core": {
+          "target": "Package",
+          "version": "[4.2.*, )"
+        },
+        "NETStandard.Library": {
+          "suppressParent": "All",
+          "target": "Package",
+          "version": "[2.0.1, )",
+          "autoReferenced": true
+        },
+        "SQLProvider": {
+          "target": "Package",
+          "version": "[1.1.36, )"
+        }
+      },
+      "imports": [
+        "net461"
+      ],
+      "assetTargetFallback": true,
+      "warn": true
+    }
+  }
+}

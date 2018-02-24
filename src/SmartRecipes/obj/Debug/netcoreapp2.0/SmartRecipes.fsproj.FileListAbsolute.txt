@@ -1,0 +1,12 @@
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/bin/Debug/netcoreapp2.0/WebRoot/main.css
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/bin/Debug/netcoreapp2.0/web.config
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/bin/Debug/netcoreapp2.0/SmartRecipes.deps.json
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/bin/Debug/netcoreapp2.0/SmartRecipes.runtimeconfig.json
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/bin/Debug/netcoreapp2.0/SmartRecipes.runtimeconfig.dev.json
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/bin/Debug/netcoreapp2.0/SmartRecipes.dll
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/bin/Debug/netcoreapp2.0/SmartRecipes.pdb
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/bin/Debug/netcoreapp2.0/SmartRecipes.Models.dll
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/bin/Debug/netcoreapp2.0/SmartRecipes.Models.pdb
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/obj/Debug/netcoreapp2.0/SmartRecipes.fsprojResolveAssemblyReference.cache
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/obj/Debug/netcoreapp2.0/SmartRecipes.dll
+/Users/pepa/Projects/SmartRecipes/src/SmartRecipes/obj/Debug/netcoreapp2.0/SmartRecipes.pdb
