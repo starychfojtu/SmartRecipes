@@ -1,9 +1,1 @@
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.DataAccess\bin\Debug\netstandard2.0\SmartRecipes.DataAccess.deps.json
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.DataAccess\bin\Debug\netstandard2.0\SmartRecipes.DataAccess.dll
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.DataAccess\bin\Debug\netstandard2.0\SmartRecipes.DataAccess.pdb
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.DataAccess\bin\Debug\netstandard2.0\SmartRecipes.Models.dll
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.DataAccess\bin\Debug\netstandard2.0\SmartRecipes.Models.pdb
 C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.DataAccess\obj\Debug\netstandard2.0\SmartRecipes.DataAccess.fsprojResolveAssemblyReference.cache
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.DataAccess\obj\Debug\netstandard2.0\SmartRecipes.DataAccess.dll
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.DataAccess\obj\Debug\netstandard2.0\SmartRecipes.DataAccess.pdb
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.DataAccess\obj\Debug\netstandard2.0\SmartRecipes.DataAccess.fsproj.CoreCompileInputs.cache

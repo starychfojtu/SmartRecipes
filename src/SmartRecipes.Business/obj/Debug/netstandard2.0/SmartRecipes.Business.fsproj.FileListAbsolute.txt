@@ -1,0 +1,1 @@
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.Business\obj\Debug\netstandard2.0\SmartRecipes.Business.fsprojResolveAssemblyReference.cache
