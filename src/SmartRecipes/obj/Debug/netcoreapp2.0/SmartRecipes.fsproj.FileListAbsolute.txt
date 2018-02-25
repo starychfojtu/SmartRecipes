@@ -10,3 +10,17 @@
 /Users/pepa/Projects/SmartRecipes/src/SmartRecipes/obj/Debug/netcoreapp2.0/SmartRecipes.fsprojResolveAssemblyReference.cache
 /Users/pepa/Projects/SmartRecipes/src/SmartRecipes/obj/Debug/netcoreapp2.0/SmartRecipes.dll
 /Users/pepa/Projects/SmartRecipes/src/SmartRecipes/obj/Debug/netcoreapp2.0/SmartRecipes.pdb
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\obj\Debug\netcoreapp2.0\SmartRecipes.fsprojResolveAssemblyReference.cache
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\obj\Debug\netcoreapp2.0\SmartRecipes.dll
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\obj\Debug\netcoreapp2.0\SmartRecipes.pdb
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\web.config
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\SmartRecipes.deps.json
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\SmartRecipes.runtimeconfig.json
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\SmartRecipes.runtimeconfig.dev.json
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\SmartRecipes.dll
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\SmartRecipes.pdb
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\SmartRecipes.DataAccess.dll
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\SmartRecipes.Models.dll
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\SmartRecipes.DataAccess.pdb
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\bin\Debug\netcoreapp2.0\SmartRecipes.Models.pdb
+C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes\obj\Debug\netcoreapp2.0\SmartRecipes.fsproj.CoreCompileInputs.cache

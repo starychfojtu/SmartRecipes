@@ -9,10 +9,21 @@ type Ingredient = {
 
 type Ingredients = seq<Ingredient>
 
+type RecipeStep = {
+    number: int;
+    ingredients: Ingredients;
+    text: string;
+}
+
+type RecipeSteps = seq<RecipeStep>
+
+[<CLIMutable>]
 type Recipe = {
     id: Guid;
     name: string;
-    ingredients: Ingredients
+    creatorId: Guid; // TODO account instead
+    ingredients: Ingredients;
+    steps: RecipeSteps;
 }
 
 type Recipes = seq<Recipe>

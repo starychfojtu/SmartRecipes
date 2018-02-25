@@ -1,4 +1,4 @@
-module SmartRecipes.Api
+namespace SmartRecipes.Api
 
 open System
 open System.IO
@@ -7,65 +7,74 @@ open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
+open Microsoft.EntityFrameworkCore
 open Giraffe
 open SmartRecipes.Api.HttpHandlers
+open SmartRecipes.DataAccess
 
-// ---------------------------------
-// Web app
-// ---------------------------------
+module Api =
+    open Microsoft.AspNetCore.Http
+    
 
-let webApp =
-    choose [
-        GET >=>
-            choose [
-                route "/" >=> Recipes.index () 
-            ]
-        setStatusCode 404 >=> text "Not Found" ]
+    // ---------------------------------
+    // Web app
+    // ---------------------------------
 
-// ---------------------------------
-// Error handler
-// ---------------------------------
+    let webApp =
+        choose [
+            GET >=>
+                choose [
+                    route "/recipes" >=> Recipes.index ()
+                    routef "/recipes/%s" Recipes.detail
+                ]
+            setStatusCode 404 >=> text "Not Found" ]
 
-let errorHandler (ex : Exception) (logger : ILogger) =
-    logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
-    clearResponse >=> setStatusCode 500 >=> text ex.Message
+    // ---------------------------------
+    // Error handler
+    // ---------------------------------
 
-// ---------------------------------
-// Config and Main
-// ---------------------------------
+    let errorHandler (ex : Exception) (logger : ILogger) =
+        logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
+        clearResponse >=> setStatusCode 500 >=> text ex.Message
 
-let configureCors (builder : CorsPolicyBuilder) =
-    builder.WithOrigins("http://localhost:8080")
-           .AllowAnyMethod()
-           .AllowAnyHeader()
-           |> ignore
+    // ---------------------------------
+    // Config and Main
+    // ---------------------------------
 
-let configureApp (app : IApplicationBuilder) =
-    let env = app.ApplicationServices.GetService<IHostingEnvironment>()
-    (match env.IsDevelopment() with
-    | true  -> app.UseDeveloperExceptionPage()
-    | false -> app.UseGiraffeErrorHandler errorHandler)
-        .UseCors(configureCors)
-        .UseStaticFiles()
-        .UseGiraffe(webApp)
+    let configureCors (builder : CorsPolicyBuilder) =
+        builder.WithOrigins("http://localhost:8080")
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               |> ignore
 
-let configureServices (services : IServiceCollection) =
-    services.AddCors()    |> ignore
-    services.AddGiraffe() |> ignore
+    let configureApp (app : IApplicationBuilder) =
+        let env = app.ApplicationServices.GetService<IHostingEnvironment>()
+        (match env.IsDevelopment() with
+        | true  -> app.UseDeveloperExceptionPage()
+        | false -> app.UseGiraffeErrorHandler errorHandler)
+            .UseCors(configureCors)
+            .UseStaticFiles()
+            .UseGiraffe(webApp)
 
-let configureLogging (builder : ILoggingBuilder) =
-    let filter (l : LogLevel) = l.Equals LogLevel.Error
-    builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
+    let configureServices (services : IServiceCollection) =
+        services.AddCors()    |> ignore
+        services.AddGiraffe() |> ignore
+        services.AddAuthentication().AddJwtBearer() |> ignore
+        services.AddDbContext<SmartRecipesContext>(fun o -> o.UseSqlServer("") |> ignore) |> ignore
 
-[<EntryPoint>]
-let main _ =
-    WebHostBuilder()
-        .UseKestrel()
-        .UseContentRoot(Directory.GetCurrentDirectory())
-        .UseIISIntegration()
-        .Configure(Action<IApplicationBuilder> configureApp)
-        .ConfigureServices(configureServices)
-        .ConfigureLogging(configureLogging)
-        .Build()
-        .Run()
-    0
+    let configureLogging (builder : ILoggingBuilder) =
+        let filter (l : LogLevel) = l.Equals LogLevel.Error
+        builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
+
+    [<EntryPoint>]
+    let main _ =
+        WebHostBuilder()
+            .UseKestrel()
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            .UseIISIntegration()
+            .Configure(Action<IApplicationBuilder> configureApp)
+            .ConfigureServices(configureServices)
+            .ConfigureLogging(configureLogging)
+            .Build()
+            .Run()
+        0
