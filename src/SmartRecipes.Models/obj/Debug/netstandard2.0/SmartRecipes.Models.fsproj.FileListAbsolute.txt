@@ -1,6 +1,0 @@
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.Models\bin\Debug\netstandard2.0\SmartRecipes.Models.deps.json
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.Models\bin\Debug\netstandard2.0\SmartRecipes.Models.dll
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.Models\bin\Debug\netstandard2.0\SmartRecipes.Models.pdb
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.Models\obj\Debug\netstandard2.0\SmartRecipes.Models.fsprojResolveAssemblyReference.cache
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.Models\obj\Debug\netstandard2.0\SmartRecipes.Models.dll
-C:\Users\Pepa\repos\SmartRecipes.Api\src\SmartRecipes.Models\obj\Debug\netstandard2.0\SmartRecipes.Models.pdb
