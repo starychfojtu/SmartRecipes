@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Recipes.fs" />
+    <Compile Include="SmartRecipesContext.fs" />
   </ItemGroup>
 
 </Project>
