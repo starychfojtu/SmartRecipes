@@ -10,6 +10,6 @@ module Generic =
         match Guid.TryParse(id) with
             | (true, guid) -> 
                 match query guid with
-                    | Some entity -> json entity
+                    | Some entity -> json entity 
                     | None -> setStatusCode 404
             | (false, _) -> setStatusCode 400

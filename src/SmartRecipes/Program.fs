@@ -56,11 +56,12 @@ module Api =
             .UseStaticFiles()
             .UseGiraffe(webApp)
 
+    let connectionString = "Server=DESKTOP-I9VPKJO\SQLEXPRESS;Database=SmartRecipes;Trusted_Connection=True;"
     let configureServices (services : IServiceCollection) =
         services.AddCors()    |> ignore
         services.AddGiraffe() |> ignore
         services.AddAuthentication().AddJwtBearer() |> ignore
-        services.AddDbContext<SmartRecipesContext>(fun o -> o.UseSqlServer("") |> ignore) |> ignore
+        services.AddDbContext<SmartRecipesContext>(fun o -> o.UseSqlServer(connectionString) |> ignore) |> ignore
 
     let configureLogging (builder : ILoggingBuilder) =
         let filter (l : LogLevel) = l.Equals LogLevel.Error

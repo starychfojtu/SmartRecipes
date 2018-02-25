@@ -14,9 +14,10 @@ open SmartRecipes.DataAccess
             //Recipes.query.byAccount account |> json
             json []
 
-        let detail id (ctx: HttpContext) (next: HttpFunc)  =
-            let query = ctx.GetService<SmartRecipesContext>() |> Recipes.query
-            Generic.detail query.withId id
+        let detail id: HttpHandler =
+            fun (next: HttpFunc) (ctx: HttpContext)->
+                let query =  ctx.GetService<SmartRecipesContext>() |> Recipes.query
+                Generic.detail query.withId id next ctx
 
         let create (ctx: HttpContext) (next: HttpFunc) = 
             let command = ctx.GetService<SmartRecipesContext>() |> Recipes.command
