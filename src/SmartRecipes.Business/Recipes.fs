@@ -10,9 +10,7 @@ module Recipes =
     let create name (account: Account) = { 
         id = Guid.NewGuid();
         name = name;
-        creatorId = account.id;
-        ingredients = [];
-        steps = [];
+        creator = account;
     }
 
     let add recipe (command: Recipes.Command) =

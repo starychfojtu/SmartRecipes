@@ -9,7 +9,7 @@ module Recipes =
 
     type Query = {
         withId: Guid -> Recipe option;
-        byAccount: Account -> Recipes;
+        byAccount: Account -> Recipe seq;
     }
 
     let withId id (context: SmartRecipesContext) =

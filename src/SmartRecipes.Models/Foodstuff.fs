@@ -1,5 +1,7 @@
 namespace SmartRecipes.Models
 
+open System
+
 type MetricUnit = 
     | Liter
     | Gram
@@ -14,7 +16,9 @@ type NutritionValues = {
     calories: int;
 }
 
+[<CLIMutable>]
 type Foodstuff = {
+    id: Guid
     name: string;
     nutritionValues: NutritionValues;
     baseAmount: MetricUnitValue
