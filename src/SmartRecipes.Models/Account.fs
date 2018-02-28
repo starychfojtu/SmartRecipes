@@ -13,5 +13,4 @@ type SignInInfo = {
 type Account = {
     id: Guid;
     signInInfo: SignInInfo;
-    recipes: Recipes;
 }

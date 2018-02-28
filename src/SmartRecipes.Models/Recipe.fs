@@ -21,7 +21,7 @@ type RecipeSteps = seq<RecipeStep>
 type Recipe = {
     id: Guid;
     name: string;
-    creatorId: Guid; // TODO account instead
+    creator: Account;
     ingredients: Ingredients;
     steps: RecipeSteps;
 }

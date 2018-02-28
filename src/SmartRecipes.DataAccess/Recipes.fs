@@ -23,16 +23,16 @@ module Recipes =
             context.Recipes |> Seq.tryFind (fun r -> r.id = id)
         );
         byAccount = (fun account -> 
-            context.Recipes |> Seq.filter (fun r -> r.creatorId = account.id)
+            context.Recipes |> Seq.filter (fun r -> r.creator = account)
         );
     }
 
     // Command
 
     type Command = {
-        create: Recipe -> bool;
-        update: Recipe -> bool;
-        delete: Recipe -> bool;
+        create: Recipe -> unit;
+        update: Recipe -> unit;
+        delete: Recipe -> unit;
     }
 
     // TODO make this generic
@@ -40,20 +40,17 @@ module Recipes =
         create = (fun recipe -> 
             context.Add(recipe) |> ignore
             context.SaveChanges() |> ignore
-            true
         );
         update = (fun recipe ->
             context.SaveChanges() |> ignore
-            true
         );
         delete = (fun recipe ->
             context.Remove(recipe) |> ignore
             context.SaveChanges() |> ignore
-            true
         );
     }
 
     // API
 
-    let query context = efQuery context
-    let command context = efCommand context
+    let query = efQuery SmartRecipesContext.createContext
+    let command = efCommand SmartRecipesContext.createContext

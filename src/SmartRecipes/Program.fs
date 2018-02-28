@@ -24,7 +24,7 @@ module Api =
         choose [
             GET >=>
                 choose [
-                    route "/recipes" >=> Recipes.index ()
+                    route "/recipes" >=> Recipes.index
                     routef "/recipes/%s" Recipes.detail
                 ]
             setStatusCode 404 >=> text "Not Found" ]
@@ -61,7 +61,6 @@ module Api =
         services.AddCors()    |> ignore
         services.AddGiraffe() |> ignore
         services.AddAuthentication().AddJwtBearer() |> ignore
-        services.AddDbContext<SmartRecipesContext>(fun o -> o.UseSqlServer(connectionString) |> ignore) |> ignore
 
     let configureLogging (builder : ILoggingBuilder) =
         let filter (l : LogLevel) = l.Equals LogLevel.Error

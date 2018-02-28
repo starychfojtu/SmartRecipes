@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Account.fs" />
     <Compile Include="Foodstuff.fs" />
     <Compile Include="Recipe.fs" />
-    <Compile Include="Account.fs" />
   </ItemGroup>
 
   <ItemGroup>

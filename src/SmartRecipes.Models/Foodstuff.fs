@@ -1,7 +1,7 @@
 namespace SmartRecipes.Models
 
 type MetricUnit = 
-    | Liter 
+    | Liter
     | Gram
     | Piece
 
