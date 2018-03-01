@@ -232,3 +232,8 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# CUSTOM
+.vs
+.idea
+packages

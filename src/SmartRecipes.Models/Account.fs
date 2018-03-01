@@ -10,6 +10,7 @@ type SignInInfo = {
     password: Password;
 }
 
+[<CLIMutable>]
 type Account = {
     id: Guid;
     signInInfo: SignInInfo;

@@ -61,6 +61,7 @@ module Api =
         services.AddCors()    |> ignore
         services.AddGiraffe() |> ignore
         services.AddAuthentication().AddJwtBearer() |> ignore
+        SmartRecipesContext.createContext.Database.EnsureCreated() |> ignore
 
     let configureLogging (builder : ILoggingBuilder) =
         let filter (l : LogLevel) = l.Equals LogLevel.Error

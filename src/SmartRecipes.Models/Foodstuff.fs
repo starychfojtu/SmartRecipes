@@ -7,6 +7,7 @@ type MetricUnit =
     | Gram
     | Piece
 
+[<CLIMutable>]
 type MetricUnitValue = {
     unit: MetricUnit;
     amount: int
