@@ -5,6 +5,7 @@ open System.IO
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
+open Microsoft.AspNetCore.Authentication.JwtBearer
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.EntityFrameworkCore
@@ -13,8 +14,9 @@ open SmartRecipes.Api.HttpHandlers
 open SmartRecipes.DataAccess
 
 module Api =
-    open Microsoft.AspNetCore.Http
     
+    let authorize =
+        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
 
     // ---------------------------------
     // Web app
@@ -26,6 +28,10 @@ module Api =
                 choose [
                     route "/recipes" >=> Recipes.index
                     routef "/recipes/%s" Recipes.detail
+                ]
+            POST >=>
+                choose [
+                    route "/recipes" >=> authorize >=> Recipes.create
                 ]
             setStatusCode 404 >=> text "Not Found" ]
 
@@ -56,12 +62,16 @@ module Api =
             .UseStaticFiles()
             .UseGiraffe(webApp)
 
-    let connectionString = "Server=DESKTOP-I9VPKJO\SQLEXPRESS;Database=SmartRecipes;Trusted_Connection=True;"
+    let initializeDatabase _ =
+        let database = SmartRecipesContext.create.Database
+        database.EnsureCreated() |> ignore
+        database.Migrate() |> ignore
+ 
     let configureServices (services : IServiceCollection) =
         services.AddCors()    |> ignore
         services.AddGiraffe() |> ignore
         services.AddAuthentication().AddJwtBearer() |> ignore
-        SmartRecipesContext.createContext.Database.EnsureCreated() |> ignore
+        initializeDatabase ()
 
     let configureLogging (builder : ILoggingBuilder) =
         let filter (l : LogLevel) = l.Equals LogLevel.Error

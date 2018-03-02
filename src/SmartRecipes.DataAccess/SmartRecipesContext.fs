@@ -57,13 +57,12 @@ type SmartRecipesContext =
 
         mb.Entity<Recipe>().HasKey(fun a -> a.id :> obj) |> ignore
         mb.Entity<Recipe>().HasOne(fun r -> r.creator) |> ignore
-        ()
 
  module SmartRecipesContext =
 
-    let connectionString = "Server=DESKTOP-I9VPKJO\SQLEXPRESS;Database=SmartRecipes;Trusted_Connection=True;"
+    let private connectionString = "Server=DESKTOP-I9VPKJO\SQLEXPRESS;Database=SmartRecipes;Trusted_Connection=True;"
     
-    let createContext = 
+    let create = 
         let optionsBuilder = new DbContextOptionsBuilder<SmartRecipesContext>();
         optionsBuilder.UseSqlServer(connectionString) |> ignore
         new SmartRecipesContext(optionsBuilder.Options)

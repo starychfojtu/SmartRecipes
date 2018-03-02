@@ -7,22 +7,17 @@ open SmartRecipes.DataAccess
 [<RequireQualifiedAccess>]
 module Recipes =
 
-    let create name (account: Account) = { 
+    let create name = { 
         id = Guid.NewGuid();
         name = name;
-        creator = account;
+        creator = { id = Guid.Empty; signInInfo = {email=""; password=""}};
     }
 
-    let add recipe (command: Recipes.Command) =
-        command.create recipe
+    let add recipe =
+        Recipes.command.create recipe
 
-    let update recipe (command: Recipes.Command) =
-        command.update recipe
+    let update recipe =
+        Recipes.command.update recipe
 
-    let delete recipe (command: Recipes.Command) =
-        command.delete recipe
-
-    module Repository =
-        
-        let withId id (query: Recipes.Query) =
-            query.withId id
+    let delete recipe =
+        Recipes.command.delete recipe
