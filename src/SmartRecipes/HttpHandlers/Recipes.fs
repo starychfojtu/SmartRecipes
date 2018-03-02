@@ -28,6 +28,7 @@ open Generic
         }
 
         type createErrorMessage = 
+            | ParametersNotProvided
             | NameCannotBeEmpty
 
         let nameNotNull parameters = 

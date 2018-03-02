@@ -52,5 +52,5 @@ module Recipes =
 
     // API
 
-    let query = efQuery SmartRecipesContext.createContext
-    let command = efCommand SmartRecipesContext.createContext
+    let query = efQuery SmartRecipesContext.create
+    let command = efCommand SmartRecipesContext.create

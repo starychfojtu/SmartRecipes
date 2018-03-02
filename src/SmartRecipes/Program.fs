@@ -15,8 +15,8 @@ open SmartRecipes.DataAccess
 
 module Api =
     
-    let authorize =
-        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
+    (*let authorize =
+        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)*)
 
     // ---------------------------------
     // Web app
@@ -31,7 +31,7 @@ module Api =
                 ]
             POST >=>
                 choose [
-                    route "/recipes" >=> authorize >=> Recipes.create
+                    route "/recipes" >=> (*authorize >=>*) Recipes.create
                 ]
             setStatusCode 404 >=> text "Not Found" ]
 
