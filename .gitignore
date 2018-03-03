@@ -234,6 +234,6 @@ _Pvt_Extensions
 .fake/
 
 # CUSTOM
-.vs
-.idea
-packages
+.vs/
+.idea/
+packages/
