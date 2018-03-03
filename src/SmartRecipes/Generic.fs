@@ -1,4 +1,4 @@
-﻿namespace SmartRecipes.Api.HttpHandlers
+﻿namespace SmartRecipes.Api
 
 open System
 open Giraffe

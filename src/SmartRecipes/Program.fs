@@ -6,17 +6,26 @@ open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Hosting
 open Microsoft.AspNetCore.Authentication.JwtBearer
+open Microsoft.AspNetCore.Authentication
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.EntityFrameworkCore
 open Giraffe
-open SmartRecipes.Api.HttpHandlers
 open SmartRecipes.DataAccess
 
 module Api =
+
+    // ---------------------------------
+    // Authentication
+    // ---------------------------------
+
+
+    let authenticationOptions (o : AuthenticationOptions) =
+        o.DefaultAuthenticateScheme <- JwtBearerDefaults.AuthenticationScheme
+        o.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme
     
-    (*let authorize =
-        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)*)
+    let authorize =
+        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
 
     // ---------------------------------
     // Web app
@@ -27,11 +36,11 @@ module Api =
             GET >=>
                 choose [
                     route "/recipes" >=> Recipes.index
-                    routef "/recipes/%s" Recipes.detail
+                    routef "/recipes/%s"Recipes.detail
                 ]
             POST >=>
                 choose [
-                    route "/recipes" >=> (*authorize >=>*) Recipes.create
+                    route "/recipes" >=> authorize >=> Recipes.create
                 ]
             setStatusCode 404 >=> text "Not Found" ]
 
@@ -70,7 +79,7 @@ module Api =
     let configureServices (services : IServiceCollection) =
         services.AddCors()    |> ignore
         services.AddGiraffe() |> ignore
-        services.AddAuthentication().AddJwtBearer() |> ignore
+        services.AddAuthentication(authenticationOptions).AddJwtBearer() |> ignore
         initializeDatabase ()
 
     let configureLogging (builder : ILoggingBuilder) =
