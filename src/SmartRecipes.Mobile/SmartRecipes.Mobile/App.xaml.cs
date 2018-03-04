@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Xamarin.Forms;
+using SmartRecipes.Mobile.Pages;
 
 namespace SmartRecipes.Mobile
 {
@@ -13,7 +14,7 @@ namespace SmartRecipes.Mobile
 		{
 			InitializeComponent();
 
-			MainPage = new SmartRecipes.Mobile.MainPage();
+			MainPage = new SignInPage();
 		}
 
 		protected override void OnStart ()

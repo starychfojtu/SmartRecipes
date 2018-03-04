@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartRecipes.Mobile.Pages.SignUpPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout
+                Padding="32"
+                Margin="16">
+                <Label Text="Smart Recipes" FontSize="32" />
+                <Entry Placeholder="Email"
+                       x:Name="EmailEntry"/>
+                <Entry Placeholder="First name"
+                       x:Name="FirstNameEntry"/>
+                <Entry Placeholder="Last name"
+                       x:Name="LastEntry"/>
+                <Entry Placeholder="Country"
+                       x:Name="CountryEntry"/>
+                <Entry Placeholder="Password"
+                       x:Name="PasswordEntry"/>
+                <Button Text="Sign Up"
+                        x:Name="SignUpButton" />
+                <Button Text="Already have an account yet ? Sign in!" 
+                        x:Name="SignInButton"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
