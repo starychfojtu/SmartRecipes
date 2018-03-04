@@ -4,27 +4,29 @@
              x:Class="SmartRecipes.Mobile.Pages.SignInPage"
              Style="{StaticResource page}">
     <ContentPage.Content>
-        <ScrollView>
-            <StackLayout>
-                <StackLayout
-                    Padding="32"
-                    Margin="8">
-                    <Label Text="Smart Recipes" 
-                           Style="{StaticResource heading}" />
-                    <Entry Placeholder="Email"
-                           x:Name="EmailEntry"
-                           Style="{StaticResource entry}"/>
-                    <Entry Placeholder="Password"
-                           x:Name="PasswordEntry"
-                           Style="{StaticResource entry}"/>
-                    <Button Text="Sign In"
-                            x:Name="SignInButton"
-                            Style="{StaticResource primaryButton}" />
-                    <Button Text="Don't have an account yet ? Sign up " 
-                            x:Name="SignUpButton"
-                            Style="{StaticResource linkButton}" />
-                </StackLayout>
-            </StackLayout>
-        </ScrollView>
+        <StackLayout
+            Padding="32"
+            Margin="8"
+            VerticalOptions="CenterAndExpand">
+            <Label 
+                Text="Smart Recipes" 
+                Style="{StaticResource heading}"/>
+            <Entry 
+                Placeholder="Email"
+                x:Name="EmailEntry"
+                Style="{StaticResource entry}"/>
+            <Entry 
+                Placeholder="Password"
+                x:Name="PasswordEntry"
+                Style="{StaticResource entry}"/>
+            <Button 
+                Text="Sign In"
+                x:Name="SignInButton"
+                Style="{StaticResource primaryButton}" />
+            <Button 
+                Text="Don't have an account yet ? Sign up " 
+                x:Name="SignUpButton"
+                Style="{StaticResource linkButton}" />
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>
