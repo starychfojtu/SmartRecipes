@@ -4,17 +4,17 @@ using Xamarin.Forms.Xaml;
 
 namespace SmartRecipes.Mobile.Pages
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class SignInPage : ContentPage
-	{
-		public SignInPage ()
-		{
-			InitializeComponent ();
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class SignInPage : ContentPage
+    {
+        public SignInPage()
+        {
+            InitializeComponent();
 
-		    SignUpButton.Clicked += (s, a) =>
-		    {
-                Application.Current.MainPage = new NavigationPage(new SignUpPage());
+            SignUpButton.Clicked += (s, a) =>
+            {
+                Application.Current.MainPage = new SignUpPage();
             };
-		}
-	}
+        }
+    }
 }

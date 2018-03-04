@@ -1,10 +1,34 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SmartRecipes.Mobile.App">
 	<Application.Resources>
 
 		<!-- Application resource dictionary -->
+        <ResourceDictionary>
+
+            <Color x:Key="primaryColor">#F44336</Color>
+            <Color x:Key="secondaryColor">#00BCD4</Color>
+            <Color x:Key="darkPrimaryColor">#D32F2F</Color>
+            <Color x:Key="lightTextColor">#FFFFFF</Color>
+            <Color x:Key="darkTextColor">#212121</Color>
+            <Color x:Key="secondaryTextColor">#757575</Color>
+            <Color x:Key="dividerColor">#BDBDBD</Color>
+
+            <Style x:Key="page" TargetType="ContentPage">
+                <Setter Property="BackgroundColor" Value="{StaticResource lightTextColor}" />
+            </Style>
+            
+            <Style x:Key="primaryButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource primaryColor}" />
+                <Setter Property="TextColor" Value="{StaticResource lightTextColor}" />
+            </Style>
+
+            <Style x:Key="linkButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="TextColor" Value="{StaticResource secondaryTextColor}" />
+            </Style>
+        </ResourceDictionary>
 
 	</Application.Resources>
 </Application>

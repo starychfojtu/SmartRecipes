@@ -1,22 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SmartRecipes.Mobile.Pages.SignInPage">
+             x:Class="SmartRecipes.Mobile.Pages.SignInPage"
+             Style="{StaticResource page}">
     <ContentPage.Content>
-        <StackLayout>
-            <StackLayout
-                Padding="32"
-                Margin="16">
-                <Label Text="Smart Recipes" FontSize="32" />
-                <Entry Placeholder="Email"
-                       x:Name="EmailEntry"/>
-                <Entry Placeholder="Password"
-                       x:Name="PasswordEntry"/>
-                <Button Text="Sign In"
-                        x:Name="SignInButton" />
-                <Button Text="Don't have an account yet ? Sign up!" 
-                        x:Name="SignUpButton"/>
+        <ScrollView>
+            <StackLayout>
+                <StackLayout
+                    Padding="32"
+                    Margin="16">
+                    <Label Text="Smart Recipes" 
+                           FontSize="32" />
+                    <Entry Placeholder="Email"
+                           x:Name="EmailEntry"/>
+                    <Entry Placeholder="Password"
+                           x:Name="PasswordEntry"/>
+                    <Button Text="Sign In"
+                            x:Name="SignInButton"
+                            Style="{StaticResource primaryButton}" />
+                    <Button Text="Don't have an account yet ? Sign up!" 
+                            x:Name="SignUpButton"
+                            Style="{StaticResource linkButton}" />
+                </StackLayout>
             </StackLayout>
-        </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>
