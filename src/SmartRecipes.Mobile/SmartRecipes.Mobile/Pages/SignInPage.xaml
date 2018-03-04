@@ -8,17 +8,19 @@
             <StackLayout>
                 <StackLayout
                     Padding="32"
-                    Margin="16">
+                    Margin="8">
                     <Label Text="Smart Recipes" 
-                           FontSize="32" />
+                           Style="{StaticResource heading}" />
                     <Entry Placeholder="Email"
-                           x:Name="EmailEntry"/>
+                           x:Name="EmailEntry"
+                           Style="{StaticResource entry}"/>
                     <Entry Placeholder="Password"
-                           x:Name="PasswordEntry"/>
+                           x:Name="PasswordEntry"
+                           Style="{StaticResource entry}"/>
                     <Button Text="Sign In"
                             x:Name="SignInButton"
                             Style="{StaticResource primaryButton}" />
-                    <Button Text="Don't have an account yet ? Sign up!" 
+                    <Button Text="Don't have an account yet ? Sign up " 
                             x:Name="SignUpButton"
                             Style="{StaticResource linkButton}" />
                 </StackLayout>

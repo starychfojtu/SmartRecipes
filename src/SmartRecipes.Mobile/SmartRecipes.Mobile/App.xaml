@@ -15,10 +15,12 @@
             <Color x:Key="secondaryTextColor">#757575</Color>
             <Color x:Key="dividerColor">#BDBDBD</Color>
 
+            <!-- Pages -->
             <Style x:Key="page" TargetType="ContentPage">
                 <Setter Property="BackgroundColor" Value="{StaticResource lightTextColor}" />
             </Style>
-            
+
+            <!-- Buttons -->
             <Style x:Key="primaryButton" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="{StaticResource primaryColor}" />
                 <Setter Property="TextColor" Value="{StaticResource lightTextColor}" />
@@ -27,7 +29,21 @@
             <Style x:Key="linkButton" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="Transparent" />
                 <Setter Property="TextColor" Value="{StaticResource secondaryTextColor}" />
+                <Setter Property="FontSize" Value="12" />
             </Style>
+
+            <!-- Labels -->
+            <Style x:Key="heading" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource darkTextColor}" />
+                <Setter Property="FontSize" Value="24" />
+            </Style>
+
+            <!-- Inputs -->
+            <Style x:Key="entry" TargetType="Entry">
+                <Setter Property="TextColor" Value="{StaticResource darkTextColor}" />
+                <Setter Property="PlaceholderColor" Value="{StaticResource secondaryTextColor}" />
+            </Style>
+            
         </ResourceDictionary>
 
 	</Application.Resources>
