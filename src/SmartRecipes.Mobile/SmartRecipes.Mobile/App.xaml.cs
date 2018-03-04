@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using SmartRecipes.Mobile.Pages;
 using Xamarin.Forms;
-using SmartRecipes.Mobile.Pages;
 
 namespace SmartRecipes.Mobile
 {
@@ -14,22 +9,22 @@ namespace SmartRecipes.Mobile
 		{
 			InitializeComponent();
 
-			MainPage = new SignInPage();
+		    Application.Current.MainPage = new SignInPage();
 		}
 
 		protected override void OnStart ()
 		{
-			// Handle when your app starts
+		    base.OnStart();
 		}
 
 		protected override void OnSleep ()
 		{
-			// Handle when your app sleeps
-		}
+		    base.OnSleep();
+        }
 
 		protected override void OnResume ()
 		{
-			// Handle when your app resumes
+			base.OnResume();
 		}
 	}
 }

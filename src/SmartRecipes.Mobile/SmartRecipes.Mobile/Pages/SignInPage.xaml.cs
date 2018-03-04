@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -16,10 +11,10 @@ namespace SmartRecipes.Mobile.Pages
 		{
 			InitializeComponent ();
 
-		    SignUpButton.Clicked += (sender, args) =>
+		    SignUpButton.Clicked += (s, a) =>
 		    {
-		        Application.Current.MainPage = new ContentPage();
-		    };
+                Application.Current.MainPage = new NavigationPage(new SignUpPage());
+            };
 		}
 	}
 }
