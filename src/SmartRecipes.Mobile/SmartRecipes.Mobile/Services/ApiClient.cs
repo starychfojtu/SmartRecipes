@@ -17,5 +17,10 @@ namespace SmartRecipes.Mobile
         {
             return new SignInResponse(true, "fakeToken");
         }
+
+        public SignUpResponse PostSignUp(SignUpRequest request)
+        {
+            return new SignUpResponse(new SignUpResponse.Account("fake@gmail.com"));
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using SmartRecipes.Mobile.Pages;
+using System.Net.Http;
 namespace SmartRecipes.Mobile
 {
     public class DIContainer
@@ -20,7 +21,8 @@ namespace SmartRecipes.Mobile
             var builder = new ContainerBuilder();
 
             // Services
-            builder.RegisterType<ApiClient>(); // TODO: Register as singleton
+            builder.RegisterInstance(new HttpClient()).As<HttpClient>();
+            builder.RegisterType<ApiClient>().SingleInstance();
             builder.RegisterType<Authenticator>();
 
             // View models

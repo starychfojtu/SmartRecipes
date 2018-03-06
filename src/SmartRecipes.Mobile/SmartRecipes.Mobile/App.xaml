@@ -38,6 +38,11 @@
                 <Setter Property="FontSize" Value="24" />
             </Style>
 
+            <Style x:Key="subHeading" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource darkTextColor}" />
+                <Setter Property="FontSize" Value="18" />
+            </Style>
+
             <!-- Inputs -->
             <Style x:Key="entry" TargetType="Entry">
                 <Setter Property="TextColor" Value="{StaticResource darkTextColor}" />

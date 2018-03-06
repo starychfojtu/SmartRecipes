@@ -12,11 +12,19 @@ namespace SmartRecipes.Mobile
             this.client = client;
         }
 
-        public bool Authenticate(SignInCredentials credentials, Action onFailure)
+        public void Authenticate(SignInCredentials credentials, Action onSuccess, Action onFailure)
         {
             var request = new SignInRequest(credentials.Email, credentials.Password);
             var response = client.PostSignIn(request);
-            return response.IsAuthorized;
+
+            if (response.IsAuthorized)
+            {
+                onSuccess();
+            }
+            else
+            {
+                onFailure();
+            }
         }
     }
 }

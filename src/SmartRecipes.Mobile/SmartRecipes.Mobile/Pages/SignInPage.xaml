@@ -11,6 +11,9 @@
             <Label 
                 Text="Smart Recipes" 
                 Style="{StaticResource heading}"/>
+            <Label 
+                Text="Organize cooking" 
+                Style="{StaticResource subHeading}"/>
             <Entry 
                 Placeholder="Email"
                 x:Name="EmailEntry"
@@ -24,7 +27,7 @@
                 x:Name="SignInButton"
                 Style="{StaticResource primaryButton}" />
             <Button 
-                Text="Don't have an account yet ? Sign up " 
+                Text="Don't have an account yet ? Sign up" 
                 x:Name="SignUpButton"
                 Style="{StaticResource linkButton}" />
         </StackLayout>

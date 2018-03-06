@@ -1,6 +1,5 @@
 ﻿using SmartRecipes.Mobile.Models;
 using Xamarin.Forms;
-using Autofac.Core;
 using Autofac;
 using SmartRecipes.Mobile.Pages;
 
@@ -10,16 +9,21 @@ namespace SmartRecipes.Mobile
     {
         private readonly INavigation navigation;
 
-        public SignInViewModel(INavigation navigation)
+        private readonly Authenticator authenticator;
+
+        public SignInViewModel(Authenticator authenticator)
         {
-            this.navigation = navigation;
+            this.authenticator = authenticator;
         }
 
         public SignInCredentials Credentials { get; set; }
 
         public void SignIn()
         {
-
+            authenticator.Authenticate(
+                Credentials,
+                () => { },
+                () => { });
         }
 
         public void NavigateToSignUp()

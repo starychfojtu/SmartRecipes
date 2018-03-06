@@ -18,5 +18,9 @@ namespace SmartRecipes.Mobile.Pages
             SignInButton.Command = new Command(() => viewModel.SignIn());
             SignUpButton.Command = new Command(() => viewModel.NavigateToSignUp());
         }
+
+        private SignInPage()
+        {
+        }
     }
 }
