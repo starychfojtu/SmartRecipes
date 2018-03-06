@@ -9,11 +9,6 @@ namespace SmartRecipes.Mobile.Pages
         public SignUpPage()
         {
             InitializeComponent();
-            SignInButton.Clicked += (sender, args) =>
-            {
-                Application.Current.MainPage = new SignInPage();
-            };
-
         }
     }
 }

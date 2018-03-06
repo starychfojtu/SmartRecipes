@@ -1,5 +1,4 @@
-﻿using System;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace SmartRecipes.Mobile.Pages
@@ -7,14 +6,17 @@ namespace SmartRecipes.Mobile.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SignInPage : ContentPage
     {
-        public SignInPage()
+        public SignInPage(SignInViewModel viewModel)
         {
             InitializeComponent();
 
-            SignUpButton.Clicked += (s, a) =>
-            {
-                Application.Current.MainPage = new SignUpPage();
-            };
+            BindingContext = viewModel;
+
+            EmailEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Credentials.Email));
+            PasswordEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Credentials.Password));
+
+            SignInButton.Command = new Command(() => viewModel.SignIn());
+            SignUpButton.Command = new Command(() => viewModel.NavigateToSignUp());
         }
     }
 }
