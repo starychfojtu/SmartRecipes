@@ -16,12 +16,14 @@ namespace SmartRecipes.Mobile
             this.authenticator = authenticator;
         }
 
-        public SignInCredentials Credentials { get; set; }
+        public string Email { get; set; }
+
+        public string Password { get; set; }
 
         public void SignIn()
         {
             authenticator.Authenticate(
-                Credentials,
+                new SignInCredentials(Email, Password),
                 () => { },
                 () => { });
         }

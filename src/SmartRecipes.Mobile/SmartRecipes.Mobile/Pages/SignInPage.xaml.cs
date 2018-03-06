@@ -12,15 +12,16 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            EmailEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Credentials.Email));
-            PasswordEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Credentials.Password));
+            EmailEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Email));
+            PasswordEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Password));
 
             SignInButton.Command = new Command(() => viewModel.SignIn());
             SignUpButton.Command = new Command(() => viewModel.NavigateToSignUp());
         }
 
-        private SignInPage()
+        public SignInPage() // For live page
         {
+            InitializeComponent();
         }
     }
 }
