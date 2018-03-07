@@ -9,6 +9,9 @@
     <PackageReference Include="Xamarin.Forms" Version="2.5.0.280555" />
     <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.3.4" />
     <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.3.4" />
+    <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.3.4" />
+    <PackageReference Include="Xam.Plugins.Forms.RoundedBoxView" Version="1.0.0.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,6 +53,7 @@
     <Folder Include="Extensions\" />
     <Folder Include="ApiModels\" />
     <Folder Include="Assets\" />
+    <Folder Include="Controls\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Models\SignInCredentials.s" />

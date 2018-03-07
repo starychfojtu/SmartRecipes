@@ -3,46 +3,73 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              x:Class="SmartRecipes.Mobile.Pages.SignInPage"
+             xmlns:abstractions="clr-namespace:RoundedBoxView.Forms.Plugin.Abstractions;assembly=RoundedBoxView.Forms.Plugin.Abstractions"
              Style="{StaticResource page}">
     
     <ContentPage.Content>
-        
-        <StackLayout
-            Padding="32"
-            Margin="8"
-            VerticalOptions="CenterAndExpand">
-            
+         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="20" />
+            </Grid.RowDefinitions>
+
+            <!-- Background image -->
             <ffimageloading:CachedImage
-                Aspect="AspectFill">
-                <ffimageloading:CachedImage.Source>
-                    <OnPlatform x:TypeArguments="ImageSource">
-                        <On Platform="Android, iOS" Value="blurbg" />
-                    </OnPlatform>
-                </ffimageloading:CachedImage.Source>
-            </ffimageloading:CachedImage>
+                Grid.RowSpan="3"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Aspect="Fill"
+                Source="blurbg" />
+
+            <!-- Heading -->
+            <Grid 
+                Grid.Row="0"
+                VerticalOptions="Center">
+                <StackLayout
+                    Padding="32"
+                    Margin="8"
+                    VerticalOptions="CenterAndExpand">
+                    <Label 
+                        Text="Smart Recipes" 
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource lightHeading}"/>
+                    <Label 
+                        Text="Organize cooking" 
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource lightSubHeading}"/> 
+                </StackLayout>
+            </Grid>
+
+            <!-- Sign in form -->
+            <Grid
+                Grid.Row="1"
+                VerticalOptions="Center">
+                <StackLayout
+                    Padding="32"
+                    Margin="8"
+                    VerticalOptions="CenterAndExpand">
+
+                    <Entry 
+                        Placeholder="Email"
+                        x:Name="EmailEntry"
+                        Style="{StaticResource lightEntry}"/>
+                    <Entry 
+                        Placeholder="Password"
+                        x:Name="PasswordEntry"
+                        IsPassword="true"
+                        Style="{StaticResource lightEntry}"/>
+                    <Button 
+                        Text="Sign In"
+                        x:Name="SignInButton"
+                        Style="{StaticResource primaryButton}" />
+                    <Button 
+                        Text="Don't have an account yet ? Sign up" 
+                        x:Name="SignUpButton"
+                        Style="{StaticResource linkButton}" />
+                </StackLayout>
+            </Grid>
             
-            <Label 
-                Text="Smart Recipes" 
-                Style="{StaticResource heading}"/>
-            <Label 
-                Text="Organize cooking" 
-                Style="{StaticResource subHeading}"/>
-            <Entry 
-                Placeholder="Email"
-                x:Name="EmailEntry"
-                Style="{StaticResource entry}"/>
-            <Entry 
-                Placeholder="Password"
-                x:Name="PasswordEntry"
-                Style="{StaticResource entry}"/>
-            <Button 
-                Text="Sign In"
-                x:Name="SignInButton"
-                Style="{StaticResource primaryButton}" />
-            <Button 
-                Text="Don't have an account yet ? Sign up" 
-                x:Name="SignUpButton"
-                Style="{StaticResource linkButton}" />
-        </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

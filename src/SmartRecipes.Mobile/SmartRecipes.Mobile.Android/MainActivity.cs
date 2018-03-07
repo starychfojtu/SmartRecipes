@@ -1,11 +1,14 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using FFImageLoading.Forms.Droid;
+using RoundedBoxView.Forms.Plugin.Droid;
+using Xamarin.Forms.Platform.Android;
 
 namespace SmartRecipes.Mobile.Droid
 {
     [Activity(Label = "SmartRecipes.Mobile", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+    public class MainActivity : FormsAppCompatActivity
     {
         protected override void OnCreate(Bundle bundle)
         {
@@ -14,7 +17,10 @@ namespace SmartRecipes.Mobile.Droid
 
             base.OnCreate(bundle);
 
-            global::Xamarin.Forms.Forms.Init(this, bundle);
+            Xamarin.Forms.Forms.Init(this, bundle);
+            CachedImageRenderer.Init(enableFastRenderer: true);
+            RoundedBoxViewRenderer.Init();
+
             LoadApplication(new App());
         }
     }

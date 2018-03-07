@@ -43,8 +43,23 @@
                 <Setter Property="FontSize" Value="18" />
             </Style>
 
+            <Style x:Key="lightHeading" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource lightTextColor}" />
+                <Setter Property="FontSize" Value="24" />
+            </Style>
+
+            <Style x:Key="lightSubHeading" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource lightTextColor}" />
+                <Setter Property="FontSize" Value="18" />
+            </Style>
+
             <!-- Inputs -->
             <Style x:Key="entry" TargetType="Entry">
+                <Setter Property="TextColor" Value="{StaticResource darkTextColor}" />
+                <Setter Property="PlaceholderColor" Value="{StaticResource secondaryTextColor}" />
+            </Style>
+
+            <Style x:Key="lightEntry" TargetType="Entry">
                 <Setter Property="TextColor" Value="{StaticResource darkTextColor}" />
                 <Setter Property="PlaceholderColor" Value="{StaticResource secondaryTextColor}" />
             </Style>
