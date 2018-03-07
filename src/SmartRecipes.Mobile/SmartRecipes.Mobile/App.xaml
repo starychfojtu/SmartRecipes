@@ -7,9 +7,10 @@
 		<!-- Application resource dictionary -->
         <ResourceDictionary>
 
-            <Color x:Key="primaryColor">#F44336</Color>
-            <Color x:Key="secondaryColor">#00BCD4</Color>
-            <Color x:Key="darkPrimaryColor">#D32F2F</Color>
+            <Color x:Key="primaryColor">#4CAF50</Color>
+            <Color x:Key="secondaryColor">#C8E6C9</Color>
+            <Color x:Key="darkPrimaryColor">#388E3C</Color>
+            <Color x:Key="accentColor">#8BC34A</Color>
             <Color x:Key="lightTextColor">#FFFFFF</Color>
             <Color x:Key="darkTextColor">#212121</Color>
             <Color x:Key="secondaryTextColor">#757575</Color>
@@ -28,19 +29,19 @@
 
             <Style x:Key="linkButton" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="Transparent" />
-                <Setter Property="TextColor" Value="{StaticResource secondaryTextColor}" />
+                <Setter Property="TextColor" Value="{StaticResource lightTextColor}" />
                 <Setter Property="FontSize" Value="12" />
             </Style>
 
             <!-- Labels -->
             <Style x:Key="heading" TargetType="Label">
                 <Setter Property="TextColor" Value="{StaticResource darkTextColor}" />
-                <Setter Property="FontSize" Value="24" />
+                <Setter Property="FontSize" Value="32" />
             </Style>
 
             <Style x:Key="subHeading" TargetType="Label">
                 <Setter Property="TextColor" Value="{StaticResource darkTextColor}" />
-                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontSize" Value="24" />
             </Style>
 
             <Style x:Key="lightHeading" TargetType="Label">
@@ -61,7 +62,10 @@
 
             <Style x:Key="lightEntry" TargetType="Entry">
                 <Setter Property="TextColor" Value="{StaticResource darkTextColor}" />
+                <Setter Property="Text" Value="{StaticResource darkTextColor}" />
                 <Setter Property="PlaceholderColor" Value="{StaticResource secondaryTextColor}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="MinimumHeightRequest" Value="32" />
             </Style>
             
         </ResourceDictionary>

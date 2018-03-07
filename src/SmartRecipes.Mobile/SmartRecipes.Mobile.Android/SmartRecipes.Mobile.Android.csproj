@@ -90,11 +90,8 @@
     <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
-    <AndroidResource Include="Resources\drawable\blurbg.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\blurbg.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\blurbg.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\blurbg.png" />
     <AndroidResource Include="Resources\drawable\rounded_corners.xml" />
+    <AndroidResource Include="Resources\drawable\blurbg.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
