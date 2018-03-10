@@ -1,6 +1,5 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using System;
 
 namespace SmartRecipes.Mobile.Pages
 {

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartRecipes.Mobile", "SmartRecipes.Mobile\SmartRecipes.Mobile\SmartRecipes.Mobile.csproj", "{F37E7463-43DC-4987-B1A5-5E2B36E5D176}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRecipes.Mobile", "SmartRecipes.Mobile\SmartRecipes.Mobile\SmartRecipes.Mobile.csproj", "{F37E7463-43DC-4987-B1A5-5E2B36E5D176}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRecipes.Mobile.iOS", "SmartRecipes.Mobile\SmartRecipes.Mobile.iOS\SmartRecipes.Mobile.iOS.csproj", "{1FDD0E18-38A8-4C8F-B267-A6B35F664C78}"
 EndProject

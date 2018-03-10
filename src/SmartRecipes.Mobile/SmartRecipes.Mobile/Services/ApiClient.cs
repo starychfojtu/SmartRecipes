@@ -6,16 +6,22 @@ namespace SmartRecipes.Mobile
     {
         private readonly HttpClient client;
 
-        private string authenticationToken;
-
         public ApiClient(HttpClient client)
         {
             this.client = client;
         }
 
+        private string AuthenticationToken { get; set; }
+
         public SignInResponse PostSignIn(SignInRequest request)
         {
-            return new SignInResponse(true, "fakeToken");
+            //if (request.Email == "test@gmail.com" && request.Password == "1234")
+            //{
+            //AuthenticationToken = "fake";
+            return new SignInResponse(true, AuthenticationToken);
+            //}
+
+            //return new SignInResponse(false, "");
         }
 
         public SignUpResponse PostSignUp(SignUpRequest request)

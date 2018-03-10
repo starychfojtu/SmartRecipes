@@ -31,6 +31,7 @@ namespace SmartRecipes.Mobile
             // Pages
             builder.RegisterType<SignInPage>();
             builder.RegisterType<SignUpPage>();
+            builder.RegisterType<ShoppingListPage>();
 
             return builder.Build();
         }

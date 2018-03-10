@@ -7,11 +7,12 @@
              Style="{StaticResource page}">
     
     <ContentPage.Content>
-         <Grid>
+         <Grid
+            IsClippedToBounds="true">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="20" />
+                <RowDefinition Height="4*" />
+                <RowDefinition Height="6*" />
+                <RowDefinition Height="16" />
             </Grid.RowDefinitions>
 
             <!-- Background image -->
@@ -24,54 +25,51 @@
                 Source="blurbg" />
 
             <!-- Heading -->
-            <Grid 
+            <StackLayout
                 Grid.Row="0"
-                VerticalOptions="Center">
-                <StackLayout
-                    Padding="32"
-                    Margin="8"
-                    VerticalOptions="CenterAndExpand">
-                    <Label 
-                        Text="Smart Recipes" 
-                        HorizontalTextAlignment="Center"
-                        Style="{StaticResource lightHeading}"/>
-                    <Label 
-                        Text="Organize cooking" 
-                        HorizontalTextAlignment="Center"
-                        Style="{StaticResource lightSubHeading}"/> 
-                </StackLayout>
-            </Grid>
+                Padding="32"
+                Margin="8"
+                VerticalOptions="CenterAndExpand">
+                <Label 
+                    Text="Smart Recipes" 
+                    HorizontalTextAlignment="Center"
+                    Style="{StaticResource lightHeading}"/>
+                <Label 
+                    Text="Organize cooking" 
+                    HorizontalTextAlignment="Center"
+                    Style="{StaticResource lightSubHeading}"/> 
+            </StackLayout>
 
             <!-- Sign in form -->
-            <Grid
+            <StackLayout
                 Grid.Row="1"
-                VerticalOptions="Center">
-                <StackLayout
-                    Padding="32"
-                    Margin="8"
-                    VerticalOptions="CenterAndExpand">
+                Padding="32"
+                Margin="8"
+                VerticalOptions="CenterAndExpand">
 
-                    <Entry
-                        Placeholder="Email"
-                        x:Name="EmailEntry"
-                        Margin="0, 0, 0, 4"
-                        Style="{StaticResource lightEntry}"/>
-                    <Entry 
-                        Placeholder="Password"
-                        x:Name="PasswordEntry"
-                        IsPassword="true"
-                        Style="{StaticResource lightEntry}"/>
-                    <Button 
-                        Text="Sign In"
-                        x:Name="SignInButton"
-                        HeightRequest="64"
-                        Style="{StaticResource primaryButton}"/>
-                    <Button 
-                        Text="Don't have an account yet ? Sign up" 
-                        x:Name="SignUpButton"
-                        Style="{StaticResource linkButton}"/>
-                </StackLayout>
-            </Grid>
+                <Entry
+                    Placeholder="Email"
+                    x:Name="EmailEntry"
+                    Margin="0, 0, 0, 4"
+                    VerticalOptions="FillAndExpand"
+                    Style="{StaticResource entry}"/>
+                <Entry 
+                    Placeholder="Password"
+                    x:Name="PasswordEntry"
+                    IsPassword="true"
+                    VerticalOptions="FillAndExpand"
+                    Style="{StaticResource entry}"/>
+                <Button 
+                    Text="Sign In"
+                    x:Name="SignInButton"
+                    VerticalOptions="FillAndExpand"
+                    Style="{StaticResource primaryButton}"/>
+                <Button 
+                    Text="Don't have an account yet ? Sign up" 
+                    VerticalOptions="FillAndExpand"
+                    x:Name="SignUpButton"
+                    Style="{StaticResource linkButton}"/>
+            </StackLayout>
             
         </Grid>
     </ContentPage.Content>

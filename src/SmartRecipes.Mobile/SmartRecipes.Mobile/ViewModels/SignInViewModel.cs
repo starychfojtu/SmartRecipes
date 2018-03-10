@@ -7,8 +7,6 @@ namespace SmartRecipes.Mobile
 {
     public class SignInViewModel
     {
-        private readonly INavigation navigation;
-
         private readonly Authenticator authenticator;
 
         public SignInViewModel(Authenticator authenticator)
@@ -24,7 +22,7 @@ namespace SmartRecipes.Mobile
         {
             authenticator.Authenticate(
                 new SignInCredentials(Email, Password),
-                () => { },
+                () => Application.Current.MainPage = DIContainer.Instance.Resolve<ShoppingListPage>(),
                 () => { });
         }
 

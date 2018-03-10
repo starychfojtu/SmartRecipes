@@ -3,12 +3,12 @@ using SmartRecipes.Mobile.Droid.ControlRenderers;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
-[assembly: ExportRenderer(typeof(Entry), typeof(RoundedEntryRenderer))]
+[assembly: ExportRenderer(typeof(Entry), typeof(SmartRecipes.Mobile.Droid.ControlRenderers.EntryRenderer))]
 namespace SmartRecipes.Mobile.Droid.ControlRenderers
 {
-    public class RoundedEntryRenderer : EntryRenderer
+    public class EntryRenderer : Xamarin.Forms.Platform.Android.EntryRenderer
     {
-        public RoundedEntryRenderer(Android.Content.Context context) : base(context)
+        public EntryRenderer(Android.Content.Context context) : base(context)
         {
         }
 
@@ -18,9 +18,9 @@ namespace SmartRecipes.Mobile.Droid.ControlRenderers
 
             if (Control != null)
             {
-                Control.Background = Android.App.Application.Context.GetDrawable(Resource.Drawable.rounded_corners);
                 Control.Gravity = GravityFlags.CenterVertical;
-                Control.SetPadding(32, 32, 32, 32);
+                Control.SetPadding(16, 16, 16, 16);
+                Control.SetBackgroundColor(Android.Graphics.Color.Transparent);
             }
         }
     }
