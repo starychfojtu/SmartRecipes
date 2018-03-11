@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using Autofac;
+using Xamarin.Forms;
 
 namespace SmartRecipes.Mobile.Pages
 {
@@ -7,6 +8,8 @@ namespace SmartRecipes.Mobile.Pages
         public ShoppingListPage()
         {
             InitializeComponent();
+
+            Children.Add(DIContainer.Instance.Resolve<ShoppingListItemsPage>());
         }
     }
 }

@@ -2,8 +2,13 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              x:Class="SmartRecipes.Mobile.Pages.ShoppingListItemsPage"
+             xmlns:views="clr-namespace:SmartRecipes.Mobile.Views;assembly=SmartRecipes.Mobile"
              Title="Ingredients">
     <ContentPage.Content>
-        <Label>Welcome to my super page</Label>
+        <ListView
+            x:Name="ItemsListView"
+            SeparatorVisibility="None"
+            RowHeight="48">
+        </ListView>
     </ContentPage.Content>
 </ContentPage>

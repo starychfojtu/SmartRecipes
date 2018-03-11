@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms" 
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-            xmlns:p="clr-namespace:SmartRecipes.Mobile.Pages;assembly=SmartRecipes.Mobile"
+            xmlns:pages="clr-namespace:SmartRecipes.Mobile.Pages;assembly=SmartRecipes.Mobile"
             x:Class="SmartRecipes.Mobile.Pages.ShoppingListPage">
-    <TabbedPage.Children>
-        <p:ShoppingListItemsPage/>
-        <p:ShoppingListRecipesPage/>
-        <p:ShoppingListAutocompletePage/>
-    </TabbedPage.Children>
 </TabbedPage>

@@ -24,14 +24,17 @@ namespace SmartRecipes.Mobile
             builder.RegisterInstance(new HttpClient()).As<HttpClient>();
             builder.RegisterType<ApiClient>().SingleInstance();
             builder.RegisterType<Authenticator>();
+            builder.RegisterType<ShoppingList>();
 
             // View models
             builder.RegisterType<SignInViewModel>();
+            builder.RegisterType<ShoppingListItemsViewModel>();
 
             // Pages
             builder.RegisterType<SignInPage>();
             builder.RegisterType<SignUpPage>();
             builder.RegisterType<ShoppingListPage>();
+            builder.RegisterType<ShoppingListItemsPage>();
 
             return builder.Build();
         }
