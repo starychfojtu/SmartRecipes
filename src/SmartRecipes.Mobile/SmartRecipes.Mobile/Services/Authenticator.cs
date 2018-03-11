@@ -1,4 +1,5 @@
 ﻿using System;
+using SmartRecipes.Mobile.ApiDto;
 using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile

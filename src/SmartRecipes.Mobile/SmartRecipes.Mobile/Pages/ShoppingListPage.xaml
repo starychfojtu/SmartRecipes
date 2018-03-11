@@ -5,5 +5,7 @@
             x:Class="SmartRecipes.Mobile.Pages.ShoppingListPage">
     <TabbedPage.Children>
         <p:ShoppingListItemsPage/>
+        <p:ShoppingListRecipesPage/>
+        <p:ShoppingListAutocompletePage/>
     </TabbedPage.Children>
 </TabbedPage>

@@ -28,6 +28,9 @@
     <Compile Update="Pages\ShoppingListItemsPage.xaml.cs">
       <DependentUpon>ShoppingListItemsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Pages\ShoppingListRecipesPage.xaml.cs">
+      <DependentUpon>ShoppingListRecipesPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -52,7 +55,7 @@
     <Folder Include="Services\" />
     <Folder Include="Models\" />
     <Folder Include="Extensions\" />
-    <Folder Include="ApiModels\" />
+    <Folder Include="ApiDto\" />
     <Folder Include="Assets\" />
     <Folder Include="Controls\" />
   </ItemGroup>
