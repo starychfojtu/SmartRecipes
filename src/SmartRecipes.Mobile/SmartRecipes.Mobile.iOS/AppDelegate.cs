@@ -7,6 +7,7 @@ using UIKit;
 using FFImageLoading.Forms.Touch;
 using RoundedBoxView.Forms.Plugin.iOSUnified;
 using Xamarin.Forms.Platform.iOS;
+using SuaveControls.FloatingActionButton.iOS.Renderers;
 
 namespace SmartRecipes.Mobile.iOS
 {
@@ -29,6 +30,7 @@ namespace SmartRecipes.Mobile.iOS
             SlideOverKit.iOS.SlideOverKit.Init();
             CachedImageRenderer.Init();
             RoundedBoxViewRenderer.Init();
+            FloatingActionButtonRenderer.InitRenderer();
 
             LoadApplication(new App());
 

@@ -12,6 +12,7 @@
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.3.4" />
     <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.3.4" />
     <PackageReference Include="Xam.Plugins.Forms.RoundedBoxView" Version="1.0.0.7" />
+    <PackageReference Include="SuaveControls.FloatingActionButton" Version="2018.1.5" />
   </ItemGroup>
 
   <ItemGroup>

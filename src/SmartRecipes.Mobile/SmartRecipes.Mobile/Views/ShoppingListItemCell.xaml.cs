@@ -1,4 +1,5 @@
 ﻿using Xamarin.Forms;
+using FFImageLoading.Transformations;
 
 namespace SmartRecipes.Mobile.Views
 {
@@ -41,6 +42,7 @@ namespace SmartRecipes.Mobile.Views
                 NameLabel.Text = Name;
                 AmountLabel.Text = Amount;
                 Image.Source = ImageUrl;
+                Image.Transformations.Add(new CircleTransformation());
             }
         }
     }

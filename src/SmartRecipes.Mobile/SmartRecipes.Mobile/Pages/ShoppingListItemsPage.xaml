@@ -3,12 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              x:Class="SmartRecipes.Mobile.Pages.ShoppingListItemsPage"
              xmlns:views="clr-namespace:SmartRecipes.Mobile.Views;assembly=SmartRecipes.Mobile"
+             xmlns:suave="clr-namespace:SuaveControls.Views;assembly=SuaveControls.FloatingActionButton"
              Title="Ingredients">
     <ContentPage.Content>
-        <ListView
-            x:Name="ItemsListView"
-            SeparatorVisibility="None"
-            RowHeight="48">
-        </ListView>
+        <StackLayout
+            Padding="16, 16, 16, 16">
+            <ListView
+                x:Name="ItemsListView"
+                SeparatorVisibility="None"
+                RowHeight="64"
+                BackgroundColor="Transparent">
+            </ListView>
+            <suave:FloatingActionButton 
+                x:Name="AddItemsButton"
+                HorizontalOptions="End" 
+                WidthRequest="50" 
+                HeightRequest="50" 
+                VerticalOptions="End"
+                Image="ic_add_white.png" 
+                ButtonColor="{StaticResource accentColor}"/>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

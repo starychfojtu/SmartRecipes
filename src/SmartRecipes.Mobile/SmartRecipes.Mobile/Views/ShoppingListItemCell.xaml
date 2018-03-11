@@ -12,16 +12,26 @@
                 Padding="4, 4, 4, 4">
                 <ffimageloading:CachedImage 
                     x:Name="Image"
-                    HorizontalOptions="Center" 
                     VerticalOptions="Center"
-                    WidthRequest="32" HeightRequest="32"
+                    WidthRequest="32" 
+                    HeightRequest="32"
+                    HorizontalOptions="Start"
+                    BackgroundColor="{StaticResource primaryColor}"
                     DownsampleToViewSize="true"/>
                 <Label
                     x:Name="NameLabel"
-                    HorizontalOptions="Center"/>
+                    Text="Chicken Breast"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
                 <Label
                     x:Name="AmountLabel"
-                    HorizontalOptions="Center"/>
+                    Text="1 kg"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"/>
+                <Stepper
+                    x:Name="AmountStepper"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"/>
             </StackLayout>
         </controls:CardView>
     </StackLayout>

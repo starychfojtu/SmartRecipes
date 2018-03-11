@@ -25,14 +25,14 @@
             <Style x:Key="primaryButton" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="{StaticResource primaryColor}" />
                 <Setter Property="TextColor" Value="{StaticResource lightTextColor}" />
-                <Setter Property="HeightRequest" Value="32" />
+                <Setter Property="HeightRequest" Value="48" />
             </Style>
 
             <Style x:Key="linkButton" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="Transparent" />
                 <Setter Property="TextColor" Value="{StaticResource lightTextColor}" />
                 <Setter Property="FontSize" Value="12" />
-                <Setter Property="HeightRequest" Value="32" />
+                <Setter Property="HeightRequest" Value="48" />
             </Style>
 
             <!-- Labels -->
@@ -63,7 +63,7 @@
                 <Setter Property="PlaceholderColor" Value="{StaticResource secondaryTextColor}" />
                 <Setter Property="BackgroundColor" Value="{StaticResource lightTextColor}" />
                 <Setter Property="FontSize" Value="14" />
-                <Setter Property="HeightRequest" Value="32" />
+                <Setter Property="HeightRequest" Value="48" />
             </Style>
             
         </ResourceDictionary>
