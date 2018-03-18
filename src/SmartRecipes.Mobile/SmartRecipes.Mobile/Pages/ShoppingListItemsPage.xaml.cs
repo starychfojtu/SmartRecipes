@@ -12,7 +12,7 @@ namespace SmartRecipes.Mobile.Pages
             BindingContext = viewModel;
 
             var itemCell = new DataTemplate(typeof(ShoppingListItemCell));
-            itemCell.SetBinding(ShoppingListItemCell.ItemProperty, $"");
+            // itemCell.SetBinding(ShoppingListItemCell.ItemProperty, $"");
 
             ItemsListView.ItemTemplate = itemCell;
             ItemsListView.ItemsSource = viewModel.Items;

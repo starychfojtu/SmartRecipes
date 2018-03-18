@@ -5,8 +5,6 @@ namespace SmartRecipes.Mobile.Views
 {
     public partial class ShoppingListItemCell : ViewCell
     {
-        public static readonly BindableProperty ItemProperty = BindableProperty.Create(nameof(Item), typeof(ShoppingListItem), typeof(ShoppingListItemCell), defaultValue: null);
-
         public ShoppingListItemCell()
         {
             InitializeComponent();
@@ -14,8 +12,7 @@ namespace SmartRecipes.Mobile.Views
 
         public ShoppingListItem Item
         {
-            get { return (ShoppingListItem)GetValue(ItemProperty); }
-            set { SetValue(ItemProperty, value); }
+            get { return BindingContext as ShoppingListItem; }
         }
 
         private void DecreaseAmount()
@@ -32,7 +29,7 @@ namespace SmartRecipes.Mobile.Views
         {
             base.OnBindingContextChanged();
 
-            if (BindingContext != null)
+            if (Item != null)
             {
                 NameLabel.Text = Item.Foodstuff.Name;
                 AmountLabel.Text = Item.Amount.ToString();
