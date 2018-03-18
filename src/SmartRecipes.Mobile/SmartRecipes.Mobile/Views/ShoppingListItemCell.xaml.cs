@@ -5,13 +5,9 @@ namespace SmartRecipes.Mobile.Views
 {
     public partial class ShoppingListItemCell : ViewCell
     {
-        private readonly ShoppingList shoppingList;
-
-        public ShoppingListItemCell(ShoppingList shoppingList)
+        public ShoppingListItemCell()
         {
             InitializeComponent();
-
-            this.shoppingList = shoppingList;
 
             Image.Transformations.Add(new CircleTransformation());
 
@@ -26,7 +22,7 @@ namespace SmartRecipes.Mobile.Views
 
         private void DecreaseAmount()
         {
-            Item.DecreaseAmount();
+            Item.DecreaseAmount(); // TODO: Make viewmodel for this cell and call shoppingList method
             OnBindingContextChanged(); // TODO: Refactor when found a better way by binding
         }
 

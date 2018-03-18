@@ -9,7 +9,7 @@ namespace SmartRecipes.Mobile
 
         private IEnumerable<ShoppingListItem> items;
 
-        private bool hasStaleData;
+        private bool hasStaleData = true;
 
         public ShoppingList(ApiClient apiClient)
         {

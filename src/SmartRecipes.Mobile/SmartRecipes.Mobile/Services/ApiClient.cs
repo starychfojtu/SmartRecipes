@@ -57,7 +57,7 @@ namespace SmartRecipes.Mobile
 
             var t = new ShoppingListResponse.Item(tomato, new Amount(3, AmountUnit.Piece));
             var o = new ShoppingListResponse.Item(onion, new Amount(2, AmountUnit.Piece));
-            var b = new ShoppingListResponse.Item(chickenBreast, new Amount(3, AmountUnit.Gram));
+            var b = new ShoppingListResponse.Item(chickenBreast, new Amount(600, AmountUnit.Gram));
 
             return new ShoppingListResponse(new[] { t, o, b });
         }

@@ -10,9 +10,8 @@
             Padding="16, 16, 16, 16">
             <ListView
                 x:Name="ItemsListView"
-                SeparatorVisibility="None"
-                RowHeight="64"
-                BackgroundColor="Transparent">
+                SeparatorColor="{StaticResource dividerColor}"
+                RowHeight="64">
             </ListView>
             <suave:FloatingActionButton 
                 x:Name="AddItemsButton"
@@ -20,7 +19,7 @@
                 WidthRequest="50" 
                 HeightRequest="50" 
                 VerticalOptions="End"
-                Image="ic_add_white.png" 
+                Image="add" 
                 ButtonColor="{StaticResource accentColor}"/>
         </StackLayout>
     </ContentPage.Content>

@@ -15,28 +15,38 @@
                 WidthRequest="32" 
                 HeightRequest="32"
                 HorizontalOptions="Start"
-                BackgroundColor="{StaticResource primaryColor}"
                 DownsampleToViewSize="true"/>
-            <Label
-                x:Name="NameLabel"
-                Text="Chicken Breast"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"/>
-            <Label
-                x:Name="AmountLabel"
-                Text="1 kg"
-                HorizontalOptions="End"
-                VerticalOptions="Center"/>
-            <Button
-                x:Name="DecreaseAmountButton"
-                Image="remove"
-                HorizontalOptions="End"
-                VerticalOptions="Center"/>
-            <Button
-                x:Name="IncreaseAmountButton"
-                Image="add"
-                HorizontalOptions="End"
-                VerticalOptions="Center"/>
+            <StackLayout
+                VerticalOptions="CenterAndExpand">
+                <Label
+                    x:Name="NameLabel"
+                    Text="Chicken Breast"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"/>
+                <Label
+                    x:Name="AmountLabel"
+                    Text="1 kg"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"/>
+            </StackLayout>
+            <StackLayout
+                Orientation="Horizontal"
+                HorizontalOptions="EndAndExpand">
+                <Button
+                    x:Name="DecreaseAmountButton"
+                    Image="remove"
+                    BackgroundColor="Transparent"
+                    WidthRequest="64"
+                    HeightRequest="64"
+                    VerticalOptions="Center"/>
+                <Button
+                    x:Name="IncreaseAmountButton"
+                    Image="add"
+                    BackgroundColor="Transparent"
+                    WidthRequest="64"
+                    HeightRequest="64"
+                    VerticalOptions="Center"/>
+            </StackLayout>
         </StackLayout>
     </StackLayout>
 </ViewCell>
