@@ -14,6 +14,7 @@ namespace SmartRecipes.Mobile.Pages
 
             ItemsListView.ItemTemplate = new DataTemplate<ShoppingListItemCell>();
             ItemsListView.ItemsSource = viewModel.Items;
+            AddItemsButton.Clicked += (s, e) => viewModel.NavigateToAddItemPage();
         }
     }
 }

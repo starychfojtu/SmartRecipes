@@ -16,10 +16,10 @@
             <suave:FloatingActionButton 
                 x:Name="AddItemsButton"
                 HorizontalOptions="End" 
-                WidthRequest="50" 
-                HeightRequest="50" 
                 VerticalOptions="End"
-                Image="add" 
+                WidthRequest="80" 
+                HeightRequest="90"
+                Image="add.png" 
                 ButtonColor="{StaticResource accentColor}"/>
         </StackLayout>
     </ContentPage.Content>

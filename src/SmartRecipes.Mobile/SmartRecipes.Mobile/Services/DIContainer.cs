@@ -24,7 +24,7 @@ namespace SmartRecipes.Mobile
             builder.RegisterInstance(new HttpClient()).As<HttpClient>();
             builder.RegisterType<ApiClient>().SingleInstance();
             builder.RegisterType<Authenticator>();
-            builder.RegisterType<ShoppingList>();
+            builder.RegisterType<ShoppingList>().SingleInstance();
 
             // View models
             builder.RegisterType<SignInViewModel>();
@@ -35,6 +35,7 @@ namespace SmartRecipes.Mobile
             builder.RegisterType<SignUpPage>();
             builder.RegisterType<ShoppingListPage>();
             builder.RegisterType<ShoppingListItemsPage>();
+            builder.RegisterType<AddShoppingListItemPage>();
 
             return builder.Build();
         }

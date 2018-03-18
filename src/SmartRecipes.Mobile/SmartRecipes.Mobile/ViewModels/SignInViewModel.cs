@@ -22,7 +22,7 @@ namespace SmartRecipes.Mobile
         {
             authenticator.Authenticate(
                 new SignInCredentials(Email, Password),
-                () => Application.Current.MainPage = DIContainer.Instance.Resolve<ShoppingListPage>(),
+                () => Application.Current.MainPage = new NavigationPage(DIContainer.Instance.Resolve<ShoppingListPage>()),
                 () => { });
         }
 

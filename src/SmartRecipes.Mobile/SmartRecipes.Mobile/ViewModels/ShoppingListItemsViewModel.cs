@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using Xamarin.Forms;
+using Autofac;
+using SmartRecipes.Mobile.Pages;
 
 namespace SmartRecipes.Mobile
 {
@@ -14,6 +17,11 @@ namespace SmartRecipes.Mobile
         public IEnumerable<ShoppingListItem> Items
         {
             get { return shoppingList.GetItems(); }
+        }
+
+        public void NavigateToAddItemPage()
+        {
+            Application.Current.MainPage.Navigation.PushAsync(DIContainer.Instance.Resolve<AddShoppingListItemPage>());
         }
     }
 }

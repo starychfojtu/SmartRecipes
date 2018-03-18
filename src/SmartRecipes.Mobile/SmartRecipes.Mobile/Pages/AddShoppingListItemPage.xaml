@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="SmartRecipes.Mobile.AddShoppingListItemPage">
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="SmartRecipes.Mobile.Pages.AddShoppingListItemPage">
     <ContentPage.Content>
         <StackLayout>
             <SearchBar 
-                x:Name="FoodstuffSearch" 
-                SearchCommand="{Binding SearchCommand}" 
-                SearchCommandParameter="{Binding Text, Source={x:Reference SearchBar}}" />
+                x:Name="FoodstuffSearch" />
             <ListView
                 x:Name="SearchedItemsListView" />
         </StackLayout>
