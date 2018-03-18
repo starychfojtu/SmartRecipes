@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using SmartRecipes.Mobile.Pages;
 using System.Net.Http;
+
 namespace SmartRecipes.Mobile
 {
     public class DIContainer
@@ -29,6 +30,7 @@ namespace SmartRecipes.Mobile
             // View models
             builder.RegisterType<SignInViewModel>();
             builder.RegisterType<ShoppingListItemsViewModel>();
+            builder.RegisterType<AddShoppingListItemViewModel>();
 
             // Pages
             builder.RegisterType<SignInPage>();
