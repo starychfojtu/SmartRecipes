@@ -11,5 +11,15 @@
         public Foodstuff Foodstuff { get; }
 
         public Amount Amount { get; set; }
+
+        public void DecreaseAmount()
+        {
+            Amount = Amount.Substract(Foodstuff.AmountStep);
+        }
+
+        public void IncreaseAmount()
+        {
+            Amount = Amount.Add(Foodstuff.AmountStep);
+        }
     }
 }

@@ -33,5 +33,10 @@ namespace SmartRecipes.Mobile
 
             return new Amount(op(first.Count, second.Count), first.Unit);
         }
+
+        public override string ToString()
+        {
+            return $"{Count} {Unit.ToString()}";
+        }
     }
 }

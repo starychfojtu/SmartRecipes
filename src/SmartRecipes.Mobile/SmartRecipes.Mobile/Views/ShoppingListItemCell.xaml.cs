@@ -5,9 +5,18 @@ namespace SmartRecipes.Mobile.Views
 {
     public partial class ShoppingListItemCell : ViewCell
     {
-        public ShoppingListItemCell()
+        private readonly ShoppingList shoppingList;
+
+        public ShoppingListItemCell(ShoppingList shoppingList)
         {
             InitializeComponent();
+
+            this.shoppingList = shoppingList;
+
+            Image.Transformations.Add(new CircleTransformation());
+
+            DecreaseAmountButton.Clicked += (s, e) => DecreaseAmount();
+            IncreaseAmountButton.Clicked += (s, e) => IncreaseAmount();
         }
 
         public ShoppingListItem Item
@@ -17,12 +26,14 @@ namespace SmartRecipes.Mobile.Views
 
         private void DecreaseAmount()
         {
-            Item.Amount.Substract(Item.Foodstuff.AmountStep);
+            Item.DecreaseAmount();
+            OnBindingContextChanged(); // TODO: Refactor when found a better way by binding
         }
 
         private void IncreaseAmount()
         {
-            Item.Amount.Add(Item.Foodstuff.AmountStep);
+            Item.IncreaseAmount();
+            OnBindingContextChanged(); // TODO: Refactor when found a better way by binding
         }
 
         protected override void OnBindingContextChanged()
@@ -33,12 +44,7 @@ namespace SmartRecipes.Mobile.Views
             {
                 NameLabel.Text = Item.Foodstuff.Name;
                 AmountLabel.Text = Item.Amount.ToString();
-
-                Image.Source = Item.Foodstuff.ImageUrl;
-                Image.Transformations.Add(new CircleTransformation());
-
-                DecreaseAmountButton.Clicked += (s, e) => DecreaseAmount();
-                IncreaseAmountButton.Clicked += (s, e) => IncreaseAmount();
+                Image.Source = Item.Foodstuff.ImageUrl.AbsoluteUri;
             }
         }
     }

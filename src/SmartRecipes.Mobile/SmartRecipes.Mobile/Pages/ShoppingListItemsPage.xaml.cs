@@ -1,5 +1,6 @@
 ﻿using Xamarin.Forms;
 using SmartRecipes.Mobile.Views;
+using SmartRecipes.Mobile.Extensions;
 
 namespace SmartRecipes.Mobile.Pages
 {
@@ -11,10 +12,7 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            var itemCell = new DataTemplate(typeof(ShoppingListItemCell));
-            // itemCell.SetBinding(ShoppingListItemCell.ItemProperty, $"");
-
-            ItemsListView.ItemTemplate = itemCell;
+            ItemsListView.ItemTemplate = new DataTemplate<ShoppingListItemCell>();
             ItemsListView.ItemsSource = viewModel.Items;
         }
     }

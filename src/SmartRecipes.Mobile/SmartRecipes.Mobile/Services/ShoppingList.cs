@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace SmartRecipes.Mobile
@@ -9,42 +7,46 @@ namespace SmartRecipes.Mobile
     {
         private readonly ApiClient apiClient;
 
+        private IEnumerable<ShoppingListItem> items;
+
+        private bool hasStaleData;
+
         public ShoppingList(ApiClient apiClient)
         {
             this.apiClient = apiClient;
-            IsValid = false;
-            Items = new List<ShoppingListItem>();
         }
-
-        private bool IsValid { get; set; }
-
-        private IEnumerable<ShoppingListItem> Items { get; set; }
 
         public IEnumerable<ShoppingListItem> GetItems()
         {
-            LoadData();
-            return Items;
+            return hasStaleData ? (items = LoadItems()) : items;
         }
 
-        private void LoadData()
+        public void IncreaseAmount(ShoppingListItem item)
         {
-            if (!IsValid)
-            {
-                var response = apiClient.GetShoppingList();
+            item.IncreaseAmount();
+            // TODO: Call API
+        }
 
-                Items = response.Items.Select(i =>
-                    new ShoppingListItem(
-                        new Foodstuff(
-                            i.FoodstuffDto.Id,
-                            i.FoodstuffDto.Name,
-                            i.FoodstuffDto.ImageUrl,
-                            i.FoodstuffDto.BaseAmount,
-                            i.FoodstuffDto.AmountStep
-                        ),
-                        i.Amount
-                    )
-                 );
-            }
+        public void DecreaseAmount(ShoppingListItem item)
+        {
+            item.DecreaseAmount();
+            // TODO: Call API
+        }
+
+        private IEnumerable<ShoppingListItem> LoadItems()
+        {
+            return apiClient.GetShoppingList().Items.Select(i =>
+                new ShoppingListItem(
+                    new Foodstuff(
+                        i.FoodstuffDto.Id,
+                        i.FoodstuffDto.Name,
+                        i.FoodstuffDto.ImageUrl,
+                        i.FoodstuffDto.BaseAmount,
+                        i.FoodstuffDto.AmountStep
+                    ),
+                    i.Amount
+                )
+             );
         }
     }
 }
