@@ -1,9 +1,8 @@
-﻿using System;
-namespace SmartRecipes.Mobile
+﻿namespace SmartRecipes.Mobile
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(Foodstuff foodstuff, int amount)
+        public ShoppingListItem(Foodstuff foodstuff, Amount amount)
         {
             Foodstuff = foodstuff;
             Amount = amount;
@@ -11,6 +10,6 @@ namespace SmartRecipes.Mobile
 
         public Foodstuff Foodstuff { get; }
 
-        public int Amount { get; set; }
+        public Amount Amount { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace SmartRecipes.Mobile.ApiDto
 
         public class Item
         {
-            public Item(Foodstuff foodstuff, int amount)
+            public Item(Foodstuff foodstuff, Amount amount)
             {
                 FoodstuffDto = foodstuff;
                 Amount = amount;
@@ -21,22 +21,28 @@ namespace SmartRecipes.Mobile.ApiDto
 
             public Foodstuff FoodstuffDto { get; }
 
-            public int Amount { get; }
+            public Amount Amount { get; }
 
             public class Foodstuff
             {
-                public Foodstuff(Guid id, string name, string imageUrl)
+                public Foodstuff(Guid id, string name, Uri imageUrl, Amount baseAmount, Amount amountStep)
                 {
                     Id = id;
                     Name = name;
                     ImageUrl = imageUrl;
+                    BaseAmount = baseAmount;
+                    AmountStep = amountStep;
                 }
 
                 public Guid Id { get; }
 
                 public string Name { get; }
 
-                public string ImageUrl { get; }
+                public Uri ImageUrl { get; }
+
+                public Amount BaseAmount { get; }
+
+                public Amount AmountStep { get; }
             }
         }
     }

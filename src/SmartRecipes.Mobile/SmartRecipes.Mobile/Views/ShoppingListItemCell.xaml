@@ -28,8 +28,14 @@
                     Text="1 kg"
                     HorizontalOptions="End"
                     VerticalOptions="Center"/>
-                <Stepper
-                    x:Name="AmountStepper"
+                <Button
+                    x:Name="DecreaseAmountButton"
+                    Image="remove"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"/>
+                <Button
+                    x:Name="IncreaseAmountButton"
+                    Image="add"
                     HorizontalOptions="End"
                     VerticalOptions="Center"/>
             </StackLayout>

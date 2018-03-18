@@ -32,7 +32,18 @@ namespace SmartRecipes.Mobile
             {
                 var response = apiClient.GetShoppingList();
 
-                Items = response.Items.Select(i => new ShoppingListItem(new Foodstuff(i.FoodstuffDto.Id, i.FoodstuffDto.Name, i.FoodstuffDto.ImageUrl), i.Amount));
+                Items = response.Items.Select(i =>
+                    new ShoppingListItem(
+                        new Foodstuff(
+                            i.FoodstuffDto.Id,
+                            i.FoodstuffDto.Name,
+                            i.FoodstuffDto.ImageUrl,
+                            i.FoodstuffDto.BaseAmount,
+                            i.FoodstuffDto.AmountStep
+                        ),
+                        i.Amount
+                    )
+                 );
             }
         }
     }

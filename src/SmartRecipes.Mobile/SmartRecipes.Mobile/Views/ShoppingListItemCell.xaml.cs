@@ -5,32 +5,27 @@ namespace SmartRecipes.Mobile.Views
 {
     public partial class ShoppingListItemCell : ViewCell
     {
-        public static readonly BindableProperty NameProperty = BindableProperty.Create(nameof(Name), typeof(string), typeof(ShoppingListItemCell), defaultValue: "Name");
-        public static readonly BindableProperty AmountProperty = BindableProperty.Create(nameof(Amount), typeof(string), typeof(ShoppingListItemCell), defaultValue: "Amount");
-        public static readonly BindableProperty ImageUrlProperty = BindableProperty.Create(nameof(ImageUrl), typeof(string), typeof(ShoppingListItemCell), defaultValue: "");
+        public static readonly BindableProperty ItemProperty = BindableProperty.Create(nameof(Item), typeof(ShoppingListItem), typeof(ShoppingListItemCell), defaultValue: null);
 
         public ShoppingListItemCell()
         {
             InitializeComponent();
         }
 
-        // Change name to simple binding, because it wont be changed from the cell
-        public string Name
+        public ShoppingListItem Item
         {
-            get { return (string)GetValue(NameProperty); }
-            set { SetValue(NameProperty, value); }
+            get { return (ShoppingListItem)GetValue(ItemProperty); }
+            set { SetValue(ItemProperty, value); }
         }
 
-        public string Amount
+        private void DecreaseAmount()
         {
-            get { return (string)GetValue(AmountProperty); }
-            set { SetValue(AmountProperty, value); }
+            Item.Amount.Substract(Item.Foodstuff.AmountStep);
         }
 
-        public string ImageUrl
+        private void IncreaseAmount()
         {
-            get { return (string)GetValue(ImageUrlProperty); }
-            set { SetValue(ImageUrlProperty, value); }
+            Item.Amount.Add(Item.Foodstuff.AmountStep);
         }
 
         protected override void OnBindingContextChanged()
@@ -39,10 +34,14 @@ namespace SmartRecipes.Mobile.Views
 
             if (BindingContext != null)
             {
-                NameLabel.Text = Name;
-                AmountLabel.Text = Amount;
-                Image.Source = ImageUrl;
+                NameLabel.Text = Item.Foodstuff.Name;
+                AmountLabel.Text = Item.Amount.ToString();
+
+                Image.Source = Item.Foodstuff.ImageUrl;
                 Image.Transformations.Add(new CircleTransformation());
+
+                DecreaseAmountButton.Clicked += (s, e) => DecreaseAmount();
+                IncreaseAmountButton.Clicked += (s, e) => IncreaseAmount();
             }
         }
     }
