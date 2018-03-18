@@ -1,4 +1,7 @@
-﻿namespace SmartRecipes.Mobile
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+
+namespace SmartRecipes.Mobile
 {
     public class AddShoppingListItemViewModel
     {
@@ -10,6 +13,18 @@
         {
             this.shoppingList = shoppingList;
             this.searchEngine = searchEngine;
+            SearchResult = new ObservableCollection<ShoppingListItem>();
+        }
+
+        public ObservableCollection<ShoppingListItem> SearchResult { get; private set; }
+
+        public void Search(string query)
+        {
+            SearchResult.Clear();
+            foreach (var f in searchEngine.Search(query))
+            {
+                SearchResult.Add(new ShoppingListItem(f, f.BaseAmount));
+            }
         }
     }
 }

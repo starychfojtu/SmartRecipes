@@ -6,9 +6,11 @@
     <ContentPage.Content>
         <StackLayout>
             <SearchBar 
-                x:Name="FoodstuffSearch" />
+                x:Name="Search" />
             <ListView
-                x:Name="SearchedItemsListView" />
+                x:Name="SearchedItemsListView"
+                SeparatorColor="{StaticResource dividerColor}"
+                RowHeight="64" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
