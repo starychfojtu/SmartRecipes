@@ -23,20 +23,20 @@ namespace SmartRecipes.Mobile
 
         // Combinators
 
-        public static ShoppingListItem IncreaseAmount(ShoppingListItem item)
+        public static Option<ShoppingListItem> IncreaseAmount(ShoppingListItem item)
         {
             return ChangeAmount(item, Amount.Add);
         }
 
-        public static ShoppingListItem DecreaseAmount(ShoppingListItem item)
+        public static Option<ShoppingListItem> DecreaseAmount(ShoppingListItem item)
         {
             return ChangeAmount(item, Amount.Substract);
         }
 
-        public static ShoppingListItem ChangeAmount(ShoppingListItem item, Func<Amount, Amount, Option<Amount>> operation)
+        public static Option<ShoppingListItem> ChangeAmount(ShoppingListItem item, Func<Amount, Amount, Option<Amount>> operation)
         {
             var changedAmount = operation(item.Amount, item.Foodstuff.AmountStep);
-            return item.WithAmount(changedAmount.SingleOrDefault()); // TODO : think about this - refactor
+            return changedAmount.Map(a => item.WithAmount(a));
         }
     }
 }

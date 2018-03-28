@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExt;
 
 namespace SmartRecipes.Mobile
 {
@@ -18,23 +19,26 @@ namespace SmartRecipes.Mobile
 
         public void DecreaseAmount(ShoppingListItem item)
         {
-            var newItem = ShoppingListItem.DecreaseAmount(item);
+            var newItem = ShoppingListItem.DecreaseAmount(item).IfNone(() => throw new InvalidOperationException());
             shoppingListItems = shoppingListItems.Replpace(item, newItem);
+            StateChanged(this, new EventArgs());
             // TODO: construct request and send API call
         }
 
         public void IncreaseAmount(ShoppingListItem item)
         {
-            var newItem = ShoppingListItem.IncreaseAmount(item);
+            var increasedItem = ShoppingListItem.IncreaseAmount(item);
+            var newItem = increasedItem.IfNone(() => throw new InvalidOperationException());
             shoppingListItems = shoppingListItems.Replpace(item, newItem);
+            StateChanged(this, new EventArgs());
             // TODO: construct request and send API call
         }
 
-        public IEnumerable<Foodstuff> Search(string query)
+        public IEnumerable<ShoppingListItem> Search(string query)
         {
             // TODO: implement with API
 
-            return new[]
+            var foodstuffs = new[]
             {
                 new Foodstuff(
                     Guid.NewGuid(),
@@ -51,6 +55,7 @@ namespace SmartRecipes.Mobile
                     new Amount(50, AmountUnit.Gram)
                 )
             };
+            return foodstuffs.Select(f => new ShoppingListItem(f, Amount.Zero(f.BaseAmount.Unit)));
         }
 
         private IEnumerable<ShoppingListItem> GetShoppingListItems()

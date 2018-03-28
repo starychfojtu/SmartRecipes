@@ -5,13 +5,10 @@ using SmartRecipes.Mobile.Pages;
 
 namespace SmartRecipes.Mobile
 {
-    public class ShoppingListItemsViewModel
+    public class ShoppingListItemsViewModel : ViewModel
     {
-        private readonly Store store;
-
-        public ShoppingListItemsViewModel(Store store)
+        public ShoppingListItemsViewModel(Store store) : base(store)
         {
-            this.store = store;
         }
 
         public IEnumerable<ShoppingListItem> Items

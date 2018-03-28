@@ -5,13 +5,10 @@ using SmartRecipes.Mobile.Pages;
 
 namespace SmartRecipes.Mobile
 {
-    public class SignInViewModel
+    public class SignInViewModel : ViewModel
     {
-        private readonly Store store;
-
-        public SignInViewModel(Store store)
+        public SignInViewModel(Store store) : base(store)
         {
-            this.store = store;
         }
 
         public string Email { get; set; }

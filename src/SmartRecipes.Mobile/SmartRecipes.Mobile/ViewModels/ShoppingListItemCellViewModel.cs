@@ -1,5 +1,4 @@
-﻿using System;
-namespace SmartRecipes.Mobile
+﻿namespace SmartRecipes.Mobile
 {
     public class ShoppingListItemCellViewModel
     {

@@ -23,6 +23,11 @@ namespace SmartRecipes.Mobile
 
         // Combinators
 
+        public static Amount Zero(AmountUnit unit)
+        {
+            return new Amount(0, unit);
+        }
+
         public static Option<Amount> Add(Amount a1, Amount a2)
         {
             return CountOperation((c1, c2) => c1 + c2, a1, a2);
@@ -35,7 +40,7 @@ namespace SmartRecipes.Mobile
 
         private static Option<Amount> CountOperation(Func<int, int, int> op, Amount first, Amount second)
         {
-            var validOperation = first.Unit != second.Unit;
+            var validOperation = first.Unit == second.Unit;
             return validOperation
                 ? Some(new Amount(op(first.Count, second.Count), first.Unit))
                 : None;
