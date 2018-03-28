@@ -12,11 +12,15 @@ namespace SmartRecipes.Mobile.Pages
             InitializeComponent();
 
             BindingContext = viewModel;
-            var cellViewModels = viewModel.Items.Select(i => new ShoppingListItemCellViewModel(i, store));
 
             ItemsListView.ItemTemplate = new DataTemplate<ShoppingListItemCell>();
-            ItemsListView.ItemsSource = cellViewModels;
+            ItemsListView.ItemsSource = viewModel.Items;
             AddItemsButton.Clicked += (s, e) => viewModel.NavigateToAddItemPage();
+        }
+
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LanguageExt;
+using System.Reactive.Linq;
 
 namespace SmartRecipes.Mobile
 {
@@ -11,10 +12,7 @@ namespace SmartRecipes.Mobile
 
         public IList<ShoppingListItem> ShoppingListItems
         {
-            get
-            {
-                return shoppingListItems ?? (shoppingListItems = GetShoppingListItems().ToList());
-            }
+            get { return shoppingListItems ?? (shoppingListItems = GetShoppingListItems().ToList()); }
         }
 
         public void DecreaseAmount(ShoppingListItem item)

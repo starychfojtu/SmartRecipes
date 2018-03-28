@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Autofac;
 using SmartRecipes.Mobile.Pages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SmartRecipes.Mobile
 {
@@ -11,9 +13,9 @@ namespace SmartRecipes.Mobile
         {
         }
 
-        public IEnumerable<ShoppingListItem> Items
+        public IEnumerable<ShoppingListItemCellViewModel> Items
         {
-            get { return store.ShoppingListItems; }
+            get { return store.ShoppingListItems.Select(i => new ShoppingListItemCellViewModel(i, store)); }
         }
 
         public void NavigateToAddItemPage()
