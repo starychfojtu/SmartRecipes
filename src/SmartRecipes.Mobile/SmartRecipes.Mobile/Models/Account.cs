@@ -2,11 +2,11 @@
 {
     public class Account
     {
-        public string Email { get; }
-
         public Account(string email)
         {
             Email = email;
         }
+
+        public string Email { get; }
     }
 }
