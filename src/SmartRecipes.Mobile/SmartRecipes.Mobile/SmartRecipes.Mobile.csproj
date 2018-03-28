@@ -19,6 +19,7 @@
   <ItemGroup>
     <Compile Remove="Extensions\CachedImageExtensions.cs" />
     <Compile Remove="Pages\ShoppingListAutocomplete.xaml.cs" />
+    <Compile Remove="Services\ShoppingList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="App.xaml.cs">

@@ -1,5 +1,6 @@
 ﻿using System;
 using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile
 {
@@ -36,8 +37,8 @@ namespace SmartRecipes.Mobile
         {
             var validOperation = first.Unit != second.Unit;
             return validOperation
-                ? Option<Amount>.Some(new Amount(op(first.Count, second.Count), first.Unit))
-                : Option<Amount>.None;
+                ? Some(new Amount(op(first.Count, second.Count), first.Unit))
+                : None;
         }
     }
 }

@@ -3,19 +3,9 @@ using System.Linq;
 
 namespace SmartRecipes.Mobile
 {
-    /// <summary>
-    /// The only place where mutable transactions, handles state.
-    /// </summary>
     public partial class Store
     {
-        private readonly ApiClient apiClient;
-
         private IList<ShoppingListItem> shoppingListItems;
-
-        public Store(ApiClient apiClient)
-        {
-            this.apiClient = apiClient;
-        }
 
         public IList<ShoppingListItem> ShoppingListItems
         {

@@ -7,11 +7,11 @@ namespace SmartRecipes.Mobile
 {
     public class SignInViewModel
     {
-        private readonly Authenticator authenticator;
+        private readonly Store store;
 
-        public SignInViewModel(Authenticator authenticator)
+        public SignInViewModel(Store store)
         {
-            this.authenticator = authenticator;
+            this.store = store;
         }
 
         public string Email { get; set; }
@@ -20,15 +20,21 @@ namespace SmartRecipes.Mobile
 
         public void SignIn()
         {
-            authenticator.Authenticate(
-                new SignInCredentials(Email, Password),
-                () => Application.Current.MainPage = new NavigationPage(DIContainer.Instance.Resolve<ShoppingListPage>()),
-                () => { });
+            var result = store.Authenticate(new SignInCredentials(Email, Password));
+            if (result.Success)
+            {
+                NavigateToApp();
+            }
         }
 
         public void NavigateToSignUp()
         {
             Application.Current.MainPage = DIContainer.Instance.Resolve<SignUpPage>();
+        }
+
+        public void NavigateToApp()
+        {
+            Application.Current.MainPage = new NavigationPage(DIContainer.Instance.Resolve<ShoppingListPage>());
         }
     }
 }

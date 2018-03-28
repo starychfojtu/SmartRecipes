@@ -1,31 +1,31 @@
 ﻿using System;
 using SmartRecipes.Mobile.ApiDto;
 using SmartRecipes.Mobile.Models;
+using LanguageExt;
+using static LanguageExt.Prelude;
+
 
 namespace SmartRecipes.Mobile
 {
-    public class Authenticator
+    public static class Authenticator
     {
-        private readonly ApiClient client;
-
-        public Authenticator(ApiClient client)
+        public static AuthenticationResult Authenticate(SignInCredentials credentials, Func<SignInRequest, SignInResponse> post)
         {
-            this.client = client;
+            var response = post(new SignInRequest(credentials.Email, credentials.Password));
+            return new AuthenticationResult(response.IsAuthorized, response.Token);
         }
 
-        public void Authenticate(SignInCredentials credentials, Action onSuccess, Action onFailure)
+        public class AuthenticationResult
         {
-            var request = new SignInRequest(credentials.Email, credentials.Password);
-            var response = client.PostSignIn(request);
+            public AuthenticationResult(bool success, string token)
+            {
+                Success = success;
+                Token = Optional(token);
+            }
 
-            if (response.IsAuthorized)
-            {
-                onSuccess();
-            }
-            else
-            {
-                onFailure();
-            }
+            public bool Success { get; }
+
+            public Option<string> Token { get; }
         }
     }
 }
