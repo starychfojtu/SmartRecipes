@@ -1,4 +1,5 @@
 ﻿using System;
+using LanguageExt;
 
 namespace SmartRecipes.Mobile
 {
@@ -14,29 +15,29 @@ namespace SmartRecipes.Mobile
 
         public AmountUnit Unit { get; }
 
-        public Amount Add(Amount amount)
-        {
-            return CountOperation((c1, c2) => c1 + c2, this, amount);
-        }
-
-        public Amount Substract(Amount amount)
-        {
-            return CountOperation((c1, c2) => c1 - c2, this, amount);
-        }
-
-        private Amount CountOperation(Func<int, int, int> op, Amount first, Amount second)
-        {
-            if (first.Unit != second.Unit)
-            {
-                throw new InvalidOperationException("Cannot add different amounts");
-            }
-
-            return new Amount(op(first.Count, second.Count), first.Unit);
-        }
-
         public override string ToString()
         {
             return $"{Count} {Unit.ToString()}";
+        }
+
+        // Combinators
+
+        public static Option<Amount> Add(Amount a1, Amount a2)
+        {
+            return CountOperation((c1, c2) => c1 + c2, a1, a2);
+        }
+
+        public static Option<Amount> Substract(Amount a1, Amount a2)
+        {
+            return CountOperation((c1, c2) => c1 - c2, a1, a2);
+        }
+
+        private static Option<Amount> CountOperation(Func<int, int, int> op, Amount first, Amount second)
+        {
+            var validOperation = first.Unit != second.Unit;
+            return validOperation
+                ? Option<Amount>.Some(new Amount(op(first.Count, second.Count), first.Unit))
+                : Option<Amount>.None;
         }
     }
 }

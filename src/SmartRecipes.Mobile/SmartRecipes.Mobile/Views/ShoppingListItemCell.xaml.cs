@@ -15,20 +15,20 @@ namespace SmartRecipes.Mobile.Views
             IncreaseAmountButton.Clicked += (s, e) => IncreaseAmount();
         }
 
-        public ShoppingListItem Item
+        public ShoppingListItemCellViewModel ViewModel
         {
-            get { return BindingContext as ShoppingListItem; }
+            get { return BindingContext as ShoppingListItemCellViewModel; }
         }
 
         private void DecreaseAmount()
         {
-            Item.DecreaseAmount(); // TODO: Make viewmodel for this cell and call shoppingList method
+            ViewModel.Store.DecreaseAmount(ViewModel.Item);
             OnBindingContextChanged(); // TODO: Refactor when found a better way by binding
         }
 
         private void IncreaseAmount()
         {
-            Item.IncreaseAmount();
+            ViewModel.Store.IncreaseAmount(ViewModel.Item);
             OnBindingContextChanged(); // TODO: Refactor when found a better way by binding
         }
 
@@ -36,11 +36,11 @@ namespace SmartRecipes.Mobile.Views
         {
             base.OnBindingContextChanged();
 
-            if (Item != null)
+            if (ViewModel != null)
             {
-                NameLabel.Text = Item.Foodstuff.Name;
-                AmountLabel.Text = Item.Amount.ToString();
-                Image.Source = Item.Foodstuff.ImageUrl.AbsoluteUri;
+                NameLabel.Text = ViewModel.Item.Foodstuff.Name;
+                AmountLabel.Text = ViewModel.Item.Amount.ToString();
+                Image.Source = ViewModel.Item.Foodstuff.ImageUrl.AbsoluteUri;
             }
         }
     }

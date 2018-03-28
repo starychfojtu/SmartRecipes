@@ -7,16 +7,16 @@ namespace SmartRecipes.Mobile
 {
     public class ShoppingListItemsViewModel
     {
-        private readonly ShoppingList shoppingList;
+        private readonly Store store;
 
-        public ShoppingListItemsViewModel(ShoppingList shoppingList)
+        public ShoppingListItemsViewModel(Store store)
         {
-            this.shoppingList = shoppingList;
+            this.store = store;
         }
 
         public IEnumerable<ShoppingListItem> Items
         {
-            get { return shoppingList.GetItems(); }
+            get { return store.ShoppingListItems; }
         }
 
         public void NavigateToAddItemPage()

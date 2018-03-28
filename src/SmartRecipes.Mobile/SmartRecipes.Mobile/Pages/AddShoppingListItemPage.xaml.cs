@@ -12,7 +12,7 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            Search.TextChanged += (s, e) => viewModel.Search(e.NewTextValue);
+            //Search.TextChanged += (s, e) => viewModel.Search(e.NewTextValue);
             SearchedItemsListView.ItemTemplate = new DataTemplate<ShoppingListItemCell>();
             SearchedItemsListView.SetBinding(ItemsView<Cell>.ItemsSourceProperty, nameof(viewModel.SearchResult));
         }

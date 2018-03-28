@@ -1,4 +1,8 @@
-﻿namespace SmartRecipes.Mobile
+﻿using System.Linq;
+using System;
+using LanguageExt;
+
+namespace SmartRecipes.Mobile
 {
     public class ShoppingListItem
     {
@@ -10,16 +14,29 @@
 
         public Foodstuff Foodstuff { get; }
 
-        public Amount Amount { get; set; }
+        public Amount Amount { get; }
 
-        public void DecreaseAmount()
+        public ShoppingListItem WithAmount(Amount amount)
         {
-            Amount = Amount.Substract(Foodstuff.AmountStep);
+            return new ShoppingListItem(Foodstuff, amount);
         }
 
-        public void IncreaseAmount()
+        // Combinators
+
+        public static ShoppingListItem IncreaseAmount(ShoppingListItem item)
         {
-            Amount = Amount.Add(Foodstuff.AmountStep);
+            return ChangeAmount(item, Amount.Add);
+        }
+
+        public static ShoppingListItem DecreaseAmount(ShoppingListItem item)
+        {
+            return ChangeAmount(item, Amount.Substract);
+        }
+
+        public static ShoppingListItem ChangeAmount(ShoppingListItem item, Func<Amount, Amount, Option<Amount>> operation)
+        {
+            var changedAmount = operation(item.Amount, item.Foodstuff.AmountStep);
+            return item.WithAmount(changedAmount.SingleOrDefault()); // TODO : think about this - refactor
         }
     }
 }
