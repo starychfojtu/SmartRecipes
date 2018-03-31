@@ -20,18 +20,13 @@ namespace SmartRecipes.Mobile
             var result = store.Authenticate(new SignInCredentials(Email, Password));
             if (result.Success)
             {
-                NavigateToApp();
+                Navigation.LogIn(this);
             }
         }
 
         public void NavigateToSignUp()
         {
-            Application.Current.MainPage = DIContainer.Instance.Resolve<SignUpPage>();
-        }
-
-        public void NavigateToApp()
-        {
-            Application.Current.MainPage = new NavigationPage(DIContainer.Instance.Resolve<ShoppingListPage>());
+            Navigation.SignUp(this);
         }
     }
 }

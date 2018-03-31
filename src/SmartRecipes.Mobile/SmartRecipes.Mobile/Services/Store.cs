@@ -13,7 +13,5 @@ namespace SmartRecipes.Mobile
         {
             this.apiClient = apiClient;
         }
-
-        public event EventHandler StateChanged;
     }
 }

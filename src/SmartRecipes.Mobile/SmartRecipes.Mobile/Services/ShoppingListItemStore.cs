@@ -19,7 +19,6 @@ namespace SmartRecipes.Mobile
         {
             var newItem = ShoppingListItem.DecreaseAmount(item).IfNone(() => throw new InvalidOperationException());
             shoppingListItems = shoppingListItems.Replpace(item, newItem);
-            StateChanged(this, new EventArgs());
             // TODO: construct request and send API call
         }
 
@@ -28,7 +27,6 @@ namespace SmartRecipes.Mobile
             var increasedItem = ShoppingListItem.IncreaseAmount(item);
             var newItem = increasedItem.IfNone(() => throw new InvalidOperationException());
             shoppingListItems = shoppingListItems.Replpace(item, newItem);
-            StateChanged(this, new EventArgs());
             // TODO: construct request and send API call
         }
 
