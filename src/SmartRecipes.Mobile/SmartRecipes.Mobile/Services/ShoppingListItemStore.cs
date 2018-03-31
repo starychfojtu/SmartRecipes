@@ -42,7 +42,7 @@ namespace SmartRecipes.Mobile
         public IEnumerable<Foodstuff> Search(string query)
         {
             // TODO: implement with API
-            return new[]
+            var foodstuff = new[]
             {
                 new Foodstuff(
                     Guid.NewGuid(),
@@ -59,6 +59,7 @@ namespace SmartRecipes.Mobile
                     new Amount(50, AmountUnit.Gram)
                 )
             };
+            return foodstuff.Except(ShoppingListItems.Select(i => i.Foodstuff));
         }
 
         private IEnumerable<ShoppingListItem> GetShoppingListItems()
