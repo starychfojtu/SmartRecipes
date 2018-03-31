@@ -30,11 +30,17 @@ namespace SmartRecipes.Mobile
             // TODO: construct request and send API call
         }
 
-        public IEnumerable<ShoppingListItem> Search(string query)
+        public void Add(Foodstuff foodstuff)
+        {
+            var newItem = ShoppingListItem.Create(foodstuff);
+            shoppingListItems.Add(newItem);
+            // TODO: construct request and send API call
+        }
+
+        public IEnumerable<Foodstuff> Search(string query)
         {
             // TODO: implement with API
-
-            var foodstuffs = new[]
+            return new[]
             {
                 new Foodstuff(
                     Guid.NewGuid(),
@@ -51,13 +57,12 @@ namespace SmartRecipes.Mobile
                     new Amount(50, AmountUnit.Gram)
                 )
             };
-            return foodstuffs.Select(f => new ShoppingListItem(f, Amount.Zero(f.BaseAmount.Unit)));
         }
 
         private IEnumerable<ShoppingListItem> GetShoppingListItems()
         {
             return apiClient.GetShoppingList().Items.Select(i =>
-                new ShoppingListItem(
+                ShoppingListItem.Create(
                     new Foodstuff(
                         i.FoodstuffDto.Id,
                         i.FoodstuffDto.Name,

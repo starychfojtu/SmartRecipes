@@ -2,7 +2,7 @@
 <ViewCell 
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-    x:Class="SmartRecipes.Mobile.Views.ShoppingListItemCell"
+    x:Class="SmartRecipes.Mobile.Views.FoodstuffCell"
     xmlns:controls="clr-namespace:SmartRecipes.Mobile.Controls;assembly=SmartRecipes.Mobile"
     xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms">
     <StackLayout>
@@ -33,14 +33,14 @@
                 Orientation="Horizontal"
                 HorizontalOptions="EndAndExpand">
                 <Button
-                    x:Name="DecreaseAmountButton"
+                    x:Name="MinusButton"
                     Image="remove"
                     BackgroundColor="Transparent"
                     WidthRequest="64"
                     HeightRequest="64"
                     VerticalOptions="Center"/>
                 <Button
-                    x:Name="IncreaseAmountButton"
+                    x:Name="PlusButton"
                     Image="add"
                     BackgroundColor="Transparent"
                     WidthRequest="64"

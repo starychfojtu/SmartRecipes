@@ -6,7 +6,7 @@ namespace SmartRecipes.Mobile
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(Foodstuff foodstuff, Amount amount)
+        private ShoppingListItem(Foodstuff foodstuff, Amount amount)
         {
             Foodstuff = foodstuff;
             Amount = amount;
@@ -22,6 +22,16 @@ namespace SmartRecipes.Mobile
         }
 
         // Combinators
+
+        public static ShoppingListItem Create(Foodstuff foodstuff, Amount amount)
+        {
+            return new ShoppingListItem(foodstuff, amount);
+        }
+
+        public static ShoppingListItem Create(Foodstuff foodstuff)
+        {
+            return new ShoppingListItem(foodstuff, foodstuff.BaseAmount);
+        }
 
         public static Option<ShoppingListItem> IncreaseAmount(ShoppingListItem item)
         {

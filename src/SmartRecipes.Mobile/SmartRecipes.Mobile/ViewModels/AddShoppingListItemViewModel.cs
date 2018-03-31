@@ -1,27 +1,31 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Linq;
+using System.Collections.Generic;
+using System;
 
 namespace SmartRecipes.Mobile
 {
-    public class AddShoppingListItemViewModel
+    public class AddShoppingListItemViewModel : ViewModel
     {
-        private readonly Store store;
-
-        public AddShoppingListItemViewModel(Store store)
+        public AddShoppingListItemViewModel(Store store) : base(store)
         {
-            this.store = store;
-            SearchResult = new ObservableCollection<ShoppingListItem>();
+            SearchResult = new List<FoodstuffCellViewModel>();
         }
 
-        public ObservableCollection<ShoppingListItem> SearchResult { get; private set; }
+        public IEnumerable<FoodstuffCellViewModel> SearchResult { get; private set; }
 
         public void Search(string query)
         {
-            var searchResult = store.Search(query);
-            SearchResult.Clear();
-            foreach (var item in searchResult)
+            SearchResult = store.Search(query).Select(f => FoodstuffCellViewModel.Create(f, f.BaseAmount, Add(f)));
+            RaisePropertyChanged(nameof(SearchResult));
+        }
+
+        private Action Add(Foodstuff foodstuff)
+        {
+            return () =>
             {
-                SearchResult.Add(item);
-            }
+                store.Add(foodstuff);
+                RaisePropertyChanged(nameof(SearchResult));
+            };
         }
     }
 }

@@ -17,5 +17,10 @@ namespace SmartRecipes.Mobile
         {
             Application.Current.MainPage = DIContainer.Instance.Resolve<SignUpPage>();
         }
+
+        public static void AddShoppingListItem(ShoppingListItemsViewModel viewModel)
+        {
+            Application.Current.MainPage.Navigation.PushAsync(DIContainer.Instance.Resolve<AddShoppingListItemPage>());
+        }
     }
 }

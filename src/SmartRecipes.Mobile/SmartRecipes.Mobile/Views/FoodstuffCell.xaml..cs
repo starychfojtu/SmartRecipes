@@ -1,0 +1,42 @@
+﻿using Xamarin.Forms;
+using FFImageLoading.Transformations;
+
+namespace SmartRecipes.Mobile.Views
+{
+    public partial class FoodstuffCell : ViewCell
+    {
+        public FoodstuffCell()
+        {
+            InitializeComponent();
+
+            Image.Transformations.Add(new CircleTransformation());
+
+            MinusButton.Clicked += (s, e) => OnMinus();
+            PlusButton.Clicked += (s, e) => OnPlus();
+        }
+
+        private FoodstuffCellViewModel ViewModel => (BindingContext as FoodstuffCellViewModel);
+
+        private void OnMinus()
+        {
+            ViewModel.OnMinus?.Invoke();
+        }
+
+        private void OnPlus()
+        {
+            ViewModel.OnPlus.Invoke();
+        }
+
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+
+            if (BindingContext != null)
+            {
+                NameLabel.Text = ViewModel.Foodstuff.Name;
+                AmountLabel.Text = ViewModel.Amount.ToString();
+                Image.Source = ViewModel.Foodstuff.ImageUrl.AbsoluteUri;
+            }
+        }
+    }
+}

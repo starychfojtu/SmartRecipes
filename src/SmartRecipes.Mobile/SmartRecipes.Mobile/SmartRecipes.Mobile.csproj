@@ -34,8 +34,23 @@
     <Compile Update="Pages\ShoppingListRecipesPage.xaml.cs">
       <DependentUpon>ShoppingListRecipesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\ShoppingListItemCell.xaml.cs">
+      <DependentUpon>FoodstuffCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\FoodstuffCell.xaml.cs">
+      <DependentUpon>StepperCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\StepperCell.xaml..cs">
+      <DependentUpon>FoodstuffCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\FoodstuffCell.xaml..cs">
+      <DependentUpon>FoodstuffCell.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Remove="Views\ShoppingListItemCell %28copy%29.xaml" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Pages\SignInPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
