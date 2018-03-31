@@ -17,8 +17,10 @@ namespace SmartRecipes.Mobile
 
         public void DecreaseAmount(ShoppingListItem item)
         {
-            var newItem = ShoppingListItem.DecreaseAmount(item).IfNone(() => throw new InvalidOperationException());
-            shoppingListItems = shoppingListItems.Replpace(item, newItem);
+            shoppingListItems = ShoppingListItem.DecreaseAmount(item).Match(
+                i => shoppingListItems.Replpace(item, i),
+                () => shoppingListItems.Without(item).ToList()
+            );
             // TODO: construct request and send API call
         }
 

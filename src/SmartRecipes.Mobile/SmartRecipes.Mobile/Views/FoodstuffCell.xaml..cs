@@ -31,11 +31,12 @@ namespace SmartRecipes.Mobile.Views
         {
             base.OnBindingContextChanged();
 
-            if (BindingContext != null)
+            if (ViewModel != null)
             {
                 NameLabel.Text = ViewModel.Foodstuff.Name;
                 AmountLabel.Text = ViewModel.Amount.ToString();
                 Image.Source = ViewModel.Foodstuff.ImageUrl.AbsoluteUri;
+                MinusButton.IsVisible = ViewModel.OnMinus != null;
             }
         }
     }

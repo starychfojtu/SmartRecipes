@@ -10,5 +10,11 @@ namespace SmartRecipes.Mobile
             list[index] = replacement;
             return list;
         }
+
+        public static ICollection<T> Without<T>(this ICollection<T> list, T item)
+        {
+            list.Remove(item);
+            return list;
+        }
     }
 }

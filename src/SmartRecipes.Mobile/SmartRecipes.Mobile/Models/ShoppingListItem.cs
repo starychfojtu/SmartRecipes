@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System;
 using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile
 {
@@ -40,7 +41,8 @@ namespace SmartRecipes.Mobile
 
         public static Option<ShoppingListItem> DecreaseAmount(ShoppingListItem item)
         {
-            return ChangeAmount(item, Amount.Substract);
+            var newItem = ChangeAmount(item, Amount.Substract);
+            return newItem.Bind(i => Amount.IsLessThanOrEquals(i.Amount, Amount.Zero(i.Amount.Unit)) ? None : Some(i));
         }
 
         public static Option<ShoppingListItem> ChangeAmount(ShoppingListItem item, Func<Amount, Amount, Option<Amount>> operation)

@@ -22,10 +22,26 @@ namespace SmartRecipes.Mobile
         }
 
         // Combinators
+        // TODO: make monoid
 
         public static Amount Zero(AmountUnit unit)
         {
             return new Amount(0, unit);
+        }
+
+        public static bool IsLessThan(Amount a1, Amount a2)
+        {
+            return a1.Unit == a2.Unit && a1.Count < a2.Count;
+        }
+
+        public static bool Equals(Amount a1, Amount a2)
+        {
+            return a1.Unit == a2.Unit && a1.Count == a2.Count;
+        }
+
+        public static bool IsLessThanOrEquals(Amount a1, Amount a2)
+        {
+            return IsLessThan(a1, a2) || Equals(a1, a2);
         }
 
         public static Option<Amount> Add(Amount a1, Amount a2)
