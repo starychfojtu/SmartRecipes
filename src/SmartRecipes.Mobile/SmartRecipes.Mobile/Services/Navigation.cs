@@ -8,7 +8,7 @@ namespace SmartRecipes.Mobile
     {
         public static void LogIn(SignInViewModel viewModel)
         {
-            Application.Current.MainPage = new NavigationPage(DIContainer.Instance.Resolve<ShoppingListPage>());
+            Application.Current.MainPage = new NavigationPage(DIContainer.Instance.Resolve<AppContainer>());
         }
 
         public static void SignUp(SignInViewModel viewModel)

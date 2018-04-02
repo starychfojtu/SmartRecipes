@@ -46,6 +46,9 @@
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\FoodstuffCell.xaml..cs">
       <DependentUpon>FoodstuffCell.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Pages\MyRecipesPage.xaml.cs">
+      <DependentUpon>MyRecipesPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

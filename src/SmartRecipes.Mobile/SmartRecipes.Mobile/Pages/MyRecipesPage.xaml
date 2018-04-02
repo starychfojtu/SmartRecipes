@@ -2,10 +2,9 @@
 <ContentPage 
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-    x:Class="SmartRecipes.Mobile.NavigationDrawer"
-    Title="Smart Recipes">
+    x:Class="SmartRecipes.Mobile.MyRecipesPage"
+    Title="My recipes">
     <ContentPage.Content>
-        <ListView
-            x:Name="Pages" />
+        <Label Text="My recipes" />
     </ContentPage.Content>
 </ContentPage>
