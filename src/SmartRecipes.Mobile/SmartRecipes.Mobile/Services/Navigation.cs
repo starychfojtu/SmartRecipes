@@ -1,6 +1,4 @@
-﻿using System;
-using SmartRecipes.Mobile.Models;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Autofac;
 using SmartRecipes.Mobile.Pages;
 

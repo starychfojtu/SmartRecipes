@@ -50,6 +50,8 @@
 
   <ItemGroup>
     <EmbeddedResource Remove="Views\ShoppingListItemCell %28copy%29.xaml" />
+    <EmbeddedResource Remove="Views\NavigationDrawer.xaml" />
+    <EmbeddedResource Remove="Pages\ShoppingListPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Pages\SignInPage.xaml">
