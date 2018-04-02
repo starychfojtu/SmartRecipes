@@ -5,9 +5,9 @@ using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile
 {
-    public class ShoppingListItem
+    public class Ingredient
     {
-        private ShoppingListItem(Foodstuff foodstuff, Amount amount)
+        private Ingredient(Foodstuff foodstuff, Amount amount)
         {
             Foodstuff = foodstuff;
             Amount = amount;
@@ -17,35 +17,35 @@ namespace SmartRecipes.Mobile
 
         public Amount Amount { get; }
 
-        public ShoppingListItem WithAmount(Amount amount)
+        public Ingredient WithAmount(Amount amount)
         {
-            return new ShoppingListItem(Foodstuff, amount);
+            return new Ingredient(Foodstuff, amount);
         }
 
         // Combinators
 
-        public static ShoppingListItem Create(Foodstuff foodstuff, Amount amount)
+        public static Ingredient Create(Foodstuff foodstuff, Amount amount)
         {
-            return new ShoppingListItem(foodstuff, amount);
+            return new Ingredient(foodstuff, amount);
         }
 
-        public static ShoppingListItem Create(Foodstuff foodstuff)
+        public static Ingredient Create(Foodstuff foodstuff)
         {
-            return new ShoppingListItem(foodstuff, foodstuff.BaseAmount);
+            return new Ingredient(foodstuff, foodstuff.BaseAmount);
         }
 
-        public static Option<ShoppingListItem> IncreaseAmount(ShoppingListItem item)
+        public static Option<Ingredient> IncreaseAmount(Ingredient item)
         {
             return ChangeAmount(item, Amount.Add);
         }
 
-        public static Option<ShoppingListItem> DecreaseAmount(ShoppingListItem item)
+        public static Option<Ingredient> DecreaseAmount(Ingredient item)
         {
             var newItem = ChangeAmount(item, Amount.Substract);
             return newItem.Bind(i => Amount.IsLessThanOrEquals(i.Amount, Amount.Zero(i.Amount.Unit)) ? None : Some(i));
         }
 
-        public static Option<ShoppingListItem> ChangeAmount(ShoppingListItem item, Func<Amount, Amount, Option<Amount>> operation)
+        public static Option<Ingredient> ChangeAmount(Ingredient item, Func<Amount, Amount, Option<Amount>> operation)
         {
             var changedAmount = operation(item.Amount, item.Foodstuff.AmountStep);
             return changedAmount.Map(a => item.WithAmount(a));

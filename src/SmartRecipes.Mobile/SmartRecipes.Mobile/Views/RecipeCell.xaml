@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="SmartRecipes.Mobile.Views.RecipeCell"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms">
+    <StackLayout>
+        <StackLayout
+            Orientation="Horizontal"
+            Padding="4, 4, 4, 4"
+            BackgroundColor="{StaticResource secondaryColor}">
+            <Label
+                x:Name="NameLabel"
+                Text="Lasagna"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"/>
+            <StackLayout
+                Orientation="Horizontal"
+                HorizontalOptions="EndAndExpand">
+                <Button
+                    x:Name="OtherButton"
+                    Image="remove"
+                    BackgroundColor="Transparent"
+                    WidthRequest="64"
+                    HeightRequest="64"
+                    VerticalOptions="Center"/>
+                <Button
+                    x:Name="PlusButton"
+                    Image="add"
+                    BackgroundColor="Transparent"
+                    WidthRequest="64"
+                    HeightRequest="64"
+                    VerticalOptions="Center"/>
+            </StackLayout>
+            <!--<StackLayout>
+                <ListView
+                    x:Name="IngredientsListView">
+                    <ListView.ItemTemplate>
+                        <ffimageloading:CachedImage 
+                            x:Name="Image"
+                            VerticalOptions="Center"
+                            WidthRequest="32" 
+                            HeightRequest="32"
+                            HorizontalOptions="Start"
+                            DownsampleToViewSize="true"/>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>-->
+        </StackLayout>
+    </StackLayout>
+</ViewCell>

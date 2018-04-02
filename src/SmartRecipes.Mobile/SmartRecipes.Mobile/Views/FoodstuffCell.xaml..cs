@@ -34,7 +34,7 @@ namespace SmartRecipes.Mobile.Views
             if (ViewModel != null)
             {
                 NameLabel.Text = ViewModel.Foodstuff.Name;
-                AmountLabel.Text = ViewModel.Amount.ToString();
+                AmountLabel.Text = ViewModel.Amount.ToString(); // TODO: add amount needed
                 Image.Source = ViewModel.Foodstuff.ImageUrl.AbsoluteUri;
                 MinusButton.IsVisible = ViewModel.OnMinus != null;
             }

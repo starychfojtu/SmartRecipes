@@ -30,6 +30,7 @@ namespace SmartRecipes.Mobile
             builder.RegisterType<SignInViewModel>();
             builder.RegisterType<ShoppingListItemsViewModel>();
             builder.RegisterType<AddShoppingListItemViewModel>();
+            builder.RegisterType<MyRecipesViewModel>();
 
             // Pages
             builder.RegisterType<SignInPage>();

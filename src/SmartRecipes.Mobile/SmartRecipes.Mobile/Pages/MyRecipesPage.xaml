@@ -3,8 +3,24 @@
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     x:Class="SmartRecipes.Mobile.MyRecipesPage"
+    xmlns:views="clr-namespace:SmartRecipes.Mobile.Views;assembly=SmartRecipes.Mobile"
+    xmlns:suave="clr-namespace:SuaveControls.Views;assembly=SuaveControls.FloatingActionButton"
     Title="My recipes">
     <ContentPage.Content>
-        <Label Text="My recipes" />
+        <StackLayout
+            Padding="16, 16, 16, 16">
+            <ListView
+                x:Name="RecipeListView"
+                SeparatorColor="{StaticResource dividerColor}"
+                RowHeight="64"/>
+            <suave:FloatingActionButton 
+                x:Name="CreateRecipeButton"
+                HorizontalOptions="End" 
+                VerticalOptions="End"
+                WidthRequest="80" 
+                HeightRequest="90"
+                Image="add.png" 
+                ButtonColor="{StaticResource accentColor}"/>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

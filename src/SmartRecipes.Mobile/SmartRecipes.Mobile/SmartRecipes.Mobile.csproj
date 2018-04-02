@@ -49,6 +49,9 @@
     <Compile Update="Pages\MyRecipesPage.xaml.cs">
       <DependentUpon>MyRecipesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\RecipeCell.xaml.cs">
+      <DependentUpon>RecipeCell.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

@@ -8,25 +8,25 @@ namespace SmartRecipes.Mobile
 {
     public partial class Store
     {
-        private IList<ShoppingListItem> shoppingListItems;
+        private IList<Ingredient> shoppingListItems;
 
-        public IList<ShoppingListItem> ShoppingListItems
+        public IList<Ingredient> ShoppingListItems
         {
             get { return shoppingListItems ?? (shoppingListItems = GetShoppingListItems().ToList()); }
         }
 
-        public void DecreaseAmount(ShoppingListItem item)
+        public void DecreaseAmount(Ingredient item)
         {
-            shoppingListItems = ShoppingListItem.DecreaseAmount(item).Match(
+            shoppingListItems = Ingredient.DecreaseAmount(item).Match(
                 i => shoppingListItems.Replpace(item, i),
                 () => shoppingListItems.Without(item).ToList()
             );
             // TODO: construct request and send API call
         }
 
-        public void IncreaseAmount(ShoppingListItem item)
+        public void IncreaseAmount(Ingredient item)
         {
-            var increasedItem = ShoppingListItem.IncreaseAmount(item);
+            var increasedItem = Ingredient.IncreaseAmount(item);
             var newItem = increasedItem.IfNone(() => throw new InvalidOperationException());
             shoppingListItems = shoppingListItems.Replpace(item, newItem);
             // TODO: construct request and send API call
@@ -34,7 +34,7 @@ namespace SmartRecipes.Mobile
 
         public void Add(Foodstuff foodstuff)
         {
-            var newItem = ShoppingListItem.Create(foodstuff);
+            var newItem = Ingredient.Create(foodstuff);
             shoppingListItems.Add(newItem);
             // TODO: construct request and send API call
         }
@@ -62,10 +62,10 @@ namespace SmartRecipes.Mobile
             return foodstuff.Except(ShoppingListItems.Select(i => i.Foodstuff));
         }
 
-        private IEnumerable<ShoppingListItem> GetShoppingListItems()
+        private IEnumerable<Ingredient> GetShoppingListItems()
         {
             return apiClient.GetShoppingList().Items.Select(i =>
-                ShoppingListItem.Create(
+                Ingredient.Create(
                     new Foodstuff(
                         i.FoodstuffDto.Id,
                         i.FoodstuffDto.Name,

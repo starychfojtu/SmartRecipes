@@ -15,7 +15,7 @@ namespace SmartRecipes.Mobile
             get { return store.ShoppingListItems.Select(item => FoodstuffCellViewModel.Create(item.Foodstuff, item.Amount, IncreaseItemAmount(item), DecreaseItemAmount(item))); }
         }
 
-        private Action IncreaseItemAmount(ShoppingListItem item)
+        private Action IncreaseItemAmount(Ingredient item)
         {
             return () =>
             {
@@ -24,7 +24,7 @@ namespace SmartRecipes.Mobile
             };
         }
 
-        private Action DecreaseItemAmount(ShoppingListItem item)
+        private Action DecreaseItemAmount(Ingredient item)
         {
             return () =>
             {

@@ -11,8 +11,7 @@
             <ListView
                 x:Name="ItemsListView"
                 SeparatorColor="{StaticResource dividerColor}"
-                RowHeight="64">
-            </ListView>
+                RowHeight="64"/>
             <suave:FloatingActionButton 
                 x:Name="AddItemsButton"
                 HorizontalOptions="End" 
