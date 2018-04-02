@@ -12,7 +12,7 @@
             <ListView
                 x:Name="RecipeListView"
                 SeparatorColor="{StaticResource dividerColor}"
-                RowHeight="64"/>
+                RowHeight="128"/>
             <suave:FloatingActionButton 
                 x:Name="CreateRecipeButton"
                 HorizontalOptions="End" 
