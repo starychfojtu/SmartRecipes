@@ -1,7 +1,5 @@
 ﻿using Xamarin.Forms;
-using FFImageLoading.Transformations;
 using System.Linq;
-using FFImageLoading.Forms;
 
 namespace SmartRecipes.Mobile.Views
 {
@@ -37,19 +35,8 @@ namespace SmartRecipes.Mobile.Views
                 OtherButton.IsVisible = ViewModel.OnOther != null;
                 IngredientsStackLayout.Children.Clear();
 
-                foreach (var ingredient in ViewModel.Recipe.Ingredients)
-                {
-                    var image = new CachedImage
-                    {
-                        HeightRequest = 32,
-                        WidthRequest = 32,
-                        VerticalOptions = LayoutOptions.Center,
-                        Source = ingredient.Foodstuff.ImageUrl,
-                        DownsampleToViewSize = true
-                    };
-                    image.Transformations.Add(new CircleTransformation());
-                    IngredientsStackLayout.Children.Add(image);
-                }
+                var thumbnails = ViewModel.Recipe.Ingredients.Select(i => Image.Thumbnail(i.Foodstuff.ImageUrl));
+                IngredientsStackLayout.Children.AddRange(thumbnails);
             }
         }
     }
