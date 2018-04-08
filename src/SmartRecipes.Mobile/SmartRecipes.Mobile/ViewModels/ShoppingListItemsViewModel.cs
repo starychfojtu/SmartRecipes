@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.Controllers;
-using System.Runtime.CompilerServices;
 
 namespace SmartRecipes.Mobile
 {
@@ -10,21 +9,23 @@ namespace SmartRecipes.Mobile
     {
         private readonly ShoppingListController controller;
 
+        private IEnumerable<FoodstuffCellViewModel> items;
+
         public ShoppingListItemsViewModel(ShoppingListController controller)
         {
             this.controller = controller;
-            GetItems().ContinueWith(t =>
-            {
-                Items = t.Result;
-                RaisePropertyChanged(nameof(Items));
-            });
+            items = Enumerable.Empty<FoodstuffCellViewModel>();
         }
 
-        public IEnumerable<FoodstuffCellViewModel> Items { get; private set; }
-
-        public async Task<IEnumerable<FoodstuffCellViewModel>> GetItems()
+        public IEnumerable<FoodstuffCellViewModel> Items
         {
-            return (await controller.GetItems()).Select(item => FoodstuffCellViewModel.Create(item.Foodstuff, item.Amount, IncreaseItemAmount(item), DecreaseItemAmount(item)));
+            get { return Items.Tee(_ => UpdateItems()); }
+        }
+
+        public async Task UpdateItems()
+        {
+            items = (await controller.GetItems()).Select(item => FoodstuffCellViewModel.Create(item.Foodstuff, item.Amount, IncreaseItemAmount(item), DecreaseItemAmount(item)));
+            RaisePropertyChanged(nameof(Items));
         }
 
         private async Task IncreaseItemAmount(Ingredient item)
@@ -36,7 +37,7 @@ namespace SmartRecipes.Mobile
         private async Task DecreaseItemAmount(Ingredient item)
         {
             await acontroller.DecreaseAmount(item);
-            RaisePropertyChanged(nameof(Items));§
+            RaisePropertyChanged(nameof(Items));
         }
 
         public void Refresh()
