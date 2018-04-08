@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using SmartRecipes.Mobile.ApiDto;
 using System;
+using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile
 {
@@ -15,8 +16,10 @@ namespace SmartRecipes.Mobile
 
         private string AuthenticationToken { get; set; }
 
-        public SignInResponse PostSignIn(SignInRequest request)
+        public async Task<SignInResponse> Post(SignInRequest request)
         {
+            await SimulateRequest();
+
             //if (request.Email == "test@gmail.com" && request.Password == "1234")
             //{
             //AuthenticationToken = "fake";
@@ -26,13 +29,37 @@ namespace SmartRecipes.Mobile
             //return new SignInResponse(false, "");
         }
 
-        public SignUpResponse PostSignUp(SignUpRequest request)
+        public async Task<SignUpResponse> Post(SignUpRequest request)
         {
+            await SimulateRequest();
             return new SignUpResponse(new SignUpResponse.Account("fake@gmail.com"));
         }
 
-        public ShoppingListResponse GetShoppingList()
+        public async Task<ShoppingListResponse> Post(AdjustItemInShoppingListRequest request)
         {
+            await SimulateRequest();
+
+            // TODO:
+            //shoppingListItems = Ingredient.DecreaseAmount(item).Match(
+            //    i => shoppingListItems.Replpace(item, i),
+            //    () => shoppingListItems.Without(item).ToList()
+            //);
+
+            //TODO:
+            //var increasedItem = Ingredient.IncreaseAmount(item);
+            //var newItem = increasedItem.IfNone(() => throw new InvalidOperationException());
+            //shoppingListItems = shoppingListItems.Replpace(item, newItem);
+
+            //TODO:
+            //var newItem = Ingredient.Create(foodstuff);
+            //shoppingListItems.Add(newItem);
+
+            return await GetShoppingList();
+        }
+
+        public async Task<ShoppingListResponse> GetShoppingList()
+        {
+            await SimulateRequest();
             var tomato = new ShoppingListResponse.Item.Foodstuff(
                 Guid.NewGuid(),
                 "Tomato",
@@ -60,6 +87,11 @@ namespace SmartRecipes.Mobile
             var b = new ShoppingListResponse.Item(chickenBreast, new Amount(600, AmountUnit.Gram));
 
             return new ShoppingListResponse(new[] { t, o, b });
+        }
+
+        private Task SimulateRequest()
+        {
+            return client.GetAsync("google.com");
         }
     }
 }

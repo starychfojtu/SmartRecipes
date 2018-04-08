@@ -1,36 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using SmartRecipes.Mobile.Controllers;
+using System.Runtime.CompilerServices;
 
 namespace SmartRecipes.Mobile
 {
     public class ShoppingListItemsViewModel : ViewModel
     {
-        public ShoppingListItemsViewModel(Store store) : base(store)
-        {
-        }
+        private readonly ShoppingListController controller;
 
-        public IEnumerable<FoodstuffCellViewModel> Items
+        public ShoppingListItemsViewModel(ShoppingListController controller)
         {
-            get { return store.ShoppingListItems.Select(item => FoodstuffCellViewModel.Create(item.Foodstuff, item.Amount, IncreaseItemAmount(item), DecreaseItemAmount(item))); }
-        }
-
-        private Action IncreaseItemAmount(Ingredient item)
-        {
-            return () =>
+            this.controller = controller;
+            GetItems().ContinueWith(t =>
             {
-                store.IncreaseAmount(item);
+                Items = t.Result;
                 RaisePropertyChanged(nameof(Items));
-            };
+            });
         }
 
-        private Action DecreaseItemAmount(Ingredient item)
+        public IEnumerable<FoodstuffCellViewModel> Items { get; private set; }
+
+        public async Task<IEnumerable<FoodstuffCellViewModel>> GetItems()
         {
-            return () =>
-            {
-                store.DecreaseAmount(item);
-                RaisePropertyChanged(nameof(Items));
-            };
+            return (await controller.GetItems()).Select(item => FoodstuffCellViewModel.Create(item.Foodstuff, item.Amount, IncreaseItemAmount(item), DecreaseItemAmount(item)));
+        }
+
+        private async Task IncreaseItemAmount(Ingredient item)
+        {
+            await controller.IncreaseAmount(item);
+            RaisePropertyChanged(nameof(Items));
+        }
+
+        private async Task DecreaseItemAmount(Ingredient item)
+        {
+            await acontroller.DecreaseAmount(item);
+            RaisePropertyChanged(nameof(Items));§
         }
 
         public void Refresh()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 namespace SmartRecipes.Mobile.ApiDto
 {
     public class ShoppingListResponse

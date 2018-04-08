@@ -75,6 +75,7 @@
     <Folder Include="ApiDto\" />
     <Folder Include="Assets\" />
     <Folder Include="Controls\" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Models\SignInCredentials.s" />

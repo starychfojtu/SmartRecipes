@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using SmartRecipes.Mobile.Pages;
 using System.Net.Http;
+using SmartRecipes.Mobile.Controllers;
 
 namespace SmartRecipes.Mobile
 {
@@ -24,7 +25,11 @@ namespace SmartRecipes.Mobile
             // Services
             builder.RegisterInstance(new HttpClient()).As<HttpClient>();
             builder.RegisterType<ApiClient>().SingleInstance();
-            builder.RegisterType<Store>().SingleInstance();
+
+            // Controllers
+            builder.RegisterType<MyRecipesController>();
+            builder.RegisterType<SecurityController>();
+            builder.RegisterType<ShoppingListController>();
 
             // View models
             builder.RegisterType<SignInViewModel>();

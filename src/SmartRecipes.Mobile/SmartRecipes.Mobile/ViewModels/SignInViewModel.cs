@@ -1,32 +1,32 @@
 ﻿using SmartRecipes.Mobile.Models;
-using Xamarin.Forms;
-using Autofac;
-using SmartRecipes.Mobile.Pages;
+using SmartRecipes.Mobile.Controllers;
 
 namespace SmartRecipes.Mobile
 {
     public class SignInViewModel : ViewModel
     {
-        public SignInViewModel(Store store) : base(store)
+        private readonly SecurityController controller;
+
+        public SignInViewModel(SecurityController controller)
         {
+            this.controller = controller;
         }
 
         public string Email { get; set; }
 
         public string Password { get; set; }
 
-        public void SignIn()
+        public string Error { get; private set; }
+
+        public async void SignIn()
         {
-            var result = store.Authenticate(new SignInCredentials(Email, Password));
-            if (result.Success)
-            {
-                Navigation.LogIn(this);
-            }
+            Error = await controller.Authenticate(new SignInCredentials(Email, Password));
+            RaisePropertyChanged(nameof(Error));
         }
 
-        public void NavigateToSignUp()
+        public void SignUp()
         {
-            Navigation.SignUp(this);
+            controller.SignUp();
         }
     }
 }

@@ -1,17 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using SmartRecipes.Mobile.Controllers;
 
 namespace SmartRecipes.Mobile
 {
     public class MyRecipesViewModel : ViewModel
     {
-        public MyRecipesViewModel(Store store) : base(store)
+        readonly MyRecipesController controller;
+
+        public MyRecipesViewModel(MyRecipesController controller)
         {
+            this.controller = controller;
         }
 
-        public IEnumerable<RecipeCellViewModel> Recipes
+        public async Task<IEnumerable<RecipeCellViewModel>> GetRecipes()
         {
-            get { return store.MyRecipes.Select(r => RecipeCellViewModel.Create(r, () => { })); }
+            return (await controller.GetAll()).Select(r => RecipeCellViewModel.Create(r, () => { }));
         }
     }
 }
