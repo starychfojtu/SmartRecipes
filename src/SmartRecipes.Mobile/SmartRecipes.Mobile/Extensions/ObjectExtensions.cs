@@ -9,5 +9,11 @@ namespace SmartRecipes.Mobile
         {
             yield return obj;
         }
+
+        public static T Tee<T>(this T obj, Action<T> action)
+        {
+            action(obj);
+            return obj;
+        }
     }
 }

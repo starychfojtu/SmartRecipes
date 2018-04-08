@@ -7,15 +7,12 @@ namespace SmartRecipes.Mobile
     {
         public static IList<T> Replpace<T>(this IList<T> list, T item, T replacement)
         {
-            var index = list.IndexOf(item);
-            list[index] = replacement;
-            return list;
+            return list.Tee(l => l[l.IndexOf(item)] = replacement);
         }
 
         public static ICollection<T> Without<T>(this ICollection<T> list, T item)
         {
-            list.Remove(item);
-            return list;
+            return list.Tee(l => l.Remove(item));
         }
 
         public static IList<T> AddRange<T>(this IList<T> list, IEnumerable<T> items)

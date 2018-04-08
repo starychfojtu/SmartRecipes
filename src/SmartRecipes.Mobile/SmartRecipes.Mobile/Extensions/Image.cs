@@ -17,8 +17,7 @@ namespace SmartRecipes.Mobile
                 Source = source,
                 DownsampleToViewSize = true
             };
-            thumbnail.Transformations.Add(new CircleTransformation());
-            return thumbnail;
+            return thumbnail.Tee(t => t.Transformations.Add(new CircleTransformation()));
         }
     }
 }

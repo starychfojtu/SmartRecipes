@@ -9,9 +9,7 @@ namespace SmartRecipes.Mobile
 
         public Authenticator.AuthenticationResult Authenticate(SignInCredentials credentials)
         {
-            var result = Authenticator.Authenticate(credentials, apiClient.PostSignIn); // TODO : introduce TEE monad
-            token = result.Token;
-            return result;
+            return Authenticator.Authenticate(credentials, apiClient.PostSignIn).Tee(r => token = r.Token);
         }
     }
 }
