@@ -2,6 +2,7 @@
 using SmartRecipes.Mobile.Pages;
 using System.Net.Http;
 using SmartRecipes.Mobile.Controllers;
+using SmartRecipes.Mobile.ReadModels;
 
 namespace SmartRecipes.Mobile
 {
@@ -26,10 +27,11 @@ namespace SmartRecipes.Mobile
             builder.RegisterInstance(new HttpClient()).As<HttpClient>();
             builder.RegisterType<ApiClient>().SingleInstance();
 
-            // Controllers
-            builder.RegisterType<MyRecipesController>();
-            builder.RegisterType<SecurityController>();
-            builder.RegisterType<ShoppingListController>();
+            // Read models
+            builder.RegisterType<ShoppingListRepository>();
+
+            // Write models
+            builder.RegisterType<ShoppingListHandler>();
 
             // View models
             builder.RegisterType<SignInViewModel>();

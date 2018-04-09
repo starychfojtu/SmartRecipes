@@ -1,42 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LanguageExt;
-using System.Reactive.Linq;
-using SmartRecipes.Mobile.ApiDto;
 using System.Threading.Tasks;
+using SmartRecipes.Mobile.ApiDto;
 
-namespace SmartRecipes.Mobile.Controllers
+namespace SmartRecipes.Mobile.ReadModels
 {
-    public class ShoppingListController
+    public class ShoppingListRepository
     {
         private readonly ApiClient apiClient;
 
-        public ShoppingListController(ApiClient apiClient)
+        public ShoppingListRepository(ApiClient apiClient)
         {
             this.apiClient = apiClient;
         }
 
-        public async Task<IEnumerable<Ingredient>> DecreaseAmount(Ingredient item)
+        public async Task<IEnumerable<Ingredient>> GetItems()
         {
-            var request = new AdjustItemInShoppingListRequest(item.Foodstuff.Id, AdjustShoppingListItemAction.DecreaseAmount);
-            var response = await apiClient.Post(request);
+            var response = await apiClient.GetShoppingList();
             return ToIngredients(response.Items);
-        }
-
-        public async Task<IEnumerable<Ingredient>> IncreaseAmount(Ingredient item)
-        {
-            return await IncreaseAmount(item.Foodstuff);
-        }
-
-        public async Task<IEnumerable<Ingredient>> Add(Foodstuff foodstuff)
-        {
-            return await IncreaseAmount(foodstuff);
         }
 
         public async Task<IEnumerable<Foodstuff>> Search(string query)
         {
-            // TODO: implement with API
+            // TODO: implement
             var foodstuff = new[]
             {
                 new Foodstuff(
@@ -58,21 +45,8 @@ namespace SmartRecipes.Mobile.Controllers
             return foodstuff.Except(shoppingListItem.Select(i => i.Foodstuff));
         }
 
-        public async Task<IEnumerable<Ingredient>> GetItems()
-        {
-            var response = await apiClient.GetShoppingList();
-            return ToIngredients(response.Items);
-        }
-
-        private async Task<IEnumerable<Ingredient>> IncreaseAmount(Foodstuff foodstuff)
-        {
-            var request = new AdjustItemInShoppingListRequest(foodstuff.Id, AdjustShoppingListItemAction.IncreaseAmount);
-            var response = await apiClient.Post(request);
-            return ToIngredients(response.Items);
-        }
-
-        // TODO move to another layer
-        private static IEnumerable<Ingredient> ToIngredients(IEnumerable<ShoppingListResponse.Item> items)
+        // TODO: move elsewhere
+        public static IEnumerable<Ingredient> ToIngredients(IEnumerable<ShoppingListResponse.Item> items)
         {
             return items.Select(i => Ingredient.Create(
                 new Foodstuff(
