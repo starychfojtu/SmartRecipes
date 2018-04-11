@@ -5,11 +5,11 @@ namespace SmartRecipes.Mobile
 {
     public class SignInViewModel : ViewModel
     {
-        private readonly SecurityController controller;
+        private readonly SecurityHandler commandHandler;
 
-        public SignInViewModel(SecurityController controller)
+        public SignInViewModel(SecurityHandler commandHandler)
         {
-            this.controller = controller;
+            this.commandHandler = commandHandler;
         }
 
         public string Email { get; set; }
@@ -20,13 +20,13 @@ namespace SmartRecipes.Mobile
 
         public async void SignIn()
         {
-            Error = await controller.Authenticate(new SignInCredentials(Email, Password));
+            Error = await commandHandler.Handle(new SignInCommand(new SignInCredentials(Email, Password)));
             RaisePropertyChanged(nameof(Error));
         }
 
         public void SignUp()
         {
-            controller.SignUp();
+            Navigation.SignUp(this);
         }
     }
 }

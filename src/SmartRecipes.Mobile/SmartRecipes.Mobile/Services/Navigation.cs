@@ -2,24 +2,26 @@
 using Autofac;
 using SmartRecipes.Mobile.Pages;
 using SmartRecipes.Mobile.Controllers;
+using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile
 {
     public static class Navigation
     {
-        public static void LogIn(SecurityController controller)
+        public static async Task LogIn(SecurityHandler controller)
         {
-            Application.Current.MainPage = new NavigationPage(DIContainer.Instance.Resolve<AppContainer>());
+            Application.Current.MainPage = new NavigationPage(await PageFactory.GetPageAsync<AppContainer>());
         }
 
-        public static void SignUp(SecurityController controller)
+        public static async Task SignUp(SignInViewModel viewModel)
         {
-            Application.Current.MainPage = DIContainer.Instance.Resolve<SignUpPage>();
+            Application.Current.MainPage = await PageFactory.GetPageAsync<SignUpPage>();
         }
 
-        public static void AddShoppingListItem(ShoppingListItemsViewModel viewModel)
+        public static async Task AddShoppingListItem(ShoppingListItemsViewModel viewModel)
         {
-            Application.Current.MainPage.Navigation.PushAsync(DIContainer.Instance.Resolve<AddShoppingListItemPage>());
+            var page = await PageFactory.GetPageAsync<AddShoppingListItemPage>();
+            await Application.Current.MainPage.Navigation.PushAsync(page);
         }
     }
 }

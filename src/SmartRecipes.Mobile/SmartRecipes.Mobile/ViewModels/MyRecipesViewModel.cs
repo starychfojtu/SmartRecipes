@@ -7,16 +7,28 @@ namespace SmartRecipes.Mobile
 {
     public class MyRecipesViewModel : ViewModel
     {
-        readonly MyRecipesController controller;
+        private readonly MyRecipesHandler commandHandler;
 
-        public MyRecipesViewModel(MyRecipesController controller)
+        private readonly RecipeRepository repository;
+
+        public MyRecipesViewModel(MyRecipesHandler commandHandler, RecipeRepository repository)
         {
-            this.controller = controller;
+            this.repository = repository;
+            this.commandHandler = commandHandler;
         }
 
-        public async Task<IEnumerable<RecipeCellViewModel>> GetRecipes()
+        public IEnumerable<RecipeCellViewModel> Recipes { get; private set; }
+
+        public async Task UpdateRecipesAsync()
         {
-            return (await controller.GetAll()).Select(r => RecipeCellViewModel.Create(r, () => { }));
+            var recipes = await repository.GetAllAsync();
+            Recipes = recipes.Select(r => RecipeCellViewModel.Create(r, () => { }));
+            RaisePropertyChanged(nameof(Recipes));
+        }
+
+        public override async Task InitializeAsync()
+        {
+            await UpdateRecipesAsync();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using SmartRecipes.Mobile.Pages;
 using System.Net.Http;
 using SmartRecipes.Mobile.Controllers;
 using SmartRecipes.Mobile.ReadModels;
@@ -29,23 +28,18 @@ namespace SmartRecipes.Mobile
 
             // Read models
             builder.RegisterType<ShoppingListRepository>();
+            builder.RegisterType<RecipeRepository>();
 
             // Write models
             builder.RegisterType<ShoppingListHandler>();
+            builder.RegisterType<SecurityHandler>();
+            builder.RegisterType<MyRecipesHandler>();
 
             // View models
             builder.RegisterType<SignInViewModel>();
             builder.RegisterType<ShoppingListItemsViewModel>();
             builder.RegisterType<AddShoppingListItemViewModel>();
             builder.RegisterType<MyRecipesViewModel>();
-
-            // Pages
-            builder.RegisterType<SignInPage>();
-            builder.RegisterType<SignUpPage>();
-            builder.RegisterType<AppContainer>();
-            builder.RegisterType<ShoppingListItemsPage>();
-            builder.RegisterType<AddShoppingListItemPage>();
-            builder.RegisterType<MyRecipesPage>();
 
             return builder.Build();
         }

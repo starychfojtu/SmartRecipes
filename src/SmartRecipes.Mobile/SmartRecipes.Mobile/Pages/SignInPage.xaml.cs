@@ -19,7 +19,7 @@ namespace SmartRecipes.Mobile.Pages
             PasswordEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Password));
 
             SignInButton.Command = new Command(() => viewModel.SignIn());
-            SignUpButton.Command = new Command(() => viewModel.NavigateToSignUp());
+            SignUpButton.Command = new Command(() => viewModel.SignUp());
         }
 
         protected override void OnSizeAllocated(double width, double height)

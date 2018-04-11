@@ -1,5 +1,4 @@
 ﻿using Xamarin.Forms;
-using SmartRecipes.Mobile.Extensions;
 
 namespace SmartRecipes.Mobile.Pages
 {

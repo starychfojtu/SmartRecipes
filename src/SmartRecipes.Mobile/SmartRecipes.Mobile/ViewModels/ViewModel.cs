@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile
 {
@@ -10,5 +11,10 @@ namespace SmartRecipes.Mobile
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public virtual Task InitializeAsync()
+        {
+            return Task.FromResult(false);
+        }
     }
 }

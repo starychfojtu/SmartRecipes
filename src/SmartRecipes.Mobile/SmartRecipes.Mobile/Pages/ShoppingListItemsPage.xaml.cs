@@ -13,9 +13,9 @@ namespace SmartRecipes.Mobile.Pages
             BindingContext = viewModel;
 
             ItemsListView.ItemTemplate = new DataTemplate<FoodstuffCell>();
-            ItemsListView.SetBinding(ItemsView<Cell>.ItemsSourceProperty, nameof(viewModel.GetItems));
+            ItemsListView.SetBinding(ItemsView<Cell>.ItemsSourceProperty, nameof(viewModel.Items));
 
-            AddItemsButton.Clicked += (s, e) => viewModel.NavigateToAddItemPage();
+            AddItemsButton.Clicked += (s, e) => viewModel.AddItem();
         }
 
         protected override void OnAppearing()

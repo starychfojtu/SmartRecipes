@@ -9,13 +9,12 @@ namespace SmartRecipes.Mobile
         public App()
         {
             InitializeComponent();
-
-            Current.MainPage = DIContainer.Instance.Resolve<SignInPage>();
         }
 
-        protected override void OnStart()
+        protected override async void OnStart()
         {
             base.OnStart();
+            Current.MainPage = await PageFactory.GetPageAsync<SignInPage>();
         }
 
         protected override void OnSleep()

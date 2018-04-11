@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Collections;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace SmartRecipes.Mobile.Controllers
+namespace SmartRecipes.Mobile
 {
-    public class MyRecipesController
+    public class RecipeRepository
     {
         private readonly ApiClient apiClient;
 
-        public MyRecipesController(ApiClient apiClient)
+        public RecipeRepository(ApiClient apiClient)
         {
             this.apiClient = apiClient;
         }
 
-        public async Task<IEnumerable<Recipe>> GetAll()
+        public async Task<IEnumerable<Recipe>> GetAllAsync()
         {
             return new[]
             {

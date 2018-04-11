@@ -20,17 +20,11 @@ namespace SmartRecipes.Mobile
             Items = Enumerable.Empty<FoodstuffCellViewModel>();
         }
 
-        // TODO: implement async binding
         public IEnumerable<FoodstuffCellViewModel> Items { get; private set; }
 
-        private async Task IncreaseItemAmount(Ingredient item)
+        public override async Task InitializeAsync()
         {
-            UpdateItems(await commandHandler.Handle(new IncreaseAmount(item)));
-        }
-
-        private async Task DecreaseItemAmount(Ingredient item)
-        {
-            UpdateItems(await commandHandler.Handle(new DecreaseAmount(item)));
+            await UpdateItemsAsync();
         }
 
         public void Refresh()
@@ -38,12 +32,12 @@ namespace SmartRecipes.Mobile
             RaisePropertyChanged(nameof(Items));
         }
 
-        public void NavigateToAddItemPage()
+        public void AddItem()
         {
             Navigation.AddShoppingListItem(this);
         }
 
-        private async Task UpdateItems()
+        private async Task UpdateItemsAsync()
         {
             UpdateItems(await repository.GetItems());
         }
@@ -54,14 +48,23 @@ namespace SmartRecipes.Mobile
             RaisePropertyChanged(nameof(Items));
         }
 
+        private async Task IncreaseAmountAsync(Ingredient item)
+        {
+            UpdateItems(await commandHandler.Handle(new IncreaseAmount(item)));
+        }
+
+        private async Task DecreaseAmountAsync(Ingredient item)
+        {
+            UpdateItems(await commandHandler.Handle(new DecreaseAmount(item)));
+        }
+
         private static FoodstuffCellViewModel ToViewModel(Ingredient ingredient)
         {
-            // TODO: fix
             return new FoodstuffCellViewModel(
                 ingredient.Foodstuff,
                 ingredient.Amount,
-                IncreaseItemAmount(ingredient),
-                DecreaseItemAmount(item)
+                () => { }, //TODO: IncreaseItemAmount(ingredient),
+                () => { } //TODO: DecreaseItemAmount(ingredient)
             );
         }
     }

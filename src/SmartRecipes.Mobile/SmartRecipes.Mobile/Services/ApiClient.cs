@@ -91,7 +91,7 @@ namespace SmartRecipes.Mobile
 
         private Task SimulateRequest()
         {
-            return client.GetAsync("google.com");
+            return client.GetAsync("https://google.com");
         }
     }
 }

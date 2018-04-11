@@ -24,13 +24,13 @@ namespace SmartRecipes.Mobile
 
         public async void Search(string query)
         {
-            SearchResult = (await repository.Search(query)).Select(f => new FoodstuffCellViewModel(f, f.BaseAmount, () => Add(f))); // TODO: add await
+            SearchResult = (await repository.Search(query)).Select(f => new FoodstuffCellViewModel(f, f.BaseAmount, () => { }));//Add(f)
             RaisePropertyChanged(nameof(SearchResult));
         }
 
         private async Task Add(Foodstuff foodstuff)
         {
-            await commandHandler.Handle(new AddToShoppingList(foodstuff));
+            var result = await commandHandler.Handle(new AddToShoppingList(foodstuff));
             RaisePropertyChanged(nameof(SearchResult));
         }
     }
