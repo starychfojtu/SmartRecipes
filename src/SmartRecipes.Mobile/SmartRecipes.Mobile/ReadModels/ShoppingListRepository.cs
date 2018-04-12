@@ -10,15 +10,21 @@ namespace SmartRecipes.Mobile.ReadModels
     {
         private readonly ApiClient apiClient;
 
-        public ShoppingListRepository(ApiClient apiClient)
+        private readonly Database database;
+
+        public ShoppingListRepository(ApiClient apiClient, Database database)
         {
             this.apiClient = apiClient;
+            this.database = database;
         }
 
         public async Task<IEnumerable<Ingredient>> GetItems()
         {
-            var response = await apiClient.GetShoppingList();
-            return ToIngredients(response.Items);
+            var apiResponse = await apiClient.GetShoppingList();
+            return await apiResponse.MatchAsync(
+                r => ToIngredients(r.Items), // TODO : update DB 
+                () => database.Ingredients.ToEnumerableAsync()
+            );
         }
 
         public async Task<IEnumerable<Foodstuff>> Search(string query)

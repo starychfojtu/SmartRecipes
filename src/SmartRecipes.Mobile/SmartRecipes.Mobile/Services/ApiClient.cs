@@ -2,6 +2,7 @@
 using SmartRecipes.Mobile.ApiDto;
 using System;
 using System.Threading.Tasks;
+using LanguageExt;
 
 namespace SmartRecipes.Mobile
 {
@@ -16,26 +17,26 @@ namespace SmartRecipes.Mobile
 
         private string AuthenticationToken { get; set; }
 
-        public async Task<SignInResponse> Post(SignInRequest request)
+        public async Task<Option<SignInResponse>> Post(SignInRequest request)
         {
             await SimulateRequest();
 
             //if (request.Email == "test@gmail.com" && request.Password == "1234")
             //{
             //AuthenticationToken = "fake";
-            return new SignInResponse(true, AuthenticationToken);
+            return new SignInResponse(true, AuthenticationToken); s
             //}
 
             //return new SignInResponse(false, "");
         }
 
-        public async Task<SignUpResponse> Post(SignUpRequest request)
+        public async Task<Option<SignUpResponse>> Post(SignUpRequest request)
         {
             await SimulateRequest();
             return new SignUpResponse(new SignUpResponse.Account("fake@gmail.com"));
         }
 
-        public async Task<ShoppingListResponse> Post(AdjustItemInShoppingListRequest request)
+        public async Task<Option<ShoppingListResponse>> Post(AdjustItemInShoppingListRequest request)
         {
             await SimulateRequest();
 
@@ -57,7 +58,7 @@ namespace SmartRecipes.Mobile
             return await GetShoppingList();
         }
 
-        public async Task<ShoppingListResponse> GetShoppingList()
+        public async Task<Option<ShoppingListResponse>> GetShoppingList()
         {
             await SimulateRequest();
             var tomato = new ShoppingListResponse.Item.Foodstuff(

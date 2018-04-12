@@ -15,6 +15,8 @@ namespace SmartRecipes.Mobile
             Text = text;
         }
 
+        public Recipe() { /* for sqllite */ }
+
         public string Name { get; }
 
         public Uri ImageUrl { get; }

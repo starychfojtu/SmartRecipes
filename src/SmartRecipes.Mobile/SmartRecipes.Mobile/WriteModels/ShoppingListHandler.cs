@@ -15,21 +15,20 @@ namespace SmartRecipes.Mobile.Controllers
             this.apiClient = apiClient;
         }
 
-        public async Task<IEnumerable<Ingredient>> Handle(DecreaseAmount command)
+        public async Task Handle(DecreaseAmount command)
         {
             var request = new AdjustItemInShoppingListRequest(command.Ingredient.Foodstuff.Id, AdjustShoppingListItemAction.DecreaseAmount);
             var response = await apiClient.Post(request);
-            return ShoppingListRepository.ToIngredients(response.Items);
         }
 
-        public async Task<IEnumerable<Ingredient>> Handle(IncreaseAmount command)
+        public async Task Handle(IncreaseAmount command)
         {
-            return await IncreaseAmount(command.Ingredient.Foodstuff);
+            await IncreaseAmount(command.Ingredient.Foodstuff);
         }
 
-        public async Task<IEnumerable<Ingredient>> Handle(AddToShoppingList command)
+        public async Task Handle(AddToShoppingList command)
         {
-            return await IncreaseAmount(command.Foodstuff);
+            await IncreaseAmount(command.Foodstuff);
         }
 
         private async Task<IEnumerable<Ingredient>> IncreaseAmount(Foodstuff foodstuff)

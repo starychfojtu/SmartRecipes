@@ -25,6 +25,7 @@ namespace SmartRecipes.Mobile
             // Services
             builder.RegisterInstance(new HttpClient()).As<HttpClient>();
             builder.RegisterType<ApiClient>().SingleInstance();
+            builder.RegisterType<Database>().SingleInstance();
 
             // Read models
             builder.RegisterType<ShoppingListRepository>();

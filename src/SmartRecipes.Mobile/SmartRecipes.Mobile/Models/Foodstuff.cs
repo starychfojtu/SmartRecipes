@@ -12,6 +12,8 @@ namespace SmartRecipes.Mobile
             AmountStep = amountStep;
         }
 
+        public Foodstuff() { /* for sqlite */ }
+
         public Guid Id { get; }
 
         public string Name { get; }

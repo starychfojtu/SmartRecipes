@@ -13,6 +13,8 @@ namespace SmartRecipes.Mobile
             Amount = amount;
         }
 
+        public Ingredient() { /* for sqllite */ }
+
         public Foodstuff Foodstuff { get; }
 
         public Amount Amount { get; }
