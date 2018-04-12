@@ -28,10 +28,13 @@ namespace SmartRecipes.Mobile.Controllers
             return "Invalid credenatials";
         }
 
-        public static async Task<AuthenticationResult> Authenticate(SignInCredentials credentials, Func<SignInRequest, Task<SignInResponse>> post)
+        public static async Task<AuthenticationResult> Authenticate(SignInCredentials credentials, Func<SignInRequest, Task<Option<SignInResponse>>> post)
         {
             var response = await post(new SignInRequest(credentials.Email, credentials.Password));
-            return new AuthenticationResult(response.IsAuthorized, response.Token);
+            return response.Match(
+                r => new AuthenticationResult(r.IsAuthorized, r.Token),
+                () => new AuthenticationResult(success: false, token: null)
+            );
         }
     }
 

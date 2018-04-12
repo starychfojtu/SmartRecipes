@@ -5,7 +5,7 @@ namespace SmartRecipes.Mobile
 {
     public static class CollectionExtensions
     {
-        public static IList<T> Replpace<T>(this IList<T> list, T item, T replacement)
+        public static IList<T> Replace<T>(this IList<T> list, T item, T replacement)
         {
             return list.Tee(l => l[l.IndexOf(item)] = replacement);
         }

@@ -2,15 +2,15 @@
 
 namespace SmartRecipes.Mobile.ApiDto
 {
-    public enum AdjustShoppingListItemAction
+    public enum IngredientAction
     {
         DecreaseAmount,
         IncreaseAmount
     }
 
-    public class AdjustItemInShoppingListRequest
+    public class AdjustIngredientRequest
     {
-        public AdjustItemInShoppingListRequest(Guid foodstuffId, AdjustShoppingListItemAction action)
+        public AdjustIngredientRequest(Guid foodstuffId, IngredientAction action)
         {
             FoodstuffId = foodstuffId;
             Action = action;
@@ -18,6 +18,6 @@ namespace SmartRecipes.Mobile.ApiDto
 
         public Guid FoodstuffId { get; }
 
-        public AdjustShoppingListItemAction Action { get; set; }
+        public IngredientAction Action { get; set; }
     }
 }

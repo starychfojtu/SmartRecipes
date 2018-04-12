@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile
 {
     public class FoodstuffCellViewModel
     {
-        public FoodstuffCellViewModel(Foodstuff foodstuff, Amount amount, Action onPlus, Action onMinus = null)
+        public FoodstuffCellViewModel(Foodstuff foodstuff, Amount amount, Func<Task> onPlus, Func<Task> onMinus = null)
         {
             Foodstuff = foodstuff;
             Amount = amount;
@@ -16,8 +17,8 @@ namespace SmartRecipes.Mobile
 
         public Amount Amount { get; }
 
-        public Action OnPlus { get; }
+        public Func<Task> OnPlus { get; }
 
-        public Action OnMinus { get; }
+        public Func<Task> OnMinus { get; }
     }
 }

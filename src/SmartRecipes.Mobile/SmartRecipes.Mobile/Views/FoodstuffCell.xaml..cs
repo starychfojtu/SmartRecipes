@@ -1,5 +1,6 @@
 ﻿using Xamarin.Forms;
 using FFImageLoading.Transformations;
+using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile.Views
 {
@@ -11,20 +12,20 @@ namespace SmartRecipes.Mobile.Views
 
             Image.Transformations.Add(new CircleTransformation());
 
-            MinusButton.Clicked += (s, e) => OnMinus();
-            PlusButton.Clicked += (s, e) => OnPlus();
+            MinusButton.Clicked += async (s, e) => await OnMinus();
+            PlusButton.Clicked += async (s, e) => await OnPlus();
         }
 
         private FoodstuffCellViewModel ViewModel => (BindingContext as FoodstuffCellViewModel);
 
-        private void OnMinus()
+        private async Task OnMinus()
         {
-            ViewModel.OnMinus?.Invoke();
+            await ViewModel.OnMinus?.Invoke();
         }
 
-        private void OnPlus()
+        private async Task OnPlus()
         {
-            ViewModel.OnPlus.Invoke();
+            await ViewModel.OnPlus.Invoke();
         }
 
         protected override void OnBindingContextChanged()

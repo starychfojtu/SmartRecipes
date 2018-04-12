@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using SmartRecipes.Mobile.ApiDto;
+﻿using SmartRecipes.Mobile.ApiDto;
 using System.Threading.Tasks;
-using SmartRecipes.Mobile.Commands;
-using SmartRecipes.Mobile.ReadModels;
+using System;
+using LanguageExt;
 
 namespace SmartRecipes.Mobile.Controllers
 {
@@ -15,27 +14,29 @@ namespace SmartRecipes.Mobile.Controllers
             this.apiClient = apiClient;
         }
 
-        public async Task Handle(DecreaseAmount command)
+        public async Task<Ingredient> DecreaseAmount(Ingredient ingredient)
         {
-            var request = new AdjustItemInShoppingListRequest(command.Ingredient.Foodstuff.Id, AdjustShoppingListItemAction.DecreaseAmount);
-            var response = await apiClient.Post(request);
+            return await ChangeAmount(ingredient, i => Ingredient.DecreaseAmount(i), IngredientAction.DecreaseAmount);
         }
 
-        public async Task Handle(IncreaseAmount command)
+        public async Task<Ingredient> IncreaseAmount(Ingredient ingredient)
         {
-            await IncreaseAmount(command.Ingredient.Foodstuff);
+            return await ChangeAmount(ingredient, i => Ingredient.IncreaseAmount(i), IngredientAction.IncreaseAmount);
+        }
+
+        private async Task<Ingredient> ChangeAmount(Ingredient ingredient, Func<Ingredient, Option<Ingredient>> operation, IngredientAction action)
+        {
+            var changed = operation(ingredient).IfNone(() => throw new InvalidOperationException());
+            var request = new AdjustIngredientRequest(ingredient.Foodstuff.Id, action);
+            var response = await apiClient.Post(request);
+            // TODO: create job to update api
+
+            return changed;
         }
 
         public async Task Handle(AddToShoppingList command)
         {
-            await IncreaseAmount(command.Foodstuff);
-        }
-
-        private async Task<IEnumerable<Ingredient>> IncreaseAmount(Foodstuff foodstuff)
-        {
-            var request = new AdjustItemInShoppingListRequest(foodstuff.Id, AdjustShoppingListItemAction.IncreaseAmount);
-            var response = await apiClient.Post(request);
-            return ShoppingListRepository.ToIngredients(response.Items);
+            //await IncreaseAmount(command.Foodstuff);
         }
     }
 }

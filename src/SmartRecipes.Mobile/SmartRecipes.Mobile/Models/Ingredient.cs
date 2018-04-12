@@ -47,7 +47,7 @@ namespace SmartRecipes.Mobile
             return newItem.Bind(i => Amount.IsLessThanOrEquals(i.Amount, Amount.Zero(i.Amount.Unit)) ? None : Some(i));
         }
 
-        public static Option<Ingredient> ChangeAmount(Ingredient item, Func<Amount, Amount, Option<Amount>> operation)
+        private static Option<Ingredient> ChangeAmount(Ingredient item, Func<Amount, Amount, Option<Amount>> operation)
         {
             var changedAmount = operation(item.Amount, item.Foodstuff.AmountStep);
             return changedAmount.Map(a => item.WithAmount(a));

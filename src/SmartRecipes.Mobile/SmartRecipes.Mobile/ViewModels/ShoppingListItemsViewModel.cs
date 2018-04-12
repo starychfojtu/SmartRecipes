@@ -17,10 +17,15 @@ namespace SmartRecipes.Mobile
         {
             this.repository = repository;
             this.commandHandler = commandHandler;
-            Items = Enumerable.Empty<FoodstuffCellViewModel>();
+            Ingredients = new List<Ingredient>();
         }
 
-        public IEnumerable<FoodstuffCellViewModel> Items { get; private set; }
+        public IEnumerable<FoodstuffCellViewModel> Items
+        {
+            get { return Ingredients.Select(i => ToViewModel(i)); }
+        }
+
+        private IList<Ingredient> Ingredients { get; set; }
 
         public override async Task InitializeAsync()
         {
@@ -32,39 +37,41 @@ namespace SmartRecipes.Mobile
             RaisePropertyChanged(nameof(Items));
         }
 
-        public void AddItem()
+        public async Task AddItem()
         {
-            Navigation.AddShoppingListItem(this);
+            await Navigation.AddShoppingListItem(this);
+        }
+
+        private async Task IncreaseAmountAsync(Ingredient ingredient)
+        {
+            var increased = await commandHandler.IncreaseAmount(ingredient);
+            UpdateItems(Ingredients.Replace(ingredient, increased));
+        }
+
+        private async Task DecreaseAmountAsync(Ingredient ingredient)
+        {
+            var decreased = await commandHandler.DecreaseAmount(ingredient);
+            UpdateItems(Ingredients.Replace(ingredient, decreased));
         }
 
         private async Task UpdateItemsAsync()
         {
-            UpdateItems(await repository.GetItems());
+            UpdateItems((await repository.GetItems()).ToList());
         }
 
-        private void UpdateItems(IEnumerable<Ingredient> ingredients)
+        private void UpdateItems(IList<Ingredient> ingredients)
         {
-            Items = ingredients.Select(i => ToViewModel(i));
+            Ingredients = ingredients;
             RaisePropertyChanged(nameof(Items));
         }
 
-        private async Task IncreaseAmountAsync(Ingredient item)
-        {
-            UpdateItems(await commandHandler.Handle(new IncreaseAmount(item)));
-        }
-
-        private async Task DecreaseAmountAsync(Ingredient item)
-        {
-            UpdateItems(await commandHandler.Handle(new DecreaseAmount(item)));
-        }
-
-        private static FoodstuffCellViewModel ToViewModel(Ingredient ingredient)
+        private FoodstuffCellViewModel ToViewModel(Ingredient ingredient)
         {
             return new FoodstuffCellViewModel(
                 ingredient.Foodstuff,
                 ingredient.Amount,
-                () => { }, //TODO: IncreaseItemAmount(ingredient),
-                () => { } //TODO: DecreaseItemAmount(ingredient)
+                () => IncreaseAmountAsync(ingredient),
+                () => DecreaseAmountAsync(ingredient)
             );
         }
     }

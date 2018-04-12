@@ -24,7 +24,7 @@ namespace SmartRecipes.Mobile
             //if (request.Email == "test@gmail.com" && request.Password == "1234")
             //{
             //AuthenticationToken = "fake";
-            return new SignInResponse(true, AuthenticationToken); s
+            return new SignInResponse(true, AuthenticationToken);
             //}
 
             //return new SignInResponse(false, "");
@@ -36,7 +36,7 @@ namespace SmartRecipes.Mobile
             return new SignUpResponse(new SignUpResponse.Account("fake@gmail.com"));
         }
 
-        public async Task<Option<ShoppingListResponse>> Post(AdjustItemInShoppingListRequest request)
+        public async Task<Option<ShoppingListResponse>> Post(AdjustIngredientRequest request)
         {
             await SimulateRequest();
 
