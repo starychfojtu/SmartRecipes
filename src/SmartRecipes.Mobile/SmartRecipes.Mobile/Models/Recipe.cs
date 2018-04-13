@@ -6,12 +6,12 @@ namespace SmartRecipes.Mobile
 {
     public class Recipe
     {
-        private Recipe(Guid id, string name, Uri imageUrl, Account owner, int personCount, IEnumerable<Ingredient> ingredients, string text)
+        private Recipe(Guid id, string name, Uri imageUrl, Guid ownerId, int personCount, IEnumerable<Ingredient> ingredients, string text)
         {
             Id = id;
             Name = name;
             ImageUrl = imageUrl;
-            Owner = owner;
+            OwnerId = ownerId;
             PersonCount = personCount;
             Ingredients = ingredients;
             Text = text;
@@ -20,25 +20,25 @@ namespace SmartRecipes.Mobile
         public Recipe() { /* for sqllite */ }
 
         [PrimaryKey]
-        public Guid Id { get; }
+        public Guid Id { get; set; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public Uri ImageUrl { get; }
+        public Uri ImageUrl { get; set; }
 
-        public Account Owner { get; }
+        public Guid OwnerId { get; set; }
 
-        public int PersonCount { get; }
+        public int PersonCount { get; set; }
 
         public IEnumerable<Ingredient> Ingredients { get; } // TODO: remove
 
-        public string Text { get; }
+        public string Text { get; set; }
 
         // Combinators
 
         public static Recipe Create(Guid id, string name, Uri imageUrl, Account owner, int personCount, IEnumerable<Ingredient> ingredients, string text)
         {
-            return new Recipe(id, name, imageUrl, owner, personCount, ingredients, text);
+            return new Recipe(id, name, imageUrl, owner.Id, personCount, ingredients, text);
         }
     }
 }

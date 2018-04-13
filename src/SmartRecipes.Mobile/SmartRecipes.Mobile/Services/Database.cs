@@ -31,17 +31,17 @@ namespace SmartRecipes.Mobile
 
         public AsyncTableQuery<Recipe> Recipes
         {
-            get { return connection.Table<Recipe>(); }
+            get { return Connection.Table<Recipe>(); }
         }
 
         public AsyncTableQuery<Ingredient> Ingredients
         {
-            get { return connection.Table<Ingredient>(); }
+            get { return Connection.Table<Ingredient>(); }
         }
 
         public AsyncTableQuery<Foodstuff> Foodstuffs
         {
-            get { return connection.Table<Foodstuff>(); }
+            get { return Connection.Table<Foodstuff>(); }
         }
 
         private SQLiteAsyncConnection Connection
@@ -52,9 +52,9 @@ namespace SmartRecipes.Mobile
         private SQLiteAsyncConnection InitializeDb()
         {
             var conn = new SQLiteAsyncConnection(DependencyService.Get<IFileHelper>().GetLocalFilePath(FileName));
-            conn.CreateTableAsync<Recipe>();
-            conn.CreateTableAsync<Ingredient>();
-            conn.CreateTableAsync<Foodstuff>();
+            conn.CreateTableAsync<Recipe>().Wait();
+            conn.CreateTableAsync<Ingredient>().Wait();
+            conn.CreateTableAsync<Foodstuff>().Wait();
             return conn;
         }
     }

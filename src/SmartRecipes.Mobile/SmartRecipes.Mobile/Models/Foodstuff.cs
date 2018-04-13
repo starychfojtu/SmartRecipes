@@ -17,15 +17,15 @@ namespace SmartRecipes.Mobile
         public Foodstuff() { /* for sqlite */ }
 
         [PrimaryKey]
-        public Guid Id { get; }
+        public Guid Id { get; set; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public Uri ImageUrl { get; }
+        public Uri ImageUrl { get; set; }
 
-        public Amount BaseAmount { get; }
+        public Amount BaseAmount { get; set; }
 
-        public Amount AmountStep { get; }
+        public Amount AmountStep { get; set; }
 
         public bool Equals(Foodstuff foodstuff)
         {

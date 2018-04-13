@@ -14,15 +14,15 @@ namespace SmartRecipes.Mobile
         public Ingredient() { /* for sqllite */ }
 
         [PrimaryKey]
-        public Guid Id { get; }
+        public Guid Id { get; set; }
 
-        public Guid FoodstuffId { get; }
+        public Guid FoodstuffId { get; set; }
 
-        public Guid? RecipeId { get; }
+        public Guid? RecipeId { get; set; }
 
-        public Guid? ShoppingListOwnerId { get; }
+        public Guid? ShoppingListOwnerId { get; set; }
 
-        public Amount Amount { get; }
+        public Amount Amount { get; set; }
 
         public Ingredient WithAmount(Amount amount)
         {
