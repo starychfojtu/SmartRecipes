@@ -20,13 +20,13 @@ namespace SmartRecipes.Mobile
 
         public async void SignIn()
         {
-            Error = await commandHandler.Handle(new SignInCommand(new SignInCredentials(Email, Password)));
+            Error = await commandHandler.SignIn(new SignInCredentials(Email, Password));
             RaisePropertyChanged(nameof(Error));
         }
 
-        public void SignUp()
+        public async void SignUp()
         {
-            Navigation.SignUp(this);
+            await Navigation.SignUp(this);
         }
     }
 }

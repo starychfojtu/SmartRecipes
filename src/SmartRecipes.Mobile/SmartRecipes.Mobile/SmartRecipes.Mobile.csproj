@@ -21,6 +21,7 @@
     <Compile Remove="Extensions\CachedImageExtensions.cs" />
     <Compile Remove="Pages\ShoppingListAutocomplete.xaml.cs" />
     <Compile Remove="Services\ShoppingList.cs" />
+    <Compile Remove="Commands\SignInCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="App.xaml.cs">
@@ -78,7 +79,7 @@
     <Folder Include="Controls\" />
     <Folder Include="WriteModels\" />
     <Folder Include="ReadModels\" />
-    <Folder Include="Commands\" />
+    <Folder Include="ReadModels\Dto\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Models\SignInCredentials.s" />

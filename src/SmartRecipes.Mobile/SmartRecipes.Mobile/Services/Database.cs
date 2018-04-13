@@ -1,5 +1,6 @@
 ﻿using SQLite;
 using Xamarin.Forms;
+using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile
 {
@@ -9,9 +10,23 @@ namespace SmartRecipes.Mobile
 
         private SQLiteAsyncConnection connection;
 
-        private SQLiteAsyncConnection Connection
+        public Database()
         {
-            get { return connection ?? (connection = InitializeDb()); }
+        }
+
+        public async Task UpdateAsync(Recipe recipe)
+        {
+            await Connection.UpdateAsync(recipe);
+        }
+
+        public async Task UpdateAsync(Ingredient ingredient)
+        {
+            await Connection.UpdateAsync(ingredient);
+        }
+
+        public async Task UpdateAsync(Foodstuff foodstuff)
+        {
+            await Connection.UpdateAsync(foodstuff);
         }
 
         public AsyncTableQuery<Recipe> Recipes
@@ -27,6 +42,11 @@ namespace SmartRecipes.Mobile
         public AsyncTableQuery<Foodstuff> Foodstuffs
         {
             get { return connection.Table<Foodstuff>(); }
+        }
+
+        private SQLiteAsyncConnection Connection
+        {
+            get { return connection ?? (connection = InitializeDb()); }
         }
 
         private SQLiteAsyncConnection InitializeDb()

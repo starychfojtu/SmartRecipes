@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace SmartRecipes.Mobile
 {
@@ -17,8 +18,8 @@ namespace SmartRecipes.Mobile
         {
             return new[]
             {
-                Recipe.Create("Lasagna", null, null, 1, Enumerable.Empty<Ingredient>() , "Cook me"),
-                Recipe.Create("Lasagna 2", null, null, 2, Enumerable.Empty<Ingredient>(), "Cook me twice")
+                Recipe.Create(Guid.NewGuid(), "Lasagna", null, null, 1, Enumerable.Empty<Ingredient>() , "Cook me"),
+                Recipe.Create(Guid.NewGuid(), "Lasagna 2", null, null, 2, Enumerable.Empty<Ingredient>(), "Cook me twice")
             };
         }
     }

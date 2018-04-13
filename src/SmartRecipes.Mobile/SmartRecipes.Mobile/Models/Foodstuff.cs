@@ -1,4 +1,6 @@
 ﻿using System;
+using SQLite;
+
 namespace SmartRecipes.Mobile
 {
     public class Foodstuff
@@ -14,6 +16,7 @@ namespace SmartRecipes.Mobile
 
         public Foodstuff() { /* for sqlite */ }
 
+        [PrimaryKey]
         public Guid Id { get; }
 
         public string Name { get; }
@@ -23,5 +26,10 @@ namespace SmartRecipes.Mobile
         public Amount BaseAmount { get; }
 
         public Amount AmountStep { get; }
+
+        public bool Equals(Foodstuff foodstuff)
+        {
+            return Id == foodstuff.Id;
+        }
     }
 }

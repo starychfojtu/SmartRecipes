@@ -35,8 +35,8 @@ namespace SmartRecipes.Mobile.Views
                 OtherButton.IsVisible = ViewModel.OnOther != null;
                 IngredientsStackLayout.Children.Clear();
 
-                var thumbnails = ViewModel.Recipe.Ingredients.Select(i => Image.Thumbnail(i.Foodstuff.ImageUrl));
-                IngredientsStackLayout.Children.AddRange(thumbnails);
+                // var thumbnails = ViewModel.Recipe.Ingredients.Select(i => Image.Thumbnail(i.Foodstuff.ImageUrl));
+                // IngredientsStackLayout.Children.AddRange(thumbnails);
             }
         }
     }

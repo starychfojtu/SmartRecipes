@@ -1,56 +1,44 @@
-﻿using System.Linq;
-using System;
-using LanguageExt;
-using static LanguageExt.Prelude;
+﻿using System;
+using SQLite;
 
 namespace SmartRecipes.Mobile
 {
     public class Ingredient
     {
-        private Ingredient(Foodstuff foodstuff, Amount amount)
+        private Ingredient(Guid foodstuffId, Amount amount)
         {
-            Foodstuff = foodstuff;
+            FoodstuffId = foodstuffId;
             Amount = amount;
         }
 
         public Ingredient() { /* for sqllite */ }
 
-        public Foodstuff Foodstuff { get; }
+        [PrimaryKey]
+        public Guid Id { get; }
+
+        public Guid FoodstuffId { get; }
+
+        public Guid? RecipeId { get; }
+
+        public Guid? ShoppingListOwnerId { get; }
 
         public Amount Amount { get; }
 
         public Ingredient WithAmount(Amount amount)
         {
-            return new Ingredient(Foodstuff, amount);
+            return new Ingredient(FoodstuffId, amount);
         }
 
         // Combinators
 
         public static Ingredient Create(Foodstuff foodstuff, Amount amount)
         {
-            return new Ingredient(foodstuff, amount);
+            return new Ingredient(foodstuff.Id, amount);
         }
 
         public static Ingredient Create(Foodstuff foodstuff)
         {
-            return new Ingredient(foodstuff, foodstuff.BaseAmount);
-        }
-
-        public static Option<Ingredient> IncreaseAmount(Ingredient item)
-        {
-            return ChangeAmount(item, Amount.Add);
-        }
-
-        public static Option<Ingredient> DecreaseAmount(Ingredient item)
-        {
-            var newItem = ChangeAmount(item, Amount.Substract);
-            return newItem.Bind(i => Amount.IsLessThanOrEquals(i.Amount, Amount.Zero(i.Amount.Unit)) ? None : Some(i));
-        }
-
-        private static Option<Ingredient> ChangeAmount(Ingredient item, Func<Amount, Amount, Option<Amount>> operation)
-        {
-            var changedAmount = operation(item.Amount, item.Foodstuff.AmountStep);
-            return changedAmount.Map(a => item.WithAmount(a));
+            return new Ingredient(foodstuff.Id, foodstuff.BaseAmount);
         }
     }
 }

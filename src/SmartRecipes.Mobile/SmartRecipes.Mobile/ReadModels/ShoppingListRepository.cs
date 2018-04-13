@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.ApiDto;
+using LanguageExt;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
@@ -18,12 +19,18 @@ namespace SmartRecipes.Mobile.ReadModels
             this.database = database;
         }
 
-        public async Task<IEnumerable<Ingredient>> GetItems()
+        public async Task<IEnumerable<ShoppingListItem>> GetItems()
         {
             var apiResponse = await apiClient.GetShoppingList();
             return await apiResponse.MatchAsync(
-                r => ToIngredients(r.Items), // TODO : update DB 
-                () => database.Ingredients.ToEnumerableAsync()
+                r => ToItems(r.Items).AsTask(), // TODO : update DB 
+                async () =>
+                {
+                    var ingredients = await database.Ingredients.Where(i => i.ShoppingListOwnerId != null).ToEnumerableAsync();
+                    var foostuffIds = ingredients.Select(i => i.FoodstuffId);
+                    var foodstuffs = await database.Foodstuffs.Where(f => foostuffIds.Contains(f.Id)).ToEnumerableAsync();
+                    return ingredients.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new ShoppingListItem(f, i.Amount));
+                }
             );
         }
 
@@ -48,13 +55,13 @@ namespace SmartRecipes.Mobile.ReadModels
                 )
             };
             var shoppingListItem = await GetItems();
-            return foodstuff.Except(shoppingListItem.Select(i => i.Foodstuff));
+            return foodstuff.Except(shoppingListItem.Select(i => i.Foodstuff.Value));
         }
 
         // TODO: move elsewhere
-        public static IEnumerable<Ingredient> ToIngredients(IEnumerable<ShoppingListResponse.Item> items)
+        public static IEnumerable<ShoppingListItem> ToItems(IEnumerable<ShoppingListResponse.Item> items)
         {
-            return items.Select(i => Ingredient.Create(
+            return items.Select(i => new ShoppingListItem(
                 new Foodstuff(
                     i.FoodstuffDto.Id,
                     i.FoodstuffDto.Name,

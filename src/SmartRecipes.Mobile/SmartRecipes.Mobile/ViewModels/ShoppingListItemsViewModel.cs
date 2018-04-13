@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.Controllers;
 using SmartRecipes.Mobile.ReadModels;
-using SmartRecipes.Mobile.Commands;
 
 namespace SmartRecipes.Mobile
 {
@@ -13,19 +12,19 @@ namespace SmartRecipes.Mobile
 
         private readonly ShoppingListRepository repository;
 
+        private IList<ShoppingListItem> items { get; set; }
+
         public ShoppingListItemsViewModel(ShoppingListHandler commandHandler, ShoppingListRepository repository)
         {
             this.repository = repository;
             this.commandHandler = commandHandler;
-            Ingredients = new List<Ingredient>();
+            items = new List<ShoppingListItem>();
         }
 
         public IEnumerable<FoodstuffCellViewModel> Items
         {
-            get { return Ingredients.Select(i => ToViewModel(i)); }
+            get { return items.Select(i => ToViewModel(i)); }
         }
-
-        private IList<Ingredient> Ingredients { get; set; }
 
         public override async Task InitializeAsync()
         {
@@ -42,16 +41,18 @@ namespace SmartRecipes.Mobile
             await Navigation.AddShoppingListItem(this);
         }
 
-        private async Task IncreaseAmountAsync(Ingredient ingredient)
+        private async Task IncreaseAmountAsync(Foodstuff foodstuff)
         {
-            var increased = await commandHandler.IncreaseAmount(ingredient);
-            UpdateItems(Ingredients.Replace(ingredient, increased));
+            var increased = await commandHandler.IncreaseAmount(foodstuff); // TODO: abstract out these functions
+            var formal = items.First(i => i.Foodstuff.Value.Equals(foodstuff));
+            UpdateItems(items.Replace(formal, increased));
         }
 
-        private async Task DecreaseAmountAsync(Ingredient ingredient)
+        private async Task DecreaseAmountAsync(Foodstuff foodstuff)
         {
-            var decreased = await commandHandler.DecreaseAmount(ingredient);
-            UpdateItems(Ingredients.Replace(ingredient, decreased));
+            var decreased = await commandHandler.DecreaseAmount(foodstuff);
+            var formal = items.First(i => i.Foodstuff.Value.Equals(foodstuff));
+            UpdateItems(items.Replace(formal, decreased));
         }
 
         private async Task UpdateItemsAsync()
@@ -59,19 +60,19 @@ namespace SmartRecipes.Mobile
             UpdateItems((await repository.GetItems()).ToList());
         }
 
-        private void UpdateItems(IList<Ingredient> ingredients)
+        private void UpdateItems(IList<ShoppingListItem> newItems)
         {
-            Ingredients = ingredients;
+            items = newItems;
             RaisePropertyChanged(nameof(Items));
         }
 
-        private FoodstuffCellViewModel ToViewModel(Ingredient ingredient)
+        private FoodstuffCellViewModel ToViewModel(ShoppingListItem item)
         {
             return new FoodstuffCellViewModel(
-                ingredient.Foodstuff,
-                ingredient.Amount,
-                () => IncreaseAmountAsync(ingredient),
-                () => DecreaseAmountAsync(ingredient)
+                item.Foodstuff,
+                item.Amount,
+                () => IncreaseAmountAsync(item.Foodstuff),
+                () => DecreaseAmountAsync(item.Foodstuff)
             );
         }
     }

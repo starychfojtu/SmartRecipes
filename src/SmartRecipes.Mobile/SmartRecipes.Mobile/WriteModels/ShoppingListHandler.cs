@@ -9,34 +9,42 @@ namespace SmartRecipes.Mobile.Controllers
     {
         private readonly ApiClient apiClient;
 
-        public ShoppingListHandler(ApiClient apiClient)
+        private readonly Database database;
+
+        public ShoppingListHandler(ApiClient apiClient, Database database)
         {
             this.apiClient = apiClient;
+            this.database = database;
         }
 
-        public async Task<Ingredient> DecreaseAmount(Ingredient ingredient)
+        public async Task<ShoppingListItem> DecreaseAmount(Foodstuff foodstuff)
         {
-            return await ChangeAmount(ingredient, i => Ingredient.DecreaseAmount(i), IngredientAction.DecreaseAmount);
+            return new ShoppingListItem(foodstuff, await ChangeAmount(foodstuff, Amount.Substract, IngredientAction.DecreaseAmount));
         }
 
-        public async Task<Ingredient> IncreaseAmount(Ingredient ingredient)
+        public async Task<ShoppingListItem> IncreaseAmount(Foodstuff foodstuff)
         {
-            return await ChangeAmount(ingredient, i => Ingredient.IncreaseAmount(i), IngredientAction.IncreaseAmount);
+            return new ShoppingListItem(foodstuff, await ChangeAmount(foodstuff, Amount.Add, IngredientAction.IncreaseAmount));
         }
 
-        private async Task<Ingredient> ChangeAmount(Ingredient ingredient, Func<Ingredient, Option<Ingredient>> operation, IngredientAction action)
+        public async Task<ShoppingListItem> Add(Foodstuff foodstuff)
         {
-            var changed = operation(ingredient).IfNone(() => throw new InvalidOperationException());
-            var request = new AdjustIngredientRequest(ingredient.Foodstuff.Id, action);
+            return await IncreaseAmount(foodstuff);
+        }
+
+        private async Task<Amount> ChangeAmount(Foodstuff foodstuff, Func<Amount, Amount, Option<Amount>> operation, IngredientAction action)
+        {
+            var ingredientOptional = await database.Ingredients.Where(i => i.FoodstuffId == foodstuff.Id).FirstOptionAsync();
+            var ingredient = ingredientOptional.IfNone(() => Ingredient.Create(foodstuff)); // TODO: save to db
+            var newAmount = operation(ingredient.Amount, foodstuff.AmountStep);
+            var changedIngredient = ingredient.WithAmount(newAmount.IfNone(() => throw new InvalidOperationException()));
+            var request = new AdjustIngredientRequest(foodstuff.Id, action);
             var response = await apiClient.Post(request);
+
+            await database.UpdateAsync(changedIngredient);
             // TODO: create job to update api
 
-            return changed;
-        }
-
-        public async Task Handle(AddToShoppingList command)
-        {
-            //await IncreaseAmount(command.Foodstuff);
+            return changedIngredient.Amount;
         }
     }
 }

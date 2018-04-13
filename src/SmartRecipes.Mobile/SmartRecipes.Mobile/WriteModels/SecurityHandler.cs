@@ -16,9 +16,9 @@ namespace SmartRecipes.Mobile.Controllers
             this.apiClient = apiClient;
         }
 
-        public async Task<string> Handle(SignInCommand command)
+        public async Task<string> SignIn(SignInCredentials credentials)
         {
-            var result = await Authenticate(command.Credentials, apiClient.Post);
+            var result = await Authenticate(credentials, apiClient.Post);
 
             if (result.Success)
             {

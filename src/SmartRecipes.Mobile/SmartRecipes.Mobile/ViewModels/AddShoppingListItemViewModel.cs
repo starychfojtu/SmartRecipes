@@ -30,7 +30,7 @@ namespace SmartRecipes.Mobile
 
         private async Task Add(Foodstuff foodstuff)
         {
-            await commandHandler.Handle(new AddToShoppingList(foodstuff));
+            await commandHandler.Add(foodstuff);
             RaisePropertyChanged(nameof(SearchResult));
         }
     }
