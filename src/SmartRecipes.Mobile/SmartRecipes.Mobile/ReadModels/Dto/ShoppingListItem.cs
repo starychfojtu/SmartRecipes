@@ -4,14 +4,24 @@ namespace SmartRecipes.Mobile
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(Some<Foodstuff> foodstuff, Amount amount)
+        public ShoppingListItem(Some<Foodstuff> foodstuff, Some<Ingredient> ingredient)
         {
             Foodstuff = foodstuff;
-            Amount = amount;
+            Ingredient = ingredient;
         }
 
-        public Some<Foodstuff> Foodstuff { get; }
+        public Foodstuff Foodstuff { get; }
 
-        public Amount Amount { get; }
+        public Ingredient Ingredient { get; }
+
+        public Amount Amount
+        {
+            get { return Ingredient.Amount; }
+        }
+
+        public ShoppingListItem WithIngredient(Some<Ingredient> ingredient)
+        {
+            return new ShoppingListItem(Foodstuff, ingredient);
+        }
     }
 }

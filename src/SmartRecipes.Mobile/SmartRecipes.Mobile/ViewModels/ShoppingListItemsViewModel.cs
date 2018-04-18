@@ -41,18 +41,16 @@ namespace SmartRecipes.Mobile
             await Navigation.AddShoppingListItem(this);
         }
 
-        private async Task IncreaseAmountAsync(Foodstuff foodstuff)
+        private async Task IncreaseAmountAsync(ShoppingListItem item)
         {
-            var increased = await commandHandler.IncreaseAmount(foodstuff); // TODO: abstract out these functions
-            var formal = items.First(i => i.Foodstuff.Value.Equals(foodstuff));
-            UpdateItems(items.Replace(formal, increased));
+            var increased = await commandHandler.IncreaseAmount(item);
+            UpdateItems(items.Replace(item, increased));
         }
 
-        private async Task DecreaseAmountAsync(Foodstuff foodstuff)
+        private async Task DecreaseAmountAsync(ShoppingListItem item)
         {
-            var decreased = await commandHandler.DecreaseAmount(foodstuff);
-            var formal = items.First(i => i.Foodstuff.Value.Equals(foodstuff));
-            UpdateItems(items.Replace(formal, decreased));
+            var decreased = await commandHandler.DecreaseAmount(item);
+            UpdateItems(items.Replace(item, decreased));
         }
 
         private async Task UpdateItemsAsync()
@@ -71,8 +69,8 @@ namespace SmartRecipes.Mobile
             return new FoodstuffCellViewModel(
                 item.Foodstuff,
                 item.Amount,
-                () => IncreaseAmountAsync(item.Foodstuff),
-                () => DecreaseAmountAsync(item.Foodstuff)
+                () => IncreaseAmountAsync(item),
+                () => DecreaseAmountAsync(item)
             );
         }
     }

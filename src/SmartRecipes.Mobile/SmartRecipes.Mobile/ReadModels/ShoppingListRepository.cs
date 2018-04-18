@@ -23,13 +23,30 @@ namespace SmartRecipes.Mobile.ReadModels
         {
             var apiResponse = await apiClient.GetShoppingList();
             return await apiResponse.MatchAsync(
-                r => ToItems(r.Items).AsTask(), // TODO : update DB 
+                async r =>
+                {
+                    var items = ToItems(r.Items);
+                    var tasks = new List<Task>();
+
+                    foreach (var item in items)
+                    {
+                        tasks.Add(database.AddOrReplaceAsync(item.Foodstuff));
+                        tasks.Add(database.AddOrReplaceAsync(item.Ingredient));
+                    }
+
+                    foreach (var task in tasks)
+                    {
+                        await task;
+                    }
+
+                    return items;
+                },
                 async () =>
                 {
                     var ingredients = await database.Ingredients.Where(i => i.ShoppingListOwnerId != null).ToEnumerableAsync();
                     var foostuffIds = ingredients.Select(i => i.FoodstuffId);
                     var foodstuffs = await database.Foodstuffs.Where(f => foostuffIds.Contains(f.Id)).ToEnumerableAsync();
-                    return ingredients.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new ShoppingListItem(f, i.Amount));
+                    return ingredients.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new ShoppingListItem(f, i));
                 }
             );
         }
@@ -40,14 +57,14 @@ namespace SmartRecipes.Mobile.ReadModels
             var foodstuff = new[]
             {
                 new Foodstuff(
-                    Guid.NewGuid(),
+                    Guid.Parse("cb3d0f54-c99d-43f1-ade4-e316b0e6543d"),
                     "Carrot",
                     new Uri("https://www.znaturalfoods.com/698-thickbox_default/carrot-powder-organic.jpg"),
                     new Amount(1, AmountUnit.Piece),
                     new Amount(1, AmountUnit.Piece)
                 ),
                 new Foodstuff(
-                    Guid.NewGuid(),
+                    Guid.Parse("e04ef558-1305-408e-9d26-1f04b7e3f785"),
                     "Bacon",
                     new Uri("https://upload.wikimedia.org/wikipedia/commons/3/31/Made20bacon.png"),
                     new Amount(100, AmountUnit.Gram),
@@ -55,22 +72,23 @@ namespace SmartRecipes.Mobile.ReadModels
                 )
             };
             var shoppingListItem = await GetItems();
-            return foodstuff.Except(shoppingListItem.Select(i => i.Foodstuff.Value));
+            return foodstuff.Except(shoppingListItem.Select(i => i.Foodstuff));
         }
 
         // TODO: move elsewhere
         public static IEnumerable<ShoppingListItem> ToItems(IEnumerable<ShoppingListResponse.Item> items)
         {
-            return items.Select(i => new ShoppingListItem(
-                new Foodstuff(
+            return items.Select(i =>
+            {
+                var foodstuff = new Foodstuff(
                     i.FoodstuffDto.Id,
                     i.FoodstuffDto.Name,
                     i.FoodstuffDto.ImageUrl,
                     i.FoodstuffDto.BaseAmount,
                     i.FoodstuffDto.AmountStep
-                ),
-                i.Amount
-            ));
+                );
+                return new ShoppingListItem(foodstuff, Ingredient.Create(foodstuff, i.Amount));
+            });
         }
     }
 }

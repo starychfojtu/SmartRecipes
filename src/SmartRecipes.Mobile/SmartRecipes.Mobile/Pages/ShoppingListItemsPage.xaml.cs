@@ -15,7 +15,7 @@ namespace SmartRecipes.Mobile.Pages
             ItemsListView.ItemTemplate = new DataTemplate<FoodstuffCell>();
             ItemsListView.SetBinding(ItemsView<Cell>.ItemsSourceProperty, nameof(viewModel.Items));
 
-            AddItemsButton.Clicked += (s, e) => viewModel.AddItem();
+            AddItemsButton.Clicked += async (s, e) => await viewModel.AddItem();
         }
 
         protected override void OnAppearing()

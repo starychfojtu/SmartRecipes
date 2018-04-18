@@ -21,11 +21,39 @@ namespace SmartRecipes.Mobile
 
         public string Name { get; set; }
 
-        public Uri ImageUrl { get; set; }
+        public string _ImageUrlString { get; set; }
+        [Ignore]
+        public Uri ImageUrl
+        {
+            get { return new Uri(_ImageUrlString); }
+            set { _ImageUrlString = value.AbsolutePath; }
+        }
 
-        public Amount BaseAmount { get; set; }
+        public int _BaseCount { get; set; }
+        public AmountUnit _BaseUnit { get; set; }
+        [Ignore]
+        public Amount BaseAmount
+        {
+            get { return new Amount(_BaseCount, _BaseUnit); }
+            set
+            {
+                _BaseCount = value.Count;
+                _BaseUnit = value.Unit;
+            }
+        }
 
-        public Amount AmountStep { get; set; }
+        public int _StepCount { get; set; }
+        public AmountUnit _StepUnit { get; set; }
+        [Ignore]
+        public Amount AmountStep
+        {
+            get { return new Amount(_StepCount, _StepUnit); }
+            set
+            {
+                _StepCount = value.Count;
+                _StepUnit = value.Unit;
+            }
+        }
 
         public bool Equals(Foodstuff foodstuff)
         {

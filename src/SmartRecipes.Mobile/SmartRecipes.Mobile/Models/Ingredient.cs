@@ -22,7 +22,18 @@ namespace SmartRecipes.Mobile
 
         public Guid? ShoppingListOwnerId { get; set; }
 
-        public Amount Amount { get; set; }
+        public int _Count { get; set; }
+        public AmountUnit _Unit { get; set; }
+        [Ignore]
+        public Amount Amount
+        {
+            get { return new Amount(_Count, _Unit); }
+            set
+            {
+                _Count = value.Count;
+                _Unit = value.Unit;
+            }
+        }
 
         public Ingredient WithAmount(Amount amount)
         {

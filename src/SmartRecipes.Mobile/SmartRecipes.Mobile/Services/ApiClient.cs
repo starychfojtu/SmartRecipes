@@ -39,22 +39,6 @@ namespace SmartRecipes.Mobile
         public async Task<Option<ShoppingListResponse>> Post(AdjustIngredientRequest request)
         {
             await SimulateRequest();
-
-            // TODO:
-            //shoppingListItems = Ingredient.DecreaseAmount(item).Match(
-            //    i => shoppingListItems.Replpace(item, i),
-            //    () => shoppingListItems.Without(item).ToList()
-            //);
-
-            //TODO:
-            //var increasedItem = Ingredient.IncreaseAmount(item);
-            //var newItem = increasedItem.IfNone(() => throw new InvalidOperationException());
-            //shoppingListItems = shoppingListItems.Replpace(item, newItem);
-
-            //TODO:
-            //var newItem = Ingredient.Create(foodstuff);
-            //shoppingListItems.Add(newItem);
-
             return await GetShoppingList();
         }
 
@@ -62,21 +46,21 @@ namespace SmartRecipes.Mobile
         {
             await SimulateRequest();
             var tomato = new ShoppingListResponse.Item.Foodstuff(
-                Guid.NewGuid(),
+                Guid.Parse("54ba369a-035f-4928-ac43-732ae234a5b8"),
                 "Tomato",
                 new Uri("https://vignette.wikia.nocookie.net/battlefordreamisland/images/0/0c/Tomato.PNG/revision/latest?cb=20170825141241"),
                 new Amount(1, AmountUnit.Piece),
                 new Amount(1, AmountUnit.Piece)
             );
             var onion = new ShoppingListResponse.Item.Foodstuff(
-                Guid.NewGuid(),
+                Guid.Parse("581bc6d4-548a-4e33-a007-2980a7d1144b"),
                 "Onion",
                 new Uri("http://cdn.shopify.com/s/files/1/1537/5553/products/00613_15abd93a-e239-45df-acdb-8485b40d546a_grande.jpg?v=1486440965"),
                 new Amount(1, AmountUnit.Piece),
                 new Amount(1, AmountUnit.Piece)
             );
             var chickenBreast = new ShoppingListResponse.Item.Foodstuff(
-                Guid.NewGuid(),
+                Guid.Parse("ae067aca-6430-402d-a7a9-54683efcac18"),
                 "Chicken breast",
                 new Uri("https://images-na.ssl-images-amazon.com/images/I/719JxkiwTVL._SL1500_.jpg"),
                 new Amount(1000, AmountUnit.Gram),

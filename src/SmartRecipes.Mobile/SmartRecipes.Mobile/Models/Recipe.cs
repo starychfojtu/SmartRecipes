@@ -24,13 +24,19 @@ namespace SmartRecipes.Mobile
 
         public string Name { get; set; }
 
-        public Uri ImageUrl { get; set; }
+        public string _ImageUrl { get; set; }
+        [Ignore]
+        public Uri ImageUrl
+        {
+            get { return new Uri(_ImageUrl); }
+            set { _ImageUrl = value.AbsolutePath; }
+        }
 
         public Guid OwnerId { get; set; }
 
         public int PersonCount { get; set; }
 
-        public IEnumerable<Ingredient> Ingredients { get; } // TODO: remove
+        public IEnumerable<Ingredient> Ingredients { get; } // TODO: serialize as json array field
 
         public string Text { get; set; }
 
