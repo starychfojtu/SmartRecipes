@@ -5,13 +5,17 @@ namespace SmartRecipes.Mobile
 {
     public class Ingredient
     {
-        private Ingredient(Guid foodstuffId, Amount amount)
+        private Ingredient(Guid id, Guid foodstuffId, Amount amount)
         {
+            Id = id;
             FoodstuffId = foodstuffId;
             Amount = amount;
         }
 
         public Ingredient() { /* for sqllite */ }
+
+        [PrimaryKey]
+        public Guid Id { get; set; }
 
         public Guid FoodstuffId { get; set; }
 
@@ -34,19 +38,19 @@ namespace SmartRecipes.Mobile
 
         public Ingredient WithAmount(Amount amount)
         {
-            return new Ingredient(FoodstuffId, amount);
+            return new Ingredient(Id, FoodstuffId, amount);
         }
 
         // Combinators
 
-        public static Ingredient Create(Foodstuff foodstuff, Amount amount)
+        public static Ingredient Create(Guid id, Foodstuff foodstuff, Amount amount)
         {
-            return new Ingredient(foodstuff.Id, amount);
+            return new Ingredient(id, foodstuff.Id, amount);
         }
 
-        public static Ingredient Create(Foodstuff foodstuff)
+        public static Ingredient Create(Guid id, Foodstuff foodstuff)
         {
-            return new Ingredient(foodstuff.Id, foodstuff.BaseAmount);
+            return new Ingredient(id, foodstuff.Id, foodstuff.BaseAmount);
         }
     }
 }

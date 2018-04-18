@@ -29,15 +29,12 @@ namespace SmartRecipes.Mobile.Controllers
 
         public async Task<ShoppingListItem> Add(Foodstuff foodstuff)
         {
-            return await IncreaseAmount(new ShoppingListItem(foodstuff, Ingredient.Create(foodstuff))); // TODO: notify DB
+            return await IncreaseAmount(new ShoppingListItem(foodstuff, Ingredient.Create(Guid.NewGuid(), foodstuff))); // TODO: notify DB
         }
 
         private async Task<Ingredient> ChangeAmount(ShoppingListItem item, Func<Amount, Amount, Option<Amount>> operation, IngredientAction action)
         {
-            var test = await database.Ingredients.ToListAsync();
-            var test2 = await database.Foodstuffs.ToListAsync();
-
-            // Main business action - should be pure
+            // Main business action
             var newAmount = operation(item.Amount, item.Foodstuff.AmountStep);
             var changedIngredient = item.Ingredient.WithAmount(newAmount.IfNone(() => throw new InvalidOperationException()));
 

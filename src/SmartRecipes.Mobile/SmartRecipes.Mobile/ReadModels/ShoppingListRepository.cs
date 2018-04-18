@@ -81,7 +81,7 @@ namespace SmartRecipes.Mobile.ReadModels
                     i.FoodstuffDto.BaseAmount,
                     i.FoodstuffDto.AmountStep
                 );
-                return new ShoppingListItem(foodstuff, Ingredient.Create(foodstuff, i.Amount));
+                return new ShoppingListItem(foodstuff, Ingredient.Create(i.Id, foodstuff, i.Amount));
             });
         }
     }

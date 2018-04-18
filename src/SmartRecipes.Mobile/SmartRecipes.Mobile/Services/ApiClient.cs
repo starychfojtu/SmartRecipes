@@ -67,9 +67,9 @@ namespace SmartRecipes.Mobile
                 new Amount(100, AmountUnit.Gram)
             );
 
-            var t = new ShoppingListResponse.Item(tomato, new Amount(3, AmountUnit.Piece));
-            var o = new ShoppingListResponse.Item(onion, new Amount(2, AmountUnit.Piece));
-            var b = new ShoppingListResponse.Item(chickenBreast, new Amount(600, AmountUnit.Gram));
+            var t = new ShoppingListResponse.Item(Guid.Parse("360a79f5-4dbb-441d-952f-acff818bfff5"), tomato, new Amount(3, AmountUnit.Piece));
+            var o = new ShoppingListResponse.Item(Guid.Parse("a90f8456-d705-4c4c-aaf9-2bc4318326e7"), onion, new Amount(2, AmountUnit.Piece));
+            var b = new ShoppingListResponse.Item(Guid.Parse("94c72dad-d77c-4012-b4f3-4730f591c02b"), chickenBreast, new Amount(600, AmountUnit.Gram));
 
             return new ShoppingListResponse(new[] { t, o, b });
         }
