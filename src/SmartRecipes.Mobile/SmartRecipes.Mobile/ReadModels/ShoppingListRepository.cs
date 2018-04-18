@@ -26,17 +26,11 @@ namespace SmartRecipes.Mobile.ReadModels
                 async r =>
                 {
                     var items = ToItems(r.Items);
-                    var tasks = new List<Task>();
 
                     foreach (var item in items)
                     {
-                        tasks.Add(database.AddOrReplaceAsync(item.Foodstuff));
-                        tasks.Add(database.AddOrReplaceAsync(item.Ingredient));
-                    }
-
-                    foreach (var task in tasks)
-                    {
-                        await task;
+                        await database.AddOrReplaceAsync(item.Foodstuff);
+                        await database.AddOrReplaceAsync(item.Ingredient);
                     }
 
                     return items;
@@ -56,14 +50,14 @@ namespace SmartRecipes.Mobile.ReadModels
             // TODO: implement
             var foodstuff = new[]
             {
-                new Foodstuff(
+                Foodstuff.Create(
                     Guid.Parse("cb3d0f54-c99d-43f1-ade4-e316b0e6543d"),
                     "Carrot",
                     new Uri("https://www.znaturalfoods.com/698-thickbox_default/carrot-powder-organic.jpg"),
                     new Amount(1, AmountUnit.Piece),
                     new Amount(1, AmountUnit.Piece)
                 ),
-                new Foodstuff(
+                Foodstuff.Create(
                     Guid.Parse("e04ef558-1305-408e-9d26-1f04b7e3f785"),
                     "Bacon",
                     new Uri("https://upload.wikimedia.org/wikipedia/commons/3/31/Made20bacon.png"),
@@ -80,7 +74,7 @@ namespace SmartRecipes.Mobile.ReadModels
         {
             return items.Select(i =>
             {
-                var foodstuff = new Foodstuff(
+                var foodstuff = Foodstuff.Create(
                     i.FoodstuffDto.Id,
                     i.FoodstuffDto.Name,
                     i.FoodstuffDto.ImageUrl,

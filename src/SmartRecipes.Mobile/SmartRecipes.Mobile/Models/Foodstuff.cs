@@ -5,7 +5,7 @@ namespace SmartRecipes.Mobile
 {
     public class Foodstuff
     {
-        public Foodstuff(Guid id, string name, Uri imageUrl, Amount baseAmount, Amount amountStep)
+        private Foodstuff(Guid id, string name, Uri imageUrl, Amount baseAmount, Amount amountStep)
         {
             Id = id;
             Name = name;
@@ -26,7 +26,7 @@ namespace SmartRecipes.Mobile
         public Uri ImageUrl
         {
             get { return new Uri(_ImageUrlString); }
-            set { _ImageUrlString = value.AbsolutePath; }
+            set { _ImageUrlString = value.AbsoluteUri; }
         }
 
         public int _BaseCount { get; set; }
@@ -58,6 +58,13 @@ namespace SmartRecipes.Mobile
         public bool Equals(Foodstuff foodstuff)
         {
             return Id == foodstuff.Id;
+        }
+
+        // 
+
+        public static Foodstuff Create(Guid id, string name, Uri imageUrl, Amount baseAmount, Amount amountStep)
+        {
+            return new Foodstuff(id, name, imageUrl, baseAmount, amountStep);
         }
     }
 }

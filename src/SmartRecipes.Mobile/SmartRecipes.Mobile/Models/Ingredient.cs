@@ -13,9 +13,6 @@ namespace SmartRecipes.Mobile
 
         public Ingredient() { /* for sqllite */ }
 
-        [PrimaryKey]
-        public Guid Id { get; set; }
-
         public Guid FoodstuffId { get; set; }
 
         public Guid? RecipeId { get; set; }

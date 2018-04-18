@@ -34,6 +34,9 @@ namespace SmartRecipes.Mobile.Controllers
 
         private async Task<Ingredient> ChangeAmount(ShoppingListItem item, Func<Amount, Amount, Option<Amount>> operation, IngredientAction action)
         {
+            var test = await database.Ingredients.ToListAsync();
+            var test2 = await database.Foodstuffs.ToListAsync();
+
             // Main business action - should be pure
             var newAmount = operation(item.Amount, item.Foodstuff.AmountStep);
             var changedIngredient = item.Ingredient.WithAmount(newAmount.IfNone(() => throw new InvalidOperationException()));

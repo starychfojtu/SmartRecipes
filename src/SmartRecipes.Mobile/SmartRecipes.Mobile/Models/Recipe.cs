@@ -29,7 +29,7 @@ namespace SmartRecipes.Mobile
         public Uri ImageUrl
         {
             get { return new Uri(_ImageUrl); }
-            set { _ImageUrl = value.AbsolutePath; }
+            set { _ImageUrl = value.AbsoluteUri; }
         }
 
         public Guid OwnerId { get; set; }
