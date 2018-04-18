@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.Controllers;
 using SmartRecipes.Mobile.ReadModels;
+using System;
 
 namespace SmartRecipes.Mobile
 {
@@ -43,15 +44,20 @@ namespace SmartRecipes.Mobile
 
         private async Task IncreaseAmountAsync(ShoppingListItem item)
         {
-            // TODO: resolve async issue when updating - LOCK/ bool isUpdating ?
-            var increased = await commandHandler.IncreaseAmount(item);
-            UpdateItems(items.Replace(item, increased));
+            await ItemAction(item, i => commandHandler.IncreaseAmount(i));
         }
 
         private async Task DecreaseAmountAsync(ShoppingListItem item)
         {
-            var decreased = await commandHandler.DecreaseAmount(item);
-            UpdateItems(items.Replace(item, decreased));
+            await ItemAction(item, i => commandHandler.DecreaseAmount(i));
+        }
+
+        private async Task ItemAction(ShoppingListItem item, Func<ShoppingListItem, Task<ShoppingListItem>> action)
+        {
+            var index = items.IndexOf(item);
+            var newItem = await (action(item));
+            items[index] = newItem;
+            UpdateItems(items);
         }
 
         private async Task UpdateItemsAsync()

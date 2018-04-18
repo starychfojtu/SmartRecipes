@@ -2,27 +2,30 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using LanguageExt;
 
 namespace SmartRecipes.Mobile
 {
-    public class RecipeRepository
+    public class RecipeRepository : Repository
     {
-        private readonly ApiClient apiClient;
-
-        public RecipeRepository(ApiClient apiClient)
+        public RecipeRepository(ApiClient apiClient, Database database) : base(apiClient, database)
         {
-            this.apiClient = apiClient;
         }
 
         public async Task<IEnumerable<Recipe>> GetAllAsync()
         {
-            var owner = new Account(Guid.Parse("13cb78ee-0aca-4287-9ecb-b87b4e83411b"), "someEmail@gmail.com");
-            var imageUrl = "https://www.recipetineats.com/wp-content/uploads/2017/05/Lasagne-recipe-3-main-680x952.jpg";
-            return new[]
-            {
-                Recipe.Create(Guid.Parse("a198fb84-42ca-41f8-bf23-2df76eb59b96"), "Lasagna", new Uri(imageUrl), owner, 1, Enumerable.Empty<Ingredient>() , "Cook me"),
-                Recipe.Create(Guid.Parse("110d81a1-a18b-43fb-9435-83ea8a1d4678"), "Lasagna 2", new Uri(imageUrl), owner, 2, Enumerable.Empty<Ingredient>(), "Cook me twice")
-            };
+            return await RetrievalAction(
+                client => client.GetMyRecipes(),
+                db => db.Recipes.ToEnumerableAsync(),
+                response => response.Recipes.Select(r => ToRecipe(r)),
+                recipes => recipes.Concat(recipes.Select(r => (object)r.Ingredients))
+            );
+        }
+
+        private Recipe ToRecipe(MyRecipesResponse.Recipe r)
+        {
+            var ingredients = r.Ingredients.Select(i => Ingredient.CreateForRecipe(i.Id, r.Id, i.FoodstuffId, i.Amount));
+            return Recipe.Create(r.Id, r.OwnerId, r.Name, r.ImageUrl, r.PersonCount, r.Text, ingredients);
         }
     }
 }

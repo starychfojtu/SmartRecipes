@@ -6,7 +6,7 @@ namespace SmartRecipes.Mobile
 {
     public class Recipe
     {
-        private Recipe(Guid id, string name, Uri imageUrl, Guid ownerId, int personCount, IEnumerable<Ingredient> ingredients, string text)
+        private Recipe(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text, IEnumerable<Ingredient> ingredients)
         {
             Id = id;
             Name = name;
@@ -22,6 +22,8 @@ namespace SmartRecipes.Mobile
         [PrimaryKey]
         public Guid Id { get; set; }
 
+        public Guid OwnerId { get; set; }
+
         public string Name { get; set; }
 
         public string _ImageUrl { get; set; }
@@ -32,19 +34,18 @@ namespace SmartRecipes.Mobile
             set { _ImageUrl = value.AbsoluteUri; }
         }
 
-        public Guid OwnerId { get; set; }
-
         public int PersonCount { get; set; }
 
+        [Ignore]
         public IEnumerable<Ingredient> Ingredients { get; } // TODO: serialize as json array field
 
         public string Text { get; set; }
 
         // Combinators
 
-        public static Recipe Create(Guid id, string name, Uri imageUrl, Account owner, int personCount, IEnumerable<Ingredient> ingredients, string text)
+        public static Recipe Create(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text, IEnumerable<Ingredient> ingredients)
         {
-            return new Recipe(id, name, imageUrl, owner.Id, personCount, ingredients, text);
+            return new Recipe(id, ownerId, name, imageUrl, personCount, text, ingredients);
         }
     }
 }

@@ -52,5 +52,13 @@ namespace SmartRecipes.Mobile
         {
             return new Ingredient(id, foodstuff.Id, foodstuff.BaseAmount);
         }
+
+        public static Ingredient CreateForRecipe(Guid id, Guid recipeId, Guid foodstuffId, Amount amount)
+        {
+            return new Ingredient(id, foodstuffId, amount)
+            {
+                RecipeId = recipeId
+            };
+        }
     }
 }

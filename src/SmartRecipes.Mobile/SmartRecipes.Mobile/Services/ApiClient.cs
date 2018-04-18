@@ -3,6 +3,7 @@ using SmartRecipes.Mobile.ApiDto;
 using System;
 using System.Threading.Tasks;
 using LanguageExt;
+using System.Linq;
 
 namespace SmartRecipes.Mobile
 {
@@ -72,6 +73,19 @@ namespace SmartRecipes.Mobile
             var b = new ShoppingListResponse.Item(Guid.Parse("94c72dad-d77c-4012-b4f3-4730f591c02b"), chickenBreast, new Amount(600, AmountUnit.Gram));
 
             return new ShoppingListResponse(new[] { t, o, b });
+        }
+
+        public async Task<Option<MyRecipesResponse>> GetMyRecipes()
+        {
+            await SimulateRequest();
+            var owner = new Account(Guid.Parse("13cb78ee-0aca-4287-9ecb-b87b4e83411b"), "someEmail@gmail.com");
+            var imageUrl = "https://www.recipetineats.com/wp-content/uploads/2017/05/Lasagne-recipe-3-main-680x952.jpg";
+            var recipes = new[]
+            {
+                new MyRecipesResponse.Recipe(Guid.Parse("a198fb84-42ca-41f8-bf23-2df76eb59b96"), "Lasagna", new Uri(imageUrl), owner.Id, 1, "Cook me", Enumerable.Empty<MyRecipesResponse.Recipe.Ingredient>()),
+                new MyRecipesResponse.Recipe(Guid.Parse("110d81a1-a18b-43fb-9435-83ea8a1d4678"), "Lasagna 2", new Uri(imageUrl), owner.Id, 2, "Cook me twice", Enumerable.Empty<MyRecipesResponse.Recipe.Ingredient>())
+            };
+            return new MyRecipesResponse(recipes);
         }
 
         private Task SimulateRequest()

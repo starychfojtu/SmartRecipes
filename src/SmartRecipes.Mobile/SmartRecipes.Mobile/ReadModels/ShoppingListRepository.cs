@@ -7,42 +7,28 @@ using LanguageExt;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
-    public class ShoppingListRepository
+    public class ShoppingListRepository : Repository
     {
-        private readonly ApiClient apiClient;
-
-        private readonly Database database;
-
-        public ShoppingListRepository(ApiClient apiClient, Database database)
+        public ShoppingListRepository(ApiClient apiClient, Database database) : base(apiClient, database)
         {
-            this.apiClient = apiClient;
-            this.database = database;
         }
 
         public async Task<IEnumerable<ShoppingListItem>> GetItems()
         {
-            var apiResponse = await apiClient.GetShoppingList();
-            return await apiResponse.MatchAsync(
-                async r =>
-                {
-                    var items = ToItems(r.Items);
-
-                    foreach (var item in items)
-                    {
-                        await database.AddOrReplaceAsync(item.Foodstuff);
-                        await database.AddOrReplaceAsync(item.Ingredient);
-                    }
-
-                    return items;
-                },
-                async () =>
-                {
-                    var ingredients = await database.Ingredients.Where(i => i.ShoppingListOwnerId != null).ToEnumerableAsync();
-                    var foostuffIds = ingredients.Select(i => i.FoodstuffId);
-                    var foodstuffs = await database.Foodstuffs.Where(f => foostuffIds.Contains(f.Id)).ToEnumerableAsync();
-                    return ingredients.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new ShoppingListItem(f, i));
-                }
+            return await RetrievalAction(
+                client => client.GetShoppingList(),
+                db => GetItems(db),
+                response => response.Items.Select(i => ToItem(i)),
+                items => items.Select(i => (object)i.Foodstuff).Concat(items.Select(i => (object)i.Ingredient))
             );
+        }
+
+        private static async Task<IEnumerable<ShoppingListItem>> GetItems(Database database)
+        {
+            var ingredients = await database.Ingredients.Where(i => i.ShoppingListOwnerId != null).ToEnumerableAsync();
+            var foostuffIds = ingredients.Select(i => i.FoodstuffId);
+            var foodstuffs = await database.Foodstuffs.Where(f => foostuffIds.Contains(f.Id)).ToEnumerableAsync();
+            return ingredients.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new ShoppingListItem(f, i));
         }
 
         public async Task<IEnumerable<Foodstuff>> Search(string query)
@@ -69,20 +55,16 @@ namespace SmartRecipes.Mobile.ReadModels
             return foodstuff.Except(shoppingListItem.Select(i => i.Foodstuff));
         }
 
-        // TODO: move elsewhere
-        public static IEnumerable<ShoppingListItem> ToItems(IEnumerable<ShoppingListResponse.Item> items)
+        public static ShoppingListItem ToItem(ShoppingListResponse.Item i)
         {
-            return items.Select(i =>
-            {
-                var foodstuff = Foodstuff.Create(
-                    i.FoodstuffDto.Id,
-                    i.FoodstuffDto.Name,
-                    i.FoodstuffDto.ImageUrl,
-                    i.FoodstuffDto.BaseAmount,
-                    i.FoodstuffDto.AmountStep
-                );
-                return new ShoppingListItem(foodstuff, Ingredient.Create(i.Id, foodstuff, i.Amount));
-            });
+            var foodstuff = Foodstuff.Create(
+                i.FoodstuffDto.Id,
+                i.FoodstuffDto.Name,
+                i.FoodstuffDto.ImageUrl,
+                i.FoodstuffDto.BaseAmount,
+                i.FoodstuffDto.AmountStep
+            );
+            return new ShoppingListItem(foodstuff, Ingredient.Create(i.Id, foodstuff, i.Amount));
         }
     }
 }
