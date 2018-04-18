@@ -6,6 +6,8 @@ namespace SmartRecipes.Mobile.Views
 {
     public partial class FoodstuffCell : ViewCell
     {
+        private FoodstuffCellViewModel CachedViewModel;
+
         public FoodstuffCell()
         {
             InitializeComponent();
@@ -36,8 +38,15 @@ namespace SmartRecipes.Mobile.Views
             {
                 NameLabel.Text = ViewModel.Foodstuff.Name;
                 AmountLabel.Text = ViewModel.Amount.ToString(); // TODO: add amount needed
-                Image.Source = ViewModel.Foodstuff.ImageUrl.AbsoluteUri;
                 MinusButton.IsVisible = ViewModel.OnMinus != null;
+
+                var imageUrl = ViewModel.Foodstuff.ImageUrl;
+                if (imageUrl != CachedViewModel?.Foodstuff.ImageUrl)
+                {
+                    Image.Source = imageUrl.AbsoluteUri;
+                }
+
+                CachedViewModel = ViewModel;
             }
         }
     }

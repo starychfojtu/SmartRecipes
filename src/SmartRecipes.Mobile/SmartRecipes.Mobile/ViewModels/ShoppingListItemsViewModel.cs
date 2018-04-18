@@ -43,6 +43,7 @@ namespace SmartRecipes.Mobile
 
         private async Task IncreaseAmountAsync(ShoppingListItem item)
         {
+            // TODO: resolve async issue when updating - LOCK/ bool isUpdating ?
             var increased = await commandHandler.IncreaseAmount(item);
             UpdateItems(items.Replace(item, increased));
         }
