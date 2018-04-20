@@ -82,8 +82,8 @@ namespace SmartRecipes.Mobile
             var imageUrl = "https://www.recipetineats.com/wp-content/uploads/2017/05/Lasagne-recipe-3-main-680x952.jpg";
             var recipes = new[]
             {
-                new MyRecipesResponse.Recipe(Guid.Parse("a198fb84-42ca-41f8-bf23-2df76eb59b96"), "Lasagna", new Uri(imageUrl), owner.Id, 1, "Cook me", Enumerable.Empty<MyRecipesResponse.Recipe.Ingredient>()),
-                new MyRecipesResponse.Recipe(Guid.Parse("110d81a1-a18b-43fb-9435-83ea8a1d4678"), "Lasagna 2", new Uri(imageUrl), owner.Id, 2, "Cook me twice", Enumerable.Empty<MyRecipesResponse.Recipe.Ingredient>())
+                new MyRecipesResponse.Recipe(Guid.Parse("a198fb84-42ca-41f8-bf23-2df76eb59b96"), "Lasagna", new Uri(imageUrl), owner.Id, 1, "Cook me"),
+                new MyRecipesResponse.Recipe(Guid.Parse("110d81a1-a18b-43fb-9435-83ea8a1d4678"), "Lasagna 2", new Uri(imageUrl), owner.Id, 2, "Cook me twice")
             };
             return new MyRecipesResponse(recipes);
         }

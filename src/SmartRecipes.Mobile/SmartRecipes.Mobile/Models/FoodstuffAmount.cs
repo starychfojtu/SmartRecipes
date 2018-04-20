@@ -3,16 +3,16 @@ using SQLite;
 
 namespace SmartRecipes.Mobile
 {
-    public class Ingredient
+    public class FoodstuffAmount
     {
-        private Ingredient(Guid id, Guid foodstuffId, Amount amount)
+        private FoodstuffAmount(Guid id, Guid foodstuffId, Amount amount)
         {
             Id = id;
             FoodstuffId = foodstuffId;
             Amount = amount;
         }
 
-        public Ingredient() { /* for sqllite */ }
+        public FoodstuffAmount() { /* for sqllite */ }
 
         [PrimaryKey]
         public Guid Id { get; set; }
@@ -36,26 +36,26 @@ namespace SmartRecipes.Mobile
             }
         }
 
-        public Ingredient WithAmount(Amount amount)
+        public FoodstuffAmount WithAmount(Amount amount)
         {
-            return new Ingredient(Id, FoodstuffId, amount);
+            return new FoodstuffAmount(Id, FoodstuffId, amount);
         }
 
         // Combinators
 
-        public static Ingredient Create(Guid id, Foodstuff foodstuff, Amount amount)
+        public static FoodstuffAmount Create(Guid id, Foodstuff foodstuff, Amount amount)
         {
-            return new Ingredient(id, foodstuff.Id, amount);
+            return new FoodstuffAmount(id, foodstuff.Id, amount);
         }
 
-        public static Ingredient Create(Guid id, Foodstuff foodstuff)
+        public static FoodstuffAmount Create(Guid id, Foodstuff foodstuff)
         {
-            return new Ingredient(id, foodstuff.Id, foodstuff.BaseAmount);
+            return new FoodstuffAmount(id, foodstuff.Id, foodstuff.BaseAmount);
         }
 
-        public static Ingredient CreateForRecipe(Guid id, Guid recipeId, Guid foodstuffId, Amount amount)
+        public static FoodstuffAmount CreateForRecipe(Guid id, Guid recipeId, Guid foodstuffId, Amount amount)
         {
-            return new Ingredient(id, foodstuffId, amount)
+            return new FoodstuffAmount(id, foodstuffId, amount)
             {
                 RecipeId = recipeId
             };

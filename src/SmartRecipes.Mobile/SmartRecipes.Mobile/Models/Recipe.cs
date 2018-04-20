@@ -1,19 +1,17 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
 using SQLite;
 
 namespace SmartRecipes.Mobile
 {
     public class Recipe
     {
-        private Recipe(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text, IEnumerable<Ingredient> ingredients)
+        private Recipe(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text)
         {
             Id = id;
             Name = name;
             ImageUrl = imageUrl;
             OwnerId = ownerId;
             PersonCount = personCount;
-            Ingredients = ingredients;
             Text = text;
         }
 
@@ -36,16 +34,13 @@ namespace SmartRecipes.Mobile
 
         public int PersonCount { get; set; }
 
-        [Ignore]
-        public IEnumerable<Ingredient> Ingredients { get; } // TODO: serialize as json array field
-
         public string Text { get; set; }
 
         // Combinators
 
-        public static Recipe Create(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text, IEnumerable<Ingredient> ingredients)
+        public static Recipe Create(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text)
         {
-            return new Recipe(id, ownerId, name, imageUrl, personCount, text, ingredients);
+            return new Recipe(id, ownerId, name, imageUrl, personCount, text);
         }
     }
 }

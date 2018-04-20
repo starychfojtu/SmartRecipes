@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using LanguageExt;
+using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile
 {
@@ -13,6 +16,11 @@ namespace SmartRecipes.Mobile
         public static ICollection<T> Without<T>(this ICollection<T> list, T item)
         {
             return list.Tee(l => l.Remove(item));
+        }
+
+        public static IEnumerable<Some<T>> ToSomeEnumerable<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable.Select(i => i.ToSome());
         }
 
         public static IList<T> AddRange<T>(this IList<T> list, IEnumerable<T> items)

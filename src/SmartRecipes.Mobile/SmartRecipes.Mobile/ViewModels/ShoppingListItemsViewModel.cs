@@ -13,13 +13,13 @@ namespace SmartRecipes.Mobile
 
         private readonly ShoppingListRepository repository;
 
-        private IList<ShoppingListItem> items { get; set; }
+        private IList<Ingredient> items { get; set; }
 
         public ShoppingListItemsViewModel(ShoppingListHandler commandHandler, ShoppingListRepository repository)
         {
             this.repository = repository;
             this.commandHandler = commandHandler;
-            items = new List<ShoppingListItem>();
+            items = new List<Ingredient>();
         }
 
         public IEnumerable<FoodstuffCellViewModel> Items
@@ -42,17 +42,17 @@ namespace SmartRecipes.Mobile
             await Navigation.AddShoppingListItem(this);
         }
 
-        private async Task IncreaseAmountAsync(ShoppingListItem item)
+        private async Task IncreaseAmountAsync(Ingredient item)
         {
             await ItemAction(item, i => commandHandler.IncreaseAmount(i));
         }
 
-        private async Task DecreaseAmountAsync(ShoppingListItem item)
+        private async Task DecreaseAmountAsync(Ingredient item)
         {
             await ItemAction(item, i => commandHandler.DecreaseAmount(i));
         }
 
-        private async Task ItemAction(ShoppingListItem item, Func<ShoppingListItem, Task<ShoppingListItem>> action)
+        private async Task ItemAction(Ingredient item, Func<Ingredient, Task<Ingredient>> action)
         {
             var index = items.IndexOf(item);
             var newItem = await (action(item));
@@ -65,13 +65,13 @@ namespace SmartRecipes.Mobile
             UpdateItems((await repository.GetItems()).ToList());
         }
 
-        private void UpdateItems(IList<ShoppingListItem> newItems)
+        private void UpdateItems(IList<Ingredient> newItems)
         {
             items = newItems;
             RaisePropertyChanged(nameof(Items));
         }
 
-        private FoodstuffCellViewModel ToViewModel(ShoppingListItem item)
+        private FoodstuffCellViewModel ToViewModel(Ingredient item)
         {
             return new FoodstuffCellViewModel(
                 item.Foodstuff,

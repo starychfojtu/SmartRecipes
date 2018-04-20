@@ -14,7 +14,7 @@ namespace SmartRecipes.Mobile
 
         public class Recipe
         {
-            public Recipe(Guid id, string name, Uri imageUrl, Guid ownerId, int personCount, string text, IEnumerable<Ingredient> ingredients)
+            public Recipe(Guid id, string name, Uri imageUrl, Guid ownerId, int personCount, string text)
             {
                 Id = id;
                 Name = name;
@@ -22,7 +22,6 @@ namespace SmartRecipes.Mobile
                 OwnerId = ownerId;
                 PersonCount = personCount;
                 Text = text;
-                Ingredients = ingredients;
             }
 
             public Guid Id { get; }
@@ -36,24 +35,6 @@ namespace SmartRecipes.Mobile
             public int PersonCount { get; }
 
             public string Text { get; set; }
-
-            public IEnumerable<Ingredient> Ingredients { get; }
-
-            public class Ingredient
-            {
-                public Ingredient(Guid id, Guid foodstuffId, Amount amount)
-                {
-                    Id = id;
-                    FoodstuffId = foodstuffId;
-                    Amount = amount;
-                }
-
-                public Guid Id { get; }
-
-                public Guid FoodstuffId { get; }
-
-                public Amount Amount { get; }
-            }
         }
     }
 }

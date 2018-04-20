@@ -21,8 +21,8 @@ namespace SmartRecipes.Mobile
 
         public async Task UpdateRecipesAsync()
         {
-            var recipes = await repository.GetAllAsync();
-            Recipes = recipes.Select(r => RecipeCellViewModel.Create(r, () => { }));
+            var recipes = await repository.GetRecipesAsync();
+            Recipes = recipes.Select(r => new RecipeCellViewModel(r, () => { }));
             RaisePropertyChanged(nameof(Recipes));
         }
 

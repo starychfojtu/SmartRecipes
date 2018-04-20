@@ -35,9 +35,9 @@ namespace SmartRecipes.Mobile
             get { return Connection.Table<Recipe>(); }
         }
 
-        public AsyncTableQuery<Ingredient> Ingredients
+        public AsyncTableQuery<FoodstuffAmount> FoodstuffAmounts
         {
-            get { return Connection.Table<Ingredient>(); }
+            get { return Connection.Table<FoodstuffAmount>(); }
         }
 
         public AsyncTableQuery<Foodstuff> Foodstuffs
@@ -54,7 +54,7 @@ namespace SmartRecipes.Mobile
         {
             var conn = new SQLiteAsyncConnection(DependencyService.Get<IFileHelper>().GetLocalFilePath(FileName));
             conn.CreateTableAsync<Recipe>().Wait();
-            conn.CreateTableAsync<Ingredient>().Wait();
+            conn.CreateTableAsync<FoodstuffAmount>().Wait();
             conn.CreateTableAsync<Foodstuff>().Wait();
             return conn;
         }
