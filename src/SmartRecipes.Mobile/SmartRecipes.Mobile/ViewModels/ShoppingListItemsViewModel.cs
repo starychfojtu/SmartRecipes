@@ -54,9 +54,9 @@ namespace SmartRecipes.Mobile
 
         private async Task ItemAction(Ingredient item, Func<Ingredient, Task<Ingredient>> action)
         {
-            var index = items.IndexOf(item);
-            var newItem = await (action(item));
-            items[index] = newItem;
+            var newItem = await action(item);
+            var oldItem = items.First(i => i.Foodstuff.Id == item.Foodstuff.Id);
+            items.Replace(oldItem, newItem);
             UpdateItems(items);
         }
 

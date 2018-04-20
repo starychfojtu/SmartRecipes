@@ -43,7 +43,7 @@ namespace SmartRecipes.Mobile.Controllers
             var response = await apiClient.Post(request);
 
             // Notifying DB
-            await database.UpdateAsync(changedIngredient);
+            await database.UpdateAsync(changedIngredient.FoodstuffAmount);
             // TODO: create job to update api
 
             return changedIngredient;
