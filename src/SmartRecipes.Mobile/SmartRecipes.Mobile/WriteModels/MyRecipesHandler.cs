@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Collections;
-using System.Linq;
+﻿using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile.Controllers
 {
@@ -9,9 +6,17 @@ namespace SmartRecipes.Mobile.Controllers
     {
         private readonly ApiClient apiClient;
 
-        public MyRecipesHandler(ApiClient apiClient)
+        private readonly Database database;
+
+        public MyRecipesHandler(ApiClient apiClient, Database database)
         {
+            this.database = database;
             this.apiClient = apiClient;
+        }
+
+        public async Task Add(Recipe recipe)
+        {
+            await database.AddAsync(recipe.ToEnumerable());
         }
     }
 }
