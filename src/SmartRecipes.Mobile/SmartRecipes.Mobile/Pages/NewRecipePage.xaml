@@ -1,5 +1,17 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="SmartRecipes.Mobile.NewRecipePage">
     <ContentPage.Content>
+        <StackLayout>
+            <Entry
+                x:Name="NameEntry"/>
+            <Entry
+                x:Name="ImageUrlEntry"/>
+            <Entry
+                x:Name="PersonCountEntry"/>
+            <Editor
+                x:Name="TextEditor"/>
+            <Button
+                x:Name="SubmitButton"/>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>
