@@ -1,6 +1,7 @@
 ﻿using LanguageExt;
+using SmartRecipes.Mobile.Models;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.ReadModels.Dto
 {
     public class Ingredient
     {

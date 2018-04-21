@@ -1,5 +1,6 @@
 ﻿using Xamarin.Forms;
 using System.Linq;
+using SmartRecipes.Mobile.ViewModels;
 
 namespace SmartRecipes.Mobile.Views
 {

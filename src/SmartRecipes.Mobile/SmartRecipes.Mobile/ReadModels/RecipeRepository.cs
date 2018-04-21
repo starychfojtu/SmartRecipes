@@ -2,8 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
+using SmartRecipes.Mobile.Models;
+using SmartRecipes.Mobile.ReadModels.Dto;
+using SmartRecipes.Mobile.Services;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.ReadModels
 {
     public class RecipeRepository : Repository
     {

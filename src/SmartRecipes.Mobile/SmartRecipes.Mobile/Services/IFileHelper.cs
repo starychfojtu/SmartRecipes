@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Services
 {
     public interface IFileHelper
     {

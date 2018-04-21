@@ -2,8 +2,11 @@
 using System.Threading.Tasks;
 using System;
 using LanguageExt;
+using SmartRecipes.Mobile.Services;
+using SmartRecipes.Mobile.ReadModels.Dto;
+using SmartRecipes.Mobile.Models;
 
-namespace SmartRecipes.Mobile.Controllers
+namespace SmartRecipes.Mobile.WriteModels
 {
     public class ShoppingListHandler
     {

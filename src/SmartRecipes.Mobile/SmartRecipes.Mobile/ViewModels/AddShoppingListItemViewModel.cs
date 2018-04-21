@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System;
-using SmartRecipes.Mobile.Controllers;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.ReadModels;
+using SmartRecipes.Mobile.WriteModels;
+using SmartRecipes.Mobile.Models;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.ViewModels
 {
     public class AddShoppingListItemViewModel : ViewModel
     {

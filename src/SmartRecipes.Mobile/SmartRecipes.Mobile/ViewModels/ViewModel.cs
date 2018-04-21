@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Threading.Tasks;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.ViewModels
 {
     public class ViewModel : INotifyPropertyChanged
     {

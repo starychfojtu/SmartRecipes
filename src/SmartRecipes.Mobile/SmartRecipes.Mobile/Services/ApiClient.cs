@@ -4,8 +4,9 @@ using System;
 using System.Threading.Tasks;
 using LanguageExt;
 using System.Linq;
+using SmartRecipes.Mobile.Models;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Services
 {
     public class ApiClient
     {

@@ -1,4 +1,4 @@
-﻿using SmartRecipes.Mobile.Controllers;
+﻿using SmartRecipes.Mobile.WriteModels;
 using System;
 
 namespace SmartRecipes.Mobile
@@ -12,18 +12,18 @@ namespace SmartRecipes.Mobile
             this.commandHandler = commandHandler;
         }
 
-        public FormDto RecipeDto { get; set; }
+        public FormDto Recipe { get; set; }
 
         public async void Submit()
         {
             // TODO: add proper owner id
-            await commandHandler.Add(Recipe.Create(
+            await commandHandler.Add(Models.Recipe.Create(
                 Guid.NewGuid(),
                 Guid.NewGuid(),
-                RecipeDto.Name,
-                new Uri(RecipeDto.ImageUrl),
-                RecipeDto.PersonCount,
-                RecipeDto.Text
+                Recipe.Name,
+                new Uri(Recipe.ImageUrl),
+                Recipe.PersonCount,
+                Recipe.Text
             ));
         }
 

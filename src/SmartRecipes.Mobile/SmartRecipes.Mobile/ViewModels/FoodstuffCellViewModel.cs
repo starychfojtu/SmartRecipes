@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using SmartRecipes.Mobile.Models;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.ViewModels
 {
     public class FoodstuffCellViewModel
     {

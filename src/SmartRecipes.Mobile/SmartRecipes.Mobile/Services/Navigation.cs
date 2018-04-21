@@ -1,10 +1,11 @@
 ﻿using Xamarin.Forms;
 using Autofac;
 using SmartRecipes.Mobile.Pages;
-using SmartRecipes.Mobile.Controllers;
 using System.Threading.Tasks;
+using SmartRecipes.Mobile.WriteModels;
+using SmartRecipes.Mobile.ViewModels;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Services
 {
     public static class Navigation
     {
@@ -21,6 +22,12 @@ namespace SmartRecipes.Mobile
         public static async Task AddShoppingListItem(ShoppingListItemsViewModel viewModel)
         {
             var page = await PageFactory.GetPageAsync<AddShoppingListItemPage>();
+            await Application.Current.MainPage.Navigation.PushAsync(page);
+        }
+
+        public static async Task AddRecipe(MyRecipesViewModel viewModel)
+        {
+            var page = await PageFactory.GetPageAsync<NewRecipePage>();
             await Application.Current.MainPage.Navigation.PushAsync(page);
         }
     }

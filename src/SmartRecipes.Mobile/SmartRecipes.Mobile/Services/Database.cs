@@ -2,8 +2,9 @@
 using Xamarin.Forms;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using SmartRecipes.Mobile.Models;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Services
 {
     public class Database
     {

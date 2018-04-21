@@ -1,7 +1,9 @@
 ﻿using LanguageExt;
+using SmartRecipes.Mobile.Models;
 using System.Collections.Generic;
 using System.Linq;
-namespace SmartRecipes.Mobile
+
+namespace SmartRecipes.Mobile.ReadModels.Dto
 {
     public class RecipeDetail
     {

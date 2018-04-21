@@ -2,7 +2,7 @@
 using LanguageExt;
 using static LanguageExt.Prelude;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Models
 {
     public class Amount
     {

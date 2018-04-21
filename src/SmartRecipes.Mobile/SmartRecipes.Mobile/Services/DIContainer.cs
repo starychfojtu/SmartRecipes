@@ -1,9 +1,10 @@
 ﻿using Autofac;
 using System.Net.Http;
-using SmartRecipes.Mobile.Controllers;
 using SmartRecipes.Mobile.ReadModels;
+using SmartRecipes.Mobile.WriteModels;
+using SmartRecipes.Mobile.ViewModels;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Services
 {
     public class DIContainer
     {
@@ -35,6 +36,7 @@ namespace SmartRecipes.Mobile
             builder.RegisterType<ShoppingListHandler>();
             builder.RegisterType<SecurityHandler>();
             builder.RegisterType<MyRecipesHandler>();
+            builder.RegisterType<NewRecipeViewModel>();
 
             // View models
             builder.RegisterType<SignInViewModel>();

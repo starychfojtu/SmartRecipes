@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using SmartRecipes.Mobile.Services;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(SmartRecipes.Mobile.Droid.Services.FileHelper))]

@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SmartRecipes.Mobile.Controllers;
+using SmartRecipes.Mobile.ReadModels;
+using SmartRecipes.Mobile.Services;
+using SmartRecipes.Mobile.WriteModels;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.ViewModels
 {
     public class MyRecipesViewModel : ViewModel
     {
@@ -18,6 +20,11 @@ namespace SmartRecipes.Mobile
         }
 
         public IEnumerable<RecipeCellViewModel> Recipes { get; private set; }
+
+        public async Task AddRecipe()
+        {
+            await Navigation.AddRecipe(this);
+        }
 
         public async Task UpdateRecipesAsync()
         {

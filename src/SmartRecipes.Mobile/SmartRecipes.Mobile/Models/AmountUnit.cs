@@ -1,4 +1,4 @@
-﻿namespace SmartRecipes.Mobile
+﻿namespace SmartRecipes.Mobile.Models
 {
     public enum AmountUnit
     {

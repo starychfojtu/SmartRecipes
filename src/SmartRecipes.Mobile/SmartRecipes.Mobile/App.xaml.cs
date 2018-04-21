@@ -1,6 +1,7 @@
 ﻿using SmartRecipes.Mobile.Pages;
 using Xamarin.Forms;
 using Autofac;
+using SmartRecipes.Mobile.Services;
 
 namespace SmartRecipes.Mobile
 {

@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using SmartRecipes.Mobile.Services;
+using Xamarin.Forms;
 
 namespace SmartRecipes.Mobile.Pages
 {

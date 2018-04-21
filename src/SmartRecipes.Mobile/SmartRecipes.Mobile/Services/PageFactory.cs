@@ -4,8 +4,9 @@ using Autofac;
 using SmartRecipes.Mobile.Pages;
 using System.Collections.Generic;
 using Xamarin.Forms;
+using SmartRecipes.Mobile.ViewModels;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Services
 {
     public static class PageFactory
     {
@@ -18,7 +19,8 @@ namespace SmartRecipes.Mobile
                 { typeof(SignInPage), typeof(SignInViewModel) },
                 { typeof(ShoppingListItemsPage), typeof(ShoppingListItemsViewModel) },
                 { typeof(AddShoppingListItemPage), typeof(AddShoppingListItemViewModel) },
-                { typeof(MyRecipesPage), typeof(MyRecipesViewModel) }
+                { typeof(MyRecipesPage), typeof(MyRecipesViewModel) },
+                { typeof(NewRecipePage), typeof(NewRecipeViewModel) }
             };
         }
 

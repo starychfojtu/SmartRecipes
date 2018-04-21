@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
+using SmartRecipes.Mobile.Models;
+using SmartRecipes.Mobile.Services;
 
-namespace SmartRecipes.Mobile.Controllers
+namespace SmartRecipes.Mobile.WriteModels
 {
     public class MyRecipesHandler
     {

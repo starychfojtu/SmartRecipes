@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Models
 {
     public class Recipe
     {

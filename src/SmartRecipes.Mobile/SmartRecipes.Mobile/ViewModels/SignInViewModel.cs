@@ -1,7 +1,8 @@
 ﻿using SmartRecipes.Mobile.Models;
-using SmartRecipes.Mobile.Controllers;
+using SmartRecipes.Mobile.Services;
+using SmartRecipes.Mobile.WriteModels;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.ViewModels
 {
     public class SignInViewModel : ViewModel
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile.ApiDto
 {

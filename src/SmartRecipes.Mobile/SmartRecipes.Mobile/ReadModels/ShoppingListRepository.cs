@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.ApiDto;
 using LanguageExt;
+using SmartRecipes.Mobile.Services;
+using SmartRecipes.Mobile.ReadModels.Dto;
+using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile.ReadModels
 {

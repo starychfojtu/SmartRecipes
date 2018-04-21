@@ -1,6 +1,7 @@
 ﻿using Xamarin.Forms;
 using SmartRecipes.Mobile.Views;
 using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.ViewModels;
 
 namespace SmartRecipes.Mobile.Pages
 {

@@ -1,5 +1,6 @@
 ﻿using System;
-namespace SmartRecipes.Mobile
+
+namespace SmartRecipes.Mobile.Models
 {
     public class Account
     {
