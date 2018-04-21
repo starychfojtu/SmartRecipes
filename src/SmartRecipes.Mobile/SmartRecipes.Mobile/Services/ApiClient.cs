@@ -3,7 +3,7 @@ using SmartRecipes.Mobile.ApiDto;
 using System;
 using System.Threading.Tasks;
 using LanguageExt;
-using System.Linq;
+using static LanguageExt.Prelude;
 using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile.Services
@@ -91,6 +91,7 @@ namespace SmartRecipes.Mobile.Services
 
         private Task SimulateRequest()
         {
+            // TODO: Implement returning None when request fails
             return client.GetAsync("https://google.com");
         }
     }

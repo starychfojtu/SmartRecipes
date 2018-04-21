@@ -5,16 +5,31 @@
     x:Class="SmartRecipes.Mobile.Pages.NewRecipePage">
     <ContentPage.Content>
         <StackLayout>
+            
+            <Label
+                Text="Name"/>
             <Entry
                 x:Name="NameEntry"/>
+
+            <Label
+                Text="Image url"/>
             <Entry
                 x:Name="ImageUrlEntry"/>
+
+            <Label
+                Text="Person count"/>
             <Entry
                 x:Name="PersonCountEntry"/>
+
+            <Label
+                Text="Text"/>
             <Editor
                 x:Name="TextEditor"/>
+            
             <Button
-                x:Name="SubmitButton"/>
+                x:Name="SubmitButton"
+                Text="Save"/>
+            
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
