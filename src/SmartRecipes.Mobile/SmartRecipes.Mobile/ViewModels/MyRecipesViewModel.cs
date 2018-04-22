@@ -26,6 +26,11 @@ namespace SmartRecipes.Mobile.ViewModels
             await Navigation.AddRecipe(this);
         }
 
+        public async Task Refresh()
+        {
+            await InitializeAsync();
+        }
+
         public async Task UpdateRecipesAsync()
         {
             var recipes = await repository.GetRecipesAsync();

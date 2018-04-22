@@ -21,7 +21,14 @@ namespace SmartRecipes.Mobile.Services
 
         public async Task<Option<SignInResponse>> Post(SignInRequest request)
         {
-            await SimulateRequest();
+            try
+            {
+                await SimulateRequest();
+            }
+            catch (HttpRequestException)
+            {
+                return None;
+            }
 
             //if (request.Email == "test@gmail.com" && request.Password == "1234")
             //{
@@ -34,19 +41,41 @@ namespace SmartRecipes.Mobile.Services
 
         public async Task<Option<SignUpResponse>> Post(SignUpRequest request)
         {
-            await SimulateRequest();
+            try
+            {
+                await SimulateRequest();
+            }
+            catch (HttpRequestException)
+            {
+                return None;
+            }
             return new SignUpResponse(new SignUpResponse.Account("fake@gmail.com"));
         }
 
         public async Task<Option<ShoppingListResponse>> Post(AdjustIngredientRequest request)
         {
-            await SimulateRequest();
+            try
+            {
+                await SimulateRequest();
+            }
+            catch (HttpRequestException)
+            {
+                return None;
+            }
             return await GetShoppingList();
         }
 
         public async Task<Option<ShoppingListResponse>> GetShoppingList()
         {
-            await SimulateRequest();
+            try
+            {
+                await SimulateRequest();
+            }
+            catch (HttpRequestException)
+            {
+                return None;
+            }
+
             var tomato = new ShoppingListResponse.Item.Foodstuff(
                 Guid.Parse("54ba369a-035f-4928-ac43-732ae234a5b8"),
                 "Tomato",
@@ -78,7 +107,15 @@ namespace SmartRecipes.Mobile.Services
 
         public async Task<Option<MyRecipesResponse>> GetMyRecipes()
         {
-            await SimulateRequest();
+            try
+            {
+                await SimulateRequest();
+            }
+            catch (HttpRequestException)
+            {
+                return None;
+            }
+
             var owner = new Account(Guid.Parse("13cb78ee-0aca-4287-9ecb-b87b4e83411b"), "someEmail@gmail.com");
             var imageUrl = "https://www.recipetineats.com/wp-content/uploads/2017/05/Lasagne-recipe-3-main-680x952.jpg";
             var recipes = new[]

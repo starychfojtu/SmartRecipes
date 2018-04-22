@@ -13,11 +13,16 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            // TODO: Update when OnAppearing
             RecipeListView.ItemTemplate = new DataTemplate<RecipeCell>();
             RecipeListView.SetBinding(ItemsView<Cell>.ItemsSourceProperty, nameof(viewModel.Recipes));
 
             AddRecipeButton.Clicked += async (s, e) => await viewModel.AddRecipe();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            (BindingContext as MyRecipesViewModel).Refresh();
         }
     }
 }
