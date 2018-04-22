@@ -34,9 +34,9 @@ namespace SmartRecipes.Mobile.ViewModels
             await UpdateItemsAsync();
         }
 
-        public void Refresh()
+        public async Task Refresh()
         {
-            RaisePropertyChanged(nameof(Items));
+            await InitializeAsync();
         }
 
         public async Task AddItem()

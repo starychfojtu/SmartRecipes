@@ -19,10 +19,10 @@ namespace SmartRecipes.Mobile.Pages
             AddItemsButton.Clicked += async (s, e) => await viewModel.AddItem();
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
-            (BindingContext as ShoppingListItemsViewModel).Refresh();
+            await (BindingContext as ShoppingListItemsViewModel).Refresh();
         }
     }
 }
