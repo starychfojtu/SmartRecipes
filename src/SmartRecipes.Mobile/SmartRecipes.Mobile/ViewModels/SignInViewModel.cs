@@ -1,6 +1,7 @@
 ﻿using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.WriteModels;
+using System.Linq;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -11,9 +12,14 @@ namespace SmartRecipes.Mobile.ViewModels
         public SignInViewModel(SecurityHandler commandHandler)
         {
             this.commandHandler = commandHandler;
+            Email = new ValidatableObject<string>(
+                "",
+                s => s.Contains("@") ? Enumerable.Empty<string>() : new[] { "Fuck off" },
+                _ => RaisePropertyChanged(nameof(Email))
+            );
         }
 
-        public string Email { get; set; }
+        public ValidatableObject<string> Email { get; set; }
 
         public string Password { get; set; }
 
@@ -21,7 +27,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public async void SignIn()
         {
-            Error = await commandHandler.SignIn(new SignInCredentials(Email, Password));
+            Error = await commandHandler.SignIn(new SignInCredentials(Email.Data, Password));
             RaisePropertyChanged(nameof(Error));
         }
 

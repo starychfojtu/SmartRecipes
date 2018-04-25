@@ -1,6 +1,7 @@
 ﻿using SmartRecipes.Mobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using SmartRecipes.Mobile.Controls;
 
 namespace SmartRecipes.Mobile.Pages
 {
@@ -16,7 +17,8 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            EmailEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Email));
+            EmailEntry.SetBinding(Entry.TextProperty, $"{nameof(viewModel.Email)}.Data");
+            EmailEntry.SetBinding(ValidatableEntry.ErrorsProperty, $"{nameof(viewModel.Email)}.Errors");
             PasswordEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Password));
 
             SignInButton.Command = new Command(() => viewModel.SignIn());
