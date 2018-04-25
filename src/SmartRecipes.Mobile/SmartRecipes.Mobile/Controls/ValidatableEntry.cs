@@ -17,18 +17,24 @@ namespace SmartRecipes.Mobile.Controls
         // TODO: THis binding code is fucking hell, investigate it
         private static void HandleErrorsPropertyChangedDelegate(BindableObject bindable, object oldValue, object newValue)
         {
+            // TODO: refactor this - very horrible code
             var entry = bindable as ValidatableEntry;
             var errors = newValue as IEnumerable<string>;
-            if (errors.Any())
+            var anyErrors = errors.Any();
+            if (anyErrors && !entry.IsError)
             {
                 entry.NonErrorTextColor = entry.TextColor;
                 entry.TextColor = Color.Red;
+                entry.IsError = true;
             }
-            else
+            else if (!anyErrors && entry.IsError)
             {
                 entry.TextColor = entry.NonErrorTextColor;
+                entry.IsError = false;
             }
         }
+
+        private bool IsError { get; set; }
 
         private Color NonErrorTextColor { get; set; }
 
