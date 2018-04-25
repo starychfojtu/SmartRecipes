@@ -6,6 +6,7 @@ using System;
 using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
+using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile.ViewModels
 {

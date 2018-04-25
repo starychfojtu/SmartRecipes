@@ -3,7 +3,7 @@ using SQLite;
 
 namespace SmartRecipes.Mobile.Models
 {
-    public class Recipe
+    public class Recipe : IRecipe
     {
         private Recipe(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text)
         {
@@ -38,6 +38,7 @@ namespace SmartRecipes.Mobile.Models
 
         // Combinators
 
+        // TODO: should be IRecipe
         public static Recipe Create(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text)
         {
             return new Recipe(id, ownerId, name, imageUrl, personCount, text);

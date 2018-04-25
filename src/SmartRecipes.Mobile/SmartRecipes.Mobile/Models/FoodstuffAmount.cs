@@ -3,9 +3,9 @@ using SQLite;
 
 namespace SmartRecipes.Mobile.Models
 {
-    public class FoodstuffAmount
+    public class FoodstuffAmount : IFoodstuffAmount
     {
-        private FoodstuffAmount(Guid id, Guid foodstuffId, Amount amount)
+        private FoodstuffAmount(Guid id, Guid foodstuffId, IAmount amount)
         {
             Id = id;
             FoodstuffId = foodstuffId;
@@ -26,7 +26,7 @@ namespace SmartRecipes.Mobile.Models
         public int _Count { get; set; }
         public AmountUnit _Unit { get; set; }
         [Ignore]
-        public Amount Amount
+        public IAmount Amount
         {
             get { return new Amount(_Count, _Unit); }
             set
@@ -36,24 +36,24 @@ namespace SmartRecipes.Mobile.Models
             }
         }
 
-        public FoodstuffAmount WithAmount(Amount amount)
+        public IFoodstuffAmount WithAmount(IAmount amount)
         {
             return new FoodstuffAmount(Id, FoodstuffId, amount);
         }
 
         // Combinators
 
-        public static FoodstuffAmount Create(Guid id, Foodstuff foodstuff, Amount amount)
+        public static IFoodstuffAmount Create(Guid id, IFoodstuff foodstuff, IAmount amount)
         {
             return new FoodstuffAmount(id, foodstuff.Id, amount);
         }
 
-        public static FoodstuffAmount Create(Guid id, Foodstuff foodstuff)
+        public static IFoodstuffAmount Create(Guid id, IFoodstuff foodstuff)
         {
             return new FoodstuffAmount(id, foodstuff.Id, foodstuff.BaseAmount);
         }
 
-        public static FoodstuffAmount CreateForRecipe(Guid id, Guid recipeId, Guid foodstuffId, Amount amount)
+        public static IFoodstuffAmount CreateForRecipe(Guid id, Guid recipeId, Guid foodstuffId, IAmount amount)
         {
             return new FoodstuffAmount(id, foodstuffId, amount)
             {

@@ -2,7 +2,7 @@
 
 namespace SmartRecipes.Mobile.Models
 {
-    public class Account
+    public class Account : IAccount
     {
         public Account(Guid id, string email)
         {

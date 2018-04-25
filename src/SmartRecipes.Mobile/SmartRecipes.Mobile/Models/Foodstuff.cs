@@ -3,9 +3,9 @@ using SQLite;
 
 namespace SmartRecipes.Mobile.Models
 {
-    public class Foodstuff
+    public class Foodstuff : IFoodstuff
     {
-        private Foodstuff(Guid id, string name, Uri imageUrl, Amount baseAmount, Amount amountStep)
+        private Foodstuff(Guid id, string name, Uri imageUrl, IAmount baseAmount, IAmount amountStep)
         {
             Id = id;
             Name = name;
@@ -32,7 +32,7 @@ namespace SmartRecipes.Mobile.Models
         public int _BaseCount { get; set; }
         public AmountUnit _BaseUnit { get; set; }
         [Ignore]
-        public Amount BaseAmount
+        public IAmount BaseAmount
         {
             get { return new Amount(_BaseCount, _BaseUnit); }
             set
@@ -45,7 +45,7 @@ namespace SmartRecipes.Mobile.Models
         public int _StepCount { get; set; }
         public AmountUnit _StepUnit { get; set; }
         [Ignore]
-        public Amount AmountStep
+        public IAmount AmountStep
         {
             get { return new Amount(_StepCount, _StepUnit); }
             set
@@ -55,14 +55,14 @@ namespace SmartRecipes.Mobile.Models
             }
         }
 
-        public bool Equals(Foodstuff foodstuff)
+        public bool Equals(IFoodstuff foodstuff)
         {
             return Id == foodstuff.Id;
         }
 
         // 
 
-        public static Foodstuff Create(Guid id, string name, Uri imageUrl, Amount baseAmount, Amount amountStep)
+        public static IFoodstuff Create(Guid id, string name, Uri imageUrl, IAmount baseAmount, IAmount amountStep)
         {
             return new Foodstuff(id, name, imageUrl, baseAmount, amountStep);
         }

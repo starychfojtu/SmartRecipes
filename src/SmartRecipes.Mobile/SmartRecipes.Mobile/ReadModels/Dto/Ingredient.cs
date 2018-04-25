@@ -1,28 +1,29 @@
 ﻿using LanguageExt;
 using SmartRecipes.Mobile.Models;
+using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile.ReadModels.Dto
 {
     public class Ingredient
     {
-        public Ingredient(Some<Foodstuff> foodstuff, Some<FoodstuffAmount> foodstuffAmount)
+        public Ingredient(Some<IFoodstuff> foodstuff, Some<IFoodstuffAmount> foodstuffAmount)
         {
-            Foodstuff = foodstuff;
-            FoodstuffAmount = foodstuffAmount;
+            Foodstuff = foodstuff.Value;
+            FoodstuffAmount = foodstuffAmount.Value;
         }
 
-        public Foodstuff Foodstuff { get; }
+        public IFoodstuff Foodstuff { get; }
 
-        public FoodstuffAmount FoodstuffAmount { get; }
+        public IFoodstuffAmount FoodstuffAmount { get; }
 
-        public Amount Amount
+        public IAmount Amount
         {
             get { return FoodstuffAmount.Amount; }
         }
 
-        public Ingredient WithAmount(Some<Amount> amount)
+        public Ingredient WithAmount(Some<IAmount> amount)
         {
-            return new Ingredient(Foodstuff, FoodstuffAmount.WithAmount(amount));
+            return new Ingredient(Foodstuff.ToSome(), FoodstuffAmount.WithAmount(amount.Value).ToSome());
         }
     }
 }

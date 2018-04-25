@@ -5,6 +5,7 @@ using LanguageExt;
 using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Models;
+using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile.WriteModels
 {
@@ -30,16 +31,22 @@ namespace SmartRecipes.Mobile.WriteModels
             return await ChangeAmount(ingredient, Amount.Add, IngredientAction.IncreaseAmount);
         }
 
-        public async Task<Ingredient> Add(Foodstuff foodstuff)
+        public async Task<Ingredient> Add(IFoodstuff foodstuff)
         {
-            return await IncreaseAmount(new Ingredient(foodstuff, FoodstuffAmount.Create(Guid.NewGuid(), foodstuff))); // TODO: notify DB
+            return await IncreaseAmount(new Ingredient(
+                foodstuff.ToSome(),
+                FoodstuffAmount.Create(Guid.NewGuid(), foodstuff).ToSome()
+            )); // TODO: notify DB
         }
 
-        private async Task<Ingredient> ChangeAmount(Ingredient ingredient, Func<Amount, Amount, Option<Amount>> operation, IngredientAction action)
+        private async Task<Ingredient> ChangeAmount(
+            Ingredient ingredient,
+            Func<IAmount, IAmount, Option<IAmount>> operation,
+            IngredientAction action)
         {
             // Main business action
-            var newAmount = operation(ingredient.Amount, ingredient.Foodstuff.AmountStep);
-            var changedIngredient = ingredient.WithAmount(newAmount.IfNone(() => throw new InvalidOperationException()));
+            var newAmount = operation(ingredient.Amount, ingredient.Foodstuff.AmountStep).IfNone(() => throw new InvalidOperationException());
+            var changedIngredient = ingredient.WithAmount(newAmount.ToSome());
 
             // Notifying API
             var request = new AdjustIngredientRequest(ingredient.Foodstuff.Id, action);

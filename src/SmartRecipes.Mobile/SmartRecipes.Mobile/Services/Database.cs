@@ -16,9 +16,9 @@ namespace SmartRecipes.Mobile.Services
         {
         }
 
-        public async Task AddAsync<T>(IEnumerable<T> recipes)
+        public async Task AddAsync<T>(IEnumerable<T> items)
         {
-            await Connection.InsertAllAsync(recipes);
+            await Connection.InsertAllAsync(items);
         }
 
         public async Task UpdateAsync<T>(T item)

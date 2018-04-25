@@ -16,7 +16,7 @@ namespace SmartRecipes.Mobile.WriteModels
             this.apiClient = apiClient;
         }
 
-        public async Task Add(Recipe recipe)
+        public async Task Add(IRecipe recipe)
         {
             await database.AddAsync(recipe.ToEnumerable());
         }

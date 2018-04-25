@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
+using SmartRecipes.Mobile.ApiDto;
 using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
@@ -14,7 +15,7 @@ namespace SmartRecipes.Mobile.ReadModels
         {
         }
 
-        public async Task<IEnumerable<Recipe>> GetRecipesAsync()
+        public async Task<IEnumerable<IRecipe>> GetRecipesAsync()
         {
             return await RetrievalAction(
                 client => client.GetMyRecipes(),

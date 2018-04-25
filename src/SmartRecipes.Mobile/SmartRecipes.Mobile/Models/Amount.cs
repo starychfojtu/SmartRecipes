@@ -4,7 +4,7 @@ using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.Models
 {
-    public class Amount
+    public class Amount : IAmount
     {
         public Amount(int count, AmountUnit unit)
         {
@@ -24,41 +24,41 @@ namespace SmartRecipes.Mobile.Models
         // Combinators
         // TODO: make monoid
 
-        public static Amount Zero(AmountUnit unit)
+        public static IAmount Zero(AmountUnit unit)
         {
             return new Amount(0, unit);
         }
 
-        public static bool IsLessThan(Amount a1, Amount a2)
+        public static bool IsLessThan(IAmount a1, IAmount a2)
         {
             return a1.Unit == a2.Unit && a1.Count < a2.Count;
         }
 
-        public static bool Equals(Amount a1, Amount a2)
+        public static bool Equals(IAmount a1, IAmount a2)
         {
             return a1.Unit == a2.Unit && a1.Count == a2.Count;
         }
 
-        public static bool IsLessThanOrEquals(Amount a1, Amount a2)
+        public static bool IsLessThanOrEquals(IAmount a1, IAmount a2)
         {
             return IsLessThan(a1, a2) || Equals(a1, a2);
         }
 
-        public static Option<Amount> Add(Amount a1, Amount a2)
+        public static Option<IAmount> Add(IAmount a1, IAmount a2)
         {
             return CountOperation((c1, c2) => c1 + c2, a1, a2);
         }
 
-        public static Option<Amount> Substract(Amount a1, Amount a2)
+        public static Option<IAmount> Substract(IAmount a1, IAmount a2)
         {
             return CountOperation((c1, c2) => c1 - c2, a1, a2);
         }
 
-        private static Option<Amount> CountOperation(Func<int, int, int> op, Amount first, Amount second)
+        private static Option<IAmount> CountOperation(Func<int, int, int> op, IAmount first, IAmount second)
         {
             var validOperation = first.Unit == second.Unit;
             return validOperation
-                ? Some(new Amount(op(first.Count, second.Count), first.Unit))
+                ? Some((IAmount)new Amount(op(first.Count, second.Count), first.Unit))
                 : None;
         }
     }

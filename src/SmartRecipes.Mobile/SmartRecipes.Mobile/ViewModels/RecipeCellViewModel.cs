@@ -5,7 +5,7 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class RecipeCellViewModel
     {
-        public RecipeCellViewModel(Recipe recipe, Action onPlus, Action onOther = null, string otherActionIcon = "detail")
+        public RecipeCellViewModel(IRecipe recipe, Action onPlus, Action onOther = null, string otherActionIcon = "detail")
         {
             OtherActionIcon = otherActionIcon;
             Recipe = recipe;
@@ -13,7 +13,7 @@ namespace SmartRecipes.Mobile.ViewModels
             OnOther = onOther;
         }
 
-        public Recipe Recipe { get; }
+        public IRecipe Recipe { get; }
 
         public Action OnPlus { get; }
 

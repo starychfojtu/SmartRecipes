@@ -7,6 +7,7 @@ using LanguageExt;
 using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Models;
+using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
@@ -34,7 +35,7 @@ namespace SmartRecipes.Mobile.ReadModels
             return ingredients.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new Ingredient(f, i));
         }
 
-        public async Task<IEnumerable<Foodstuff>> Search(string query)
+        public async Task<IEnumerable<IFoodstuff>> Search(string query)
         {
             // TODO: implement
             var foodstuff = new[]
@@ -67,7 +68,7 @@ namespace SmartRecipes.Mobile.ReadModels
                 i.FoodstuffDto.BaseAmount,
                 i.FoodstuffDto.AmountStep
             );
-            return new Ingredient(foodstuff, FoodstuffAmount.Create(i.Id, foodstuff, i.Amount));
+            return new Ingredient(foodstuff.ToSome(), FoodstuffAmount.Create(i.Id, foodstuff, i.Amount).ToSome());
         }
     }
 }
