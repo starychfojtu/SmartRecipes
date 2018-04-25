@@ -21,8 +21,8 @@ namespace SmartRecipes.Mobile.Pages
             viewModel.Bind(EmailEntry, ValidatableEntry.ErrorsProperty, vm => vm.Email.Errors);
             viewModel.Bind(PasswordEntry, Entry.TextProperty, vm => vm.Password);
 
-            SignInButton.Command = new Command(() => viewModel.SignIn());
-            SignUpButton.Command = new Command(() => viewModel.SignUp());
+            SignInButton.Clicked += (s, e) => viewModel.SignIn();
+            SignUpButton.Clicked += (s, e) => viewModel.SignUp();
         }
 
         protected override void OnSizeAllocated(double width, double height)
@@ -32,6 +32,7 @@ namespace SmartRecipes.Mobile.Pages
             ScaleBackground(width, height);
         }
 
+        // TODO: move to generic placeholder
         private void ScaleBackground(double width, double height)
         {
             var backgroundAspectRatio = BackgroundWidth / BackgroundHeight;

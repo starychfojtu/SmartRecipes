@@ -20,13 +20,4 @@ namespace SmartRecipes.Mobile.ViewModels
             return Task.FromResult(false);
         }
     }
-
-    public static class ViewModelExtensions
-    {
-        public static void Bind<TViewModel, TProperty>(this TViewModel viewModel, BindableObject obj, BindableProperty property, Expression<Func<TViewModel, TProperty>> propertyAccessor)
-            where TViewModel : ViewModel
-        {
-            obj.SetBinding(property, propertyAccessor.ToPropertyPathName());
-        }
-    }
 }
