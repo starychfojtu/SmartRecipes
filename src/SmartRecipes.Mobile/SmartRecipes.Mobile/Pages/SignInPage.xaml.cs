@@ -17,9 +17,9 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            EmailEntry.SetBinding(Entry.TextProperty, $"{nameof(viewModel.Email)}.Data");
-            EmailEntry.SetBinding(ValidatableEntry.ErrorsProperty, $"{nameof(viewModel.Email)}.Errors");
-            PasswordEntry.SetBinding(Entry.TextProperty, nameof(viewModel.Password));
+            viewModel.Bind(EmailEntry, Entry.TextProperty, vm => vm.Email.Data);
+            viewModel.Bind(EmailEntry, ValidatableEntry.ErrorsProperty, vm => vm.Email.Errors);
+            viewModel.Bind(PasswordEntry, Entry.TextProperty, vm => vm.Password);
 
             SignInButton.Command = new Command(() => viewModel.SignIn());
             SignUpButton.Command = new Command(() => viewModel.SignUp());

@@ -12,8 +12,6 @@ namespace SmartRecipes.Mobile
 
         private readonly Func<T, IEnumerable<string>> validate;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public ValidatableObject(T data, Func<T, IEnumerable<string>> validate, Action<T> onDataChanged)
         {
             this.data = data;
