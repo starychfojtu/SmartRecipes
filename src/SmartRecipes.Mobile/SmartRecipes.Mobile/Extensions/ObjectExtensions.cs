@@ -29,9 +29,9 @@ namespace SmartRecipes.Mobile
             context.Bind(entry, Entry.TextProperty, propertyAccessor);
         }
 
-        public static void BindErrors<TContext>(this TContext context, ValidatableEntry entry, Expression<Func<TContext, IEnumerable<string>>> propertyAccessor)
+        public static void BindErrors<TContext>(this TContext context, ValidatableEntry entry, Expression<Func<TContext, bool>> predicate)
         {
-            context.Bind(entry, ValidatableEntry.ErrorsProperty, propertyAccessor);
+            context.Bind(entry, ValidatableEntry.IsValidProperty, predicate);
         }
     }
 }

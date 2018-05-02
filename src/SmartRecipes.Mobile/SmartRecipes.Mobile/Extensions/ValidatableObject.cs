@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System;
-using System.Linq;
+﻿using System;
 
 namespace SmartRecipes.Mobile
 {
@@ -10,14 +8,14 @@ namespace SmartRecipes.Mobile
 
         private readonly Action<T> onDataChanged;
 
-        private readonly Func<T, IEnumerable<string>> validate;
+        private readonly Predicate<T> validate;
 
-        public ValidatableObject(T data, Func<T, IEnumerable<string>> validate, Action<T> onDataChanged)
+        public ValidatableObject(T data, Predicate<T> validate, Action<T> onDataChanged)
         {
             this.data = data;
             this.validate = validate;
             this.onDataChanged = onDataChanged;
-            Errors = validate(data);
+            IsValid = validate(data);
         }
 
         public T Data
@@ -26,22 +24,17 @@ namespace SmartRecipes.Mobile
             set
             {
                 data = value;
-                Errors = validate(data);
+                IsValid = validate(data);
                 onDataChanged?.Invoke(data);
             }
         }
 
-        public bool IsValid
-        {
-            get { return Errors.Count() == 0; }
-        }
-
-        public IEnumerable<string> Errors { get; private set; }
+        public bool IsValid { get; set; }
     }
 
     public static class ValidatableObject
     {
-        public static ValidatableObject<T> Create<T>(Func<T, IEnumerable<string>> validate, Action<T> onDataChanged)
+        public static ValidatableObject<T> Create<T>(Predicate<T> validate, Action<T> onDataChanged)
         {
             return new ValidatableObject<T>(default(T), validate, onDataChanged);
         }

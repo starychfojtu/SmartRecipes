@@ -14,7 +14,7 @@ namespace SmartRecipes.Mobile.ViewModels
             this.commandHandler = commandHandler;
 
             Email = ValidatableObject.Create<string>(
-                s => Validation.NonEmptyEmail(s),
+                s => Validation.NotEmpty(s) && Validation.IsEmail(s),
                 _ => RaisePropertyChanged(nameof(Email))
             );
             Password = ValidatableObject.Create<string>(
@@ -32,11 +32,9 @@ namespace SmartRecipes.Mobile.ViewModels
             get { return Email.IsValid && Password.IsValid; }
         }
 
-        public async Task<string> SignIn()
+        public async Task<bool> SignIn()
         {
-            return FormIsValid
-                ? await commandHandler.SignIn(new SignInCredentials(Email.Data, Password.Data))
-                : "Please fill in valid input";
+            return FormIsValid && await commandHandler.SignIn(new SignInCredentials(Email.Data, Password.Data));
         }
 
         public async Task SignUp()

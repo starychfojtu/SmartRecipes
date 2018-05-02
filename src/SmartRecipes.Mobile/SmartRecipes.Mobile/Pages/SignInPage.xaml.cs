@@ -16,16 +16,18 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            viewModel.BindErrors(EmailEntry, vm => vm.Email.Errors);
+            viewModel.BindErrors(EmailEntry, vm => vm.Email.IsValid);
             viewModel.BindText(EmailEntry, vm => vm.Email.Data);
 
-            viewModel.BindErrors(PasswordEntry, vm => vm.Password.Errors);
+            viewModel.BindErrors(PasswordEntry, vm => vm.Password.IsValid);
             viewModel.BindText(PasswordEntry, vm => vm.Password.Data);
 
             SignInButton.Clicked += async (s, e) =>
             {
-                var error = await viewModel.SignIn();
-                await DisplayAlert("Sign in failed.", error, "Ok");
+                if (!await viewModel.SignIn())
+                {
+                    await DisplayAlert("Sign in failed.", "Email or password is incorrect.", "Ok");
+                }
             };
             SignUpButton.Clicked += async (s, e) => await viewModel.SignUp();
         }

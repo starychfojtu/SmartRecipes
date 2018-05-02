@@ -17,16 +17,17 @@ namespace SmartRecipes.Mobile.WriteModels
             this.apiClient = apiClient;
         }
 
-        public async Task<string> SignIn(SignInCredentials credentials)
+        public async Task<bool> SignIn(SignInCredentials credentials)
         {
             var result = await Authenticate(credentials, apiClient.Post);
 
             if (result.Success)
             {
                 await Navigation.LogIn(this);
+                return true;
             }
 
-            return "Invalid credenatials";
+            return false;
         }
 
         public static async Task<AuthenticationResult> Authenticate(SignInCredentials credentials, Func<SignInRequest, Task<Option<SignInResponse>>> post)

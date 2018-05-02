@@ -1,6 +1,5 @@
 ﻿using Xamarin.Forms;
 using SmartRecipes.Mobile.Controls;
-using System.Linq;
 
 namespace SmartRecipes.Mobile
 {
@@ -18,9 +17,9 @@ namespace SmartRecipes.Mobile
             var layout = new StackLayout();
             var context = ValidatableBindingContext;
 
-            context.Bind(DataEntry, Entry.TextProperty, c => c.Data);
-            context.Bind(DataEntry, ValidatableEntry.ErrorsProperty, c => c.Errors);
-            context.Bind(ErrorLabel, Label.TextProperty, c => c.Errors.FirstOrDefault());
+            //context.Bind(DataEntry, Entry.TextProperty, c => c.Data);
+            //context.Bind(DataEntry, ValidatableEntry.ErrorsProperty, c => c.Errors);
+            //context.Bind(ErrorLabel, Label.TextProperty, c => c.Errors.FirstOrDefault());
 
             layout.Children.Add(DataEntry);
             layout.Children.Add(ErrorLabel);
