@@ -5,16 +5,17 @@ using SmartRecipes.Mobile.Pages;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;
+using System.Collections.Immutable;
 
 namespace SmartRecipes.Mobile.Services
 {
     public static class PageFactory
     {
-        private static IReadOnlyDictionary<Type, Type> ViewModelByPages { get; }
+        private static IImmutableDictionary<Type, Type> ViewModelByPages { get; }
 
         static PageFactory()
         {
-            ViewModelByPages = new Dictionary<Type, Type>
+            var types = new Dictionary<Type, Type>
             {
                 { typeof(SignInPage), typeof(SignInViewModel) },
                 { typeof(ShoppingListItemsPage), typeof(ShoppingListItemsViewModel) },
@@ -22,6 +23,7 @@ namespace SmartRecipes.Mobile.Services
                 { typeof(MyRecipesPage), typeof(MyRecipesViewModel) },
                 { typeof(NewRecipePage), typeof(NewRecipeViewModel) }
             };
+            ViewModelByPages = types.ToImmutableDictionary();
         }
 
         public static async Task<T> GetPageAsync<T>() where T : class

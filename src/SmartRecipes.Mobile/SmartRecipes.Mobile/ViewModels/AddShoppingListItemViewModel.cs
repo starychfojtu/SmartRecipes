@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SmartRecipes.Mobile.ReadModels;
 using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.Models;
+using System.Collections.Immutable;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -17,7 +18,7 @@ namespace SmartRecipes.Mobile.ViewModels
         {
             this.repository = repository;
             this.commandHandler = commandHandler;
-            SearchResult = new List<FoodstuffCellViewModel>();
+            SearchResult = ImmutableList.Create<FoodstuffCellViewModel>();
         }
 
         public IEnumerable<FoodstuffCellViewModel> SearchResult { get; private set; }

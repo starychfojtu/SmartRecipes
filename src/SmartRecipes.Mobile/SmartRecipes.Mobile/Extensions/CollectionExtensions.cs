@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using LanguageExt;
 using LanguageExt.SomeHelp;
+using System.Collections.Immutable;
+using System;
 
 namespace SmartRecipes.Mobile
 {
     public static class CollectionExtensions
     {
-        public static IList<T> Replace<T>(this IList<T> list, T item, T replacement)
+        public static IImmutableList<T> Replace<T>(this IImmutableList<T> list, T item, T replacement)
         {
-            return list.Tee(l => l[l.IndexOf(item)] = replacement);
-        }
-
-        public static ICollection<T> Without<T>(this ICollection<T> list, T item)
-        {
-            return list.Tee(l => l.Remove(item));
+            return list.Remove(item).Add(replacement);
         }
 
         public static IEnumerable<Some<T>> ToSomeEnumerable<T>(this IEnumerable<T> enumerable)

@@ -6,7 +6,7 @@ using System;
 using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
-using LanguageExt.SomeHelp;
+using System.Collections.Immutable;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -16,13 +16,13 @@ namespace SmartRecipes.Mobile.ViewModels
 
         private readonly ShoppingListRepository repository;
 
-        private IList<Ingredient> items { get; set; }
+        private IImmutableList<Ingredient> items { get; set; }
 
         public ShoppingListItemsViewModel(ShoppingListHandler commandHandler, ShoppingListRepository repository)
         {
             this.repository = repository;
             this.commandHandler = commandHandler;
-            items = new List<Ingredient>();
+            items = ImmutableList.Create<Ingredient>();
         }
 
         public IEnumerable<FoodstuffCellViewModel> Items
@@ -59,16 +59,16 @@ namespace SmartRecipes.Mobile.ViewModels
         {
             var newItem = await action(item);
             var oldItem = items.First(i => i.Foodstuff.Id == item.Foodstuff.Id);
-            items.Replace(oldItem, newItem);
-            UpdateItems(items);
+            var newItems = items.Replace(oldItem, newItem);
+            UpdateItems(newItems);
         }
 
         private async Task UpdateItemsAsync()
         {
-            UpdateItems((await repository.GetItems()).ToList());
+            UpdateItems((await repository.GetItems()).ToImmutableList());
         }
 
-        private void UpdateItems(IList<Ingredient> newItems)
+        private void UpdateItems(IImmutableList<Ingredient> newItems)
         {
             items = newItems;
             RaisePropertyChanged(nameof(Items));
