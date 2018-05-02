@@ -13,14 +13,11 @@ namespace SmartRecipes.Mobile.ViewModels
         {
             this.commandHandler = commandHandler;
 
-            Email = new ValidatableObject<string>(
-                "",
+            Email = ValidatableObject.Create<string>(
                 s => Validation.NonEmptyEmail(s),
                 _ => RaisePropertyChanged(nameof(Email))
             );
-
-            Password = new ValidatableObject<string>(
-                "",
+            Password = ValidatableObject.Create<string>(
                 s => Validation.NotEmpty(s),
                 _ => RaisePropertyChanged(nameof(Password))
             );
