@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
-using System.ComponentModel;
+using System.Linq;
 
 namespace SmartRecipes.Mobile
 {
@@ -17,6 +17,7 @@ namespace SmartRecipes.Mobile
             this.data = data;
             this.validate = validate;
             this.onDataChanged = onDataChanged;
+            Errors = validate(default(T));
         }
 
         public T Data
@@ -28,6 +29,11 @@ namespace SmartRecipes.Mobile
                 Errors = validate(data);
                 onDataChanged?.Invoke(data);
             }
+        }
+
+        public bool IsValid
+        {
+            get { return Errors.Count() == 0; }
         }
 
         public IEnumerable<string> Errors { get; private set; }

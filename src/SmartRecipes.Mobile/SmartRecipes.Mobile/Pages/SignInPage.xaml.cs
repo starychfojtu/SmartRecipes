@@ -1,7 +1,6 @@
 ﻿using SmartRecipes.Mobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using SmartRecipes.Mobile.Controls;
 
 namespace SmartRecipes.Mobile.Pages
 {
@@ -17,12 +16,18 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            viewModel.Bind(EmailEntry, Entry.TextProperty, vm => vm.Email.Data);
-            viewModel.Bind(EmailEntry, ValidatableEntry.ErrorsProperty, vm => vm.Email.Errors);
-            viewModel.Bind(PasswordEntry, Entry.TextProperty, vm => vm.Password);
+            viewModel.BindErrors(EmailEntry, vm => vm.Email.Errors);
+            viewModel.BindText(EmailEntry, vm => vm.Email.Data);
 
-            SignInButton.Clicked += (s, e) => viewModel.SignIn();
-            SignUpButton.Clicked += (s, e) => viewModel.SignUp();
+            viewModel.BindErrors(PasswordEntry, vm => vm.Password.Errors);
+            viewModel.BindText(PasswordEntry, vm => vm.Password.Data);
+
+            SignInButton.Clicked += async (s, e) =>
+            {
+                var error = await viewModel.SignIn();
+                await DisplayAlert("Sign in failed.", error, "Ok");
+            };
+            SignUpButton.Clicked += async (s, e) => await viewModel.SignUp();
         }
 
         protected override void OnSizeAllocated(double width, double height)

@@ -43,6 +43,7 @@
 
             <!-- Sign in form -->
             <StackLayout
+                x:Name="FormLayout"
                 Grid.Row="1"
                 Padding="32"
                 Margin="8"
@@ -54,7 +55,7 @@
                     Margin="0, 0, 0, 4"
                     VerticalOptions="FillAndExpand"
                     Style="{StaticResource entry}"/>
-                <Entry 
+                <controls:ValidatableEntry 
                     Placeholder="Password"
                     x:Name="PasswordEntry"
                     IsPassword="true"
