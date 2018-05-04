@@ -23,7 +23,9 @@
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 Aspect="AspectFit"
-                Source="blurbg" />
+                Source="blurbg"/>
+            
+
 
             <!-- Heading -->
             <StackLayout
@@ -39,6 +41,10 @@
                     Text="Organize cooking" 
                     HorizontalTextAlignment="Center"
                     Style="{StaticResource lightSubHeading}"/> 
+                <ActivityIndicator
+                    x:Name="Loader"
+                    IsRunning="false"
+                    Color="{StaticResource accentColor}"/>
             </StackLayout>
 
             <!-- Sign in form -->

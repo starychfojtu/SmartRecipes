@@ -1,6 +1,8 @@
 ﻿using SmartRecipes.Mobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using System.Threading.Tasks;
+using System;
 
 namespace SmartRecipes.Mobile.Pages
 {
@@ -24,12 +26,22 @@ namespace SmartRecipes.Mobile.Pages
 
             SignInButton.Clicked += async (s, e) =>
             {
-                if (!await viewModel.SignIn())
+                await LoaderAction(Loader, async () =>
                 {
-                    await DisplayAlert("Sign in failed.", "Email or password is incorrect.", "Ok");
-                }
+                    if (!await viewModel.SignIn())
+                    {
+                        await DisplayAlert("Sign in failed.", "Email or password is incorrect.", "Ok");
+                    }
+                });
             };
             SignUpButton.Clicked += async (s, e) => await viewModel.SignUp();
+        }
+
+        public static async Task LoaderAction(ActivityIndicator indicator, Func<Task> a)
+        {
+            indicator.IsRunning = true;
+            await a();
+            indicator.IsRunning = false;
         }
 
         protected override void OnSizeAllocated(double width, double height)
