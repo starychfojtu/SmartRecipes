@@ -1,8 +1,9 @@
 ﻿using SmartRecipes.Mobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using System.Threading.Tasks;
-using System;
+using Autofac.Core;
+using SmartRecipes.Mobile.Extensions;
+using static SmartRecipes.Mobile.Extensions.PageExtensions;
 
 namespace SmartRecipes.Mobile.Pages
 {
@@ -35,13 +36,6 @@ namespace SmartRecipes.Mobile.Pages
                 });
             };
             SignUpButton.Clicked += async (s, e) => await viewModel.SignUp();
-        }
-
-        public static async Task LoaderAction(ActivityIndicator indicator, Func<Task> a)
-        {
-            indicator.IsRunning = true;
-            await a();
-            indicator.IsRunning = false;
         }
 
         protected override void OnSizeAllocated(double width, double height)
