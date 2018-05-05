@@ -1,7 +1,7 @@
 ﻿using SmartRecipes.Mobile.Pages;
 using Xamarin.Forms;
-using Autofac;
 using SmartRecipes.Mobile.Services;
+using System.Net;
 
 namespace SmartRecipes.Mobile
 {
@@ -9,6 +9,7 @@ namespace SmartRecipes.Mobile
     {
         public App()
         {
+            ServicePointManager.ServerCertificateValidationCallback += (o, certificate, chain, errors) => true;
             InitializeComponent();
         }
 

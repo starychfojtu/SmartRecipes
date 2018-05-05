@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Views;
+using Xamarin.Forms;
 
 namespace SmartRecipes.Mobile.Pages
 {
@@ -10,11 +12,15 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            NameEntry.SetBinding(Entry.TextProperty, $"{nameof(viewModel.Recipe)}.{nameof(NewRecipeViewModel.FormDto.Name)}");
-            ImageUrlEntry.SetBinding(Entry.TextProperty, $"{nameof(viewModel.Recipe)}.{nameof(NewRecipeViewModel.FormDto.ImageUrl)}");
-            PersonCountEntry.SetBinding(Entry.TextProperty, $"{nameof(viewModel.Recipe)}.{nameof(NewRecipeViewModel.FormDto.PersonCount)}");
-            TextEditor.SetBinding(Editor.TextProperty, $"{nameof(viewModel.Recipe)}.{nameof(NewRecipeViewModel.FormDto.Text)}");
+            viewModel.BindText(NameEntry, vm => vm.Recipe.Name);
+            viewModel.BindText(ImageUrlEntry, vm => vm.Recipe.ImageUrl);
+            viewModel.BindText(PersonCountEntry, vm => vm.Recipe.PersonCount);
+            viewModel.Bind(TextEditor, Entry.TextProperty, vm => vm.Recipe.Text);
 
+            IngredientsListView.ItemTemplate = new DataTemplate<FoodstuffCell>();
+            IngredientsListView.SetBinding(ItemsView<Cell>.ItemsSourceProperty, nameof(viewModel.Ingredients));
+
+            AddIngredientButton.Clicked += async (s, e) => await viewModel.OpenAddIngredientDialog();
             SubmitButton.Clicked += async (s, e) => await viewModel.Submit();
         }
     }

@@ -3,7 +3,6 @@ using System;
 using SmartRecipes.Mobile.ViewModels;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.Models;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -28,7 +27,13 @@ namespace SmartRecipes.Mobile
 
         public async Task OpenAddIngredientDialog()
         {
-            var newIngredient = FoodstuffAmount.Create(Guid.NewGuid(), null);
+            var newIngredient = FoodstuffAmount.Create(Guid.NewGuid(), Foodstuff.Create(
+                Guid.Parse("cb3d0f54-c99d-43f1-ade4-e316b0e6543d"),
+                "Carrot",
+                new Uri("https://www.znaturalfoods.com/698-thickbox_default/carrot-powder-organic.jpg"),
+                new Amount(1, AmountUnit.Piece),
+                new Amount(1, AmountUnit.Piece)
+            ));
             UpdateIngredients(Ingredients.Add(newIngredient));
         }
 
@@ -46,7 +51,7 @@ namespace SmartRecipes.Mobile
             await commandHandler.Add(recipe, ingredients);
         }
 
-        private void UpdateIngredients(IEnumerable<IFoodstuffAmount> ingredients)
+        private void UpdateIngredients(ImmutableList<IFoodstuffAmount> ingredients)
         {
             Ingredients = ingredients;
             RaisePropertyChanged(nameof(Ingredients));

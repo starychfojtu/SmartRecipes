@@ -2,34 +2,51 @@
 <ContentPage 
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-    x:Class="SmartRecipes.Mobile.Pages.NewRecipePage">
+    x:Class="SmartRecipes.Mobile.Pages.NewRecipePage"
+    xmlns:suave="clr-namespace:SuaveControls.Views;assembly=SuaveControls.FloatingActionButton">
     <ContentPage.Content>
-        <StackLayout>
-            
-            <Label
-                Text="Name"/>
-            <Entry
-                x:Name="NameEntry"/>
+        <ScrollView>
+            <StackLayout
+                Padding="16, 16, 16, 16">
+                
+                <Label
+                    Text="Name"/>
+                <Entry
+                    x:Name="NameEntry"/>
 
-            <Label
-                Text="Image url"/>
-            <Entry
-                x:Name="ImageUrlEntry"/>
+                <Label
+                    Text="Image url"/>
+                <Entry
+                    x:Name="ImageUrlEntry"/>
 
-            <Label
-                Text="Person count"/>
-            <Entry
-                x:Name="PersonCountEntry"/>
+                <Label
+                    Text="Person count"/>
+                <Entry
+                    x:Name="PersonCountEntry"/>
 
-            <Label
-                Text="Text"/>
-            <Editor
-                x:Name="TextEditor"/>
-            
-            <Button
-                x:Name="SubmitButton"
-                Text="Save"/>
-            
-        </StackLayout>
+                <Label
+                    Text="Text"/>
+                <Editor
+                    x:Name="TextEditor"/>
+                
+                <Button
+                    x:Name="SubmitButton"
+                    Text="Save"/>
+                
+                <ListView
+                    x:Name="IngredientsListView"
+                    SeparatorColor="{StaticResource dividerColor}"
+                    RowHeight="64"/>
+                
+                <suave:FloatingActionButton 
+                    x:Name="AddIngredientButton"
+                    HorizontalOptions="End" 
+                    VerticalOptions="End"
+                    WidthRequest="80" 
+                    HeightRequest="90"
+                    Image="add.png" 
+                    ButtonColor="{StaticResource accentColor}"/>
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>
