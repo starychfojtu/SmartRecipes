@@ -12,9 +12,9 @@ namespace SmartRecipes.Mobile.ViewModels
     {
         private readonly ShoppingListHandler commandHandler;
 
-        private readonly ShoppingListRepository repository;
+        private readonly FoodstuffRepository repository;
 
-        public AddShoppingListItemViewModel(ShoppingListHandler commandHandler, ShoppingListRepository repository)
+        public AddShoppingListItemViewModel(ShoppingListHandler commandHandler, FoodstuffRepository repository)
         {
             this.repository = repository;
             this.commandHandler = commandHandler;
