@@ -41,6 +41,11 @@ namespace SmartRecipes.Mobile.Models
             return new FoodstuffAmount(Id, FoodstuffId, amount);
         }
 
+        public IFoodstuffAmount WithRecipe(IRecipe recipe)
+        {
+            return (new FoodstuffAmount(Id, FoodstuffId, Amount)).Tee(f => f.RecipeId = recipe.Id);
+        }
+
         // Combinators
 
         public static IFoodstuffAmount Create(Guid id, IFoodstuff foodstuff, IAmount amount)

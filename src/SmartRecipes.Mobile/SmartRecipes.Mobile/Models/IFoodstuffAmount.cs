@@ -1,5 +1,4 @@
 ﻿using System;
-using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile.Models
 {
@@ -16,5 +15,7 @@ namespace SmartRecipes.Mobile.Models
         IAmount Amount { get; }
 
         IFoodstuffAmount WithAmount(IAmount amount);
+
+        IFoodstuffAmount WithRecipe(IRecipe recipe);
     }
 }
