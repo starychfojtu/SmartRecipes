@@ -1,6 +1,7 @@
 ﻿using LanguageExt;
 using SmartRecipes.Mobile.Models;
 using LanguageExt.SomeHelp;
+using System;
 
 namespace SmartRecipes.Mobile.ReadModels.Dto
 {
@@ -24,6 +25,15 @@ namespace SmartRecipes.Mobile.ReadModels.Dto
         public Ingredient WithAmount(Some<IAmount> amount)
         {
             return new Ingredient(Foodstuff.ToSome(), FoodstuffAmount.WithAmount(amount.Value).ToSome());
+        }
+
+        public static Ingredient Create(IFoodstuff foodstuff, Guid shoppingListOwnerId)
+        {
+            var foodstuffAmount = Models.FoodstuffAmount.CreateForShoppingList(Guid.NewGuid(), shoppingListOwnerId, foodstuff.Id, foodstuff.BaseAmount);
+            return new Ingredient(
+                foodstuff.ToSome(),
+                foodstuffAmount.ToSome()
+            );
         }
     }
 }

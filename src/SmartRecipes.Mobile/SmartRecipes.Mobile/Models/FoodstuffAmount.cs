@@ -56,16 +56,6 @@ namespace SmartRecipes.Mobile.Models
 
         // Combinators
 
-        public static IFoodstuffAmount Create(Guid id, IFoodstuff foodstuff, IAmount amount)
-        {
-            return new FoodstuffAmount(id, foodstuff.Id, amount);
-        }
-
-        public static IFoodstuffAmount Create(Guid id, IFoodstuff foodstuff)
-        {
-            return new FoodstuffAmount(id, foodstuff.Id, foodstuff.BaseAmount);
-        }
-
         public static IFoodstuffAmount CreateForRecipe(Guid id, Guid recipeId, Guid foodstuffId, IAmount amount)
         {
             return new FoodstuffAmount(id, foodstuffId, amount)

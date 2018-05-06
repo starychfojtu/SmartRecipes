@@ -36,7 +36,7 @@ namespace SmartRecipes.Mobile.WriteModels
         public async Task<IEnumerable<Ingredient>> Add(IEnumerable<IFoodstuff> foodstuffs)
         {
             // TODO: add proper user id
-            var ingredients = foodstuffs.Select(f => new Ingredient(f.ToSome(), FoodstuffAmount.CreateForShoppingList(Guid.NewGuid(), Guid.NewGuid(), f.Id, f.BaseAmount).ToSome()));
+            var ingredients = foodstuffs.Select(f => Ingredient.Create(f, Guid.NewGuid()));
 
             var shoppingListItems = ingredients.Select(i => i.FoodstuffAmount);
             await database.AddAsync(shoppingListItems);

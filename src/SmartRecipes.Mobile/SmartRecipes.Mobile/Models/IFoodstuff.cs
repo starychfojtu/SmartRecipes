@@ -1,5 +1,6 @@
 ﻿using System;
 using SmartRecipes.Mobile.Models;
+using SmartRecipes.Mobile.ReadModels.Dto;
 
 namespace SmartRecipes.Mobile.Models
 {

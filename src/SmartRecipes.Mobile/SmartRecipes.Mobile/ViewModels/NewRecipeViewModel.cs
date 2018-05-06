@@ -2,13 +2,11 @@
 using System;
 using SmartRecipes.Mobile.ViewModels;
 using System.Threading.Tasks;
-using SmartRecipes.Mobile.Models;
 using System.Collections.Immutable;
 using System.Linq;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using System.Collections.Generic;
 using SmartRecipes.Mobile.Services;
-using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile
 {
@@ -37,7 +35,7 @@ namespace SmartRecipes.Mobile
         public async Task OpenAddIngredientDialog()
         {
             var foodstuffs = await Navigation.SelectFoodstuffDialog();
-            var newIngredients = foodstuffs.Select(f => new Ingredient(f.ToSome(), FoodstuffAmount.Create(Guid.NewGuid(), f).ToSome()));
+            var newIngredients = foodstuffs.Select(f => Ingredient.Create(f, Guid.Empty)); // TODO: refactor
             UpdateIngredients(ingredients.Concat(newIngredients).ToImmutableList());
         }
 

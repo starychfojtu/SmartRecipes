@@ -14,7 +14,7 @@ namespace SmartRecipes.Mobile.ReadModels
 
         public async Task<IEnumerable<IFoodstuff>> Search(string query)
         {
-            // TODO: implement
+            // TODO: implement with retrieval action and API
             return new[]
             {
                 Foodstuff.Create(
