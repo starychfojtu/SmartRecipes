@@ -8,13 +8,17 @@ using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Models;
 using LanguageExt.SomeHelp;
+using SmartRecipes.Mobile.WriteModels;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
     public class ShoppingListRepository : Repository
     {
-        public ShoppingListRepository(ApiClient apiClient, Database database) : base(apiClient, database)
+        private readonly UserHandler userHandler;
+
+        public ShoppingListRepository(UserHandler userHandler, ApiClient apiClient, Database database) : base(apiClient, database)
         {
+            this.userHandler = userHandler;
         }
 
         public async Task<IEnumerable<Ingredient>> GetItems()
@@ -22,7 +26,7 @@ namespace SmartRecipes.Mobile.ReadModels
             return await RetrievalAction(
                 client => client.GetShoppingList(),
                 db => GetIngredients(db),
-                response => response.Items.Select(i => ToIngredients(i, response.OwnerId)),
+                response => response.Items.Select(i => ToIngredients(i, userHandler.CurrentAccount.Id)),
                 ingredients => ingredients.Select(i => (object)i.Foodstuff).Concat(ingredients.Select(i => (object)i.FoodstuffAmount))
             );
         }

@@ -12,15 +12,18 @@ namespace SmartRecipes.Mobile
 {
     public class NewRecipeViewModel : ViewModel
     {
-        private readonly MyRecipesHandler commandHandler;
+        private readonly MyRecipesHandler recipeHandler;
+
+        private readonly UserHandler userHandler;
 
         private const string DefaultImageUrl = "https://thumbs.dreamstime.com/z/empty-dish-14513513.jpg";
 
         private IImmutableList<Ingredient> ingredients;
 
-        public NewRecipeViewModel(MyRecipesHandler commandHandler)
+        public NewRecipeViewModel(MyRecipesHandler recipeHandler, UserHandler userHandler)
         {
-            this.commandHandler = commandHandler;
+            this.recipeHandler = recipeHandler;
+            this.userHandler = userHandler;
             Recipe = new FormDto();
             ingredients = ImmutableList.Create<Ingredient>();
         }
@@ -43,14 +46,14 @@ namespace SmartRecipes.Mobile
         {
             var recipe = Models.Recipe.Create(
                 Guid.NewGuid(),
-                Guid.NewGuid(),
+                userHandler.CurrentAccount.Id, // TODO: this should probably set recipehandler, not viewModel
                 Recipe.Name,
                 new Uri(Recipe.ImageUrl ?? DefaultImageUrl),
                 Recipe.PersonCount,
                 Recipe.Text
             );
             var recipeIngredients = ingredients.Select(i => i.FoodstuffAmount.WithRecipe(recipe));
-            await commandHandler.Add(recipe, recipeIngredients);
+            await recipeHandler.Add(recipe, recipeIngredients);
         }
 
         private void UpdateIngredients(IImmutableList<Ingredient> newIngredients)

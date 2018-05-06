@@ -12,7 +12,7 @@ namespace SmartRecipes.Mobile.Services
 {
     public static class Navigation
     {
-        public static async Task LogIn(SecurityHandler controller)
+        public static async Task LogIn(UserHandler controller)
         {
             Application.Current.MainPage = new NavigationPage(await PageFactory.GetPageAsync<AppContainer>());
         }

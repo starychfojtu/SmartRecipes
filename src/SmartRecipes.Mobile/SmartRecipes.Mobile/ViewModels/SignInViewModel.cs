@@ -7,9 +7,9 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class SignInViewModel : ViewModel
     {
-        private readonly SecurityHandler commandHandler;
+        private readonly UserHandler commandHandler;
 
-        public SignInViewModel(SecurityHandler commandHandler)
+        public SignInViewModel(UserHandler commandHandler)
         {
             this.commandHandler = commandHandler;
 

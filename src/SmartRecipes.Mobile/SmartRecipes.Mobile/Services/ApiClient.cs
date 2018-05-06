@@ -101,7 +101,7 @@ namespace SmartRecipes.Mobile.Services
             var o = new ShoppingListResponse.Item(Guid.Parse("a90f8456-d705-4c4c-aaf9-2bc4318326e7"), onion, new Amount(2, AmountUnit.Piece));
             var b = new ShoppingListResponse.Item(Guid.Parse("94c72dad-d77c-4012-b4f3-4730f591c02b"), chickenBreast, new Amount(600, AmountUnit.Gram));
 
-            return new ShoppingListResponse(Guid.Parse("13cb78ee-0aca-4287-9ecb-b87b4e83411b"), new[] { t, o, b });
+            return new ShoppingListResponse(new[] { t, o, b });
         }
 
         public async Task<Option<MyRecipesResponse>> GetMyRecipes()

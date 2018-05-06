@@ -35,7 +35,7 @@ namespace SmartRecipes.Mobile.Services
 
             // Write models
             builder.RegisterType<ShoppingListHandler>();
-            builder.RegisterType<SecurityHandler>();
+            builder.RegisterType<UserHandler>();
             builder.RegisterType<MyRecipesHandler>();
             builder.RegisterType<NewRecipeViewModel>();
 

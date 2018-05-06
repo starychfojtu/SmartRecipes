@@ -17,8 +17,11 @@ namespace SmartRecipes.Mobile.WriteModels
 
         private readonly Database database;
 
-        public ShoppingListHandler(ApiClient apiClient, Database database)
+        private readonly UserHandler userHandler;
+
+        public ShoppingListHandler(UserHandler userHandler, ApiClient apiClient, Database database)
         {
+            this.userHandler = userHandler;
             this.apiClient = apiClient;
             this.database = database;
         }
@@ -35,8 +38,7 @@ namespace SmartRecipes.Mobile.WriteModels
 
         public async Task<IEnumerable<Ingredient>> Add(IEnumerable<IFoodstuff> foodstuffs)
         {
-            // TODO: add proper user id
-            var ingredients = foodstuffs.Select(f => Ingredient.Create(f, Guid.NewGuid()));
+            var ingredients = foodstuffs.Select(f => Ingredient.Create(f, userHandler.CurrentAccount.Id));
 
             var shoppingListItems = ingredients.Select(i => i.FoodstuffAmount);
             await database.AddAsync(shoppingListItems);

@@ -8,13 +8,20 @@ using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.WriteModels
 {
-    public class SecurityHandler
+    public class UserHandler
     {
         private readonly ApiClient apiClient;
 
-        public SecurityHandler(ApiClient apiClient)
+        private IAccount clientAccount;
+
+        public UserHandler(ApiClient apiClient)
         {
             this.apiClient = apiClient;
+        }
+
+        public IAccount CurrentAccount
+        {
+            get { return clientAccount ?? (clientAccount = new Account(Guid.Parse("13cb78ee-0aca-4287-9ecb-b87b4e83411b"), "someEmail@gmail.com")); }
         }
 
         public async Task<bool> SignIn(SignInCredentials credentials)
