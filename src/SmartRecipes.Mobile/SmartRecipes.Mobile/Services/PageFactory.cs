@@ -19,7 +19,7 @@ namespace SmartRecipes.Mobile.Services
             {
                 { typeof(SignInPage), typeof(SignInViewModel) },
                 { typeof(ShoppingListItemsPage), typeof(ShoppingListItemsViewModel) },
-                { typeof(AddShoppingListItemPage), typeof(AddShoppingListItemViewModel) },
+                { typeof(FoodstuffSearchPage), typeof(FoodstuffSearchViewModel) },
                 { typeof(MyRecipesPage), typeof(MyRecipesViewModel) },
                 { typeof(NewRecipePage), typeof(NewRecipeViewModel) }
             };

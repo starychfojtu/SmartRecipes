@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Immutable;
 using System.Linq;
+using SmartRecipes.Mobile.Services;
 
 namespace SmartRecipes.Mobile
 {
@@ -23,7 +24,7 @@ namespace SmartRecipes.Mobile
 
         public FormDto Recipe { get; set; }
 
-        public ImmutableList<IFoodstuffAmount> Ingredients { get; private set; }
+        public IImmutableList<IFoodstuffAmount> Ingredients { get; private set; }
 
         public async Task OpenAddIngredientDialog()
         {
@@ -51,7 +52,7 @@ namespace SmartRecipes.Mobile
             await commandHandler.Add(recipe, ingredients);
         }
 
-        private void UpdateIngredients(ImmutableList<IFoodstuffAmount> ingredients)
+        private void UpdateIngredients(IImmutableList<IFoodstuffAmount> ingredients)
         {
             Ingredients = ingredients;
             RaisePropertyChanged(nameof(Ingredients));

@@ -25,6 +25,8 @@
     <Compile Remove="Pages\ShoppingListAutocomplete.xaml.cs" />
     <Compile Remove="Services\ShoppingList.cs" />
     <Compile Remove="Commands\SignInCommand.cs" />
+    <Compile Remove="Pages\AddShoppingListItemPage.xaml %28copy%29.cs" />
+    <Compile Remove="Pages\NewRecipeAddIngredientPage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="App.xaml.cs">
@@ -57,12 +59,25 @@
     <Compile Update="Views\RecipeCell.xaml.cs">
       <DependentUpon>RecipeCell.xaml</DependentUpon>
     </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Pages\AddShoppingListItemPage.xaml.cs">
+      <DependentUpon>FoodstuffSearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Pages\FoodstuffSearchPage.cs">
+      <DependentUpon>FoodstuffSearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Pages\FoodstuffSearchPage.xaml.cs">
+      <DependentUpon>FoodstuffSearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\FoodstuffCell.xaml. %28copy%29.cs">
+      <DependentUpon>FoodstuffSearchCell.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="Views\ShoppingListItemCell %28copy%29.xaml" />
     <EmbeddedResource Remove="Views\NavigationDrawer.xaml" />
     <EmbeddedResource Remove="Pages\ShoppingListPage.xaml" />
+    <EmbeddedResource Remove="Pages\AddShoppingListItemPage %28copy%29.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Pages\SignInPage.xaml">

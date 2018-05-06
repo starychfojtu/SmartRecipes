@@ -13,10 +13,10 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            ItemsListView.ItemTemplate = new DataTemplate<FoodstuffCell>();
+            ItemsListView.ItemTemplate = new DataTemplate<FoodstuffSearchCell>();
             ItemsListView.SetBinding(ItemsView<Cell>.ItemsSourceProperty, nameof(viewModel.Items));
 
-            AddItemsButton.Clicked += async (s, e) => await viewModel.AddItem();
+            AddItemsButton.Clicked += async (s, e) => await viewModel.OpenAddIngredientDialog();
         }
 
         protected async override void OnAppearing()

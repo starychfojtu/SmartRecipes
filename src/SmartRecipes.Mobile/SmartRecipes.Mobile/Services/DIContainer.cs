@@ -31,6 +31,7 @@ namespace SmartRecipes.Mobile.Services
             // Read models
             builder.RegisterType<ShoppingListRepository>();
             builder.RegisterType<RecipeRepository>();
+            builder.RegisterType<FoodstuffRepository>();
 
             // Write models
             builder.RegisterType<ShoppingListHandler>();
@@ -41,7 +42,7 @@ namespace SmartRecipes.Mobile.Services
             // View models
             builder.RegisterType<SignInViewModel>();
             builder.RegisterType<ShoppingListItemsViewModel>();
-            builder.RegisterType<AddShoppingListItemViewModel>();
+            builder.RegisterType<FoodstuffSearchViewModel>();
             builder.RegisterType<MyRecipesViewModel>();
 
             return builder.Build();

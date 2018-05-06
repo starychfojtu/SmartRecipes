@@ -40,9 +40,9 @@ namespace SmartRecipes.Mobile.ViewModels
             await InitializeAsync();
         }
 
-        public async Task AddItem()
+        public async Task OpenAddIngredientDialog()
         {
-            await Navigation.AddShoppingListItem(this);
+            await Navigation.OpenAddIngredientDialog();
         }
 
         private async Task IncreaseAmountAsync(Ingredient item)
@@ -70,7 +70,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         private void UpdateItems(IImmutableList<Ingredient> newItems)
         {
-            items = newItems;
+            items = newItems.OrderBy(i => i.Foodstuff.Name).ToImmutableList();
             RaisePropertyChanged(nameof(Items));
         }
 

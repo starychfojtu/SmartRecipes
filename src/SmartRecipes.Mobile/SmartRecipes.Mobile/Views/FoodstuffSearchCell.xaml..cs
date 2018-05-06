@@ -1,35 +1,23 @@
 ﻿using Xamarin.Forms;
 using FFImageLoading.Transformations;
-using System.Threading.Tasks;
 using SmartRecipes.Mobile.ViewModels;
 
 namespace SmartRecipes.Mobile.Views
 {
-    public partial class FoodstuffCell : ViewCell
+    public partial class FoodstuffSearchCell : ViewCell
     {
-        private FoodstuffCellViewModel CachedViewModel;
+        private FoodstuffSearchCellViewModel CachedViewModel;
 
-        public FoodstuffCell()
+        public FoodstuffSearchCell()
         {
             InitializeComponent();
 
             Image.Transformations.Add(new CircleTransformation());
 
-            MinusButton.Clicked += async (s, e) => await OnMinus();
-            PlusButton.Clicked += async (s, e) => await OnPlus();
+            PlusButton.Clicked += (s, e) => ViewModel.OnSelected();
         }
 
-        private FoodstuffCellViewModel ViewModel => (BindingContext as FoodstuffCellViewModel);
-
-        private async Task OnMinus()
-        {
-            await ViewModel.OnMinus?.Invoke();
-        }
-
-        private async Task OnPlus()
-        {
-            await ViewModel.OnPlus.Invoke();
-        }
+        private FoodstuffSearchCellViewModel ViewModel => (BindingContext as FoodstuffSearchCellViewModel);
 
         protected override void OnBindingContextChanged()
         {
@@ -38,8 +26,7 @@ namespace SmartRecipes.Mobile.Views
             if (ViewModel != null)
             {
                 NameLabel.Text = ViewModel.Foodstuff.Name;
-                AmountLabel.Text = ViewModel.Amount.ToString(); // TODO: add amount needed
-                MinusButton.IsVisible = ViewModel.OnMinus != null;
+                AmountLabel.Text = ViewModel.Foodstuff.BaseAmount.ToString();
 
                 var imageUrl = ViewModel.Foodstuff.ImageUrl;
                 if (imageUrl != CachedViewModel?.Foodstuff.ImageUrl)

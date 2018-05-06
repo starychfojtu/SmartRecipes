@@ -5,9 +5,9 @@ using SmartRecipes.Mobile.ViewModels;
 
 namespace SmartRecipes.Mobile.Pages
 {
-    public partial class AddShoppingListItemPage : ContentPage
+    public partial class FoodstuffSearchPage : ContentPage
     {
-        public AddShoppingListItemPage(AddShoppingListItemViewModel viewModel)
+        public FoodstuffSearchPage(FoodstuffSearchViewModel viewModel)
         {
             InitializeComponent();
 

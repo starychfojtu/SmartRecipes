@@ -8,13 +8,13 @@ using System.Collections.Immutable;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
-    public class NewRecipeAddIngredient : ViewModel
+    public class NewRecipeAddIngredientViewModel : ViewModel
     {
         private readonly MyRecipesHandler commandHandler;
 
         private readonly FoodstuffRepository repository;
 
-        public NewRecipeAddIngredient(MyRecipesHandler commandHandler, FoodstuffRepository repository)
+        public NewRecipeAddIngredientViewModel(MyRecipesHandler commandHandler, FoodstuffRepository repository)
         {
             this.repository = repository;
             this.commandHandler = commandHandler;
