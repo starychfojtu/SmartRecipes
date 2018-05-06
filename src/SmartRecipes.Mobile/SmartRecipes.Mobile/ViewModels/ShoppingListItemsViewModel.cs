@@ -7,6 +7,7 @@ using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
 using System.Collections.Immutable;
+using SmartRecipes.Mobile.Pages;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -42,7 +43,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public async Task OpenAddIngredientDialog()
         {
-            await Navigation.OpenAddIngredientDialog();
+            var selected = await Navigation.OpenAddIngredientDialog();
         }
 
         private async Task IncreaseAmountAsync(Ingredient item)

@@ -6,6 +6,7 @@ using SmartRecipes.Mobile.ViewModels;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Generic;
 using System;
+using System.Collections;
 
 namespace SmartRecipes.Mobile.Services
 {
@@ -29,13 +30,14 @@ namespace SmartRecipes.Mobile.Services
 
         public static async Task<IEnumerable<IFoodstuff>> OpenAddIngredientDialog()
         {
+            var selected = new TaskCompletionSource<IEnumerable<IFoodstuff>>();
             var page = await PageFactory.GetPageAsync<FoodstuffSearchPage>();
-            page.SelectingEnded += (s, e) =>
-            {
-                Console.Write("I am disappearing.");
-            };
+
+            page.SelectingEnded += (s, e) => selected.SetResult(e.Selected);
+
             await Application.Current.MainPage.Navigation.PushAsync(page);
-            return null;
+
+            return await selected.Task;
         }
     }
 }
