@@ -1,6 +1,5 @@
 ﻿using Xamarin.Forms;
 using FFImageLoading.Transformations;
-using System.Threading.Tasks;
 using SmartRecipes.Mobile.ViewModels;
 
 namespace SmartRecipes.Mobile.Views
