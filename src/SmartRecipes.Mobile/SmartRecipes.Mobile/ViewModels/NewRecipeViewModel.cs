@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Immutable;
 using System.Linq;
+using SmartRecipes.Mobile.ReadModels.Dto;
+using System.Collections.Generic;
 using SmartRecipes.Mobile.Services;
+using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile
 {
@@ -15,27 +18,27 @@ namespace SmartRecipes.Mobile
 
         private const string DefaultImageUrl = "https://thumbs.dreamstime.com/z/empty-dish-14513513.jpg";
 
+        private IImmutableList<Ingredient> ingredients;
+
         public NewRecipeViewModel(MyRecipesHandler commandHandler)
         {
             this.commandHandler = commandHandler;
             Recipe = new FormDto();
-            Ingredients = ImmutableList.Create<IFoodstuffAmount>();
+            ingredients = ImmutableList.Create<Ingredient>();
         }
 
         public FormDto Recipe { get; set; }
 
-        public IImmutableList<IFoodstuffAmount> Ingredients { get; private set; }
+        public IEnumerable<IngredientCellViewModel> Ingredients
+        {
+            get { return ingredients.Select(i => new IngredientCellViewModel(i, null, null)); }
+        }
 
         public async Task OpenAddIngredientDialog()
         {
-            var newIngredient = FoodstuffAmount.Create(Guid.NewGuid(), Foodstuff.Create(
-                Guid.Parse("cb3d0f54-c99d-43f1-ade4-e316b0e6543d"),
-                "Carrot",
-                new Uri("https://www.znaturalfoods.com/698-thickbox_default/carrot-powder-organic.jpg"),
-                new Amount(1, AmountUnit.Piece),
-                new Amount(1, AmountUnit.Piece)
-            ));
-            UpdateIngredients(Ingredients.Add(newIngredient));
+            var foodstuffs = await Navigation.SelectFoodstuffDialog();
+            var newIngredients = foodstuffs.Select(f => new Ingredient(f.ToSome(), FoodstuffAmount.Create(Guid.NewGuid(), f).ToSome()));
+            UpdateIngredients(ingredients.Concat(newIngredients).ToImmutableList());
         }
 
         public async Task Submit()
@@ -48,13 +51,13 @@ namespace SmartRecipes.Mobile
                 Recipe.PersonCount,
                 Recipe.Text
             );
-            var ingredients = Ingredients.Select(i => i.WithRecipe(recipe));
-            await commandHandler.Add(recipe, ingredients);
+            var recipeIngredients = ingredients.Select(i => i.FoodstuffAmount.WithRecipe(recipe));
+            await commandHandler.Add(recipe, recipeIngredients);
         }
 
-        private void UpdateIngredients(IImmutableList<IFoodstuffAmount> ingredients)
+        private void UpdateIngredients(IImmutableList<Ingredient> newIngredients)
         {
-            Ingredients = ingredients;
+            ingredients = newIngredients;
             RaisePropertyChanged(nameof(Ingredients));
         }
 
