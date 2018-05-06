@@ -18,10 +18,10 @@ namespace SmartRecipes.Mobile.ViewModels
         {
             this.repository = repository;
             this.commandHandler = commandHandler;
-            SearchResult = ImmutableList.Create<FoodstuffCellViewModel>();
+            SearchResult = ImmutableList.Create<IngredientCellViewModel>();
         }
 
-        public IEnumerable<FoodstuffCellViewModel> SearchResult { get; private set; }
+        public IEnumerable<IngredientCellViewModel> SearchResult { get; private set; }
 
         public async void Search(string query)
         {

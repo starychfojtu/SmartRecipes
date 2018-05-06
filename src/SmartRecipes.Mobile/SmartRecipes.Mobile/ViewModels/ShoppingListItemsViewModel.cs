@@ -7,7 +7,6 @@ using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
 using System.Collections.Immutable;
-using SmartRecipes.Mobile.Pages;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -17,18 +16,18 @@ namespace SmartRecipes.Mobile.ViewModels
 
         private readonly ShoppingListRepository repository;
 
-        private IImmutableList<Ingredient> items { get; set; }
+        private IImmutableList<Ingredient> ingredients { get; set; }
 
         public ShoppingListItemsViewModel(ShoppingListHandler commandHandler, ShoppingListRepository repository)
         {
             this.repository = repository;
             this.commandHandler = commandHandler;
-            items = ImmutableList.Create<Ingredient>();
+            ingredients = ImmutableList.Create<Ingredient>();
         }
 
-        public IEnumerable<FoodstuffCellViewModel> Items
+        public IEnumerable<IngredientCellViewModel> Ingredients
         {
-            get { return items.Select(i => ToViewModel(i)); }
+            get { return ingredients.Select(i => ToViewModel(i)); }
         }
 
         public override async Task InitializeAsync()
@@ -43,7 +42,10 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public async Task OpenAddIngredientDialog()
         {
-            var selected = await Navigation.OpenAddIngredientDialog();
+            var selected = await Navigation.SelectFoodstuffDialog();
+            var newIngredients = await commandHandler.Add(selected);
+            var allIngredients = ingredients.Concat(newIngredients).ToImmutableList();
+            UpdateIngredients(allIngredients);
         }
 
         private async Task IncreaseAmountAsync(Ingredient item)
@@ -59,29 +61,28 @@ namespace SmartRecipes.Mobile.ViewModels
         private async Task ItemAction(Ingredient item, Func<Ingredient, Task<Ingredient>> action)
         {
             var newItem = await action(item);
-            var oldItem = items.First(i => i.Foodstuff.Id == item.Foodstuff.Id);
-            var newItems = items.Replace(oldItem, newItem);
-            UpdateItems(newItems);
+            var oldItem = ingredients.First(i => i.Foodstuff.Id == item.Foodstuff.Id);
+            var newItems = ingredients.Replace(oldItem, newItem);
+            UpdateIngredients(newItems);
         }
 
         private async Task UpdateItemsAsync()
         {
-            UpdateItems((await repository.GetItems()).ToImmutableList());
+            UpdateIngredients((await repository.GetItems()).ToImmutableList());
         }
 
-        private void UpdateItems(IImmutableList<Ingredient> newItems)
+        private void UpdateIngredients(IImmutableList<Ingredient> newIngredients)
         {
-            items = newItems.OrderBy(i => i.Foodstuff.Name).ToImmutableList();
-            RaisePropertyChanged(nameof(Items));
+            ingredients = newIngredients.OrderBy(i => i.Foodstuff.Name).ToImmutableList();
+            RaisePropertyChanged(nameof(Ingredients));
         }
 
-        private FoodstuffCellViewModel ToViewModel(Ingredient item)
+        private IngredientCellViewModel ToViewModel(Ingredient ingredient)
         {
-            return new FoodstuffCellViewModel(
-                item.Foodstuff,
-                item.Amount,
-                () => IncreaseAmountAsync(item),
-                () => DecreaseAmountAsync(item)
+            return new IngredientCellViewModel(
+                ingredient,
+                () => IncreaseAmountAsync(ingredient),
+                () => DecreaseAmountAsync(ingredient)
             );
         }
     }

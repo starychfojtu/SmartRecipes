@@ -6,6 +6,7 @@ using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Models;
 using LanguageExt.SomeHelp;
+using System.Collections.Generic;
 
 namespace SmartRecipes.Mobile.WriteModels
 {
@@ -31,12 +32,18 @@ namespace SmartRecipes.Mobile.WriteModels
             return await ChangeAmount(ingredient, Amount.Add, IngredientAction.IncreaseAmount);
         }
 
-        public async Task<Ingredient> Add(IFoodstuff foodstuff)
+        public async Task<IEnumerable<Ingredient>> Add(IEnumerable<IFoodstuff> foodstuffs)
         {
-            return await IncreaseAmount(new Ingredient(
-                foodstuff.ToSome(),
-                FoodstuffAmount.Create(Guid.NewGuid(), foodstuff).ToSome()
-            )); // TODO: notify DB
+            // TODO: do this as batch
+            var ingredients = new List<Ingredient>();
+            foreach (var foodstuff in foodstuffs)
+            {
+                ingredients.Add(await IncreaseAmount(new Ingredient(
+                    foodstuff.ToSome(),
+                    FoodstuffAmount.Create(Guid.NewGuid(), foodstuff).ToSome()
+                ))); // TODO: notify DB
+            }
+            return ingredients;
         }
 
         private async Task<Ingredient> ChangeAmount(

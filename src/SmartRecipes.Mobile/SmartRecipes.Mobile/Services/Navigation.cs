@@ -28,7 +28,7 @@ namespace SmartRecipes.Mobile.Services
             await Application.Current.MainPage.Navigation.PushAsync(page);
         }
 
-        public static async Task<IEnumerable<IFoodstuff>> OpenAddIngredientDialog()
+        public static async Task<IEnumerable<IFoodstuff>> SelectFoodstuffDialog()
         {
             var selected = new TaskCompletionSource<IEnumerable<IFoodstuff>>();
             var page = await PageFactory.GetPageAsync<FoodstuffSearchPage>();

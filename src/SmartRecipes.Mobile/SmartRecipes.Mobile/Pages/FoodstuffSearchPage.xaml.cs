@@ -16,9 +16,10 @@ namespace SmartRecipes.Mobile.Pages
 
             BindingContext = viewModel;
 
-            Search.TextChanged += (s, e) => viewModel.Search(e.NewTextValue);
             SearchedItemsListView.ItemTemplate = new DataTemplate<FoodstuffSearchCell>();
-            SearchedItemsListView.SetBinding(ItemsView<Cell>.ItemsSourceProperty, nameof(viewModel.SearchResult));
+            viewModel.Bind(SearchedItemsListView, ItemsView<Cell>.ItemsSourceProperty, vm => vm.SearchResult);
+
+            Search.TextChanged += (s, e) => viewModel.Search(e.NewTextValue);
         }
 
         public event EventHandler<FoodstuffSelectedArgs> SelectingEnded;

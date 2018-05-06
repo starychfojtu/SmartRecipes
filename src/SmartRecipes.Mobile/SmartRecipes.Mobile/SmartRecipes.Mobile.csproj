@@ -71,6 +71,9 @@
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\FoodstuffCell.xaml. %28copy%29.cs">
       <DependentUpon>FoodstuffSearchCell.xaml</DependentUpon>
     </Compile>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Views\IngredientCell.xaml..cs">
+      <DependentUpon>IngredientCell.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
