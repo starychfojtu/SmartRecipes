@@ -38,12 +38,20 @@ namespace SmartRecipes.Mobile.Models
 
         public IFoodstuffAmount WithAmount(IAmount amount)
         {
-            return new FoodstuffAmount(Id, FoodstuffId, amount);
+            return new FoodstuffAmount(Id, FoodstuffId, amount)
+            {
+                RecipeId = RecipeId,
+                ShoppingListOwnerId = ShoppingListOwnerId
+            };
         }
 
         public IFoodstuffAmount WithRecipe(IRecipe recipe)
         {
-            return (new FoodstuffAmount(Id, FoodstuffId, Amount)).Tee(f => f.RecipeId = recipe.Id);
+            return new FoodstuffAmount(Id, FoodstuffId, Amount)
+            {
+                RecipeId = recipe.Id,
+                ShoppingListOwnerId = ShoppingListOwnerId
+            };
         }
 
         // Combinators

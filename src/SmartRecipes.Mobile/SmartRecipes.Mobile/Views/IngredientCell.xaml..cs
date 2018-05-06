@@ -1,13 +1,11 @@
 ﻿using Xamarin.Forms;
-using FFImageLoading.Transformations;
 using SmartRecipes.Mobile.ViewModels;
+using FFImageLoading.Transformations;
 
 namespace SmartRecipes.Mobile.Views
 {
     public partial class IngredientCell : ViewCell
     {
-        private IngredientCellViewModel CachedViewModel;
-
         public IngredientCell()
         {
             InitializeComponent();
@@ -29,15 +27,7 @@ namespace SmartRecipes.Mobile.Views
                 NameLabel.Text = ViewModel.Ingredient.Foodstuff.Name;
                 AmountLabel.Text = ViewModel.Ingredient.Amount.ToString(); // TODO: add amount needed
                 MinusButton.IsVisible = ViewModel.OnMinus != null;
-
-                var imageUrl = ViewModel.Ingredient.Foodstuff.ImageUrl;
-                if (imageUrl != CachedViewModel?.Ingredient.Foodstuff.ImageUrl)
-                {
-                    // TODO: resolve disposed bitmaps
-                    // Image.Source = imageUrl.AbsoluteUri;
-                }
-
-                CachedViewModel = ViewModel;
+                Image.Source = ViewModel.Ingredient.Foodstuff.ImageUrl;
             }
         }
     }

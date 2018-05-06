@@ -36,7 +36,8 @@
                 <ListView
                     x:Name="IngredientsListView"
                     SeparatorColor="{StaticResource dividerColor}"
-                    RowHeight="64"/>
+                    RowHeight="64"
+                    CachingStrategy="RecycleElement"/>
                 
                 <suave:FloatingActionButton 
                     x:Name="AddIngredientButton"

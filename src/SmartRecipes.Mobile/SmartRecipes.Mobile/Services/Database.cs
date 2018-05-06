@@ -3,6 +3,7 @@ using Xamarin.Forms;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using SmartRecipes.Mobile.Models;
+using System.Linq;
 
 namespace SmartRecipes.Mobile.Services
 {
@@ -11,7 +12,6 @@ namespace SmartRecipes.Mobile.Services
         private const string FileName = "SmartRecies.db";
 
         private SQLiteAsyncConnection connection;
-        private SQLiteConnection connectionS;
 
         public async Task AddAsync<T>(IEnumerable<T> items)
         {
@@ -20,7 +20,7 @@ namespace SmartRecipes.Mobile.Services
 
         public async Task UpdateAsync<T>(IEnumerable<T> items)
         {
-            await Connection.UpdateAsync(items);
+            await Connection.UpdateAllAsync(items);
         }
 
         public async Task AddOrReplaceAsync<T>(T item)

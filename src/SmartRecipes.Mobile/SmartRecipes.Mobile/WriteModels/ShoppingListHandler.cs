@@ -63,6 +63,7 @@ namespace SmartRecipes.Mobile.WriteModels
             }
 
             await database.UpdateAsync(newIngredients.Select(i => i.FoodstuffAmount));
+            var test = await database.FoodstuffAmounts.ToListAsync();
 
             return newIngredients;
         }

@@ -4,6 +4,8 @@ using Android.OS;
 using FFImageLoading.Forms.Droid;
 using RoundedBoxView.Forms.Plugin.Droid;
 using Xamarin.Forms.Platform.Android;
+using Java.Lang;
+using System;
 
 namespace SmartRecipes.Mobile.Droid
 {

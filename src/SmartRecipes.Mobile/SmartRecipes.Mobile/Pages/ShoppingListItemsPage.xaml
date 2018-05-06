@@ -11,14 +11,15 @@
             <ListView
                 x:Name="ItemsListView"
                 SeparatorColor="{StaticResource dividerColor}"
-                RowHeight="64"/>
+                RowHeight="64"
+                CachingStrategy="RecycleElement"/>
             <suave:FloatingActionButton 
                 x:Name="AddItemsButton"
                 HorizontalOptions="End" 
                 VerticalOptions="End"
                 WidthRequest="80" 
                 HeightRequest="90"
-                Image="add.png" 
+                Image="add.png"
                 ButtonColor="{StaticResource accentColor}"/>
         </StackLayout>
     </ContentPage.Content>

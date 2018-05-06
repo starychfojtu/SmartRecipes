@@ -1,13 +1,11 @@
 ﻿using Xamarin.Forms;
-using FFImageLoading.Transformations;
 using SmartRecipes.Mobile.ViewModels;
+using FFImageLoading.Transformations;
 
 namespace SmartRecipes.Mobile.Views
 {
     public partial class FoodstuffSearchCell : ViewCell
     {
-        private FoodstuffSearchCellViewModel CachedViewModel;
-
         public FoodstuffSearchCell()
         {
             InitializeComponent();
@@ -27,15 +25,7 @@ namespace SmartRecipes.Mobile.Views
             {
                 NameLabel.Text = ViewModel.Foodstuff.Name;
                 AmountLabel.Text = ViewModel.Foodstuff.BaseAmount.ToString();
-
-                var imageUrl = ViewModel.Foodstuff.ImageUrl;
-                if (imageUrl != CachedViewModel?.Foodstuff.ImageUrl)
-                {
-                    // TODO: resolve disposed bitmaps
-                    // Image.Source = imageUrl.AbsoluteUri;
-                }
-
-                CachedViewModel = ViewModel;
+                Image.Source = ViewModel.Foodstuff.ImageUrl;
             }
         }
     }
