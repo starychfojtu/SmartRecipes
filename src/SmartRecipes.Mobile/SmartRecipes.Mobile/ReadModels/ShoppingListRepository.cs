@@ -22,20 +22,32 @@ namespace SmartRecipes.Mobile.ReadModels
             return await RetrievalAction(
                 client => client.GetShoppingList(),
                 db => GetIngredients(db),
-                response => response.Items.Select(i => ToIngredients(i)),
+                response => response.Items.Select(i => ToIngredients(i, response.OwnerId)),
                 ingredients => ingredients.Select(i => (object)i.Foodstuff).Concat(ingredients.Select(i => (object)i.FoodstuffAmount))
             );
         }
 
         private static async Task<IEnumerable<Ingredient>> GetIngredients(Database database)
         {
-            var ingredients = await database.FoodstuffAmounts.Where(i => i.ShoppingListOwnerId != null).ToEnumerableAsync();
-            var foostuffIds = ingredients.Select(i => i.FoodstuffId);
-            var foodstuffs = await database.Foodstuffs.Where(f => foostuffIds.Contains(f.Id)).ToEnumerableAsync();
-            return ingredients.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new Ingredient(f, i));
+            var foodstuffAmounts = await GetShoppingListItemAmounts(database);
+
+            var foostuffIds = foodstuffAmounts.Select(a => a.FoodstuffId);
+            var foodstuffs = await GetFoodstuffs(foostuffIds, database);
+
+            return foodstuffAmounts.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new Ingredient(f.ToSome(), i.ToSome()));
         }
 
-        public static Ingredient ToIngredients(ShoppingListResponse.Item i)
+        private static async Task<IEnumerable<IFoodstuffAmount>> GetShoppingListItemAmounts(Database database)
+        {
+            return await database.FoodstuffAmounts.Where(i => i.ShoppingListOwnerId != null).ToEnumerableAsync();
+        }
+
+        private static async Task<IEnumerable<IFoodstuff>> GetFoodstuffs(IEnumerable<Guid> ids, Database database)
+        {
+            return await database.Foodstuffs.Where(f => ids.Contains(f.Id)).ToEnumerableAsync();
+        }
+
+        public static Ingredient ToIngredients(ShoppingListResponse.Item i, Guid ownerId)
         {
             var foodstuff = Foodstuff.Create(
                 i.FoodstuffDto.Id,
@@ -44,7 +56,7 @@ namespace SmartRecipes.Mobile.ReadModels
                 i.FoodstuffDto.BaseAmount,
                 i.FoodstuffDto.AmountStep
             );
-            return new Ingredient(foodstuff.ToSome(), FoodstuffAmount.Create(i.Id, foodstuff, i.Amount).ToSome());
+            return new Ingredient(foodstuff.ToSome(), FoodstuffAmount.CreateForShoppingList(i.Id, ownerId, foodstuff.Id, i.Amount).ToSome());
         }
     }
 }

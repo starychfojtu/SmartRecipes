@@ -6,10 +6,13 @@ namespace SmartRecipes.Mobile.ApiDto
 {
     public class ShoppingListResponse
     {
-        public ShoppingListResponse(IEnumerable<Item> items)
+        public ShoppingListResponse(Guid ownerId, IEnumerable<Item> items)
         {
+            OwnerId = ownerId;
             Items = items;
         }
+
+        public Guid OwnerId { get; }
 
         public IEnumerable<Item> Items { get; }
 

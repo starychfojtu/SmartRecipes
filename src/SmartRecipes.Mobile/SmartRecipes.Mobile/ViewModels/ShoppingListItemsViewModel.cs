@@ -48,20 +48,10 @@ namespace SmartRecipes.Mobile.ViewModels
             UpdateIngredients(allIngredients);
         }
 
-        private async Task IncreaseAmountAsync(Ingredient item)
+        private async Task IngredientAction(Ingredient ingredient, Func<Ingredient, Task<Ingredient>> action)
         {
-            await ItemAction(item, i => commandHandler.IncreaseAmount(i));
-        }
-
-        private async Task DecreaseAmountAsync(Ingredient item)
-        {
-            await ItemAction(item, i => commandHandler.DecreaseAmount(i));
-        }
-
-        private async Task ItemAction(Ingredient item, Func<Ingredient, Task<Ingredient>> action)
-        {
-            var newItem = await action(item);
-            var oldItem = ingredients.First(i => i.Foodstuff.Id == item.Foodstuff.Id);
+            var newItem = await action(ingredient);
+            var oldItem = ingredients.First(i => i.Foodstuff.Id == ingredient.Foodstuff.Id);
             var newItems = ingredients.Replace(oldItem, newItem);
             UpdateIngredients(newItems);
         }
@@ -81,8 +71,8 @@ namespace SmartRecipes.Mobile.ViewModels
         {
             return new IngredientCellViewModel(
                 ingredient,
-                () => IncreaseAmountAsync(ingredient),
-                () => DecreaseAmountAsync(ingredient)
+                () => IngredientAction(ingredient, i => commandHandler.IncreaseAmount(i.ToEnumerable()).Map(r => r.First())),
+                () => IngredientAction(ingredient, i => commandHandler.DecreaseAmount(i.ToEnumerable()).Map(r => r.First()))
             );
         }
     }

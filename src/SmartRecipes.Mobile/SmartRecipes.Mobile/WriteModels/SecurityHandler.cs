@@ -21,13 +21,17 @@ namespace SmartRecipes.Mobile.WriteModels
         {
             var result = await Authenticate(credentials, apiClient.Post);
 
-            if (result.Success)
-            {
-                await Navigation.LogIn(this);
-                return true;
-            }
+            // TODO: Remove this
+            await Navigation.LogIn(this);
+            return true;
 
-            return false;
+            //if (result.Success)
+            //{
+            //    await Navigation.LogIn(this);
+            //    return true;
+            //}
+
+            //return false;
         }
 
         public static async Task<AuthenticationResult> Authenticate(SignInCredentials credentials, Func<SignInRequest, Task<Option<SignInResponse>>> post)

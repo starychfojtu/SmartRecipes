@@ -65,5 +65,13 @@ namespace SmartRecipes.Mobile.Models
                 RecipeId = recipeId
             };
         }
+
+        public static IFoodstuffAmount CreateForShoppingList(Guid id, Guid shoppingListOwnerId, Guid foodstuffId, IAmount amount)
+        {
+            return new FoodstuffAmount(id, foodstuffId, amount)
+            {
+                ShoppingListOwnerId = shoppingListOwnerId
+            };
+        }
     }
 }

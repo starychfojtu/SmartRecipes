@@ -11,19 +11,16 @@ namespace SmartRecipes.Mobile.Services
         private const string FileName = "SmartRecies.db";
 
         private SQLiteAsyncConnection connection;
-
-        public Database()
-        {
-        }
+        private SQLiteConnection connectionS;
 
         public async Task AddAsync<T>(IEnumerable<T> items)
         {
             await Connection.InsertAllAsync(items);
         }
 
-        public async Task UpdateAsync<T>(T item)
+        public async Task UpdateAsync<T>(IEnumerable<T> items)
         {
-            await Connection.UpdateAsync(item);
+            await Connection.UpdateAsync(items);
         }
 
         public async Task AddOrReplaceAsync<T>(T item)
