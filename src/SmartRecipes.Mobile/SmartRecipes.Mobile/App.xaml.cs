@@ -1,7 +1,6 @@
 ﻿using SmartRecipes.Mobile.Pages;
 using Xamarin.Forms;
 using SmartRecipes.Mobile.Services;
-using System.Net;
 
 namespace SmartRecipes.Mobile
 {

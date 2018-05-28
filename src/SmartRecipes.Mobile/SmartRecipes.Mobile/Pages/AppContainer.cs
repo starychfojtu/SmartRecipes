@@ -16,6 +16,7 @@ namespace SmartRecipes.Mobile.Pages
                 PageFactory.CreateTabbed("Shopping list", shoppingListItemsPage),
                 PageFactory.CreateTabbed("Recipes", myRecipesPage)
             };
+
             Detail = pages[0];
             Master = new NavigationDrawer(pages, index =>
             {
