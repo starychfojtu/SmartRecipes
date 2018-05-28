@@ -25,7 +25,7 @@ namespace SmartRecipes.Mobile.ReadModels
             );
         }
 
-        private static async Task<IEnumerable<RecipeDetail>> GetDetails(Database database)
+        private static async Task<IEnumerable<RecipeDetail>> GetRecipeDetails(Database database)
         {
             // TODO: write double join query or simplify this by abstraction, this code is horrible
             var recipes = await database.Recipes.ToEnumerableAsync();

@@ -26,8 +26,10 @@ namespace SmartRecipes.Mobile.ReadModels
 
         private static async Task<IEnumerable<IFoodstuff>> Search(string query, Database database)
         {
-            // TODO: implement proper search
-            return await database.Foodstuffs.ToEnumerableAsync();
+            var foodstuffs = database.GetTableMapping<Foodstuff>();
+            var name = foodstuffs.FindColumnWithPropertyName(nameof(Foodstuff.Name)).Name; // TODO: add helper that takes lambda
+            var sql = $@"SELECT * FROM {foodstuffs.TableName} WHERE LOWER({name}) LIKE ?";
+            return await database.Execute<Foodstuff>(sql, $"%{query}%");
         }
 
         private static IEnumerable<IFoodstuff> ToFoodstuffs(SearchFoodstuffResponse response)

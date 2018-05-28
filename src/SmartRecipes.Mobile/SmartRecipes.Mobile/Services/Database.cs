@@ -28,6 +28,17 @@ namespace SmartRecipes.Mobile.Services
             await Connection.InsertOrReplaceAsync(item);
         }
 
+        public async Task<IEnumerable<T>> Execute<T>(string sql, params object[] args)
+            where T : new()
+        {
+            return await connection.QueryAsync<T>(sql, args);
+        }
+
+        public TableMapping GetTableMapping<T>()
+        {
+            return connection.GetConnection().GetMapping<T>();
+        }
+
         public AsyncTableQuery<Recipe> Recipes
         {
             get { return Connection.Table<Recipe>(); }
@@ -51,9 +62,10 @@ namespace SmartRecipes.Mobile.Services
         private SQLiteAsyncConnection InitializeDb()
         {
             var conn = new SQLiteAsyncConnection(DependencyService.Get<IFileHelper>().GetLocalFilePath(FileName));
-            conn.CreateTableAsync<Recipe>().Wait();
-            conn.CreateTableAsync<FoodstuffAmount>().Wait();
-            conn.CreateTableAsync<Foodstuff>().Wait();
+            var syncConn = conn.GetConnection();
+            syncConn.CreateTable<Recipe>();
+            syncConn.CreateTable<FoodstuffAmount>();
+            syncConn.CreateTable<Foodstuff>();
             return conn;
         }
     }
