@@ -10,7 +10,8 @@
             <ListView
                 x:Name="SearchedItemsListView"
                 SeparatorColor="{StaticResource dividerColor}"
-                RowHeight="64" />
+                RowHeight="64"
+                CachingStrategy="RecycleElement" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
