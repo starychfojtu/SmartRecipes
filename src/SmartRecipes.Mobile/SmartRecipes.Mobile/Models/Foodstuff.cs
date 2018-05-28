@@ -1,10 +1,9 @@
 ﻿using System;
 using SQLite;
-using SmartRecipes.Mobile.ReadModels.Dto;
 
 namespace SmartRecipes.Mobile.Models
 {
-    public class Foodstuff : IFoodstuff
+    public class Foodstuff : Entity, IFoodstuff
     {
         private Foodstuff(Guid id, string name, Uri imageUrl, IAmount baseAmount, IAmount amountStep)
         {
@@ -18,7 +17,7 @@ namespace SmartRecipes.Mobile.Models
         public Foodstuff() { /* for sqlite */ }
 
         [PrimaryKey]
-        public Guid Id { get; set; }
+        public override Guid Id { get; set; }
 
         public string Name { get; set; }
 
@@ -60,8 +59,6 @@ namespace SmartRecipes.Mobile.Models
         {
             return Id == foodstuff.Id;
         }
-
-        // 
 
         public static IFoodstuff Create(Guid id, string name, Uri imageUrl, IAmount baseAmount, IAmount amountStep)
         {

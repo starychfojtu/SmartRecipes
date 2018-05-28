@@ -28,5 +28,18 @@ namespace SmartRecipes.Mobile.Views
                 Image.Source = ViewModel.Foodstuff.ImageUrl;
             }
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            OnBindingContextChanged();
+        }
+
+        protected override void OnDisappearing()
+        {
+            NameLabel.Text = "";
+            AmountLabel.Text = "";
+            Image.Source = "";
+        }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System;
-using SmartRecipes.Mobile.Models;
-using SmartRecipes.Mobile.ReadModels.Dto;
 
 namespace SmartRecipes.Mobile.Models
 {
-    public interface IFoodstuff
+    public interface IFoodstuff : IEquatable<IFoodstuff>
     {
         Guid Id { get; }
 
@@ -15,7 +13,5 @@ namespace SmartRecipes.Mobile.Models
         IAmount BaseAmount { get; }
 
         IAmount AmountStep { get; }
-
-        bool Equals(IFoodstuff foodstuff);
     }
 }
