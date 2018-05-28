@@ -5,8 +5,13 @@ namespace SmartRecipes.Mobile.Models
 {
     public abstract class Entity : IEquatable<Entity>
     {
-        [Ignore]
-        public abstract Guid Id { get; set; }
+        public Entity(Guid id)
+        {
+            Id = id;
+        }
+
+        [PrimaryKey]
+        public Guid Id { get; set; }
 
         public bool Equals(Entity other)
         {

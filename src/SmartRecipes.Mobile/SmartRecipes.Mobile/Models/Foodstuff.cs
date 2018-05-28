@@ -5,9 +5,8 @@ namespace SmartRecipes.Mobile.Models
 {
     public class Foodstuff : Entity, IFoodstuff
     {
-        private Foodstuff(Guid id, string name, Uri imageUrl, IAmount baseAmount, IAmount amountStep)
+        private Foodstuff(Guid id, string name, Uri imageUrl, IAmount baseAmount, IAmount amountStep) : base(id)
         {
-            Id = id;
             Name = name;
             ImageUrl = imageUrl;
             BaseAmount = baseAmount;
@@ -15,9 +14,6 @@ namespace SmartRecipes.Mobile.Models
         }
 
         public Foodstuff() { /* for sqlite */ }
-
-        [PrimaryKey]
-        public override Guid Id { get; set; }
 
         public string Name { get; set; }
 
