@@ -6,20 +6,22 @@ using RoundedBoxView.Forms.Plugin.Droid;
 using Xamarin.Forms.Platform.Android;
 using Java.Lang;
 using System;
+using System.Net;
 
 namespace SmartRecipes.Mobile.Droid
 {
     [Activity(Label = "SmartRecipes.Mobile", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : FormsAppCompatActivity
     {
-        protected override void OnCreate(Bundle bundle)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
-            base.OnCreate(bundle);
+            base.OnCreate(savedInstanceState);
 
-            Xamarin.Forms.Forms.Init(this, bundle);
+            ServicePointManager.ServerCertificateValidationCallback += (o, certificate, chain, errors) => true;
+            Xamarin.Forms.Forms.Init(this, savedInstanceState);
             CachedImageRenderer.Init(enableFastRenderer: true);
             RoundedBoxViewRenderer.Init();
 

@@ -9,7 +9,6 @@ namespace SmartRecipes.Mobile
     {
         public App()
         {
-            ServicePointManager.ServerCertificateValidationCallback += (o, certificate, chain, errors) => true;
             InitializeComponent();
         }
 

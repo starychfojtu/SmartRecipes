@@ -8,6 +8,7 @@ using FFImageLoading.Forms.Touch;
 using RoundedBoxView.Forms.Plugin.iOSUnified;
 using Xamarin.Forms.Platform.iOS;
 using SuaveControls.FloatingActionButton.iOS.Renderers;
+using System.Net;
 
 namespace SmartRecipes.Mobile.iOS
 {
@@ -26,6 +27,7 @@ namespace SmartRecipes.Mobile.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            ServicePointManager.ServerCertificateValidationCallback += (o, certificate, chain, errors) => true;
             global::Xamarin.Forms.Forms.Init();
             SlideOverKit.iOS.SlideOverKit.Init();
             CachedImageRenderer.Init();
