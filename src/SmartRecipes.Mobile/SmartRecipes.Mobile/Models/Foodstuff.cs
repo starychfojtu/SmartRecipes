@@ -13,7 +13,7 @@ namespace SmartRecipes.Mobile.Models
             AmountStep = amountStep;
         }
 
-        public Foodstuff() { /* for sqlite */ }
+        public Foodstuff() : base(Guid.Empty) { /* for sqlite */ }
 
         public string Name { get; set; }
 
