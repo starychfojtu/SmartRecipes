@@ -51,7 +51,7 @@ namespace SmartRecipes.Mobile.Services
             return new SignUpResponse(new SignUpResponse.Account("fake@gmail.com"));
         }
 
-        public async Task<Option<ShoppingListResponse>> Post(AdjustIngredientRequest request)
+        public async Task<Option<ShoppingListResponse>> Post(ChangeFoodstuffAmountRequest request)
         {
             try
             {

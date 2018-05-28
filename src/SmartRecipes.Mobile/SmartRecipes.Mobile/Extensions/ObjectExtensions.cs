@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Xamarin.Forms;
 using SmartRecipes.Mobile.Controls;
+using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile
 {
@@ -16,6 +17,12 @@ namespace SmartRecipes.Mobile
         public static T Tee<T>(this T obj, Action<T> action)
         {
             action(obj);
+            return obj;
+        }
+
+        public static async Task<T> TeeAsync<T>(this T obj, Func<T, Task> action)
+        {
+            await action(obj);
             return obj;
         }
 

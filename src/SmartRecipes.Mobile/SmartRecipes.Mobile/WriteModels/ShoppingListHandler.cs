@@ -8,6 +8,8 @@ using SmartRecipes.Mobile.Models;
 using LanguageExt.SomeHelp;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Immutable;
+using SmartRecipes.Mobile.ReadModels;
 
 namespace SmartRecipes.Mobile.WriteModels
 {
@@ -19,55 +21,62 @@ namespace SmartRecipes.Mobile.WriteModels
 
         private readonly UserHandler userHandler;
 
-        public ShoppingListHandler(UserHandler userHandler, ApiClient apiClient, Database database)
+        private readonly ShoppingListRepository repository;
+
+        public ShoppingListHandler(UserHandler userHandler, ApiClient apiClient, Database database, ShoppingListRepository repository)
         {
+            this.repository = repository;
             this.userHandler = userHandler;
             this.apiClient = apiClient;
             this.database = database;
         }
 
-        public async Task<IEnumerable<Ingredient>> DecreaseAmount(IEnumerable<Ingredient> ingredients)
+        public static IEnumerable<Ingredient> ChangeAmount(IEnumerable<Ingredient> ingredients, Func<IAmount, IAmount, Option<IAmount>> operation)
         {
-            return await ChangeAmount(ingredients, Amount.Substract, IngredientAction.DecreaseAmount);
-        }
-
-        public async Task<IEnumerable<Ingredient>> IncreaseAmount(IEnumerable<Ingredient> ingredients)
-        {
-            return await ChangeAmount(ingredients, Amount.Add, IngredientAction.IncreaseAmount);
-        }
-
-        public async Task<IEnumerable<Ingredient>> Add(IEnumerable<IFoodstuff> foodstuffs)
-        {
-            var ingredients = foodstuffs.Select(f => Ingredient.Create(f, userHandler.CurrentAccount.Id));
-
-            var shoppingListItems = ingredients.Select(i => i.FoodstuffAmount);
-            await database.AddAsync(shoppingListItems);
-
-            return await IncreaseAmount(ingredients);
-        }
-
-        private async Task<IEnumerable<Ingredient>> ChangeAmount(
-            IEnumerable<Ingredient> ingredients,
-            Func<IAmount, IAmount, Option<IAmount>> operation,
-            IngredientAction action)
-        {
-            var newIngredients = ingredients.Select(i =>
+            return ingredients.Select(i =>
             {
                 var newAmount = operation(i.Amount, i.Foodstuff.AmountStep).IfNone(() => throw new InvalidOperationException());
                 return i.WithAmount(newAmount.ToSome());
             });
+        }
 
-            foreach (var ingredient in ingredients)
+        public async Task<IEnumerable<Ingredient>> DecreaseAmount(IEnumerable<Ingredient> ingredients)
+        {
+            var newIngredients = ChangeAmount(ingredients, (a1, a2) => Amount.Substract(a1, a2));
+            return await newIngredients.TeeAsync(ins => Update(ins.Select(i => i.FoodstuffAmount).ToImmutableList()));
+        }
+
+        public async Task<IEnumerable<Ingredient>> IncreaseAmount(IEnumerable<Ingredient> ingredients)
+        {
+            var newIngredients = ChangeAmount(ingredients, (a1, a2) => Amount.Add(a1, a2));
+            return await newIngredients.TeeAsync(ins => Update(ins.Select(i => i.FoodstuffAmount).ToImmutableList()));
+        }
+
+        public async Task<IEnumerable<Ingredient>> Add(IEnumerable<IFoodstuff> foodstuffs)
+        {
+            var shoppingListItems = await repository.GetItems();
+            var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
+            var newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f);
+            var newFoodstuffAmounts = newFoodstuffs.Values.Select(
+                f => FoodstuffAmount.CreateForShoppingList(Guid.NewGuid(), userHandler.CurrentAccount.Id, f.Id, f.BaseAmount)
+            );
+
+            await database.AddAsync(newFoodstuffAmounts);
+            await Update(newFoodstuffAmounts);
+
+            return newFoodstuffAmounts.Select(fa => new Ingredient(newFoodstuffs[fa.FoodstuffId].ToSome(), fa.ToSome()));
+        }
+
+        private async Task Update(IEnumerable<IFoodstuffAmount> foodstuffAmounts)
+        {
+            foreach (var foodstuffAmount in foodstuffAmounts)
             {
-                // TODO: create job to update api
-                var request = new AdjustIngredientRequest(ingredient.Foodstuff.Id, action);
+                // TODO: create job to update api when this fails
+                var request = new ChangeFoodstuffAmountRequest(foodstuffAmount.FoodstuffId, foodstuffAmount.Amount);
                 var response = await apiClient.Post(request);
             }
 
-            await database.UpdateAsync(newIngredients.Select(i => i.FoodstuffAmount));
-            var test = await database.FoodstuffAmounts.ToListAsync();
-
-            return newIngredients;
+            await database.UpdateAsync(foodstuffAmounts);
         }
     }
 }

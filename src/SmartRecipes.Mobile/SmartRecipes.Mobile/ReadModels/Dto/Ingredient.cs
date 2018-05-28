@@ -26,14 +26,5 @@ namespace SmartRecipes.Mobile.ReadModels.Dto
         {
             return new Ingredient(Foodstuff.ToSome(), FoodstuffAmount.WithAmount(amount.Value).ToSome());
         }
-
-        public static Ingredient Create(IFoodstuff foodstuff, Guid shoppingListOwnerId)
-        {
-            var foodstuffAmount = Models.FoodstuffAmount.CreateForShoppingList(Guid.NewGuid(), shoppingListOwnerId, foodstuff.Id, foodstuff.BaseAmount);
-            return new Ingredient(
-                foodstuff.ToSome(),
-                foodstuffAmount.ToSome()
-            );
-        }
     }
 }

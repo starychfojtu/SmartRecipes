@@ -1,9 +1,11 @@
 ﻿using System;
+using SQLite;
 
 namespace SmartRecipes.Mobile.Models
 {
     public abstract class Entity : IEquatable<Entity>
     {
+        [Ignore]
         public abstract Guid Id { get; set; }
 
         public bool Equals(Entity other)
