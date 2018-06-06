@@ -43,7 +43,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public async Task OpenAddIngredientDialog()
         {
             var selected = await Navigation.SelectFoodstuffDialog();
-            var newIngredients = await commandHandler.Add(selected);
+            var newIngredients = await commandHandler.Add(repository, CurrentAccount, selected);
             var allIngredients = ingredients.Concat(newIngredients).ToImmutableList();
             UpdateIngredients(allIngredients);
         }
@@ -58,7 +58,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         private async Task UpdateItemsAsync()
         {
-            UpdateIngredients((await repository.GetItems()).ToImmutableList());
+            UpdateIngredients((await repository.GetItems(CurrentAccount)).ToImmutableList());
         }
 
         private void UpdateIngredients(IImmutableList<Ingredient> newIngredients)

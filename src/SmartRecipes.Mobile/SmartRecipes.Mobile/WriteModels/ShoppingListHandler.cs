@@ -19,14 +19,11 @@ namespace SmartRecipes.Mobile.WriteModels
 
         private readonly Database database;
 
-        private readonly UserHandler userHandler;
-
         private readonly ShoppingListRepository repository;
 
-        public ShoppingListHandler(UserHandler userHandler, ApiClient apiClient, Database database, ShoppingListRepository repository)
+        public ShoppingListHandler(ApiClient apiClient, Database database, ShoppingListRepository repository)
         {
             this.repository = repository;
-            this.userHandler = userHandler;
             this.apiClient = apiClient;
             this.database = database;
         }
@@ -52,13 +49,14 @@ namespace SmartRecipes.Mobile.WriteModels
             return await newIngredients.TeeAsync(ins => Update(ins.Select(i => i.FoodstuffAmount).ToImmutableList()));
         }
 
-        public async Task<IEnumerable<Ingredient>> Add(IEnumerable<IFoodstuff> foodstuffs)
+        public async Task<IEnumerable<Ingredient>> Add(ShoppingListRepository repository, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
         {
-            var shoppingListItems = await repository.GetItems();
+            // TODO: refactor this
+            var shoppingListItems = await repository.GetItems(owner);
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
             var newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f);
             var newFoodstuffAmounts = newFoodstuffs.Values.Select(
-                f => FoodstuffAmount.CreateForShoppingList(Guid.NewGuid(), userHandler.CurrentAccount.Id, f.Id, f.BaseAmount)
+                f => FoodstuffAmount.CreateForShoppingList(Guid.NewGuid(), owner, f.Id, f.BaseAmount)
             );
 
             await database.AddAsync(newFoodstuffAmounts);

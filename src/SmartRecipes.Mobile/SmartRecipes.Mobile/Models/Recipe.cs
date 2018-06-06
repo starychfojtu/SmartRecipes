@@ -39,6 +39,11 @@ namespace SmartRecipes.Mobile.Models
         // Combinators
 
         // TODO: should be IRecipe
+        public static Recipe Create(Guid id, IAccount owner, string name, Uri imageUrl, int personCount, string text)
+        {
+            return new Recipe(id, owner.Id, name, imageUrl, personCount, text);
+        }
+
         public static Recipe Create(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text)
         {
             return new Recipe(id, ownerId, name, imageUrl, personCount, text);

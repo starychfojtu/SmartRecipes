@@ -7,12 +7,11 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class SignInViewModel : ViewModel
     {
-        private readonly UserHandler commandHandler;
+        private readonly ApiClient apiClient;
 
-        public SignInViewModel(UserHandler commandHandler)
+        public SignInViewModel(ApiClient apiClient)
         {
-            this.commandHandler = commandHandler;
-
+            this.apiClient = apiClient;
             Email = ValidatableObject.Create<string>(
                 s => true, //TODO: uncomment this -  Validation.NotEmpty(s) && Validation.IsEmail(s),
                 _ => RaisePropertyChanged(nameof(Email))
@@ -36,7 +35,14 @@ namespace SmartRecipes.Mobile.ViewModels
         {
             if (FormIsValid)
             {
-                return await commandHandler.SignIn(new SignInCredentials(Email.Data, Password.Data));
+                var credentials = new SignInCredentials(Email.Data, Password.Data);
+                var authResult = await UserHandler.SignIn(apiClient, credentials);
+
+                if (authResult.Success)
+                {
+                    // TODO: set current account
+                    await Navigation.LogIn();
+                }
             }
             return false;
         }

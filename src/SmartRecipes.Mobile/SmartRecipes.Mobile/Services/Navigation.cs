@@ -1,18 +1,15 @@
 ﻿using Xamarin.Forms;
 using SmartRecipes.Mobile.Pages;
 using System.Threading.Tasks;
-using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.ViewModels;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Generic;
-using System;
-using System.Collections;
 
 namespace SmartRecipes.Mobile.Services
 {
     public static class Navigation
     {
-        public static async Task LogIn(UserHandler controller)
+        public static async Task LogIn()
         {
             Application.Current.MainPage = new NavigationPage(await PageFactory.GetPageAsync<AppContainer>());
         }

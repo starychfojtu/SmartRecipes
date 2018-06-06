@@ -8,25 +8,21 @@ using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Models;
 using LanguageExt.SomeHelp;
-using SmartRecipes.Mobile.WriteModels;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
     public class ShoppingListRepository : Repository
     {
-        private readonly UserHandler userHandler;
-
-        public ShoppingListRepository(UserHandler userHandler, ApiClient apiClient, Database database) : base(apiClient, database)
+        public ShoppingListRepository(ApiClient apiClient, Database database) : base(apiClient, database)
         {
-            this.userHandler = userHandler;
         }
 
-        public async Task<IEnumerable<Ingredient>> GetItems()
+        public async Task<IEnumerable<Ingredient>> GetItems(IAccount owner)
         {
             return await RetrievalAction(
                 client => client.GetShoppingList(),
                 db => GetIngredients(db),
-                response => response.Items.Select(i => ToIngredients(i, userHandler.CurrentAccount.Id)),
+                response => response.Items.Select(i => ToIngredients(i, owner)),
                 ingredients => ingredients.Select(i => (object)i.Foodstuff).Concat(ingredients.Select(i => (object)i.FoodstuffAmount))
             );
         }
@@ -51,7 +47,7 @@ namespace SmartRecipes.Mobile.ReadModels
             return await database.Foodstuffs.Where(f => ids.Contains(f.Id)).ToEnumerableAsync();
         }
 
-        public static Ingredient ToIngredients(ShoppingListResponse.Item i, Guid ownerId)
+        public static Ingredient ToIngredients(ShoppingListResponse.Item i, IAccount owner)
         {
             var foodstuff = Foodstuff.Create(
                 i.FoodstuffDto.Id,
@@ -60,7 +56,7 @@ namespace SmartRecipes.Mobile.ReadModels
                 i.FoodstuffDto.BaseAmount,
                 i.FoodstuffDto.AmountStep
             );
-            return new Ingredient(foodstuff.ToSome(), FoodstuffAmount.CreateForShoppingList(i.Id, ownerId, foodstuff.Id, i.Amount).ToSome());
+            return new Ingredient(foodstuff.ToSome(), FoodstuffAmount.CreateForShoppingList(i.Id, owner, foodstuff.Id, i.Amount).ToSome());
         }
     }
 }

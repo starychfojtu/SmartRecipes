@@ -16,16 +16,13 @@ namespace SmartRecipes.Mobile
     {
         private readonly Database database;
 
-        private readonly UserHandler userHandler;
-
         private const string DefaultImageUrl = "https://thumbs.dreamstime.com/z/empty-dish-14513513.jpg";
 
         private IImmutableList<Ingredient> ingredients;
 
-        public NewRecipeViewModel(Database database, UserHandler userHandler)
+        public NewRecipeViewModel(Database database)
         {
             this.database = database;
-            this.userHandler = userHandler;
             Recipe = new FormDto();
             ingredients = ImmutableList.Create<Ingredient>();
         }
@@ -53,7 +50,7 @@ namespace SmartRecipes.Mobile
             // TODO: this should probably happen recipehandler
             var recipe = Models.Recipe.Create(
                 Guid.NewGuid(),
-                userHandler.CurrentAccount.Id,
+                CurrentAccount,
                 Recipe.Name,
                 new Uri(Recipe.ImageUrl ?? DefaultImageUrl),
                 Recipe.PersonCount,
