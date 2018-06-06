@@ -3,20 +3,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.ReadModels;
 using SmartRecipes.Mobile.Services;
-using SmartRecipes.Mobile.WriteModels;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
     public class MyRecipesViewModel : ViewModel
     {
-        private readonly MyRecipesHandler commandHandler;
-
         private readonly RecipeRepository repository;
 
-        public MyRecipesViewModel(MyRecipesHandler commandHandler, RecipeRepository repository)
+        public MyRecipesViewModel(RecipeRepository repository)
         {
             this.repository = repository;
-            this.commandHandler = commandHandler;
         }
 
         public IEnumerable<RecipeCellViewModel> Recipes { get; private set; }

@@ -14,7 +14,7 @@ namespace SmartRecipes.Mobile
 {
     public class NewRecipeViewModel : ViewModel
     {
-        private readonly MyRecipesHandler recipeHandler;
+        private readonly Database database;
 
         private readonly UserHandler userHandler;
 
@@ -22,9 +22,9 @@ namespace SmartRecipes.Mobile
 
         private IImmutableList<Ingredient> ingredients;
 
-        public NewRecipeViewModel(MyRecipesHandler recipeHandler, UserHandler userHandler)
+        public NewRecipeViewModel(Database database, UserHandler userHandler)
         {
-            this.recipeHandler = recipeHandler;
+            this.database = database;
             this.userHandler = userHandler;
             Recipe = new FormDto();
             ingredients = ImmutableList.Create<Ingredient>();
@@ -43,23 +43,24 @@ namespace SmartRecipes.Mobile
             // TODO: refactor creating of objects in whole solution
             var newIngredients = foodstuffs.Select(f => new Ingredient(
                 f.ToSome(),
-                FoodstuffAmount.CreateForRecipe(Guid.NewGuid(), Guid.Empty, f.Id, f.BaseAmount).ToSome()
+                FoodstuffAmount.CreateForRecipe(Guid.Empty, Guid.Empty, f.Id, f.BaseAmount).ToSome()
             ));
             UpdateIngredients(ingredients.Concat(newIngredients).ToImmutableList());
         }
 
         public async Task Submit()
         {
+            // TODO: this should probably happen recipehandler
             var recipe = Models.Recipe.Create(
                 Guid.NewGuid(),
-                userHandler.CurrentAccount.Id, // TODO: this should probably set recipehandler, not viewModel
+                userHandler.CurrentAccount.Id,
                 Recipe.Name,
                 new Uri(Recipe.ImageUrl ?? DefaultImageUrl),
                 Recipe.PersonCount,
                 Recipe.Text
             );
             var recipeIngredients = ingredients.Select(i => i.FoodstuffAmount.WithRecipe(recipe));
-            await recipeHandler.Add(recipe, recipeIngredients);
+            await MyRecipesHandler.Add(database, recipe, recipeIngredients);
         }
 
         private void UpdateIngredients(IImmutableList<Ingredient> newIngredients)
