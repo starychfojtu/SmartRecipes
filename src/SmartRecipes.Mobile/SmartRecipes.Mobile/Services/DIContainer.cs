@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using System.Net.Http;
-using SmartRecipes.Mobile.ReadModels;
-using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.ViewModels;
 
 namespace SmartRecipes.Mobile.Services

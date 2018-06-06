@@ -8,6 +8,7 @@ using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile.Services
 {
+    // TODO: make static
     public class ApiClient
     {
         private readonly HttpClient client;

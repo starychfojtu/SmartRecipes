@@ -3,7 +3,6 @@ using Xamarin.Forms;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using SmartRecipes.Mobile.Models;
-using System.Linq;
 
 namespace SmartRecipes.Mobile.Services
 {
