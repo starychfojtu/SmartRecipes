@@ -15,15 +15,12 @@ namespace SmartRecipes.Mobile.ViewModels
 
         private readonly Database database;
 
-        private readonly ShoppingListHandler commandHandler;
-
         private IEnumerable<IFoodstuff> searched;
 
-        public FoodstuffSearchViewModel(ApiClient apiClient, Database database, ShoppingListHandler commandHandler)
+        public FoodstuffSearchViewModel(ApiClient apiClient, Database database)
         {
             this.apiClient = apiClient;
             this.database = database;
-            this.commandHandler = commandHandler;
             searched = ImmutableList.Create<IFoodstuff>();
             Selected = ImmutableList.Create<IFoodstuff>();
         }

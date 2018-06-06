@@ -13,40 +13,29 @@ using SmartRecipes.Mobile.ReadModels;
 
 namespace SmartRecipes.Mobile.WriteModels
 {
-    public class ShoppingListHandler
+    public static class ShoppingListHandler
     {
-        private readonly ApiClient apiClient;
-
-        private readonly Database database;
-
-        public ShoppingListHandler(ApiClient apiClient, Database database)
+        public static Ingredient DecreaseAmount(Ingredient ingredient)
         {
-            this.apiClient = apiClient;
-            this.database = database;
+            return DecreaseAmount(ingredient.ToEnumerable()).First();
         }
 
-        public static IEnumerable<Ingredient> ChangeAmount(IEnumerable<Ingredient> ingredients, Func<IAmount, IAmount, Option<IAmount>> operation)
+        public static Ingredient IncreaseAmount(Ingredient ingredient)
         {
-            return ingredients.Select(i =>
-            {
-                var newAmount = operation(i.Amount, i.Foodstuff.AmountStep).IfNone(() => throw new InvalidOperationException());
-                return i.WithAmount(newAmount.ToSome());
-            });
+            return IncreaseAmount(ingredient.ToEnumerable()).First();
         }
 
-        public async Task<IEnumerable<Ingredient>> DecreaseAmount(IEnumerable<Ingredient> ingredients)
+        public static IEnumerable<Ingredient> DecreaseAmount(IEnumerable<Ingredient> ingredients)
         {
-            var newIngredients = ChangeAmount(ingredients, (a1, a2) => Amount.Substract(a1, a2));
-            return await newIngredients.TeeAsync(ins => Update(ins.Select(i => i.FoodstuffAmount).ToImmutableList()));
+            return ChangeAmount((a1, a2) => Amount.Add(a1, a2), ingredients);
         }
 
-        public async Task<IEnumerable<Ingredient>> IncreaseAmount(IEnumerable<Ingredient> ingredients)
+        public static IEnumerable<Ingredient> IncreaseAmount(IEnumerable<Ingredient> ingredients)
         {
-            var newIngredients = ChangeAmount(ingredients, (a1, a2) => Amount.Add(a1, a2));
-            return await newIngredients.TeeAsync(ins => Update(ins.Select(i => i.FoodstuffAmount).ToImmutableList()));
+            return ChangeAmount((a1, a2) => Amount.Add(a1, a2), ingredients);
         }
 
-        public async Task<IEnumerable<Ingredient>> Add(ApiClient apiClient, Database database, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
+        public static async Task<IEnumerable<Ingredient>> Add(ApiClient apiClient, Database database, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
         {
             // TODO: refactor this
             var shoppingListItems = await ShoppingListRepository.GetItems(apiClient, database, owner);
@@ -57,12 +46,12 @@ namespace SmartRecipes.Mobile.WriteModels
             );
 
             await database.AddAsync(newFoodstuffAmounts);
-            await Update(newFoodstuffAmounts);
+            await Update(apiClient, database, newFoodstuffAmounts);
 
             return newFoodstuffAmounts.Select(fa => new Ingredient(newFoodstuffs[fa.FoodstuffId].ToSome(), fa.ToSome()));
         }
 
-        private async Task Update(IEnumerable<IFoodstuffAmount> foodstuffAmounts)
+        public static async Task Update(ApiClient apiClient, Database database, IEnumerable<IFoodstuffAmount> foodstuffAmounts)
         {
             foreach (var foodstuffAmount in foodstuffAmounts)
             {
@@ -72,6 +61,15 @@ namespace SmartRecipes.Mobile.WriteModels
             }
 
             await database.UpdateAsync(foodstuffAmounts);
+        }
+
+        private static IEnumerable<Ingredient> ChangeAmount(Func<IAmount, IAmount, Option<IAmount>> operation, IEnumerable<Ingredient> ingredients)
+        {
+            return ingredients.Select(i =>
+            {
+                var newAmount = operation(i.Amount, i.Foodstuff.AmountStep).IfNone(() => throw new InvalidOperationException());
+                return i.WithAmount(newAmount.ToSome());
+            });
         }
     }
 }
