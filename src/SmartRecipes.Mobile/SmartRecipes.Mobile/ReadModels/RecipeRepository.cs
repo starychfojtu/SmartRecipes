@@ -9,15 +9,13 @@ using SmartRecipes.Mobile.Services;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
-    public class RecipeRepository : Repository
+    public static class RecipeRepository
     {
-        public RecipeRepository(ApiClient apiClient, Database database) : base(apiClient, database)
+        public static async Task<IEnumerable<IRecipe>> GetRecipesAsync(ApiClient apiClient, Database database)
         {
-        }
-
-        public async Task<IEnumerable<IRecipe>> GetRecipesAsync()
-        {
-            return await RetrievalAction(
+            return await Repository.RetrievalAction(
+                apiClient,
+                database,
                 client => client.GetMyRecipes(),
                 db => db.Recipes.ToEnumerableAsync(),
                 response => response.Recipes.Select(r => ToRecipe(r)),
@@ -27,7 +25,7 @@ namespace SmartRecipes.Mobile.ReadModels
 
         private static async Task<IEnumerable<RecipeDetail>> GetRecipeDetails(Database database)
         {
-            // TODO: write double join query or simplify this by abstraction, this code is horrible
+            // TODO: write double join query or simplify this by abstraction, this code is horrible, split it
             var recipes = await database.Recipes.ToEnumerableAsync();
             var recipeIds = recipes.Select(r => r.Id);
             var foodstuffAmounts = await database.FoodstuffAmounts.Where(a => recipeIds.Contains(a.RecipeId.Value)).ToEnumerableAsync();
@@ -44,7 +42,7 @@ namespace SmartRecipes.Mobile.ReadModels
             );
         }
 
-        private Recipe ToRecipe(MyRecipesResponse.Recipe r)
+        private static Recipe ToRecipe(MyRecipesResponse.Recipe r)
         {
             return Recipe.Create(r.Id, r.OwnerId, r.Name, r.ImageUrl, r.PersonCount, r.Text);
         }

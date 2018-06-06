@@ -12,15 +12,18 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class ShoppingListItemsViewModel : ViewModel
     {
-        private readonly ShoppingListHandler commandHandler;
+        private readonly ApiClient apiClient;
 
-        private readonly ShoppingListRepository repository;
+        private readonly Database database;
+
+        private readonly ShoppingListHandler commandHandler;
 
         private IImmutableList<Ingredient> ingredients { get; set; }
 
-        public ShoppingListItemsViewModel(ShoppingListHandler commandHandler, ShoppingListRepository repository)
+        public ShoppingListItemsViewModel(ApiClient apiClient, Database database, ShoppingListHandler commandHandler)
         {
-            this.repository = repository;
+            this.apiClient = apiClient;
+            this.database = database;
             this.commandHandler = commandHandler;
             ingredients = ImmutableList.Create<Ingredient>();
         }
@@ -43,7 +46,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public async Task OpenAddIngredientDialog()
         {
             var selected = await Navigation.SelectFoodstuffDialog();
-            var newIngredients = await commandHandler.Add(repository, CurrentAccount, selected);
+            var newIngredients = await commandHandler.Add(apiClient, database, CurrentAccount, selected);
             var allIngredients = ingredients.Concat(newIngredients).ToImmutableList();
             UpdateIngredients(allIngredients);
         }
@@ -58,7 +61,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         private async Task UpdateItemsAsync()
         {
-            UpdateIngredients((await repository.GetItems(CurrentAccount)).ToImmutableList());
+            UpdateIngredients((await ShoppingListRepository.GetItems(apiClient, database, CurrentAccount)).ToImmutableList());
         }
 
         private void UpdateIngredients(IImmutableList<Ingredient> newIngredients)

@@ -6,19 +6,11 @@ using SmartRecipes.Mobile.Services;
 
 namespace SmartRecipes.Mobile
 {
-    public abstract class Repository
+    public static class Repository
     {
-        private readonly ApiClient apiClient;
-
-        private readonly Database database;
-
-        public Repository(ApiClient apiClient, Database database)
-        {
-            this.apiClient = apiClient;
-            this.database = database;
-        }
-
-        protected async Task<TModel> RetrievalAction<TModel, TResponse>(
+        public static async Task<TModel> RetrievalAction<TModel, TResponse>(
+            ApiClient apiClient,
+            Database database,
             Func<ApiClient, Task<Option<TResponse>>> apiCall,
             Func<Database, Task<TModel>> databaseQuery,
             Func<TResponse, TModel> responseMapper,

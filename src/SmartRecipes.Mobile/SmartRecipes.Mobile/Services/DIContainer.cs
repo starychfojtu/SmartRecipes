@@ -28,20 +28,15 @@ namespace SmartRecipes.Mobile.Services
             builder.RegisterType<ApiClient>().SingleInstance();
             builder.RegisterType<Database>().SingleInstance();
 
-            // Read models
-            builder.RegisterType<ShoppingListRepository>();
-            builder.RegisterType<RecipeRepository>();
-            builder.RegisterType<FoodstuffRepository>();
-
             // Write models
             builder.RegisterType<ShoppingListHandler>();
-            builder.RegisterType<NewRecipeViewModel>();
 
             // View models
             builder.RegisterType<SignInViewModel>();
             builder.RegisterType<ShoppingListItemsViewModel>();
             builder.RegisterType<FoodstuffSearchViewModel>();
             builder.RegisterType<MyRecipesViewModel>();
+            builder.RegisterType<NewRecipeViewModel>();
 
             return builder.Build();
         }

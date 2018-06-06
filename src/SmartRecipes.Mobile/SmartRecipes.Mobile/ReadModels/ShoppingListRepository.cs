@@ -11,15 +11,13 @@ using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
-    public class ShoppingListRepository : Repository
+    public static class ShoppingListRepository
     {
-        public ShoppingListRepository(ApiClient apiClient, Database database) : base(apiClient, database)
+        public static async Task<IEnumerable<Ingredient>> GetItems(ApiClient apiClient, Database database, IAccount owner)
         {
-        }
-
-        public async Task<IEnumerable<Ingredient>> GetItems(IAccount owner)
-        {
-            return await RetrievalAction(
+            return await Repository.RetrievalAction(
+                apiClient,
+                database,
                 client => client.GetShoppingList(),
                 db => GetIngredients(db),
                 response => response.Items.Select(i => ToIngredients(i, owner)),

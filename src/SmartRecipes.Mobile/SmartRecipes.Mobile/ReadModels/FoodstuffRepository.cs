@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.ApiDto;
 using SmartRecipes.Mobile.Models;
@@ -8,15 +7,13 @@ using System.Linq;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
-    public class FoodstuffRepository : Repository
+    public static class FoodstuffRepository
     {
-        public FoodstuffRepository(ApiClient apiClient, Database database) : base(apiClient, database)
+        public static async Task<IEnumerable<IFoodstuff>> Search(ApiClient apiClient, Database database, string query)
         {
-        }
-
-        public async Task<IEnumerable<IFoodstuff>> Search(string query)
-        {
-            return await RetrievalAction(
+            return await Repository.RetrievalAction(
+                apiClient,
+                database,
                 client => client.SearchFoodstuffs(new SearchFoodstuffRequest(query)),
                 db => Search(query, db),
                 response => ToFoodstuffs(response),

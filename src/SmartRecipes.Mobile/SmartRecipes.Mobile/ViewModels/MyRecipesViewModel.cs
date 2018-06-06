@@ -8,11 +8,14 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class MyRecipesViewModel : ViewModel
     {
-        private readonly RecipeRepository repository;
+        private readonly ApiClient apiClient;
 
-        public MyRecipesViewModel(RecipeRepository repository)
+        private readonly Database database;
+
+        public MyRecipesViewModel(ApiClient apiClient, Database database)
         {
-            this.repository = repository;
+            this.apiClient = apiClient;
+            this.database = database;
         }
 
         public IEnumerable<RecipeCellViewModel> Recipes { get; private set; }
@@ -29,7 +32,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public async Task UpdateRecipesAsync()
         {
-            var recipes = await repository.GetRecipesAsync();
+            var recipes = await RecipeRepository.GetRecipesAsync(apiClient, database);
             Recipes = recipes.Select(r => new RecipeCellViewModel(r, () => { }));
             RaisePropertyChanged(nameof(Recipes));
         }

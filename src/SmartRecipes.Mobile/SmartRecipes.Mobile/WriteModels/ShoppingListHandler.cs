@@ -19,11 +19,8 @@ namespace SmartRecipes.Mobile.WriteModels
 
         private readonly Database database;
 
-        private readonly ShoppingListRepository repository;
-
-        public ShoppingListHandler(ApiClient apiClient, Database database, ShoppingListRepository repository)
+        public ShoppingListHandler(ApiClient apiClient, Database database)
         {
-            this.repository = repository;
             this.apiClient = apiClient;
             this.database = database;
         }
@@ -49,10 +46,10 @@ namespace SmartRecipes.Mobile.WriteModels
             return await newIngredients.TeeAsync(ins => Update(ins.Select(i => i.FoodstuffAmount).ToImmutableList()));
         }
 
-        public async Task<IEnumerable<Ingredient>> Add(ShoppingListRepository repository, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
+        public async Task<IEnumerable<Ingredient>> Add(ApiClient apiClient, Database database, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
         {
             // TODO: refactor this
-            var shoppingListItems = await repository.GetItems(owner);
+            var shoppingListItems = await ShoppingListRepository.GetItems(apiClient, database, owner);
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
             var newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f);
             var newFoodstuffAmounts = newFoodstuffs.Values.Select(
