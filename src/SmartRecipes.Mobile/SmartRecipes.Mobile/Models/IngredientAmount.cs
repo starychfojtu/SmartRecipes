@@ -1,4 +1,5 @@
 ﻿using System;
+using LanguageExt;
 
 namespace SmartRecipes.Mobile.Models
 {
@@ -21,6 +22,11 @@ namespace SmartRecipes.Mobile.Models
         public static IIngredientAmount Create(Guid id, Guid recipeId, Guid foodstuffId, IAmount amount)
         {
             return new IngredientAmount(id, recipeId, foodstuffId, amount);
+        }
+
+        public static IIngredientAmount Create(Some<IRecipe> recipe, Some<IFoodstuff> foodstuff, IAmount amount)
+        {
+            return new IngredientAmount(Guid.NewGuid(), recipe.Value.Id, foodstuff.Value.Id, amount);
         }
     }
 }

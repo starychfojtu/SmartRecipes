@@ -1,4 +1,5 @@
 ﻿using System;
+using LanguageExt;
 using SQLite;
 
 namespace SmartRecipes.Mobile.Models
@@ -38,10 +39,9 @@ namespace SmartRecipes.Mobile.Models
 
         // Combinators
 
-        // TODO: should be IRecipe
-        public static Recipe Create(Guid id, IAccount owner, string name, Uri imageUrl, int personCount, string text)
+        public static IRecipe Create(Some<IAccount> owner, Some<string> name, Some<Uri> imageUrl, int personCount, string text)
         {
-            return new Recipe(id, owner.Id, name, imageUrl, personCount, text);
+            return new Recipe(Guid.NewGuid(), owner.Value.Id, name, imageUrl, personCount, text);
         }
 
         public static Recipe Create(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, string text)

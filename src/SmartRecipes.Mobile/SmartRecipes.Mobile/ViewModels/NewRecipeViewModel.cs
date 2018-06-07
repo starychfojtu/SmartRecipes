@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using SmartRecipes.Mobile.Services;
 using LanguageExt.SomeHelp;
 using SmartRecipes.Mobile.Models;
+using LanguageExt;
 
 namespace SmartRecipes.Mobile
 {
@@ -17,50 +18,68 @@ namespace SmartRecipes.Mobile
 
         private const string DefaultImageUrl = "https://thumbs.dreamstime.com/z/empty-dish-14513513.jpg";
 
-        private IImmutableList<IngredientDto> ingredients;
+        private IImmutableDictionary<IFoodstuff, IAmount> ingredients;
 
         public NewRecipeViewModel(Database database)
         {
             this.database = database;
             Recipe = new FormDto();
-            ingredients = ImmutableList.Create<IngredientDto>();
+            ingredients = ImmutableDictionary.Create<IFoodstuff, IAmount>();
         }
 
         public FormDto Recipe { get; set; }
 
         public IEnumerable<FoodstuffAmountCellViewModel> Ingredients
         {
-            get { return ingredients.Select(i => new FoodstuffAmountCellViewModel(i.Foodstuff.ToSome(), i.Amount.ToSome(), null, null)); }
+            get { return ingredients.Select(kvp => ToViewModel(kvp.Key, kvp.Value)); }
         }
 
         public async Task OpenAddIngredientDialog()
         {
             var foodstuffs = await Navigation.SelectFoodstuffDialog();
-            var newIngredients = foodstuffs.Select(f => new IngredientDto(f, f.BaseAmount));
+            var newFoodstuffs = foodstuffs.Where(f => !ingredients.ContainsKey(f)).Select(f => new KeyValuePair<IFoodstuff, IAmount>(f, f.BaseAmount));
+            var newIngredients = ingredients.AddRange(newFoodstuffs);
 
-            UpdateIngredients(ingredients.Concat(newIngredients).ToImmutableList());
+            UpdateIngredients(newIngredients);
         }
 
         public async Task Submit()
         {
-            // TODO: this should happen recipehandler
-            var recipeId = Guid.NewGuid();
             var recipe = Models.Recipe.Create(
-                recipeId,
-                CurrentAccount,
+                CurrentAccount.ToSome(),
                 Recipe.Name,
                 new Uri(Recipe.ImageUrl ?? DefaultImageUrl),
                 Recipe.PersonCount,
                 Recipe.Text
             );
-            var recipeIngredients = ingredients.Select(i => IngredientAmount.Create(Guid.NewGuid(), recipeId, i.Foodstuff.Id, i.Amount));
+            var recipeIngredients = ingredients.Select(kvp => IngredientAmount.Create(recipe.ToSome(), kvp.Key.ToSome(), kvp.Value));
+
             await MyRecipesHandler.Add(database, recipe, recipeIngredients);
         }
 
-        private void UpdateIngredients(IImmutableList<IngredientDto> newIngredients)
+        private Task UpdateIngredient(IFoodstuff foodstuff, Func<IAmount, IAmount, Option<IAmount>> action)
+        {
+            var newAmount = action(ingredients[foodstuff], foodstuff.AmountStep).IfNone(foodstuff.BaseAmount);
+            var newIngredients = ingredients.SetItem(foodstuff, newAmount);
+
+            UpdateIngredients(newIngredients);
+            return Task.CompletedTask;
+        }
+
+        private void UpdateIngredients(IImmutableDictionary<IFoodstuff, IAmount> newIngredients)
         {
             ingredients = newIngredients;
             RaisePropertyChanged(nameof(Ingredients));
+        }
+
+        private FoodstuffAmountCellViewModel ToViewModel(IFoodstuff foodstuff, IAmount amount)
+        {
+            return new FoodstuffAmountCellViewModel(
+                foodstuff.ToSome(),
+                amount.ToSome(),
+                () => UpdateIngredient(foodstuff, (a1, a2) => Amount.Add(a1, a2)),
+                () => UpdateIngredient(foodstuff, (a1, a2) => Amount.Substract(a1, a2))
+            );
         }
 
         public class FormDto
@@ -72,19 +91,6 @@ namespace SmartRecipes.Mobile
             public int PersonCount { get; set; }
 
             public string Text { get; set; }
-        }
-
-        public class IngredientDto
-        {
-            public IngredientDto(IFoodstuff foodstuff, IAmount amount)
-            {
-                Foodstuff = foodstuff;
-                Amount = amount;
-            }
-
-            public IFoodstuff Foodstuff { get; }
-
-            public IAmount Amount { get; }
         }
     }
 }

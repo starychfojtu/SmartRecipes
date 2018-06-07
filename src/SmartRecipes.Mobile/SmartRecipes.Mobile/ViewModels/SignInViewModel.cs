@@ -42,6 +42,7 @@ namespace SmartRecipes.Mobile.ViewModels
                 {
                     // TODO: set current account
                     await Navigation.LogIn();
+                    return true;
                 }
             }
             return false;

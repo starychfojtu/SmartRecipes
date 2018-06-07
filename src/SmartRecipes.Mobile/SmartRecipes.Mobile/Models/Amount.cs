@@ -4,7 +4,7 @@ using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.Models
 {
-    public class Amount : IAmount
+    public struct Amount : IAmount
     {
         public Amount(int count, AmountUnit unit)
         {

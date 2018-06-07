@@ -27,7 +27,11 @@ namespace SmartRecipes.Mobile.WriteModels
 
         private static IShoppingListItemAmount ChangeAmount(Func<IAmount, IAmount, Option<IAmount>> action, IShoppingListItemAmount foodstuffAmount, IFoodstuff foodstuff)
         {
-            if (foodstuffAmount.Id != foodstuff.Id) { throw new ArgumentException(); }
+            if (foodstuffAmount.FoodstuffId != foodstuff.Id)
+            {
+                throw new ArgumentException();
+            }
+
             var newAmount = action(foodstuffAmount.Amount, foodstuff.AmountStep).IfNone(() => throw new ArgumentException());
             return foodstuffAmount.WithAmount(newAmount);
         }

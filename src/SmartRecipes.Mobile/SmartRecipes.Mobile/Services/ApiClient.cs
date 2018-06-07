@@ -31,12 +31,17 @@ namespace SmartRecipes.Mobile.Services
                 return None;
             }
 
-            if (request.Email == "test@gmail.com" && request.Password == "1234")
-            {
-                return new SignInResponse(true, AuthenticationToken);
-            }
+            // TODO: comment this out
+            return new SignInResponse(true, "");
 
-            return new SignInResponse(false, "");
+            /*
+                if (request.Email == "test@gmail.com" && request.Password == "1234")
+                {
+                    return new SignInResponse(true, AuthenticationToken);
+                }
+
+                return new SignInResponse(false, "");
+            */
         }
 
         public async Task<Option<SignUpResponse>> Post(SignUpRequest request)
