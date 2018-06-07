@@ -13,31 +13,31 @@ namespace SmartRecipes.Mobile.ReadModels
 {
     public static class ShoppingListRepository
     {
-        public static async Task<IEnumerable<Ingredient>> GetItems(ApiClient apiClient, Database database, IAccount owner)
+        public static async Task<IEnumerable<ShoppingListItem>> GetItems(ApiClient apiClient, Database database, IAccount owner)
         {
             return await Repository.RetrievalAction(
                 apiClient,
                 database,
                 client => client.GetShoppingList(),
-                db => GetIngredients(db),
-                response => response.Items.Select(i => ToIngredients(i, owner)),
-                ingredients => ingredients.Select(i => (object)i.Foodstuff).Concat(ingredients.Select(i => (object)i.FoodstuffAmount))
+                db => GetShoppingListItems(db),
+                response => response.Items.Select(i => ToShoppingListItem(i, owner)),
+                items => items.Select(i => (object)i.Foodstuff).Concat(items.Select(i => (object)i.ItemAmount))
             );
         }
 
-        private static async Task<IEnumerable<Ingredient>> GetIngredients(Database database)
+        private static async Task<IEnumerable<ShoppingListItem>> GetShoppingListItems(Database database)
         {
             var foodstuffAmounts = await GetShoppingListItemAmounts(database);
 
             var foostuffIds = foodstuffAmounts.Select(a => a.FoodstuffId);
             var foodstuffs = await GetFoodstuffs(foostuffIds, database);
 
-            return foodstuffAmounts.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new Ingredient(f.ToSome(), i.ToSome()));
+            return foodstuffAmounts.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new ShoppingListItem(f.ToSome(), i.ToSome()));
         }
 
-        private static async Task<IEnumerable<IFoodstuffAmount>> GetShoppingListItemAmounts(Database database)
+        private static async Task<IEnumerable<IShoppingListItemAmount>> GetShoppingListItemAmounts(Database database)
         {
-            return await database.FoodstuffAmounts.Where(i => i.ShoppingListOwnerId != null).ToEnumerableAsync();
+            return await database.ShoppingListItemAmounts.ToEnumerableAsync();
         }
 
         private static async Task<IEnumerable<IFoodstuff>> GetFoodstuffs(IEnumerable<Guid> ids, Database database)
@@ -45,7 +45,7 @@ namespace SmartRecipes.Mobile.ReadModels
             return await database.Foodstuffs.Where(f => ids.Contains(f.Id)).ToEnumerableAsync();
         }
 
-        public static Ingredient ToIngredients(ShoppingListResponse.Item i, IAccount owner)
+        public static ShoppingListItem ToShoppingListItem(ShoppingListResponse.Item i, IAccount owner)
         {
             var foodstuff = Foodstuff.Create(
                 i.FoodstuffDto.Id,
@@ -54,7 +54,7 @@ namespace SmartRecipes.Mobile.ReadModels
                 i.FoodstuffDto.BaseAmount,
                 i.FoodstuffDto.AmountStep
             );
-            return new Ingredient(foodstuff.ToSome(), FoodstuffAmount.CreateForShoppingList(i.Id, owner, foodstuff.Id, i.Amount).ToSome());
+            return new ShoppingListItem(foodstuff.ToSome(), ShoppingListItemAmount.Create(i.Id, owner.Id, foodstuff.Id, i.Amount).ToSome());
         }
     }
 }

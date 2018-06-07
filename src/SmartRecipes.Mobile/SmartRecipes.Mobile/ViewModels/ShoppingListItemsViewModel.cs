@@ -7,6 +7,8 @@ using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
 using System.Collections.Immutable;
+using SmartRecipes.Mobile.Models;
+using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -16,18 +18,18 @@ namespace SmartRecipes.Mobile.ViewModels
 
         private readonly Database database;
 
-        private IImmutableList<Ingredient> ingredients { get; set; }
+        private IImmutableList<ShoppingListItem> shoppingListItems { get; set; }
 
         public ShoppingListItemsViewModel(ApiClient apiClient, Database database)
         {
             this.apiClient = apiClient;
             this.database = database;
-            ingredients = ImmutableList.Create<Ingredient>();
+            shoppingListItems = ImmutableList.Create<ShoppingListItem>();
         }
 
-        public IEnumerable<IngredientCellViewModel> Ingredients
+        public IEnumerable<FoodstuffAmountCellViewModel> ShoppingListItems
         {
-            get { return ingredients.Select(i => ToViewModel(i)); }
+            get { return shoppingListItems.Select(i => ToViewModel(i)); }
         }
 
         public override async Task InitializeAsync()
@@ -40,40 +42,44 @@ namespace SmartRecipes.Mobile.ViewModels
             await InitializeAsync();
         }
 
-        public async Task OpenAddIngredientDialog()
+        public async Task OpenAddFoodstuffDialog()
         {
             var selected = await Navigation.SelectFoodstuffDialog();
-            var newIngredients = await ShoppingListHandler.Add(apiClient, database, CurrentAccount, selected);
-            var allIngredients = ingredients.Concat(newIngredients).ToImmutableList();
-            UpdateIngredients(allIngredients);
+            var newShoppingListItems = await ShoppingListHandler.AddToShoppingList(apiClient, database, CurrentAccount, selected);
+            var allShoppingListItems = shoppingListItems.Concat(newShoppingListItems).ToImmutableList();
+            UpdateShoppingListItems(allShoppingListItems);
         }
 
-        private async Task IngredientAction(Ingredient ingredient, Func<Ingredient, Ingredient> action)
+        private async Task ShoppingListItemAction(ShoppingListItem shoppingListItem, Func<IShoppingListItemAmount, IFoodstuff, IShoppingListItemAmount> action)
         {
-            var newIngredient = action(ingredient);
-            var oldItem = ingredients.First(i => i.Foodstuff.Id == ingredient.Foodstuff.Id);
-            var newIngredients = ingredients.Replace(oldItem, newIngredient);
-            await ShoppingListHandler.Update(apiClient, database, newIngredient.FoodstuffAmount.ToEnumerable());
-            UpdateIngredients(newIngredients);
+            var newAmount = action(shoppingListItem.ItemAmount, shoppingListItem.Foodstuff);
+            var newShoppingListItem = shoppingListItem.WithItemAmount(newAmount.ToSome());
+
+            var oldItem = shoppingListItems.First(i => i.Foodstuff.Id == shoppingListItem.Foodstuff.Id);
+            var newShoppingListItems = shoppingListItems.Replace(oldItem, newShoppingListItem);
+
+            await ShoppingListHandler.Update(apiClient, database, newShoppingListItem.ItemAmount.ToEnumerable());
+            UpdateShoppingListItems(newShoppingListItems);
         }
 
         private async Task UpdateItemsAsync()
         {
-            UpdateIngredients((await ShoppingListRepository.GetItems(apiClient, database, CurrentAccount)).ToImmutableList());
+            UpdateShoppingListItems((await ShoppingListRepository.GetItems(apiClient, database, CurrentAccount)));
         }
 
-        private void UpdateIngredients(IImmutableList<Ingredient> newIngredients)
+        private void UpdateShoppingListItems(IEnumerable<ShoppingListItem> newShoppingListItems)
         {
-            ingredients = newIngredients.OrderBy(i => i.Foodstuff.Name).ToImmutableList();
-            RaisePropertyChanged(nameof(Ingredients));
+            shoppingListItems = newShoppingListItems.OrderBy(i => i.Foodstuff.Name).ToImmutableList();
+            RaisePropertyChanged(nameof(ShoppingListItems));
         }
 
-        private IngredientCellViewModel ToViewModel(Ingredient ingredient)
+        private FoodstuffAmountCellViewModel ToViewModel(ShoppingListItem shoppingListItem)
         {
-            return new IngredientCellViewModel(
-                ingredient,
-                () => IngredientAction(ingredient, i => ShoppingListHandler.IncreaseAmount(i)),
-                () => IngredientAction(ingredient, i => ShoppingListHandler.DecreaseAmount(i))
+            return new FoodstuffAmountCellViewModel(
+                shoppingListItem.Foodstuff.ToSome(),
+                shoppingListItem.Amount.ToSome(),
+                () => ShoppingListItemAction(shoppingListItem, (ia, f) => ShoppingListHandler.Increase(ia, f)),
+                () => ShoppingListItemAction(shoppingListItem, (ia, f) => ShoppingListHandler.Decrease(ia, f))
             );
         }
     }

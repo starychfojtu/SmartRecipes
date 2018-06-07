@@ -17,7 +17,7 @@ namespace SmartRecipes.Mobile.Pages
             viewModel.BindText(PersonCountEntry, vm => vm.Recipe.PersonCount);
             viewModel.Bind(TextEditor, Entry.TextProperty, vm => vm.Recipe.Text);
 
-            IngredientsListView.ItemTemplate = new DataTemplate<IngredientCell>();
+            IngredientsListView.ItemTemplate = new DataTemplate<FoodstuffAmountCell>();
             viewModel.Bind(IngredientsListView, ItemsView<Cell>.ItemsSourceProperty, vm => vm.Ingredients);
 
             AddIngredientButton.Clicked += async (s, e) => await viewModel.OpenAddIngredientDialog();

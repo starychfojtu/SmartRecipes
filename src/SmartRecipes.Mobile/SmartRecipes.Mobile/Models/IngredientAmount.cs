@@ -1,0 +1,26 @@
+﻿using System;
+
+namespace SmartRecipes.Mobile.Models
+{
+    public class IngredientAmount : FoodstuffAmount, IIngredientAmount
+    {
+        private IngredientAmount(Guid id, Guid recipeId, Guid foodstuffId, IAmount amount) : base(id, foodstuffId, amount)
+        {
+            RecipeId = recipeId;
+        }
+
+        public IngredientAmount() { /* SQLite */ }
+
+        public Guid RecipeId { get; set; }
+
+        public IIngredientAmount WithAmount(IAmount amount)
+        {
+            return new IngredientAmount(Id, RecipeId, FoodstuffId, amount);
+        }
+
+        public static IIngredientAmount Create(Guid id, Guid recipeId, Guid foodstuffId, IAmount amount)
+        {
+            return new IngredientAmount(id, recipeId, foodstuffId, amount);
+        }
+    }
+}

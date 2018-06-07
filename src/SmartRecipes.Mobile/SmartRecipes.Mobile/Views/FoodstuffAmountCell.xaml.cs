@@ -4,9 +4,9 @@ using FFImageLoading.Transformations;
 
 namespace SmartRecipes.Mobile.Views
 {
-    public partial class IngredientCell : ViewCell
+    public partial class FoodstuffAmountCell : ViewCell
     {
-        public IngredientCell()
+        public FoodstuffAmountCell()
         {
             InitializeComponent();
 
@@ -16,7 +16,7 @@ namespace SmartRecipes.Mobile.Views
             PlusButton.Clicked += async (s, e) => await ViewModel.OnPlus.Invoke();
         }
 
-        private IngredientCellViewModel ViewModel => (BindingContext as IngredientCellViewModel);
+        private FoodstuffAmountCellViewModel ViewModel => (BindingContext as FoodstuffAmountCellViewModel);
 
         protected override void OnBindingContextChanged()
         {
@@ -24,10 +24,10 @@ namespace SmartRecipes.Mobile.Views
 
             if (ViewModel != null)
             {
-                NameLabel.Text = ViewModel.Ingredient.Foodstuff.Name;
-                AmountLabel.Text = ViewModel.Ingredient.Amount.ToString(); // TODO: add amount needed
+                NameLabel.Text = ViewModel.Foodstuff.Name;
+                AmountLabel.Text = ViewModel.Amount.ToString(); // TODO: add amount needed
                 MinusButton.IsVisible = ViewModel.OnMinus != null;
-                Image.Source = ViewModel.Ingredient.Foodstuff.ImageUrl;
+                Image.Source = ViewModel.Foodstuff.ImageUrl;
             }
         }
     }

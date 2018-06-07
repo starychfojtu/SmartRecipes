@@ -28,10 +28,10 @@ namespace SmartRecipes.Mobile.ReadModels
             // TODO: write double join query or simplify this by abstraction, this code is horrible, split it
             var recipes = await database.Recipes.ToEnumerableAsync();
             var recipeIds = recipes.Select(r => r.Id);
-            var foodstuffAmounts = await database.FoodstuffAmounts.Where(a => recipeIds.Contains(a.RecipeId.Value)).ToEnumerableAsync();
+            var foodstuffAmounts = await database.IngredientAmounts.Where(a => recipeIds.Contains(a.RecipeId)).ToEnumerableAsync();
             var foodsstuffIds = foodstuffAmounts.Select(a => a.FoodstuffId);
             var foodstuffs = await database.Foodstuffs.Where(f => foodsstuffIds.Contains(f.Id)).ToEnumerableAsync();
-            var recipesWithAmounts = recipes.GroupJoin(foodstuffAmounts, r => r.Id, a => a.RecipeId.Value, (r, a) => new { Recipe = r, Amounts = a });
+            var recipesWithAmounts = recipes.GroupJoin(foodstuffAmounts, r => r.Id, a => a.RecipeId, (r, a) => new { Recipe = r, Amounts = a });
             return recipesWithAmounts.SelectMany(
                 recipeWithAmounts => recipeWithAmounts.Amounts.GroupJoin(
                     foodstuffs,

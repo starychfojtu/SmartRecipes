@@ -4,7 +4,6 @@ using SmartRecipes.Mobile.ViewModels;
 using System.Threading.Tasks;
 using System.Collections.Immutable;
 using System.Linq;
-using SmartRecipes.Mobile.ReadModels.Dto;
 using System.Collections.Generic;
 using SmartRecipes.Mobile.Services;
 using LanguageExt.SomeHelp;
@@ -18,49 +17,47 @@ namespace SmartRecipes.Mobile
 
         private const string DefaultImageUrl = "https://thumbs.dreamstime.com/z/empty-dish-14513513.jpg";
 
-        private IImmutableList<Ingredient> ingredients;
+        private IImmutableList<IngredientDto> ingredients;
 
         public NewRecipeViewModel(Database database)
         {
             this.database = database;
             Recipe = new FormDto();
-            ingredients = ImmutableList.Create<Ingredient>();
+            ingredients = ImmutableList.Create<IngredientDto>();
         }
 
         public FormDto Recipe { get; set; }
 
-        public IEnumerable<IngredientCellViewModel> Ingredients
+        public IEnumerable<FoodstuffAmountCellViewModel> Ingredients
         {
-            get { return ingredients.Select(i => new IngredientCellViewModel(i, null, null)); }
+            get { return ingredients.Select(i => new FoodstuffAmountCellViewModel(i.Foodstuff.ToSome(), i.Amount.ToSome(), null, null)); }
         }
 
         public async Task OpenAddIngredientDialog()
         {
             var foodstuffs = await Navigation.SelectFoodstuffDialog();
-            // TODO: refactor creating of objects in whole solution
-            var newIngredients = foodstuffs.Select(f => new Ingredient(
-                f.ToSome(),
-                FoodstuffAmount.CreateForRecipe(Guid.Empty, Guid.Empty, f.Id, f.BaseAmount).ToSome()
-            ));
+            var newIngredients = foodstuffs.Select(f => new IngredientDto(f, f.BaseAmount));
+
             UpdateIngredients(ingredients.Concat(newIngredients).ToImmutableList());
         }
 
         public async Task Submit()
         {
-            // TODO: this should probably happen recipehandler
+            // TODO: this should happen recipehandler
+            var recipeId = Guid.NewGuid();
             var recipe = Models.Recipe.Create(
-                Guid.NewGuid(),
+                recipeId,
                 CurrentAccount,
                 Recipe.Name,
                 new Uri(Recipe.ImageUrl ?? DefaultImageUrl),
                 Recipe.PersonCount,
                 Recipe.Text
             );
-            var recipeIngredients = ingredients.Select(i => i.FoodstuffAmount.WithRecipe(recipe));
+            var recipeIngredients = ingredients.Select(i => IngredientAmount.Create(Guid.NewGuid(), recipeId, i.Foodstuff.Id, i.Amount));
             await MyRecipesHandler.Add(database, recipe, recipeIngredients);
         }
 
-        private void UpdateIngredients(IImmutableList<Ingredient> newIngredients)
+        private void UpdateIngredients(IImmutableList<IngredientDto> newIngredients)
         {
             ingredients = newIngredients;
             RaisePropertyChanged(nameof(Ingredients));
@@ -75,6 +72,19 @@ namespace SmartRecipes.Mobile
             public int PersonCount { get; set; }
 
             public string Text { get; set; }
+        }
+
+        public class IngredientDto
+        {
+            public IngredientDto(IFoodstuff foodstuff, IAmount amount)
+            {
+                Foodstuff = foodstuff;
+                Amount = amount;
+            }
+
+            public IFoodstuff Foodstuff { get; }
+
+            public IAmount Amount { get; }
         }
     }
 }
