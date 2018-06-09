@@ -27,6 +27,13 @@
                 WidthRequest="64"
                 HeightRequest="64"
                 VerticalOptions="Center"/>
+            <Button
+                x:Name="EditButton"
+                Text="Edit"
+                BackgroundColor="Transparent"
+                WidthRequest="64"
+                HeightRequest="64"
+                VerticalOptions="Center"/>
         </StackLayout>
         
         <StackLayout

@@ -22,7 +22,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public async Task AddRecipe()
         {
-            await Navigation.AddRecipe(this);
+            await Navigation.CreateRecipe();
         }
 
         public async Task Refresh()

@@ -50,7 +50,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public async Task SignUp()
         {
-            await Navigation.SignUp(this);
+            await Navigation.SignUp();
         }
     }
 }

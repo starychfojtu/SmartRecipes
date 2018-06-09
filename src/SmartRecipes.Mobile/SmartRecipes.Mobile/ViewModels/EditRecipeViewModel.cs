@@ -9,36 +9,46 @@ using SmartRecipes.Mobile.Services;
 using LanguageExt.SomeHelp;
 using SmartRecipes.Mobile.Models;
 using LanguageExt;
+using Xamarin.Forms;
 
 namespace SmartRecipes.Mobile
 {
-    public class NewRecipeViewModel : ViewModel
+    public enum EditRecipeMode
+    {
+        New,
+        Edit
+    }
+
+    public class EditRecipeViewModel : ViewModel
     {
         private readonly Database database;
 
         private const string DefaultImageUrl = "https://thumbs.dreamstime.com/z/empty-dish-14513513.jpg";
 
-        private IImmutableDictionary<IFoodstuff, IAmount> ingredients;
-
-        public NewRecipeViewModel(Database database)
+        public EditRecipeViewModel(Database database)
         {
             this.database = database;
             Recipe = new FormDto();
-            ingredients = ImmutableDictionary.Create<IFoodstuff, IAmount>();
+            Ingredients = ImmutableDictionary.Create<IFoodstuff, IAmount>();
+            Mode = EditRecipeMode.New;
         }
+
+        public EditRecipeMode Mode { get; set; }
 
         public FormDto Recipe { get; set; }
 
-        public IEnumerable<FoodstuffAmountCellViewModel> Ingredients
+        public IImmutableDictionary<IFoodstuff, IAmount> Ingredients { get; set; }
+
+        public IEnumerable<FoodstuffAmountCellViewModel> IngredientViewModels
         {
-            get { return ingredients.Select(kvp => ToViewModel(kvp.Key, kvp.Value)); }
+            get { return Ingredients.Select(kvp => ToViewModel(kvp.Key, kvp.Value)); }
         }
 
         public async Task OpenAddIngredientDialog()
         {
             var foodstuffs = await Navigation.SelectFoodstuffDialog();
-            var newFoodstuffs = foodstuffs.Where(f => !ingredients.ContainsKey(f)).Select(f => new KeyValuePair<IFoodstuff, IAmount>(f, f.BaseAmount));
-            var newIngredients = ingredients.AddRange(newFoodstuffs);
+            var newFoodstuffs = foodstuffs.Where(f => !Ingredients.ContainsKey(f)).Select(f => new KeyValuePair<IFoodstuff, IAmount>(f, f.BaseAmount));
+            var newIngredients = Ingredients.AddRange(newFoodstuffs);
 
             UpdateIngredients(newIngredients);
         }
@@ -52,15 +62,16 @@ namespace SmartRecipes.Mobile
                 Recipe.PersonCount,
                 Recipe.Text
             );
-            var recipeIngredients = ingredients.Select(kvp => IngredientAmount.Create(recipe.ToSome(), kvp.Key.ToSome(), kvp.Value));
+            var recipeIngredients = Ingredients.Select(kvp => IngredientAmount.Create(recipe.ToSome(), kvp.Key.ToSome(), kvp.Value));
 
             await MyRecipesHandler.Add(database, recipe, recipeIngredients);
+            await Application.Current.MainPage.Navigation.PopModalAsync();
         }
 
         private Task UpdateIngredient(IFoodstuff foodstuff, Func<IAmount, IAmount, Option<IAmount>> action)
         {
-            var newAmount = action(ingredients[foodstuff], foodstuff.AmountStep).IfNone(foodstuff.BaseAmount);
-            var newIngredients = ingredients.SetItem(foodstuff, newAmount);
+            var newAmount = action(Ingredients[foodstuff], foodstuff.AmountStep).IfNone(foodstuff.BaseAmount);
+            var newIngredients = Ingredients.SetItem(foodstuff, newAmount);
 
             UpdateIngredients(newIngredients);
             return Task.CompletedTask;
@@ -68,7 +79,7 @@ namespace SmartRecipes.Mobile
 
         private void UpdateIngredients(IImmutableDictionary<IFoodstuff, IAmount> newIngredients)
         {
-            ingredients = newIngredients;
+            Ingredients = newIngredients;
             RaisePropertyChanged(nameof(Ingredients));
         }
 

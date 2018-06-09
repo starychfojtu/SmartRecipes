@@ -4,9 +4,9 @@ using Xamarin.Forms;
 
 namespace SmartRecipes.Mobile.Pages
 {
-    public partial class NewRecipePage : ContentPage
+    public partial class EditRecipePage : ContentPage
     {
-        public NewRecipePage(NewRecipeViewModel viewModel)
+        public EditRecipePage(EditRecipeViewModel viewModel)
         {
             InitializeComponent();
 
