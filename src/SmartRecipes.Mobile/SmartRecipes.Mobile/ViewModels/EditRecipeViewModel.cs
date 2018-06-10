@@ -10,7 +10,6 @@ using LanguageExt.SomeHelp;
 using SmartRecipes.Mobile.Models;
 using LanguageExt;
 using Xamarin.Forms;
-using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile
 {

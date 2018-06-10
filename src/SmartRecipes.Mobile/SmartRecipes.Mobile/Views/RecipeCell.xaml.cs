@@ -1,6 +1,5 @@
 ﻿using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;
-using SmartRecipes.Mobile.Services;
 
 namespace SmartRecipes.Mobile.Views
 {
@@ -10,29 +9,12 @@ namespace SmartRecipes.Mobile.Views
         {
             InitializeComponent();
 
-            OtherButton.Clicked += (s, e) => OnOther();
-            PlusButton.Clicked += (s, e) => OnPlus();
-
-            EditButton.Clicked += async (s, e) =>
-            {
-                if (ViewModel != null)
-                {
-                    await Navigation.EditRecipe(ViewModel.Recipe);
-                }
-            };
+            OtherButton.Clicked += (s, e) => ViewModel?.OnOther?.Invoke();
+            PlusButton.Clicked += (s, e) => ViewModel?.OnPlus.Invoke();
+            EditButton.Clicked += async (s, e) => await ViewModel?.EditRecipe();
         }
 
         private RecipeCellViewModel ViewModel => (BindingContext as RecipeCellViewModel);
-
-        private void OnOther()
-        {
-            ViewModel.OnOther?.Invoke();
-        }
-
-        private void OnPlus()
-        {
-            ViewModel.OnPlus.Invoke();
-        }
 
         protected override void OnBindingContextChanged()
         {

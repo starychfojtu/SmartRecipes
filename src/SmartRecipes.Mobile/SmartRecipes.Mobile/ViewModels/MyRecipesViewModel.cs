@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.ReadModels;
 using SmartRecipes.Mobile.Services;
+using System.Data.Common;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -33,7 +34,11 @@ namespace SmartRecipes.Mobile.ViewModels
         public async Task UpdateRecipesAsync()
         {
             var recipes = await RecipeRepository.GetRecipesAsync(apiClient, database);
-            Recipes = recipes.Select(r => new RecipeCellViewModel(r, () => { }));
+            Recipes = recipes.Select(r => new RecipeCellViewModel(
+                r,
+                async recipe => await RecipeRepository.GetDetail(apiClient, database, recipe),
+                () => { /*TODO: add adding to shopping list */ }
+            ));
             RaisePropertyChanged(nameof(Recipes));
         }
 

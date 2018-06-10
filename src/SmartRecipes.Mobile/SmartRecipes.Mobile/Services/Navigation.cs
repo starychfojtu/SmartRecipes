@@ -3,6 +3,7 @@ using SmartRecipes.Mobile.Pages;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Generic;
+using SmartRecipes.Mobile.ReadModels.Dto;
 
 namespace SmartRecipes.Mobile.Services
 {
@@ -24,7 +25,7 @@ namespace SmartRecipes.Mobile.Services
             await Application.Current.MainPage.Navigation.PushAsync(page);
         }
 
-        public static async Task EditRecipe(IRecipe recipe)
+        public static async Task EditRecipe(RecipeDetail recipe)
         {
             var page = await PageFactory.GetEditRecipePage(recipe);
             await Application.Current.MainPage.Navigation.PushAsync(page);

@@ -7,6 +7,7 @@ using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;
 using System.Collections.Immutable;
 using SmartRecipes.Mobile.Models;
+using SmartRecipes.Mobile.ReadModels.Dto;
 
 namespace SmartRecipes.Mobile.Services
 {
@@ -27,15 +28,16 @@ namespace SmartRecipes.Mobile.Services
             ViewModelByPages = types.ToImmutableDictionary();
         }
 
-        public static async Task<EditRecipePage> GetEditRecipePage(IRecipe recipe)
+        public static async Task<EditRecipePage> GetEditRecipePage(RecipeDetail recipeDetail)
         {
             var viewModel = DIContainer.Instance.Resolve<EditRecipeViewModel>();
+            var recipe = recipeDetail.Recipe;
+            var ingredients = recipeDetail.Ingredients;
 
             await viewModel.InitializeAsync();
 
-            // TODO: Consider moving this to navigation
-            // TODO: add ingredients
             viewModel.Mode = EditRecipeMode.Edit;
+            viewModel.Ingredients = ingredients.ToImmutableDictionary(i => i.Foodstuff, i => i.Amount);
             viewModel.Recipe = new EditRecipeViewModel.FormDto
             {
                 Id = recipe.Id,

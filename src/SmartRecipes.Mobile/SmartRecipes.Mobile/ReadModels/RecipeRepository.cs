@@ -6,6 +6,8 @@ using SmartRecipes.Mobile.ApiDto;
 using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
+using LanguageExt.SomeHelp;
+using System.Collections.Immutable;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
@@ -23,23 +25,20 @@ namespace SmartRecipes.Mobile.ReadModels
             );
         }
 
-        private static async Task<IEnumerable<RecipeDetail>> GetRecipeDetails(Database database)
+        public static async Task<RecipeDetail> GetDetail(ApiClient apiClient, Database database, IRecipe recipe)
         {
-            // TODO: write double join query or simplify this by abstraction, this code is horrible, split it
-            var recipes = await database.Recipes.ToEnumerableAsync();
-            var recipeIds = recipes.Select(r => r.Id);
-            var foodstuffAmounts = await database.IngredientAmounts.Where(a => recipeIds.Contains(a.RecipeId)).ToEnumerableAsync();
-            var foodsstuffIds = foodstuffAmounts.Select(a => a.FoodstuffId);
-            var foodstuffs = await database.Foodstuffs.Where(f => foodsstuffIds.Contains(f.Id)).ToEnumerableAsync();
-            var recipesWithAmounts = recipes.GroupJoin(foodstuffAmounts, r => r.Id, a => a.RecipeId, (r, a) => new { Recipe = r, Amounts = a });
-            return recipesWithAmounts.SelectMany(
-                recipeWithAmounts => recipeWithAmounts.Amounts.GroupJoin(
-                    foodstuffs,
-                    a => a.FoodstuffId,
-                    f => f.Id,
-                    (a, fs) => new RecipeDetail(recipeWithAmounts.Recipe, fs.Select(f => new Ingredient(f, a)).ToSomeEnumerable())
-                )
-            );
+            var ingredients = await GetIngredients(apiClient, database, recipe);
+            return new RecipeDetail(recipe.ToSome(), ingredients.ToSomeEnumerable());
+        }
+
+        public static async Task<IEnumerable<Ingredient>> GetIngredients(ApiClient apiClient, Database database, IRecipe recipe)
+        {
+            var ingredientAmounts = await database.IngredientAmounts.Where(i => i.RecipeId == recipe.Id).ToEnumerableAsync();
+
+            var foodstuffIds = ingredientAmounts.Select(i => i.FoodstuffId).ToImmutableHashSet();
+            var foodstuffs = await database.Foodstuffs.Where(f => foodstuffIds.Contains(f.Id)).ToEnumerableAsync();
+
+            return ingredientAmounts.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new Ingredient(f, i));
         }
 
         private static Recipe ToRecipe(MyRecipesResponse.Recipe r)
