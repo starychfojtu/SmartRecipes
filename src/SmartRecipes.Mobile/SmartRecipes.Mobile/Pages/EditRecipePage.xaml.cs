@@ -15,7 +15,7 @@ namespace SmartRecipes.Mobile.Pages
             viewModel.BindText(NameEntry, vm => vm.Recipe.Name);
             viewModel.BindText(ImageUrlEntry, vm => vm.Recipe.ImageUrl);
             viewModel.BindText(PersonCountEntry, vm => vm.Recipe.PersonCount);
-            viewModel.Bind(TextEditor, Entry.TextProperty, vm => vm.Recipe.Text);
+            viewModel.Bind(TextEditor, Editor.TextProperty, vm => vm.Recipe.Text);
 
             IngredientsListView.ItemTemplate = new DataTemplate<FoodstuffAmountCell>();
             viewModel.Bind(IngredientsListView, ItemsView<Cell>.ItemsSourceProperty, vm => vm.Ingredients);

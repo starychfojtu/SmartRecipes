@@ -33,6 +33,7 @@ namespace SmartRecipes.Mobile.Services
 
             await viewModel.InitializeAsync();
 
+            // TODO: Consider moving this to navigation
             // TODO: add ingredients
             viewModel.Mode = EditRecipeMode.Edit;
             viewModel.Recipe = new EditRecipeViewModel.FormDto
