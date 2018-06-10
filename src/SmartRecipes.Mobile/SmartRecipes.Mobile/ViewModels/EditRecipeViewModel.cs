@@ -10,6 +10,7 @@ using LanguageExt.SomeHelp;
 using SmartRecipes.Mobile.Models;
 using LanguageExt;
 using Xamarin.Forms;
+using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile
 {
@@ -55,6 +56,16 @@ namespace SmartRecipes.Mobile
 
         public async Task Submit()
         {
+            var submitTask = Mode == EditRecipeMode.New
+                ? CreateRecipe()
+                : UpdateRecipe();
+
+            await submitTask;
+            await Application.Current.MainPage.Navigation.PopAsync();
+        }
+
+        public async Task CreateRecipe()
+        {
             var recipe = Models.Recipe.Create(
                 CurrentAccount.ToSome(),
                 Recipe.Name,
@@ -65,7 +76,20 @@ namespace SmartRecipes.Mobile
             var recipeIngredients = Ingredients.Select(kvp => IngredientAmount.Create(recipe.ToSome(), kvp.Key.ToSome(), kvp.Value));
 
             await MyRecipesHandler.Add(database, recipe, recipeIngredients);
-            await Application.Current.MainPage.Navigation.PopModalAsync();
+        }
+
+        public async Task UpdateRecipe()
+        {
+            var recipe = Models.Recipe.Create(
+                Recipe.Id.Value,
+                CurrentAccount.Id,
+                Recipe.Name,
+                new Uri(Recipe.ImageUrl ?? DefaultImageUrl),
+                Recipe.PersonCount,
+                Recipe.Text
+            );
+
+            await database.UpdateAsync(recipe.ToEnumerable());
         }
 
         private Task UpdateIngredient(IFoodstuff foodstuff, Func<IAmount, IAmount, Option<IAmount>> action)
@@ -95,6 +119,8 @@ namespace SmartRecipes.Mobile
 
         public class FormDto
         {
+            public Guid? Id { get; set; }
+
             public string Name { get; set; }
 
             public string ImageUrl { get; set; }

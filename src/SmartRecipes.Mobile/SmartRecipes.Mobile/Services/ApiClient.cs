@@ -22,25 +22,15 @@ namespace SmartRecipes.Mobile.Services
 
         public async Task<Option<SignInResponse>> Post(SignInRequest request)
         {
-            try
-            {
-                await SimulateRequest();
-            }
-            catch (HttpRequestException)
-            {
-                return None;
-            }
-
-            // TODO: comment this out
             return new SignInResponse(true, "");
 
-            /*
-                if (request.Email == "test@gmail.com" && request.Password == "1234")
-                {
-                    return new SignInResponse(true, AuthenticationToken);
-                }
+            /* 
+            if (request.Email == "test@gmail.com" && request.Password == "1234")
+            {
+                return new SignInResponse(true, AuthenticationToken);
+            }
 
-                return new SignInResponse(false, "");
+            return new SignInResponse(false, "");
             */
         }
 

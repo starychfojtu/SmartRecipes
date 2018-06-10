@@ -38,6 +38,7 @@ namespace SmartRecipes.Mobile.Services
             viewModel.Mode = EditRecipeMode.Edit;
             viewModel.Recipe = new EditRecipeViewModel.FormDto
             {
+                Id = recipe.Id,
                 Name = recipe.Name,
                 ImageUrl = recipe.ImageUrl.AbsoluteUri,
                 PersonCount = recipe.PersonCount,
