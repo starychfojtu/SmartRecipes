@@ -5,6 +5,7 @@ using LanguageExt.SomeHelp;
 using System.Collections.Immutable;
 using System;
 using SmartRecipes.Mobile.Models;
+using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile
 {
@@ -25,6 +26,16 @@ namespace SmartRecipes.Mobile
             where T : Entity
         {
             return first.Except(second, new EntityEqualityComparer<T>());
+        }
+
+        public static async Task<IEnumerable<U>> SelectAsync<T, U>(this IEnumerable<T> collection, Func<T, Task<U>> selector)
+        {
+            var newCollection = new List<U>();
+            foreach (var item in collection)
+            {
+                newCollection.Add(await selector(item));
+            }
+            return newCollection;
         }
 
         public static IEnumerable<Some<T>> ToSomeEnumerable<T>(this IEnumerable<T> enumerable)

@@ -9,6 +9,7 @@ using SmartRecipes.Mobile.Services;
 using System.Collections.Immutable;
 using SmartRecipes.Mobile.Models;
 using LanguageExt.SomeHelp;
+using LanguageExt;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -19,6 +20,8 @@ namespace SmartRecipes.Mobile.ViewModels
         private readonly Database database;
 
         private IImmutableList<ShoppingListItem> shoppingListItems { get; set; }
+
+        private IImmutableDictionary<IFoodstuff, IAmount> requiredAmounts { get; set; }
 
         public ShoppingListItemsViewModel(ApiClient apiClient, Database database)
         {
@@ -34,7 +37,8 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            await UpdateItemsAsync();
+            requiredAmounts = await ShoppingListRepository.GetRequiredAmounts(apiClient, database, CurrentAccount.ToSome());
+            UpdateShoppingListItems((await ShoppingListRepository.GetItems(apiClient, database, CurrentAccount.ToSome())));
         }
 
         public async Task Refresh()
@@ -62,11 +66,6 @@ namespace SmartRecipes.Mobile.ViewModels
             UpdateShoppingListItems(newShoppingListItems);
         }
 
-        private async Task UpdateItemsAsync()
-        {
-            UpdateShoppingListItems((await ShoppingListRepository.GetItems(apiClient, database, CurrentAccount.ToSome())));
-        }
-
         private void UpdateShoppingListItems(IEnumerable<ShoppingListItem> newShoppingListItems)
         {
             shoppingListItems = newShoppingListItems.OrderBy(i => i.Foodstuff.Name).ToImmutableList();
@@ -78,6 +77,7 @@ namespace SmartRecipes.Mobile.ViewModels
             return new FoodstuffAmountCellViewModel(
                 shoppingListItem.Foodstuff.ToSome(),
                 shoppingListItem.Amount.ToSome(),
+                requiredAmounts.TryGetValue(shoppingListItem.Foodstuff),
                 () => ShoppingListItemAction(shoppingListItem, (ia, f) => ShoppingListHandler.Increase(ia, f)),
                 () => ShoppingListItemAction(shoppingListItem, (ia, f) => ShoppingListHandler.Decrease(ia, f))
             );

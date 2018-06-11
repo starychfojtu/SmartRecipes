@@ -8,6 +8,7 @@ using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
 using LanguageExt.SomeHelp;
 using System.Collections.Immutable;
+using System;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
@@ -29,6 +30,17 @@ namespace SmartRecipes.Mobile.ReadModels
         {
             var ingredients = await GetIngredients(apiClient, database, recipe);
             return new RecipeDetail(recipe.ToSome(), ingredients.ToSomeEnumerable());
+        }
+
+        public static async Task<RecipeDetail> GetDetail(ApiClient apiClient, Database database, Guid recipeId)
+        {
+            var recipe = await GetRecipe(apiClient, database, recipeId);
+            return await GetDetail(apiClient, database, recipe.ToSome());
+        }
+
+        public static async Task<IRecipe> GetRecipe(ApiClient apiClient, Database database, Guid recipeId)
+        {
+            return await database.Recipes.Where(r => r.Id == recipeId).FirstAsync();
         }
 
         public static async Task<IEnumerable<Ingredient>> GetIngredients(ApiClient apiClient, Database database, Some<IRecipe> recipe)

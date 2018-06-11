@@ -114,6 +114,7 @@ namespace SmartRecipes.Mobile
             return new FoodstuffAmountCellViewModel(
                 foodstuff.ToSome(),
                 amount.ToSome(),
+                None,
                 () => ChangeAmount(foodstuff, (a1, a2) => Amount.Add(a1, a2)),
                 () => ChangeAmount(foodstuff, (a1, a2) => Amount.Substract(a1, a2))
             );
