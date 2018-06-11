@@ -13,7 +13,7 @@ namespace SmartRecipes.Mobile.ReadModels
 {
     public static class ShoppingListRepository
     {
-        public static async Task<IEnumerable<ShoppingListItem>> GetItems(ApiClient apiClient, Database database, IAccount owner)
+        public static async Task<IEnumerable<ShoppingListItem>> GetItems(ApiClient apiClient, Database database, Some<IAccount> owner)
         {
             return await Repository.RetrievalAction(
                 apiClient,
@@ -23,6 +23,18 @@ namespace SmartRecipes.Mobile.ReadModels
                 response => response.Items.Select(i => ToShoppingListItem(i, owner)),
                 items => items.Select(i => (object)i.Foodstuff).Concat(items.Select(i => (object)i.ItemAmount))
             );
+        }
+
+        public static ShoppingListItem ToShoppingListItem(ShoppingListResponse.Item i, Some<IAccount> owner)
+        {
+            var foodstuff = Foodstuff.Create(
+                i.FoodstuffDto.Id,
+                i.FoodstuffDto.Name,
+                i.FoodstuffDto.ImageUrl,
+                i.FoodstuffDto.BaseAmount,
+                i.FoodstuffDto.AmountStep
+            );
+            return new ShoppingListItem(foodstuff.ToSome(), ShoppingListItemAmount.Create(i.Id, owner.Value.Id, foodstuff.Id, i.Amount).ToSome());
         }
 
         private static async Task<IEnumerable<ShoppingListItem>> GetShoppingListItems(Database database)
@@ -43,18 +55,6 @@ namespace SmartRecipes.Mobile.ReadModels
         private static async Task<IEnumerable<IFoodstuff>> GetFoodstuffs(IEnumerable<Guid> ids, Database database)
         {
             return await database.Foodstuffs.Where(f => ids.Contains(f.Id)).ToEnumerableAsync();
-        }
-
-        public static ShoppingListItem ToShoppingListItem(ShoppingListResponse.Item i, IAccount owner)
-        {
-            var foodstuff = Foodstuff.Create(
-                i.FoodstuffDto.Id,
-                i.FoodstuffDto.Name,
-                i.FoodstuffDto.ImageUrl,
-                i.FoodstuffDto.BaseAmount,
-                i.FoodstuffDto.AmountStep
-            );
-            return new ShoppingListItem(foodstuff.ToSome(), ShoppingListItemAmount.Create(i.Id, owner.Id, foodstuff.Id, i.Amount).ToSome());
         }
     }
 }

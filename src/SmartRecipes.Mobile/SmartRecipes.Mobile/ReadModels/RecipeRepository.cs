@@ -25,15 +25,16 @@ namespace SmartRecipes.Mobile.ReadModels
             );
         }
 
-        public static async Task<RecipeDetail> GetDetail(ApiClient apiClient, Database database, IRecipe recipe)
+        public static async Task<RecipeDetail> GetDetail(ApiClient apiClient, Database database, Some<IRecipe> recipe)
         {
             var ingredients = await GetIngredients(apiClient, database, recipe);
             return new RecipeDetail(recipe.ToSome(), ingredients.ToSomeEnumerable());
         }
 
-        public static async Task<IEnumerable<Ingredient>> GetIngredients(ApiClient apiClient, Database database, IRecipe recipe)
+        public static async Task<IEnumerable<Ingredient>> GetIngredients(ApiClient apiClient, Database database, Some<IRecipe> recipe)
         {
-            var ingredientAmounts = await database.IngredientAmounts.Where(i => i.RecipeId == recipe.Id).ToEnumerableAsync();
+            var recipeId = recipe.Value.Id;
+            var ingredientAmounts = await database.IngredientAmounts.Where(i => i.RecipeId == recipeId).ToEnumerableAsync();
 
             var foodstuffIds = ingredientAmounts.Select(i => i.FoodstuffId).ToImmutableHashSet();
             var foodstuffs = await database.Foodstuffs.Where(f => foodstuffIds.Contains(f.Id)).ToEnumerableAsync();

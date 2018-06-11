@@ -36,14 +36,32 @@ namespace SmartRecipes.Mobile.WriteModels
             return foodstuffAmount.WithAmount(newAmount);
         }
 
-        public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(ApiClient apiClient, Database database, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
+        public static async Task AddToShoppingList(
+            ApiClient apiClient,
+            Database database,
+            Some<IRecipe> recipe,
+            Some<IAccount> owner,
+            int personCount)
+        {
+            var ingredients = await RecipeRepository.GetIngredients(apiClient, database, recipe);
+            var recipeFoodstuffs = ingredients.Select(i => i.Foodstuff);
+
+            var shoppingListItems = await ShoppingListRepository.GetItems(apiClient, database, owner);
+            var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
+
+            var notAddedFoodstuffs = recipeFoodstuffs.Except(alreadyAddedFoodstuffs);
+            var itemAmounts = notAddedFoodstuffs.Select(f => ShoppingListItemAmount.Create(owner, f.ToSome(), Amount.Zero(f.BaseAmount.Unit)));
+
+            await database.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount).ToEnumerable());
+            await database.AddAsync(itemAmounts);
+        }
+
+        public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(ApiClient apiClient, Database database, Some<IAccount> owner, IEnumerable<IFoodstuff> foodstuffs)
         {
             var shoppingListItems = await ShoppingListRepository.GetItems(apiClient, database, owner);
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
             var newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f);
-            var newItemAmounts = newFoodstuffs.Values.Select(
-                f => ShoppingListItemAmount.Create(Guid.NewGuid(), owner.Id, f.Id, f.BaseAmount)
-            );
+            var newItemAmounts = newFoodstuffs.Values.Select(f => ShoppingListItemAmount.Create(owner, f.ToSome(), f.BaseAmount));
 
             await database.AddAsync(newItemAmounts);
             await Update(apiClient, database, newItemAmounts);

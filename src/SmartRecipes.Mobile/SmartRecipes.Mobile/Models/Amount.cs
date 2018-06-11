@@ -16,6 +16,11 @@ namespace SmartRecipes.Mobile.Models
 
         public AmountUnit Unit { get; }
 
+        public IAmount WithCount(int count)
+        {
+            return new Amount(count, Unit);
+        }
+
         public override string ToString()
         {
             return $"{Count} {Unit.ToString()}";

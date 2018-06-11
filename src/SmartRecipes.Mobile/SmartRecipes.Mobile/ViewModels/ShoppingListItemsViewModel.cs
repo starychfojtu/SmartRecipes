@@ -45,7 +45,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public async Task OpenAddFoodstuffDialog()
         {
             var selected = await Navigation.SelectFoodstuffDialog();
-            var newShoppingListItems = await ShoppingListHandler.AddToShoppingList(apiClient, database, CurrentAccount, selected);
+            var newShoppingListItems = await ShoppingListHandler.AddToShoppingList(apiClient, database, CurrentAccount.ToSome(), selected);
             var allShoppingListItems = shoppingListItems.Concat(newShoppingListItems).ToImmutableList();
             UpdateShoppingListItems(allShoppingListItems);
         }
@@ -64,7 +64,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         private async Task UpdateItemsAsync()
         {
-            UpdateShoppingListItems((await ShoppingListRepository.GetItems(apiClient, database, CurrentAccount)));
+            UpdateShoppingListItems((await ShoppingListRepository.GetItems(apiClient, database, CurrentAccount.ToSome())));
         }
 
         private void UpdateShoppingListItems(IEnumerable<ShoppingListItem> newShoppingListItems)

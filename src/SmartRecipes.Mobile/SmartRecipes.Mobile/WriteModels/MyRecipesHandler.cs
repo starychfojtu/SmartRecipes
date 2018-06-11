@@ -2,7 +2,6 @@
 using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.Services;
 using System.Collections.Generic;
-using LanguageExt;
 
 namespace SmartRecipes.Mobile.WriteModels
 {
@@ -17,16 +16,6 @@ namespace SmartRecipes.Mobile.WriteModels
             // TODO: add to API or job
             await database.AddAsync(recipe.ToEnumerable());
             await database.AddAsync(ingredients);
-        }
-
-        public static async Task AddToShoppingList(
-            ApiClient apiClient,
-            Database database,
-            Some<IRecipe> recipe,
-            Some<IAccount> owner,
-            int personCount)
-        {
-            await database.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount).ToEnumerable());
         }
 
         public static async Task Update(ApiClient apiClient, Database database, IRecipe recipe, IEnumerable<IIngredientAmount> ingredients)

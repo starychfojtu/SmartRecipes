@@ -27,6 +27,7 @@
     <Compile Remove="Commands\SignInCommand.cs" />
     <Compile Remove="Pages\AddShoppingListItemPage.xaml %28copy%29.cs" />
     <Compile Remove="Pages\NewRecipeAddIngredientPage.xaml.cs" />
+    <Compile Remove="ReadModels\Dto\ShoppingListItem %28copy%29.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="App.xaml.cs">

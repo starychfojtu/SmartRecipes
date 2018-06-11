@@ -7,5 +7,7 @@ namespace SmartRecipes.Mobile.Models
         int Count { get; }
 
         AmountUnit Unit { get; }
+
+        IAmount WithCount(int count);
     }
 }
