@@ -58,6 +58,11 @@ namespace SmartRecipes.Mobile.Services
             get { return Connection.Table<Foodstuff>(); }
         }
 
+        public AsyncTableQuery<RecipeInShoppingList> RecipeInShoppingLists
+        {
+            get { return Connection.Table<RecipeInShoppingList>(); }
+        }
+
         private SQLiteAsyncConnection Connection
         {
             get { return connection ?? (connection = InitializeDb()); }
@@ -71,6 +76,7 @@ namespace SmartRecipes.Mobile.Services
             syncConn.CreateTable<IngredientAmount>();
             syncConn.CreateTable<ShoppingListItemAmount>();
             syncConn.CreateTable<Foodstuff>();
+            syncConn.CreateTable<RecipeInShoppingList>();
 
             return conn;
         }

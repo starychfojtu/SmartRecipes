@@ -12,7 +12,7 @@ namespace SmartRecipes.Mobile.Models
             Amount = amount;
         }
 
-        public FoodstuffAmount() { /* SQLite */ }
+        protected FoodstuffAmount() { /* SQLite */ }
 
         [PrimaryKey]
         public Guid Id { get; set; }

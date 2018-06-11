@@ -5,7 +5,7 @@ namespace SmartRecipes.Mobile.Models
 {
     public abstract class Entity : IEquatable<Entity>
     {
-        public Entity(Guid id)
+        protected Entity(Guid id)
         {
             Id = id;
         }

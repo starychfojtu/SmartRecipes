@@ -5,7 +5,7 @@ namespace SmartRecipes.Mobile.Pages
 {
     public class AppContainer : MasterDetailPage
     {
-        private Page[] pages;
+        private readonly Page[] pages;
 
         public AppContainer(ShoppingListItemsPage shoppingListItemsPage, MyRecipesPage myRecipesPage)
         {

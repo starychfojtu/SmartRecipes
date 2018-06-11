@@ -44,7 +44,7 @@ namespace SmartRecipes.Mobile.Services
                 Name = recipe.Name,
                 ImageUrl = recipe.ImageUrl.AbsoluteUri,
                 PersonCount = recipe.PersonCount,
-                Text = recipe.Text,
+                Text = recipe.Text
             };
 
             return new EditRecipePage(viewModel);
