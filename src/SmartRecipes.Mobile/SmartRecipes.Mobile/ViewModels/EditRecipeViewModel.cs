@@ -9,6 +9,7 @@ using SmartRecipes.Mobile.Services;
 using LanguageExt.SomeHelp;
 using SmartRecipes.Mobile.Models;
 using LanguageExt;
+using static LanguageExt.Prelude;
 using Xamarin.Forms;
 
 namespace SmartRecipes.Mobile
@@ -21,12 +22,13 @@ namespace SmartRecipes.Mobile
 
     public class EditRecipeViewModel : ViewModel
     {
+        private readonly ApiClient apiClient;
+
         private readonly Database database;
 
-        private const string DefaultImageUrl = "https://thumbs.dreamstime.com/z/empty-dish-14513513.jpg";
-
-        public EditRecipeViewModel(Database database)
+        public EditRecipeViewModel(ApiClient apiClient, Database database)
         {
+            this.apiClient = apiClient;
             this.database = database;
             Recipe = new FormDto();
             Ingredients = ImmutableDictionary.Create<IFoodstuff, IAmount>();
@@ -55,43 +57,43 @@ namespace SmartRecipes.Mobile
 
         public async Task Submit()
         {
+            var getIngredients = fun<IRecipe, IEnumerable<IIngredientAmount>>(r => Ingredients.Select(kvp => IngredientAmount.Create(r.ToSome(), kvp.Key.ToSome(), kvp.Value)));
             var submitTask = Mode == EditRecipeMode.New
-                ? CreateRecipe()
-                : UpdateRecipe();
+                ? CreateRecipe(getIngredients)
+                : UpdateRecipe(getIngredients);
 
             await submitTask;
             await Application.Current.MainPage.Navigation.PopAsync();
         }
 
-        public async Task CreateRecipe()
+        public async Task CreateRecipe(Func<IRecipe, IEnumerable<IIngredientAmount>> getIngredients)
         {
             var recipe = Models.Recipe.Create(
                 CurrentAccount.ToSome(),
                 Recipe.Name,
-                new Uri(Recipe.ImageUrl ?? DefaultImageUrl),
+                Optional(Recipe.ImageUrl).Map(url => new Uri(url)),
                 Recipe.PersonCount,
                 Recipe.Text
             );
-            var recipeIngredients = Ingredients.Select(kvp => IngredientAmount.Create(recipe.ToSome(), kvp.Key.ToSome(), kvp.Value));
 
-            await MyRecipesHandler.Add(database, recipe, recipeIngredients);
+            await MyRecipesHandler.Add(apiClient, database, recipe, getIngredients(recipe));
         }
 
-        public async Task UpdateRecipe()
+        public async Task UpdateRecipe(Func<IRecipe, IEnumerable<IIngredientAmount>> getIngredients)
         {
             var recipe = Models.Recipe.Create(
                 Recipe.Id.Value,
                 CurrentAccount.Id,
                 Recipe.Name,
-                new Uri(Recipe.ImageUrl ?? DefaultImageUrl),
+                Optional(Recipe.ImageUrl).Map(url => new Uri(url)),
                 Recipe.PersonCount,
                 Recipe.Text
             );
 
-            await database.UpdateAsync(recipe.ToEnumerable());
+            await MyRecipesHandler.Update(apiClient, database, recipe, getIngredients(recipe));
         }
 
-        private Task UpdateIngredient(IFoodstuff foodstuff, Func<IAmount, IAmount, Option<IAmount>> action)
+        private Task ChangeAmount(IFoodstuff foodstuff, Func<IAmount, IAmount, Option<IAmount>> action)
         {
             var newAmount = action(Ingredients[foodstuff], foodstuff.AmountStep).IfNone(foodstuff.BaseAmount);
             var newIngredients = Ingredients.SetItem(foodstuff, newAmount);
@@ -104,6 +106,7 @@ namespace SmartRecipes.Mobile
         {
             Ingredients = newIngredients;
             RaisePropertyChanged(nameof(Ingredients));
+            RaisePropertyChanged(nameof(IngredientViewModels));
         }
 
         private FoodstuffAmountCellViewModel ToViewModel(IFoodstuff foodstuff, IAmount amount)
@@ -111,8 +114,8 @@ namespace SmartRecipes.Mobile
             return new FoodstuffAmountCellViewModel(
                 foodstuff.ToSome(),
                 amount.ToSome(),
-                () => UpdateIngredient(foodstuff, (a1, a2) => Amount.Add(a1, a2)),
-                () => UpdateIngredient(foodstuff, (a1, a2) => Amount.Substract(a1, a2))
+                () => ChangeAmount(foodstuff, (a1, a2) => Amount.Add(a1, a2)),
+                () => ChangeAmount(foodstuff, (a1, a2) => Amount.Substract(a1, a2))
             );
         }
 

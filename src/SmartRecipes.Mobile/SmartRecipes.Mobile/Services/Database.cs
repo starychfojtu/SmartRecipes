@@ -71,6 +71,7 @@ namespace SmartRecipes.Mobile.Services
             syncConn.CreateTable<IngredientAmount>();
             syncConn.CreateTable<ShoppingListItemAmount>();
             syncConn.CreateTable<Foodstuff>();
+
             return conn;
         }
     }
