@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using LanguageExt;
+using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile
 {
@@ -16,6 +18,17 @@ namespace SmartRecipes.Mobile
             var indexOfFirstDot = expressions.IndexOf('.');
             var propertyPathName = expressions.Substring(indexOfFirstDot + 1);
             return propertyPathName;
+        }
+
+        // TODO: Generalize this !!
+        public static Reader<E, Task<B>> Bind<E, A, B>(this Reader<E, Task<A>> reader, Func<A, Reader<E, Task<B>>> binder)
+        {
+            return env =>
+            {
+                var (aTask, aIsFaulted) = reader(env);
+                var bTask = aTask.Bind(a => binder(a)(env).Value);
+                return (bTask, false);
+            };
         }
     }
 }

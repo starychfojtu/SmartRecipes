@@ -14,7 +14,7 @@ namespace SmartRecipes.Mobile.Pages
             BindingContext = viewModel;
 
             ItemsListView.ItemTemplate = new DataTemplate<FoodstuffAmountCell>();
-            viewModel.Bind(ItemsListView, ItemsView<Cell>.ItemsSourceProperty, vm => vm.ShoppingListItems);
+            viewModel.BindValue(ItemsListView, ItemsView<Cell>.ItemsSourceProperty, vm => vm.ShoppingListItems);
 
             AddItemsButton.Clicked += async (s, e) => await viewModel.OpenAddFoodstuffDialog();
         }

@@ -26,19 +26,19 @@ namespace SmartRecipes.Mobile
             return obj;
         }
 
-        public static void Bind<TContext, TProperty>(this TContext context, BindableObject obj, BindableProperty property, Expression<Func<TContext, TProperty>> propertyAccessor)
+        public static void BindValue<TContext, TProperty>(this TContext context, BindableObject obj, BindableProperty property, Expression<Func<TContext, TProperty>> propertyAccessor)
         {
             obj.SetBinding(property, propertyAccessor.ToPropertyPathName());
         }
 
         public static void BindText<TContext, TProperty>(this TContext context, Entry entry, Expression<Func<TContext, TProperty>> propertyAccessor)
         {
-            context.Bind(entry, Entry.TextProperty, propertyAccessor);
+            context.BindValue(entry, Entry.TextProperty, propertyAccessor);
         }
 
         public static void BindErrors<TContext>(this TContext context, ValidatableEntry entry, Expression<Func<TContext, bool>> predicate)
         {
-            context.Bind(entry, ValidatableEntry.IsValidProperty, predicate);
+            context.BindValue(entry, ValidatableEntry.IsValidProperty, predicate);
         }
     }
 }

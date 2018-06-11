@@ -37,23 +37,22 @@ namespace SmartRecipes.Mobile.WriteModels
         }
 
         public static async Task AddToShoppingList(
-            ApiClient apiClient,
-            Database database,
+            DataAccess dataAccess,
             Some<IRecipe> recipe,
             Some<IAccount> owner,
             int personCount)
         {
-            var ingredients = await RecipeRepository.GetIngredients(apiClient, database, recipe);
+            var ingredients = await (RecipeRepository.GetIngredients(recipe)(dataAccess)).Value;
             var recipeFoodstuffs = ingredients.Select(i => i.Foodstuff);
 
-            var shoppingListItems = await ShoppingListRepository.GetItems(apiClient, database, owner);
+            var shoppingListItems = await (ShoppingListRepository.GetItems(owner)(dataAccess)).Value;
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
 
             var notAddedFoodstuffs = recipeFoodstuffs.Except(alreadyAddedFoodstuffs);
             var itemAmounts = notAddedFoodstuffs.Select(f => ShoppingListItemAmount.Create(owner, f.ToSome(), Amount.Zero(f.BaseAmount.Unit)));
 
-            await database.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount).ToEnumerable());
-            await database.AddAsync(itemAmounts);
+            await dataAccess.Db.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount).ToEnumerable());
+            await dataAccess.Db.AddAsync(itemAmounts);
         }
 
         public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(ApiClient apiClient, Database database, Some<IAccount> owner, IEnumerable<IFoodstuff> foodstuffs)
