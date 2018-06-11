@@ -13,7 +13,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public RecipeCellViewModel(
             IRecipe recipe,
             Func<IRecipe, Task<RecipeDetail>> getDetail,
-            Action onPlus,
+            Func<Task> onPlus,
             Action onOther = null,
             string otherActionIcon = "detail")
         {
@@ -26,7 +26,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public IRecipe Recipe { get; }
 
-        public Action OnPlus { get; }
+        public Func<Task> OnPlus { get; }
 
         public Action OnOther { get; }
 

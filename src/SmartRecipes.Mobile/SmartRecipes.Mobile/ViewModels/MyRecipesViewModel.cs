@@ -3,7 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.ReadModels;
 using SmartRecipes.Mobile.Services;
-using System.Data.Common;
+using SmartRecipes.Mobile.WriteModels;
+using LanguageExt.SomeHelp;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -37,7 +38,7 @@ namespace SmartRecipes.Mobile.ViewModels
             Recipes = recipes.Select(r => new RecipeCellViewModel(
                 r,
                 async recipe => await RecipeRepository.GetDetail(apiClient, database, recipe),
-                () => { /*TODO: add adding to shopping list */ }
+                async () => await MyRecipesHandler.AddToShoppingList(apiClient, database, r.ToSome(), CurrentAccount.ToSome(), r.PersonCount) // TODO: add modal to choose count from
             ));
             RaisePropertyChanged(nameof(Recipes));
         }

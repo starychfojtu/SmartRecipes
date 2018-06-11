@@ -10,7 +10,7 @@ namespace SmartRecipes.Mobile.Views
             InitializeComponent();
 
             OtherButton.Clicked += (s, e) => ViewModel?.OnOther?.Invoke();
-            PlusButton.Clicked += (s, e) => ViewModel?.OnPlus.Invoke();
+            PlusButton.Clicked += async (s, e) => await ViewModel?.OnPlus.Invoke();
             EditButton.Clicked += async (s, e) => await ViewModel?.EditRecipe();
         }
 
