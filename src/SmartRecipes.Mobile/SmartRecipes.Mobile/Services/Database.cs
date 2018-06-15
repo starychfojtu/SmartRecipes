@@ -12,19 +12,19 @@ namespace SmartRecipes.Mobile.Services
 
         private SQLiteAsyncConnection connection;
 
-        public async Task AddAsync<T>(IEnumerable<T> items)
+        public async Task<int> AddAsync<T>(IEnumerable<T> items)
         {
-            await Connection.InsertAllAsync(items);
+            return await Connection.InsertAllAsync(items);
         }
 
-        public async Task UpdateAsync<T>(IEnumerable<T> items)
+        public async Task<int> UpdateAsync<T>(IEnumerable<T> items)
         {
-            await Connection.UpdateAllAsync(items);
+            return await Connection.UpdateAllAsync(items);
         }
 
-        public async Task AddOrReplaceAsync<T>(T item)
+        public async Task<int> AddOrReplaceAsync<T>(T item)
         {
-            await Connection.InsertOrReplaceAsync(item);
+            return await Connection.InsertOrReplaceAsync(item);
         }
 
         public async Task<IEnumerable<T>> Execute<T>(string sql, params object[] args)

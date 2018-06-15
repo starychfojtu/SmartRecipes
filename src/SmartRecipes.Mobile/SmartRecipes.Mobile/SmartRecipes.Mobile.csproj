@@ -24,6 +24,7 @@
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.3.6" />
     <PackageReference Include="Xamarin.FFImageLoading.Transformations" Version="2.3.6" />
     <PackageReference Include="LanguageExt.Core" Version="3.0.2" />
+    <PackageReference Include="csharp-monad" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

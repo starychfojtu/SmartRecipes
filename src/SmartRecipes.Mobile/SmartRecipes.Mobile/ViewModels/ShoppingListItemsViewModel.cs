@@ -15,19 +15,16 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class ShoppingListItemsViewModel : ViewModel
     {
-        private readonly ApiClient apiClient;
-
-        private readonly Database database;
+        private readonly DataAccess dataAccess;
 
         private IImmutableList<ShoppingListItem> shoppingListItems { get; set; }
 
         private IImmutableDictionary<IFoodstuff, IAmount> requiredAmounts { get; set; }
 
-        public ShoppingListItemsViewModel(ApiClient apiClient, Database database)
+        public ShoppingListItemsViewModel(DataAccess dataAccess)
         {
-            this.apiClient = apiClient;
-            this.database = database;
             shoppingListItems = ImmutableList.Create<ShoppingListItem>();
+            this.dataAccess = dataAccess;
         }
 
         public IEnumerable<FoodstuffAmountCellViewModel> ShoppingListItems
@@ -37,8 +34,8 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            requiredAmounts = await ShoppingListRepository.GetRequiredAmounts(apiClient, database, CurrentAccount.ToSome());
-            UpdateShoppingListItems((await ShoppingListRepository.GetItems(apiClient, database, CurrentAccount.ToSome())));
+            requiredAmounts = await ShoppingListRepository.GetRequiredAmounts(CurrentAccount.ToSome())(dataAccess);
+            UpdateShoppingListItems((await ShoppingListRepository.GetItems(CurrentAccount.ToSome())(dataAccess)));
         }
 
         public async Task Refresh()
@@ -49,8 +46,8 @@ namespace SmartRecipes.Mobile.ViewModels
         public async Task OpenAddFoodstuffDialog()
         {
             var selected = await Navigation.SelectFoodstuffDialog();
-            var newShoppingListItems = await ShoppingListHandler.AddToShoppingList(apiClient, database, CurrentAccount.ToSome(), selected);
-            var allShoppingListItems = shoppingListItems.Concat(newShoppingListItems).ToImmutableList();
+            var newShoppingListItems = await ShoppingListHandler.AddToShoppingList(dataAccess, CurrentAccount.ToSome(), selected);
+            var allShoppingListItems = shoppingListItems.Concat(newShoppingListItems);
             UpdateShoppingListItems(allShoppingListItems);
         }
 
@@ -62,7 +59,7 @@ namespace SmartRecipes.Mobile.ViewModels
             var oldItem = shoppingListItems.First(i => i.Foodstuff.Id == shoppingListItem.Foodstuff.Id);
             var newShoppingListItems = shoppingListItems.Replace(oldItem, newShoppingListItem);
 
-            await ShoppingListHandler.Update(apiClient, database, newShoppingListItem.ItemAmount.ToEnumerable());
+            await ShoppingListHandler.Update(dataAccess, newShoppingListItem.ItemAmount.ToEnumerable());
             UpdateShoppingListItems(newShoppingListItems);
         }
 

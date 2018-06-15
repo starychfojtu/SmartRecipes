@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using LanguageExt;
 using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile
@@ -20,14 +19,23 @@ namespace SmartRecipes.Mobile
             return propertyPathName;
         }
 
-        // TODO: Generalize this !!
-        public static Reader<E, Task<B>> Bind<E, A, B>(this Reader<E, Task<A>> reader, Func<A, Reader<E, Task<B>>> binder)
+        // TODO: Generalize this or find this function in API !!
+        public static Monad.Reader<E, Task<B>> Bind<E, A, B>(this Monad.Reader<E, Task<A>> reader, Func<A, Monad.Reader<E, Task<B>>> binder)
+        {
+            return env => reader(env).Bind(a => binder(a)(env));
+        }
+
+        // TODO: Generalize this or find this function in API !!
+        public static Monad.Reader<E, Task<C>> SelectMany<E, A, B, C>(
+            this Monad.Reader<E, Task<A>> reader,
+            Func<A, Monad.Reader<E, Task<B>>> binder,
+            Func<A, B, C> selector)
         {
             return env =>
             {
-                var (aTask, aIsFaulted) = reader(env);
-                var bTask = aTask.Bind(a => binder(a)(env).Value);
-                return (bTask, false);
+                var first = reader(env);
+                var second = first.Bind(a => binder(a)(env));
+                return first.Bind(a => second.Map(b => selector(a, b)));
             };
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -11,18 +10,15 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class FoodstuffSearchViewModel : ViewModel
     {
-        private readonly ApiClient apiClient;
-
-        private readonly Database database;
+        private readonly DataAccess dataAccess;
 
         private IEnumerable<IFoodstuff> searched;
 
-        public FoodstuffSearchViewModel(ApiClient apiClient, Database database)
+        public FoodstuffSearchViewModel(DataAccess dataAccess)
         {
-            this.apiClient = apiClient;
-            this.database = database;
             searched = ImmutableList.Create<IFoodstuff>();
             Selected = ImmutableList.Create<IFoodstuff>();
+            this.dataAccess = dataAccess;
         }
 
         public IEnumerable<FoodstuffSearchCellViewModel> SearchResult
@@ -34,7 +30,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public async Task Search(string query)
         {
-            searched = await FoodstuffRepository.Search(apiClient, database, query);
+            searched = await FoodstuffRepository.Search(query)(dataAccess);
             RaisePropertyChanged(nameof(SearchResult));
         }
 

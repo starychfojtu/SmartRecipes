@@ -4,29 +4,36 @@ using SmartRecipes.Mobile.ApiDto;
 using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.Services;
 using System.Linq;
+using System;
 
 namespace SmartRecipes.Mobile.ReadModels
 {
     public static class FoodstuffRepository
     {
-        public static async Task<IEnumerable<IFoodstuff>> Search(ApiClient apiClient, Database database, string query)
+        public static Monad.Reader<DataAccess, Task<IEnumerable<IFoodstuff>>> Search(string query)
         {
-            return await Repository.RetrievalAction(
-                apiClient,
-                database,
+            return Repository.RetrievalAction(
                 client => client.SearchFoodstuffs(new SearchFoodstuffRequest(query)),
-                db => Search(query, db),
+                SearchDb(query),
                 response => ToFoodstuffs(response),
                 foodstuffs => foodstuffs
             );
         }
 
-        private static async Task<IEnumerable<IFoodstuff>> Search(string query, Database database)
+        public static Monad.Reader<DataAccess, Task<IEnumerable<IFoodstuff>>> GetByIds(IEnumerable<Guid> ids)
         {
-            var foodstuffs = database.GetTableMapping<Foodstuff>();
-            var name = foodstuffs.FindColumnWithPropertyName(nameof(Foodstuff.Name)).Name; // TODO: add helper that takes lambda
-            var sql = $@"SELECT * FROM {foodstuffs.TableName} WHERE LOWER({name}) LIKE ?";
-            return await database.Execute<Foodstuff>(sql, $"%{query}%");
+            return da => da.Db.Foodstuffs.Where(f => ids.Contains(f.Id)).ToEnumerableAsync<Foodstuff, IFoodstuff>();
+        }
+
+        private static Monad.Reader<DataAccess, Task<IEnumerable<IFoodstuff>>> SearchDb(string query)
+        {
+            return da =>
+            {
+                var foodstuffs = da.Db.GetTableMapping<Foodstuff>();
+                var name = foodstuffs.FindColumnWithPropertyName(nameof(Foodstuff.Name)).Name; // TODO: add helper that takes lambda
+                var sql = $@"SELECT * FROM {foodstuffs.TableName} WHERE LOWER({name}) LIKE ?";
+                return da.Db.Execute<Foodstuff>(sql, $"%{query}%").Map(fs => fs.Select(f => f as IFoodstuff));
+            };
         }
 
         private static IEnumerable<IFoodstuff> ToFoodstuffs(SearchFoodstuffResponse response)

@@ -42,10 +42,10 @@ namespace SmartRecipes.Mobile.WriteModels
             Some<IAccount> owner,
             int personCount)
         {
-            var ingredients = await (RecipeRepository.GetIngredients(recipe)(dataAccess)).Value;
+            var ingredients = await RecipeRepository.GetIngredients(recipe)(dataAccess);
             var recipeFoodstuffs = ingredients.Select(i => i.Foodstuff);
 
-            var shoppingListItems = await (ShoppingListRepository.GetItems(owner)(dataAccess)).Value;
+            var shoppingListItems = await ShoppingListRepository.GetItems(owner)(dataAccess);
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
 
             var notAddedFoodstuffs = recipeFoodstuffs.Except(alreadyAddedFoodstuffs);
@@ -55,29 +55,29 @@ namespace SmartRecipes.Mobile.WriteModels
             await dataAccess.Db.AddAsync(itemAmounts);
         }
 
-        public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(ApiClient apiClient, Database database, Some<IAccount> owner, IEnumerable<IFoodstuff> foodstuffs)
+        public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(DataAccess dataAccess, Some<IAccount> owner, IEnumerable<IFoodstuff> foodstuffs)
         {
-            var shoppingListItems = await ShoppingListRepository.GetItems(apiClient, database, owner);
+            var shoppingListItems = await ShoppingListRepository.GetItems(owner)(dataAccess);
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
             var newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f);
             var newItemAmounts = newFoodstuffs.Values.Select(f => ShoppingListItemAmount.Create(owner, f.ToSome(), f.BaseAmount));
 
-            await database.AddAsync(newItemAmounts);
-            await Update(apiClient, database, newItemAmounts);
+            await dataAccess.Db.AddAsync(newItemAmounts);
+            await Update(dataAccess, newItemAmounts);
 
             return newItemAmounts.Select(fa => new ShoppingListItem(newFoodstuffs[fa.FoodstuffId].ToSome(), fa.ToSome()));
         }
 
-        public static async Task Update(ApiClient apiClient, Database database, IEnumerable<IShoppingListItemAmount> itemAmounts)
+        public static async Task Update(DataAccess dataAccess, IEnumerable<IShoppingListItemAmount> itemAmounts)
         {
             foreach (var itemAmount in itemAmounts)
             {
                 // TODO: create job to update api when this fai
                 var request = new ChangeFoodstuffAmountRequest(itemAmount.FoodstuffId, itemAmount.Amount);
-                var response = await apiClient.Post(request);
+                var response = await dataAccess.Api.Post(request);
             }
 
-            await database.UpdateAsync(itemAmounts);
+            await dataAccess.Db.UpdateAsync(itemAmounts);
         }
     }
 }

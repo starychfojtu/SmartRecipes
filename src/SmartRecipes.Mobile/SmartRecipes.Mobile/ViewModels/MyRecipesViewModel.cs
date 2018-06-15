@@ -10,14 +10,11 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class MyRecipesViewModel : ViewModel
     {
-        private readonly ApiClient apiClient;
+        private readonly DataAccess dataAccess;
 
-        private readonly Database database;
-
-        public MyRecipesViewModel(ApiClient apiClient, Database database)
+        public MyRecipesViewModel(DataAccess dataAccess)
         {
-            this.apiClient = apiClient;
-            this.database = database;
+            this.dataAccess = dataAccess;
         }
 
         public IEnumerable<RecipeCellViewModel> Recipes { get; private set; }
@@ -34,11 +31,11 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public async Task UpdateRecipesAsync()
         {
-            var recipes = await RecipeRepository.GetRecipesAsync(apiClient, database);
+            var recipes = await RecipeRepository.GetRecipes()(dataAccess);
             Recipes = recipes.Select(r => new RecipeCellViewModel(
                 r,
-                async recipe => await RecipeRepository.GetDetail(apiClient, database, recipe.ToSome()),
-                async () => await ShoppingListHandler.AddToShoppingList(apiClient, database, r.ToSome(), CurrentAccount.ToSome(), r.PersonCount) // TODO: add modal to choose count from
+                async recipe => await RecipeRepository.GetDetail(recipe)(dataAccess),
+                async () => await ShoppingListHandler.AddToShoppingList(dataAccess, r.ToSome(), CurrentAccount.ToSome(), r.PersonCount) // TODO: add modal to choose count from
             ));
             RaisePropertyChanged(nameof(Recipes));
         }
