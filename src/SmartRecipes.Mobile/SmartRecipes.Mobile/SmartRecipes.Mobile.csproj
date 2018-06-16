@@ -1,9 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>
@@ -26,7 +24,6 @@
     <PackageReference Include="LanguageExt.Core" Version="3.0.2" />
     <PackageReference Include="csharp-monad" Version="1.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Extensions\CachedImageExtensions.cs" />
     <Compile Remove="Pages\ShoppingListAutocomplete.xaml.cs" />
@@ -83,7 +80,6 @@
       <DependentUpon>IngredientCell.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Remove="Views\ShoppingListItemCell %28copy%29.xaml" />
     <EmbeddedResource Remove="Views\NavigationDrawer.xaml" />

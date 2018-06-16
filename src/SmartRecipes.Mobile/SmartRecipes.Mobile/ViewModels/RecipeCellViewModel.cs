@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using System.Threading.Tasks;
@@ -13,24 +14,16 @@ namespace SmartRecipes.Mobile.ViewModels
         public RecipeCellViewModel(
             IRecipe recipe,
             Func<IRecipe, Task<RecipeDetail>> getDetail,
-            Func<Task> onPlus,
-            Action onOther = null,
-            string otherActionIcon = "detail")
+            params UserAction<IRecipe>[] actions)
         {
             this.getDetail = getDetail;
-            OtherActionIcon = otherActionIcon;
             Recipe = recipe;
-            OnPlus = onPlus;
-            OnOther = onOther;
+            Actions = actions;
         }
 
         public IRecipe Recipe { get; }
-
-        public Func<Task> OnPlus { get; }
-
-        public Action OnOther { get; }
-
-        public string OtherActionIcon { get; }
+        
+        public IEnumerable<UserAction<IRecipe>> Actions { get; }
 
         public async Task EditRecipe()
         {

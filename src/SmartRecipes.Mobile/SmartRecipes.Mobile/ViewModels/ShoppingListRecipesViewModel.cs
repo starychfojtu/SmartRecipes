@@ -26,7 +26,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public IEnumerable<RecipeCellViewModel> Recipes
         {
-            get { return recipeItems.Select(i => new RecipeCellViewModel(i.Detail.Recipe, r => Task.FromResult(i.Detail), null, null)); }
+            get { return recipeItems.Select(i => ToViewModel(i)); }
         }
 
         public override async Task InitializeAsync()
@@ -34,14 +34,17 @@ namespace SmartRecipes.Mobile.ViewModels
             UpdateRecipeItems(await ShoppingListRepository.GetRecipeItems(CurrentAccount)(dataAccess));
         }
 
-        private async Task Cook(ShoppingListRecipeItem item)
+        // TODO: refactor this
+        private async Task Cook(IRecipe recipe)
         {
+            var item = recipeItems.First(r => r.Detail.Recipe.Equals(recipe));
             await ShoppingListHandler.Cook(dataAccess, item);
             UpdateRecipeItems(recipeItems.Remove(item));
         }
 
-        private async Task Delete(ShoppingListRecipeItem item)
+        private async Task Delete(IRecipe recipe)
         {
+            var item = recipeItems.First(r => r.Detail.Recipe.Equals(recipe));
             await ShoppingListHandler.RemoveFromShoppingList(dataAccess, item.RecipeInShoppingList);
             UpdateRecipeItems(recipeItems.Remove(item));
         }
@@ -50,6 +53,16 @@ namespace SmartRecipes.Mobile.ViewModels
         {
             recipeItems = items.ToImmutableList();
             RaisePropertyChanged(nameof(Recipes));
+        }
+        
+        private RecipeCellViewModel ToViewModel(ShoppingListRecipeItem item)
+        {
+            return new RecipeCellViewModel(
+                item.Detail.Recipe,
+                r => Task.FromResult(item.Detail),
+                new UserAction<IRecipe>(r => Cook(r), "cook", 1),
+                new UserAction<IRecipe>(r => Delete(r), "delete", 2)
+            );
         }
     }
 }

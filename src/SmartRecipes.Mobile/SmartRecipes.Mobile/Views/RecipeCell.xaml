@@ -6,6 +6,7 @@
     xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms">
     <StackLayout>
         <StackLayout
+            x:Name="MainLayout"
             BackgroundColor="{StaticResource secondaryColor}"
             Orientation="Horizontal">
             <Label

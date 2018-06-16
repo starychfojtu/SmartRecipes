@@ -5,6 +5,7 @@ using SmartRecipes.Mobile.ReadModels;
 using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.WriteModels;
 using LanguageExt.SomeHelp;
+using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -32,10 +33,14 @@ namespace SmartRecipes.Mobile.ViewModels
         public async Task UpdateRecipesAsync()
         {
             var recipes = await RecipeRepository.GetRecipes()(dataAccess);
-            Recipes = recipes.Select(r => new RecipeCellViewModel(
-                r,
-                async recipe => await RecipeRepository.GetDetail(recipe)(dataAccess),
-                async () => await ShoppingListHandler.AddToShoppingList(dataAccess, r, CurrentAccount, r.PersonCount) // TODO: add modal to choose count from
+            Recipes = recipes.Select(recipe => new RecipeCellViewModel(
+                recipe,
+                r => RecipeRepository.GetDetail(r)(dataAccess),
+                new UserAction<IRecipe>(
+                    r => ShoppingListHandler.AddToShoppingList(dataAccess, r, CurrentAccount, r.PersonCount),
+                    "plus",
+                    1
+                )
             ));
             RaisePropertyChanged(nameof(Recipes));
         }

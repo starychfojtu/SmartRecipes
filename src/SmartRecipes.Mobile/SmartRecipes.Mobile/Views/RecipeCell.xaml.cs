@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using System.Linq;
+using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;
 
 namespace SmartRecipes.Mobile.Views
@@ -8,13 +9,9 @@ namespace SmartRecipes.Mobile.Views
         public RecipeCell()
         {
             InitializeComponent();
-
-            OtherButton.Clicked += (s, e) => ViewModel?.OnOther?.Invoke();
-            PlusButton.Clicked += async (s, e) => await ViewModel?.OnPlus.Invoke();
-            EditButton.Clicked += async (s, e) => await ViewModel?.EditRecipe();
         }
 
-        private RecipeCellViewModel ViewModel => (BindingContext as RecipeCellViewModel);
+        private RecipeCellViewModel ViewModel => BindingContext as RecipeCellViewModel;
 
         protected override void OnBindingContextChanged()
         {
@@ -22,12 +19,25 @@ namespace SmartRecipes.Mobile.Views
 
             if (ViewModel != null)
             {
-                var recipe = ViewModel.Recipe;
-                NameLabel.Text = recipe.Name;
-                OtherButton.IsVisible = ViewModel.OnOther != null;
-                IngredientsStackLayout.Children.Clear();
+                var buttons = ViewModel.Actions.OrderBy(a => a.Order).Select(a =>
+                {
+                    var actionButton = new Button
+                    {
+                        HeightRequest = 64,
+                        WidthRequest = 64,
+                        Image = a.Icon,
+                        VerticalOptions = LayoutOptions.Center,
+                        BackgroundColor = Color.Transparent
+                    };
+                    actionButton.Clicked += async (s, e) => await a.Action(ViewModel.Recipe);
+                    return actionButton;
+                });
+
+                NameLabel.Text = ViewModel.Recipe.Name;
+                MainLayout.Children.AddRange(buttons);
 
                 // TODO: in future versions
+                // IngredientsStackLayout.Children.Clear();
                 //var thumbnails = ingredients.Select(i => Image.Thumbnail(i.Foodstuff.ImageUrl));
                 //IngredientsStackLayout.Children.AddRange(thumbnails);
             }
