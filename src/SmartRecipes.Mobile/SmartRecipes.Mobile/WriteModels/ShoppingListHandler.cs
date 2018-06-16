@@ -55,6 +55,17 @@ namespace SmartRecipes.Mobile.WriteModels
             await dataAccess.Db.AddAsync(itemAmounts);
         }
 
+        public static async Task Cook(DataAccess dataAccess, ShoppingListRecipeItem recipeItem)
+        {
+            // TODO: remove amount of ingredients required for this recipe
+            await RemoveFromShoppingList(dataAccess, recipeItem.RecipeInShoppingList);
+        }
+
+        public static async Task RemoveFromShoppingList(DataAccess dataAccess, IRecipeInShoppingList recipe)
+        {
+            await dataAccess.Db.Delete(recipe);
+        }
+
         public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(DataAccess dataAccess, Some<IAccount> owner, IEnumerable<IFoodstuff> foodstuffs)
         {
             var shoppingListItems = await ShoppingListRepository.GetItems(owner)(dataAccess);

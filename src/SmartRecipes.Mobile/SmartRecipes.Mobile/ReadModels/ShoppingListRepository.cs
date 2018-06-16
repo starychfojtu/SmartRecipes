@@ -37,9 +37,16 @@ namespace SmartRecipes.Mobile.ReadModels
             return new ShoppingListItem(foodstuff.ToSome(), ShoppingListItemAmount.Create(i.Id, owner.Value.Id, foodstuff.Id, i.Amount).ToSome());
         }
 
+        public static Monad.Reader<DataAccess, Task<IEnumerable<ShoppingListRecipeItem>>> GetRecipeItems(IAccount owner)
+        {
+            return null;
+            //return GetRecipesInShoppingList();
+        }
+
         public static Monad.Reader<DataAccess, Task<IImmutableDictionary<IFoodstuff, IAmount>>> GetRequiredAmounts(Some<IAccount> owner)
         {
             throw new NotImplementedException();
+            // TODO: Add method GerDetails(Enumerable of recipes)
             /*var recipes = GetRecipesInShoppingList(owner);
             var details = recipes.Bind(rs => rs.Select(r => RecipeRepository.GetDetail(r.RecipeId)));
             return details.Fold(ImmutableDictionary.Create<IFoodstuff, IAmount>(), (dict, tuple) =>
@@ -52,6 +59,11 @@ namespace SmartRecipes.Mobile.ReadModels
                     return d.SetItem(i.Foodstuff, newAmount);
                 });
             });*/
+        }
+
+        private static Monad.Reader<DataAccess, Task<IEnumerable<RecipeDetail>>> GetDetails(IEnumerable<IRecipe> recipes)
+        {
+            return null;
         }
 
         private static Monad.Reader<DataAccess, Task<IEnumerable<ShoppingListItem>>> GetShoppingListItems()

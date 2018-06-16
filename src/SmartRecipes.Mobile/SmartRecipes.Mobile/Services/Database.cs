@@ -27,6 +27,11 @@ namespace SmartRecipes.Mobile.Services
             return await Connection.InsertOrReplaceAsync(item);
         }
 
+        public async Task<int> Delete<T>(T item)
+        {
+            return await Connection.DeleteAsync(item);
+        }
+
         public async Task<IEnumerable<T>> Execute<T>(string sql, params object[] args)
             where T : new()
         {
