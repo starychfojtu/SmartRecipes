@@ -19,9 +19,9 @@ namespace SmartRecipes.Mobile.Models
             return new ShoppingListItemAmount(Id, ShoppingListOwnerId, FoodstuffId, amount);
         }
 
-        public static IShoppingListItemAmount Create(Some<IAccount> owner, Some<IFoodstuff> foodstuff, IAmount amount)
+        public static IShoppingListItemAmount Create(IAccount owner, IFoodstuff foodstuff, IAmount amount)
         {
-            return new ShoppingListItemAmount(Guid.NewGuid(), owner.Value.Id, foodstuff.Value.Id, amount);
+            return new ShoppingListItemAmount(Guid.NewGuid(), owner.Id, foodstuff.Id, amount);
         }
 
         public static IShoppingListItemAmount Create(Guid id, Guid shoppingListOwnerId, Guid foodstuffId, IAmount amount)

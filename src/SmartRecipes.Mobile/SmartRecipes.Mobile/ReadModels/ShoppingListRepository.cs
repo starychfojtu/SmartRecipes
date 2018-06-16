@@ -15,7 +15,7 @@ namespace SmartRecipes.Mobile.ReadModels
 {
     public static class ShoppingListRepository
     {
-        public static Monad.Reader<DataAccess, Task<IEnumerable<ShoppingListItem>>> GetItems(Some<IAccount> owner)
+        public static Monad.Reader<DataAccess, Task<IEnumerable<ShoppingListItem>>> GetItems(IAccount owner)
         {
             return Repository.RetrievalAction(
                 client => client.GetShoppingList(),
@@ -25,7 +25,7 @@ namespace SmartRecipes.Mobile.ReadModels
             );
         }
 
-        public static ShoppingListItem ToShoppingListItem(ShoppingListResponse.Item i, Some<IAccount> owner)
+        public static ShoppingListItem ToShoppingListItem(ShoppingListResponse.Item i, IAccount owner)
         {
             var foodstuff = Foodstuff.Create(
                 i.FoodstuffDto.Id,
@@ -34,7 +34,7 @@ namespace SmartRecipes.Mobile.ReadModels
                 i.FoodstuffDto.BaseAmount,
                 i.FoodstuffDto.AmountStep
             );
-            return new ShoppingListItem(foodstuff.ToSome(), ShoppingListItemAmount.Create(i.Id, owner.Value.Id, foodstuff.Id, i.Amount).ToSome());
+            return new ShoppingListItem(foodstuff, ShoppingListItemAmount.Create(i.Id, owner.Id, foodstuff.Id, i.Amount));
         }
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<ShoppingListRecipeItem>>> GetRecipeItems(IAccount owner)
@@ -43,7 +43,7 @@ namespace SmartRecipes.Mobile.ReadModels
             //return GetRecipesInShoppingList();
         }
 
-        public static Monad.Reader<DataAccess, Task<IImmutableDictionary<IFoodstuff, IAmount>>> GetRequiredAmounts(Some<IAccount> owner)
+        public static Monad.Reader<DataAccess, Task<IImmutableDictionary<IFoodstuff, IAmount>>> GetRequiredAmounts(IAccount owner)
         {
             throw new NotImplementedException();
             // TODO: Add method GerDetails(Enumerable of recipes)
@@ -70,7 +70,7 @@ namespace SmartRecipes.Mobile.ReadModels
         {
             return GetShoppingListItemAmounts().SelectMany(
                 ia => GetFoodstuffs(ia.Select(i => i.FoodstuffId)),
-                (fas, fs) => fas.Join(fs, i => i.FoodstuffId, f => f.Id, (i, f) => new ShoppingListItem(f.ToSome(), i.ToSome()))
+                (fas, fs) => fas.Join(fs, i => i.FoodstuffId, f => f.Id, (i, f) => new ShoppingListItem(f, i))
             );
         }
 
@@ -84,10 +84,10 @@ namespace SmartRecipes.Mobile.ReadModels
             return da => da.Db.Foodstuffs.Where(f => ids.Contains(f.Id)).ToEnumerableAsync<Foodstuff, IFoodstuff>();
         }
 
-        private static Monad.Reader<DataAccess, Task<IEnumerable<IRecipeInShoppingList>>> GetRecipesInShoppingList(Some<IAccount> owner)
+        private static Monad.Reader<DataAccess, Task<IEnumerable<IRecipeInShoppingList>>> GetRecipesInShoppingList(IAccount owner)
         {
             return da => da.Db.RecipeInShoppingLists
-                .Where(r => r.ShoppingListOwnerId == owner.Value.Id)
+                .Where(r => r.ShoppingListOwnerId == owner.Id)
                 .ToEnumerableAsync<RecipeInShoppingList, IRecipeInShoppingList>();
         }
     }

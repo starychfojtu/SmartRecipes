@@ -34,8 +34,8 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            requiredAmounts = await ShoppingListRepository.GetRequiredAmounts(CurrentAccount.ToSome())(dataAccess);
-            UpdateShoppingListItems((await ShoppingListRepository.GetItems(CurrentAccount.ToSome())(dataAccess)));
+            requiredAmounts = await ShoppingListRepository.GetRequiredAmounts(CurrentAccount)(dataAccess);
+            UpdateShoppingListItems((await ShoppingListRepository.GetItems(CurrentAccount)(dataAccess)));
         }
 
         public async Task Refresh()
@@ -46,7 +46,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public async Task OpenAddFoodstuffDialog()
         {
             var selected = await Navigation.SelectFoodstuffDialog();
-            var newShoppingListItems = await ShoppingListHandler.AddToShoppingList(dataAccess, CurrentAccount.ToSome(), selected);
+            var newShoppingListItems = await ShoppingListHandler.AddToShoppingList(dataAccess, CurrentAccount, selected);
             var allShoppingListItems = shoppingListItems.Concat(newShoppingListItems);
             UpdateShoppingListItems(allShoppingListItems);
         }
@@ -54,7 +54,7 @@ namespace SmartRecipes.Mobile.ViewModels
         private async Task ShoppingListItemAction(ShoppingListItem shoppingListItem, Func<IShoppingListItemAmount, IFoodstuff, IShoppingListItemAmount> action)
         {
             var newAmount = action(shoppingListItem.ItemAmount, shoppingListItem.Foodstuff);
-            var newShoppingListItem = shoppingListItem.WithItemAmount(newAmount.ToSome());
+            var newShoppingListItem = shoppingListItem.WithItemAmount(newAmount);
 
             var oldItem = shoppingListItems.First(i => i.Foodstuff.Id == shoppingListItem.Foodstuff.Id);
             var newShoppingListItems = shoppingListItems.Replace(oldItem, newShoppingListItem);
@@ -72,8 +72,8 @@ namespace SmartRecipes.Mobile.ViewModels
         private FoodstuffAmountCellViewModel ToViewModel(ShoppingListItem shoppingListItem)
         {
             return new FoodstuffAmountCellViewModel(
-                shoppingListItem.Foodstuff.ToSome(),
-                shoppingListItem.Amount.ToSome(),
+                shoppingListItem.Foodstuff,
+                shoppingListItem.Amount,
                 requiredAmounts.TryGetValue(shoppingListItem.Foodstuff),
                 () => ShoppingListItemAction(shoppingListItem, (ia, f) => ShoppingListHandler.Increase(ia, f)),
                 () => ShoppingListItemAction(shoppingListItem, (ia, f) => ShoppingListHandler.Decrease(ia, f))

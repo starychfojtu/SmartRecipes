@@ -24,9 +24,9 @@ namespace SmartRecipes.Mobile.Models
             return new IngredientAmount(id, recipeId, foodstuffId, amount);
         }
 
-        public static IIngredientAmount Create(Some<IRecipe> recipe, Some<IFoodstuff> foodstuff, IAmount amount)
+        public static IIngredientAmount Create(IRecipe recipe, IFoodstuff foodstuff, IAmount amount)
         {
-            return new IngredientAmount(Guid.NewGuid(), recipe.Value.Id, foodstuff.Value.Id, amount);
+            return new IngredientAmount(Guid.NewGuid(), recipe.Id, foodstuff.Id, amount);
         }
     }
 }

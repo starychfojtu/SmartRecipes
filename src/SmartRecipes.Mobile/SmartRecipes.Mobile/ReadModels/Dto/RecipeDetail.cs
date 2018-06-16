@@ -7,10 +7,10 @@ namespace SmartRecipes.Mobile.ReadModels.Dto
 {
     public class RecipeDetail
     {
-        public RecipeDetail(Some<IRecipe> recipe, IEnumerable<Some<Ingredient>> ingredients)
+        public RecipeDetail(IRecipe recipe, IEnumerable<Ingredient> ingredients)
         {
-            Recipe = recipe.Value;
-            Ingredients = ingredients.Select(i => i.Value);
+            Recipe = recipe;
+            Ingredients = ingredients.Select(i => i);
         }
 
         public IRecipe Recipe { get; }

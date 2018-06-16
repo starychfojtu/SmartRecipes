@@ -6,10 +6,10 @@ namespace SmartRecipes.Mobile.ReadModels.Dto
 {
     public class Ingredient
     {
-        public Ingredient(Some<IFoodstuff> foodstuff, Some<IIngredientAmount> ingredientAmount)
+        public Ingredient(IFoodstuff foodstuff, IIngredientAmount ingredientAmount)
         {
-            Foodstuff = foodstuff.Value;
-            IngredientAmount = ingredientAmount.Value;
+            Foodstuff = foodstuff;
+            IngredientAmount = ingredientAmount;
         }
 
         public IFoodstuff Foodstuff { get; }
@@ -21,9 +21,9 @@ namespace SmartRecipes.Mobile.ReadModels.Dto
             get { return IngredientAmount.Amount; }
         }
 
-        public Ingredient WithAmount(Some<IAmount> amount)
+        public Ingredient WithAmount(IAmount amount)
         {
-            return new Ingredient(Foodstuff.ToSome(), IngredientAmount.WithAmount(amount.Value).ToSome());
+            return new Ingredient(Foodstuff, IngredientAmount.WithAmount(amount));
         }
     }
 }

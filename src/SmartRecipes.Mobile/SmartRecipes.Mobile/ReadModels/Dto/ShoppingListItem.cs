@@ -6,10 +6,10 @@ namespace SmartRecipes.Mobile.ReadModels.Dto
 {
     public class ShoppingListItem
     {
-        public ShoppingListItem(Some<IFoodstuff> foodstuff, Some<IShoppingListItemAmount> itemAmount)
+        public ShoppingListItem(IFoodstuff foodstuff, IShoppingListItemAmount itemAmount)
         {
-            Foodstuff = foodstuff.Value;
-            ItemAmount = itemAmount.Value;
+            Foodstuff = foodstuff;
+            ItemAmount = itemAmount;
         }
 
         public IFoodstuff Foodstuff { get; }
@@ -21,9 +21,9 @@ namespace SmartRecipes.Mobile.ReadModels.Dto
             get { return ItemAmount.Amount; }
         }
 
-        public ShoppingListItem WithItemAmount(Some<IShoppingListItemAmount> itemAmount)
+        public ShoppingListItem WithItemAmount(IShoppingListItemAmount itemAmount)
         {
-            return new ShoppingListItem(Foodstuff.ToSome(), itemAmount.ToSome());
+            return new ShoppingListItem(Foodstuff, itemAmount);
         }
     }
 }

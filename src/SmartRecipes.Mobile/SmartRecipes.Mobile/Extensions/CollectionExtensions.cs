@@ -38,9 +38,9 @@ namespace SmartRecipes.Mobile
             return newCollection;
         }
 
-        public static IEnumerable<Some<T>> ToSomeEnumerable<T>(this IEnumerable<T> enumerable)
+        public static IEnumerable<T> ToSomeEnumerable<T>(this IEnumerable<T> enumerable)
         {
-            return enumerable.Select(i => i.ToSome());
+            return enumerable.Select(i => i);
         }
 
         public static IList<T> AddRange<T>(this IList<T> list, IEnumerable<T> items)

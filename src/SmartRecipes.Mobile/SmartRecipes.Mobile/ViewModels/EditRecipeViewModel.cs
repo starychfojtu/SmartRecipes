@@ -57,7 +57,7 @@ namespace SmartRecipes.Mobile
 
         public async Task Submit()
         {
-            var getIngredients = fun<IRecipe, IEnumerable<IIngredientAmount>>(r => Ingredients.Select(kvp => IngredientAmount.Create(r.ToSome(), kvp.Key.ToSome(), kvp.Value)));
+            var getIngredients = fun<IRecipe, IEnumerable<IIngredientAmount>>(r => Ingredients.Select(kvp => IngredientAmount.Create(r, kvp.Key, kvp.Value)));
             var submitTask = Mode == EditRecipeMode.New
                 ? CreateRecipe(getIngredients)
                 : UpdateRecipe(getIngredients);
@@ -69,7 +69,7 @@ namespace SmartRecipes.Mobile
         public async Task CreateRecipe(Func<IRecipe, IEnumerable<IIngredientAmount>> getIngredients)
         {
             var recipe = Models.Recipe.Create(
-                CurrentAccount.ToSome(),
+                CurrentAccount,
                 Recipe.Name,
                 Optional(Recipe.ImageUrl).Map(url => new Uri(url)),
                 Recipe.PersonCount,
@@ -112,8 +112,8 @@ namespace SmartRecipes.Mobile
         private FoodstuffAmountCellViewModel ToViewModel(IFoodstuff foodstuff, IAmount amount)
         {
             return new FoodstuffAmountCellViewModel(
-                foodstuff.ToSome(),
-                amount.ToSome(),
+                foodstuff,
+                amount,
                 None,
                 () => ChangeAmount(foodstuff, (a1, a2) => Amount.Add(a1, a2)),
                 () => ChangeAmount(foodstuff, (a1, a2) => Amount.Substract(a1, a2))

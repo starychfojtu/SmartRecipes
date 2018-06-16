@@ -7,10 +7,10 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class FoodstuffAmountCellViewModel
     {
-        public FoodstuffAmountCellViewModel(Some<IFoodstuff> foodstuff, Some<IAmount> amount, Option<IAmount> requiredAmount, Func<Task> onPlus, Func<Task> onMinus = null)
+        public FoodstuffAmountCellViewModel(IFoodstuff foodstuff, IAmount amount, Option<IAmount> requiredAmount, Func<Task> onPlus, Func<Task> onMinus = null)
         {
-            Foodstuff = foodstuff.Value;
-            Amount = amount.Value;
+            Foodstuff = foodstuff;
+            Amount = amount;
             RequiredAmount = requiredAmount;
             OnPlus = onPlus;
             OnMinus = onMinus;

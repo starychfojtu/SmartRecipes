@@ -28,7 +28,7 @@ namespace SmartRecipes.Mobile.Views
                 IngredientsStackLayout.Children.Clear();
 
                 // TODO: in future versions
-                //var thumbnails = ingredients.Select(i => Image.Thumbnail(i.Value.Foodstuff.ImageUrl));
+                //var thumbnails = ingredients.Select(i => Image.Thumbnail(i.Foodstuff.ImageUrl));
                 //IngredientsStackLayout.Children.AddRange(thumbnails);
             }
         }

@@ -5,10 +5,10 @@ namespace SmartRecipes.Mobile.ReadModels.Dto
 {
     public class ShoppingListRecipeItem
     {
-        public ShoppingListRecipeItem(Some<RecipeDetail> detail, Some<IRecipeInShoppingList> recipeInShoppingList)
+        public ShoppingListRecipeItem(RecipeDetail detail, IRecipeInShoppingList recipeInShoppingList)
         {
             Detail = detail;
-            RecipeInShoppingList = recipeInShoppingList.Value;
+            RecipeInShoppingList = recipeInShoppingList;
         }
 
         public IRecipeInShoppingList RecipeInShoppingList { get; }

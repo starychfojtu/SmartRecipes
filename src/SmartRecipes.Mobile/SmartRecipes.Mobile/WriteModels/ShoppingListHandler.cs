@@ -38,8 +38,8 @@ namespace SmartRecipes.Mobile.WriteModels
 
         public static async Task AddToShoppingList(
             DataAccess dataAccess,
-            Some<IRecipe> recipe,
-            Some<IAccount> owner,
+            IRecipe recipe,
+            IAccount owner,
             int personCount)
         {
             var ingredients = await RecipeRepository.GetIngredients(recipe)(dataAccess);
@@ -49,7 +49,7 @@ namespace SmartRecipes.Mobile.WriteModels
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
 
             var notAddedFoodstuffs = recipeFoodstuffs.Except(alreadyAddedFoodstuffs);
-            var itemAmounts = notAddedFoodstuffs.Select(f => ShoppingListItemAmount.Create(owner, f.ToSome(), Amount.Zero(f.BaseAmount.Unit)));
+            var itemAmounts = notAddedFoodstuffs.Select(f => ShoppingListItemAmount.Create(owner, f, Amount.Zero(f.BaseAmount.Unit)));
 
             await dataAccess.Db.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount).ToEnumerable());
             await dataAccess.Db.AddAsync(itemAmounts);
@@ -66,17 +66,17 @@ namespace SmartRecipes.Mobile.WriteModels
             await dataAccess.Db.Delete(recipe);
         }
 
-        public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(DataAccess dataAccess, Some<IAccount> owner, IEnumerable<IFoodstuff> foodstuffs)
+        public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(DataAccess dataAccess, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
         {
             var shoppingListItems = await ShoppingListRepository.GetItems(owner)(dataAccess);
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
             var newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f);
-            var newItemAmounts = newFoodstuffs.Values.Select(f => ShoppingListItemAmount.Create(owner, f.ToSome(), f.BaseAmount));
+            var newItemAmounts = newFoodstuffs.Values.Select(f => ShoppingListItemAmount.Create(owner, f, f.BaseAmount));
 
             await dataAccess.Db.AddAsync(newItemAmounts);
             await Update(dataAccess, newItemAmounts);
 
-            return newItemAmounts.Select(fa => new ShoppingListItem(newFoodstuffs[fa.FoodstuffId].ToSome(), fa.ToSome()));
+            return newItemAmounts.Select(fa => new ShoppingListItem(newFoodstuffs[fa.FoodstuffId], fa));
         }
 
         public static async Task Update(DataAccess dataAccess, IEnumerable<IShoppingListItemAmount> itemAmounts)

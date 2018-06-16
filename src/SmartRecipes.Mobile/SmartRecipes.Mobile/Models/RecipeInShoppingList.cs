@@ -25,9 +25,9 @@ namespace SmartRecipes.Mobile.Models
             return new RecipeInShoppingList(id, recipeId, shoppingListOwnerId, personCount);
         }
 
-        public static IRecipeInShoppingList Create(Some<IRecipe> recipe, Some<IAccount> owner, int personCount)
+        public static IRecipeInShoppingList Create(IRecipe recipe, IAccount owner, int personCount)
         {
-            return new RecipeInShoppingList(Guid.NewGuid(), recipe.Value.Id, owner.Value.Id, personCount);
+            return new RecipeInShoppingList(Guid.NewGuid(), recipe.Id, owner.Id, personCount);
         }
     }
 }

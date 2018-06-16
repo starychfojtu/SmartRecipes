@@ -35,7 +35,7 @@ namespace SmartRecipes.Mobile.ViewModels
             Recipes = recipes.Select(r => new RecipeCellViewModel(
                 r,
                 async recipe => await RecipeRepository.GetDetail(recipe)(dataAccess),
-                async () => await ShoppingListHandler.AddToShoppingList(dataAccess, r.ToSome(), CurrentAccount.ToSome(), r.PersonCount) // TODO: add modal to choose count from
+                async () => await ShoppingListHandler.AddToShoppingList(dataAccess, r, CurrentAccount, r.PersonCount) // TODO: add modal to choose count from
             ));
             RaisePropertyChanged(nameof(Recipes));
         }
