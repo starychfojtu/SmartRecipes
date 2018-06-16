@@ -26,7 +26,7 @@ namespace SmartRecipes.Mobile.ReadModels
 
         public static Monad.Reader<DataAccess, Task<RecipeDetail>> GetDetail(Guid recipeId)
         {
-            return GetRecipe(recipeId).Bind(GetDetail);
+            return GetRecipe(recipeId).Bind(r => GetDetail(r));
         }
 
         public static Monad.Reader<DataAccess, Task<RecipeDetail>> GetDetail(IRecipe recipe)
@@ -34,9 +34,19 @@ namespace SmartRecipes.Mobile.ReadModels
             return GetIngredients(recipe).Select(t => t.Map(i => new RecipeDetail(recipe, i.ToSomeEnumerable())));
         }
 
+        public static Monad.Reader<DataAccess, Task<IEnumerable<RecipeDetail>>> GetDetails(IEnumerable<IRecipe> recipes)
+        {
+            return da => Task.WhenAll(recipes.Select(r => GetDetail(r)(da))).Map(ds => ds as IEnumerable<RecipeDetail>);
+        }
+
         public static Monad.Reader<DataAccess, Task<IRecipe>> GetRecipe(Guid recipeId)
         {
-            return da => da.Db.Recipes.Where(r => r.Id == recipeId).FirstAsync().Map(r => r as IRecipe);
+            return GetRecipes(recipeId.ToEnumerable()).Select(t => t.Map(rs => rs.FirstOrDefault())); // TODO: return option
+        }
+
+        public static Monad.Reader<DataAccess, Task<IEnumerable<IRecipe>>> GetRecipes(IEnumerable<Guid> ids)
+        {
+            return da => da.Db.Recipes.Where(r => ids.Contains(r.Id)).ToEnumerableAsync<Recipe, IRecipe>();
         }
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<Ingredient>>> GetIngredients(IRecipe recipe)
