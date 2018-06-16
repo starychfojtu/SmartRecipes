@@ -7,6 +7,7 @@ using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
 using System;
 using LanguageExt;
+using LanguageExt.ClassInstances;
 using LanguageExt.SomeHelp;
 using Monad;
 
@@ -31,7 +32,7 @@ namespace SmartRecipes.Mobile.ReadModels
 
         public static Monad.Reader<DataAccess, Task<RecipeDetail>> GetDetail(IRecipe recipe)
         {
-            return GetIngredients(recipe).Select(t => t.Map(i => new RecipeDetail(recipe, i.ToSomeEnumerable())));
+            return GetIngredients(recipe).Select(i => new RecipeDetail(recipe, i));
         }
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<RecipeDetail>>> GetDetails(IEnumerable<IRecipe> recipes)
@@ -41,7 +42,7 @@ namespace SmartRecipes.Mobile.ReadModels
 
         public static Monad.Reader<DataAccess, Task<IRecipe>> GetRecipe(Guid recipeId)
         {
-            return GetRecipes(recipeId.ToEnumerable()).Select(t => t.Map(rs => rs.FirstOrDefault())); // TODO: return option
+            return GetRecipes(recipeId.ToEnumerable()).Select(rs => rs.FirstOrDefault()); // TODO: return option
         }
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<IRecipe>>> GetRecipes(IEnumerable<Guid> ids)
@@ -51,10 +52,10 @@ namespace SmartRecipes.Mobile.ReadModels
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<Ingredient>>> GetIngredients(IRecipe recipe)
         {
-            return GetIngredientAmounts(recipe).SelectMany(
-                amounts => FoodstuffRepository.GetByIds(amounts.Select(a => a.FoodstuffId)),
-                (amounts, foodstuffs) => amounts.Join(foodstuffs, i => i.FoodstuffId, f => f.Id, (i, f) => new Ingredient(f, i))
-            );
+            return 
+                from ias in GetIngredientAmounts(recipe)
+                from fs in FoodstuffRepository.GetFoodstuffs(ias.Select(i => i.FoodstuffId))
+                select ias.Join(fs, i => i.FoodstuffId, f => f.Id, (i, f) => new Ingredient(f, i));
         }
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<IngredientAmount>>> GetIngredientAmounts(IRecipe recipe)

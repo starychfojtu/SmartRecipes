@@ -20,7 +20,7 @@ namespace SmartRecipes.Mobile.ReadModels
             );
         }
 
-        public static Monad.Reader<DataAccess, Task<IEnumerable<IFoodstuff>>> GetByIds(IEnumerable<Guid> ids)
+        public static Monad.Reader<DataAccess, Task<IEnumerable<IFoodstuff>>> GetFoodstuffs(IEnumerable<Guid> ids)
         {
             return da => da.Db.Foodstuffs.Where(f => ids.Contains(f.Id)).ToEnumerableAsync<Foodstuff, IFoodstuff>();
         }

@@ -38,5 +38,11 @@ namespace SmartRecipes.Mobile
                 return first.Bind(a => second.Map(b => selector(a, b)));
             };
         }
+        
+        // TODO: Generalize this or find this function in API !!
+        public static Monad.Reader<E, Task<B>> Select<E, A, B>(this Monad.Reader<E, Task<A>> reader, Func<A, B> selector)
+        {
+            return env => reader(env).Map(r => selector(r));
+        }
     }
 }
