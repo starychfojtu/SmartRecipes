@@ -4,13 +4,12 @@ using SQLite;
 
 namespace SmartRecipes.Mobile.Models
 {
-    public class Recipe : IRecipe
+    public class Recipe : Entity, IRecipe
     {
         private const string DefaultImageUrl = "https://thumbs.dreamstime.com/z/empty-dish-14513513.jpg";
 
-        private Recipe(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, Option<string> text)
+        private Recipe(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, Option<string> text) : base(id)
         {
-            Id = id;
             Name = name;
             ImageUrl = imageUrl;
             OwnerId = ownerId;
@@ -18,10 +17,7 @@ namespace SmartRecipes.Mobile.Models
             Text = text.IfNone(() => null);
         }
 
-        public Recipe() { /* for sqllite */ }
-
-        [PrimaryKey]
-        public Guid Id { get; set; }
+        public Recipe() : base(Guid.Empty) { /* for sqllite */ }
 
         public Guid OwnerId { get; set; }
 

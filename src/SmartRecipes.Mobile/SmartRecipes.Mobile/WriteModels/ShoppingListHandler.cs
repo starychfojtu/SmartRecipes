@@ -26,7 +26,10 @@ namespace SmartRecipes.Mobile.WriteModels
             return ChangeAmount((a1, a2) => Amount.Substract(a1, a2), foodstuffAmount, foodstuff);
         }
 
-        private static IShoppingListItemAmount ChangeAmount(Func<IAmount, IAmount, Option<IAmount>> action, IShoppingListItemAmount foodstuffAmount, IFoodstuff foodstuff)
+        private static IShoppingListItemAmount ChangeAmount(
+            Func<IAmount, IAmount, Option<IAmount>> action,
+            IShoppingListItemAmount foodstuffAmount,
+            IFoodstuff foodstuff)
         {
             if (foodstuffAmount.FoodstuffId != foodstuff.Id)
             {
@@ -37,34 +40,38 @@ namespace SmartRecipes.Mobile.WriteModels
             return foodstuffAmount.WithAmount(newAmount);
         }
 
-        public static TryAsync<Unit> AddToShoppingList(
-            DataAccess dataAccess,
-            IRecipe recipe,
-            IAccount owner,
-            int personCount)
+        // TODO: refactor
+        public static TryAsync<Unit> AddToShoppingList(DataAccess dataAccess, IRecipe recipe, IAccount owner, int personCount)
         {
-            return TryAsync(async () =>
-            {
-                var ingredients = await RecipeRepository.GetIngredients(recipe)(dataAccess);
-                var recipeFoodstuffs = ingredients.Select(i => i.Foodstuff);
+            return TryAsync(async () => await ShoppingListRepository
+                .GetRecipeItems(owner)
+                .Select(items => items.Find(i => i.Detail.Recipe.Equals(recipe)))(dataAccess)
+                .MatchAsync(
+                    async i => await dataAccess.Db.UpdateAsync(i.RecipeInShoppingList.AddPersons(personCount)).Map(_ => Unit.Default),
+                    async () =>
+                    {
+                        var getNewItemAmounts =
+                            from ingredients in RecipeRepository.GetIngredients(recipe)
+                            from items in ShoppingListRepository.GetItems(owner)
+                            let foodstuffs = ingredients.Select(i => i.Foodstuff)
+                            let addedFoodstuffs = items.Select(i => i.Foodstuff)
+                            select foodstuffs.Except(addedFoodstuffs).Select(f => ShoppingListItemAmount.Create(owner, f, Amount.Zero(f.BaseAmount.Unit)));
 
-                var shoppingListItems = await ShoppingListRepository.GetItems(owner)(dataAccess);
-                var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
+                        await dataAccess.Db.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount));
+                        await dataAccess.Db.AddAsync(await getNewItemAmounts(dataAccess));
 
-                var notAddedFoodstuffs = recipeFoodstuffs.Except(alreadyAddedFoodstuffs);
-                var itemAmounts = notAddedFoodstuffs.Select(f =>
-                    ShoppingListItemAmount.Create(owner, f, Amount.Zero(f.BaseAmount.Unit)));
-
-                await dataAccess.Db.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount).ToEnumerable());
-                await dataAccess.Db.AddAsync(itemAmounts);
-                
-                return Unit.Default;
-            });
+                        return Unit.Default;
+                    }
+                )
+            );
         }
 
         public static TryAsync<Unit> Cook(DataAccess dataAccess, ShoppingListRecipeItem recipeItem)
         {
-            return TryAsync<ShoppingListRecipeItem>(() => throw new InvalidOperationException("Not enought ingredients in shopping list."))
+            return TryAsync<ShoppingListRecipeItem>(() =>
+                {
+                    throw new InvalidOperationException("Not enought ingredients in shopping list.");
+                })
                 .Bind(i => RemoveFromShoppingList(dataAccess, i.RecipeInShoppingList));
         }
 

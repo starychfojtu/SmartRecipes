@@ -15,12 +15,12 @@ namespace SmartRecipes.Mobile.Models
 
         public bool Equals(Entity other)
         {
-            return Id == other.Id;
+            return other != null && Id == other.Id;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is Entity ? Equals(obj) : false;
+            return obj is Entity e && Equals(e);
         }
 
         public override int GetHashCode()

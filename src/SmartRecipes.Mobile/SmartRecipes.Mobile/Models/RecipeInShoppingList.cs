@@ -18,6 +18,11 @@ namespace SmartRecipes.Mobile.Models
         public Guid ShoppingListOwnerId { get; set; }
 
         public int PersonCount { get; set; }
+        
+        public IRecipeInShoppingList AddPersons(int count)
+        {
+            return new RecipeInShoppingList(Id, RecipeId, ShoppingListOwnerId, PersonCount + count);
+        }
 
         public static IRecipeInShoppingList Create(Guid id, Guid recipeId, Guid shoppingListOwnerId, int personCount)
         {

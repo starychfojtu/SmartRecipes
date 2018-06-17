@@ -51,7 +51,7 @@ namespace SmartRecipes.Mobile.ReadModels
             {
                 return item.Detail.Ingredients.Fold(dict, (d, i) =>
                 {
-                    var personCountRatio = item.Detail.Recipe.PersonCount / item.RecipeInShoppingList.PersonCount;
+                    var personCountRatio = item.RecipeInShoppingList.PersonCount / item.Detail.Recipe.PersonCount;
                     var amount = i.Amount.WithCount(i.Amount.Count * personCountRatio); 
                     var newAmount = d.ContainsKey(i.Foodstuff)
                         ? Amount.Add(d[i.Foodstuff], amount).IfNone(amount)

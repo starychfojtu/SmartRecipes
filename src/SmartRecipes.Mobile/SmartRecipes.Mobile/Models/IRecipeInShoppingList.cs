@@ -11,5 +11,7 @@ namespace SmartRecipes.Mobile.Models
         Guid ShoppingListOwnerId { get; }
 
         int PersonCount { get; }
+
+        IRecipeInShoppingList AddPersons(int count);
     }
 }
