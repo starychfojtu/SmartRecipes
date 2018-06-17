@@ -16,7 +16,7 @@ namespace SmartRecipes.Mobile.ReadModels
         {
             return Repository.RetrievalAction(
                 client => client.GetMyRecipes(),
-                da => da.Db.Recipes.ToEnumerableAsync<Recipe, IRecipe>(),
+                env => env.Db.Recipes.ToEnumerableAsync<Recipe, IRecipe>(),
                 response => response.Recipes.Select(r => ToRecipe(r)),
                 recipes => recipes
             );
@@ -34,17 +34,17 @@ namespace SmartRecipes.Mobile.ReadModels
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<RecipeDetail>>> GetDetails(IEnumerable<IRecipe> recipes)
         {
-            return da => Task.WhenAll(recipes.Select(r => GetDetail(r)(da))).Map(ds => ds as IEnumerable<RecipeDetail>);
+            return env => Task.WhenAll(recipes.Select(r => GetDetail(r)(env))).Map(ds => ds as IEnumerable<RecipeDetail>);
         }
 
         public static Monad.Reader<DataAccess, Task<IRecipe>> GetRecipe(Guid recipeId)
         {
-            return GetRecipes(recipeId.ToEnumerable()).Select(rs => rs.FirstOrDefault()); // TODO: return option
+            return GetRecipes(recipeId.ToEnumerable()).Select(rs => rs.First()); 
         }
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<IRecipe>>> GetRecipes(IEnumerable<Guid> ids)
         {
-            return da => da.Db.Recipes.Where(r => ids.Contains(r.Id)).ToEnumerableAsync<Recipe, IRecipe>();
+            return env => env.Db.Recipes.Where(r => ids.Contains(r.Id)).ToEnumerableAsync<Recipe, IRecipe>();
         }
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<Ingredient>>> GetIngredients(IRecipe recipe)
@@ -57,7 +57,7 @@ namespace SmartRecipes.Mobile.ReadModels
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<IngredientAmount>>> GetIngredientAmounts(IRecipe recipe)
         {
-            return da => da.Db.IngredientAmounts.Where(i => i.RecipeId == recipe.Id).ToEnumerableAsync();
+            return env => env.Db.IngredientAmounts.Where(i => i.RecipeId == recipe.Id).ToEnumerableAsync();
         }
 
         private static Recipe ToRecipe(MyRecipesResponse.Recipe r)

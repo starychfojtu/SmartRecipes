@@ -23,17 +23,17 @@ namespace SmartRecipes.Mobile.ReadModels
 
         public static Monad.Reader<DataAccess, Task<IEnumerable<IFoodstuff>>> GetFoodstuffs(IEnumerable<Guid> ids)
         {
-            return da => da.Db.Foodstuffs.Where(f => ids.Contains(f.Id)).ToEnumerableAsync<Foodstuff, IFoodstuff>();
+            return env => env.Db.Foodstuffs.Where(f => ids.Contains(f.Id)).ToEnumerableAsync<Foodstuff, IFoodstuff>();
         }
 
-        private static Monad.Reader<DataAccess, Task<IEnumerable<IFoodstuff>>> SearchDb(string query)
+        private static Monad.Reader<DataAccess, Task<IEnumerable<IFoodstuff>>> SearchDb(string searchQuery)
         {
-            return da =>
+            return env =>
             {
-                var foodstuffs = da.Db.GetTableMapping<Foodstuff>();
-                var name = foodstuffs.FindColumnWithPropertyName(nameof(Foodstuff.Name)).Name; // TODO: add helper that takes lambda
-                var sql = $@"SELECT * FROM {foodstuffs.TableName} WHERE LOWER({name}) LIKE ?";
-                return da.Db.Execute<Foodstuff>(sql, $"%{query}%").Map(fs => fs.Select(f => f as IFoodstuff));
+                var foodstuffs = env.Db.GetTableMapping<Foodstuff>();
+                var foodstuffName = foodstuffs.FindColumnWithPropertyName(nameof(Foodstuff.Name)).Name; // TODO: add helper that takes lambenv
+                var sql = $@"SELECT * FROM {foodstuffs.TableName} WHERE LOWER({foodstuffName}) LIKE ?";
+                return env.Db.Execute<Foodstuff>(sql, $"%{searchQuery}%").Map(fs => fs.Select(f => f as IFoodstuff));
             };
         }
 
