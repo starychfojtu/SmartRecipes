@@ -3,7 +3,6 @@ using SQLite;
 using System.Collections.Generic;
 using LanguageExt;
 using static LanguageExt.Prelude;
-using System;
 using System.Linq;
 
 namespace SmartRecipes.Mobile

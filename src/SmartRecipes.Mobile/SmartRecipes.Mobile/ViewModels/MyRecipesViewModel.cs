@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using SmartRecipes.Mobile.ReadModels;
 using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.WriteModels;
-using LanguageExt.SomeHelp;
 using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile.ViewModels

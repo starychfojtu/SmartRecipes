@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile.ViewModels

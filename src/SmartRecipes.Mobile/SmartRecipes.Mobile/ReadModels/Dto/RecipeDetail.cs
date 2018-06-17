@@ -1,5 +1,4 @@
-﻿using LanguageExt;
-using SmartRecipes.Mobile.Models;
+﻿using SmartRecipes.Mobile.Models;
 using System.Collections.Generic;
 using System.Linq;
 

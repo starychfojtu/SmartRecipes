@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Collections.Generic;
 using SmartRecipes.Mobile.Services;
-using LanguageExt.SomeHelp;
 using SmartRecipes.Mobile.Models;
 using LanguageExt;
 using static LanguageExt.Prelude;

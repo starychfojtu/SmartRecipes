@@ -1,5 +1,4 @@
-﻿using System;
-using SmartRecipes.Mobile.Services;
+﻿using SmartRecipes.Mobile.Services;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using SmartRecipes.Mobile.ReadModels.Dto;
@@ -7,7 +6,6 @@ using System.Linq;
 using SmartRecipes.Mobile.Models;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.WriteModels;
-using System.Collections;
 using SmartRecipes.Mobile.ReadModels;
 
 namespace SmartRecipes.Mobile.ViewModels

@@ -1,5 +1,4 @@
-﻿using System;
-namespace SmartRecipes.Mobile.ApiDto
+﻿namespace SmartRecipes.Mobile.ApiDto
 {
     public class SearchFoodstuffRequest
     {

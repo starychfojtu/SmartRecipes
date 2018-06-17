@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SmartRecipes.Mobile.Models
+﻿namespace SmartRecipes.Mobile.Models
 {
     public interface IAmount
     {

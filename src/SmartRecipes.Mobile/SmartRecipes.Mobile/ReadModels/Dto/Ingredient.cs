@@ -1,6 +1,4 @@
-﻿using LanguageExt;
-using SmartRecipes.Mobile.Models;
-using LanguageExt.SomeHelp;
+﻿using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile.ReadModels.Dto
 {

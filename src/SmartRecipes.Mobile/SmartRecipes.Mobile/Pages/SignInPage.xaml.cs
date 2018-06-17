@@ -1,8 +1,6 @@
 ﻿using SmartRecipes.Mobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Autofac.Core;
-using SmartRecipes.Mobile.Extensions;
 using static SmartRecipes.Mobile.Extensions.PageExtensions;
 
 namespace SmartRecipes.Mobile.Pages

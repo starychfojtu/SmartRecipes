@@ -8,7 +8,6 @@ using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
 using System.Collections.Immutable;
 using SmartRecipes.Mobile.Models;
-using LanguageExt.SomeHelp;
 using LanguageExt;
 
 namespace SmartRecipes.Mobile.ViewModels

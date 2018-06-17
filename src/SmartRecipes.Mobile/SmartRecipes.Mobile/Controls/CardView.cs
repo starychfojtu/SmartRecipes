@@ -1,6 +1,4 @@
-﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.PlatformConfiguration;
+﻿using Xamarin.Forms;
 
 namespace SmartRecipes.Mobile.Controls
 {

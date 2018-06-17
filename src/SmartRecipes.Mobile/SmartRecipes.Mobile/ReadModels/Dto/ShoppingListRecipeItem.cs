@@ -1,6 +1,4 @@
-﻿using System;
-using LanguageExt;
-using SmartRecipes.Mobile.Models;
+﻿using SmartRecipes.Mobile.Models;
 namespace SmartRecipes.Mobile.ReadModels.Dto
 {
     public class ShoppingListRecipeItem

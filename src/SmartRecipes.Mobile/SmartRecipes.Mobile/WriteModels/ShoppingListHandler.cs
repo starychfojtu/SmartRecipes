@@ -4,7 +4,6 @@ using System;
 using LanguageExt;
 using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.Models;
-using LanguageExt.SomeHelp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Immutable;
