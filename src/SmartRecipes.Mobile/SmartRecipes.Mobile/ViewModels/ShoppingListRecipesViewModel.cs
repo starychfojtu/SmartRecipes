@@ -16,13 +16,13 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class ShoppingListRecipesViewModel : ViewModel
     {
-        private readonly DataAccess dataAccess;
+        private readonly Enviroment _enviroment;
 
         private IImmutableList<ShoppingListRecipeItem> recipeItems;
 
-        public ShoppingListRecipesViewModel(DataAccess dataAccess)
+        public ShoppingListRecipesViewModel(Enviroment enviroment)
         {
-            this.dataAccess = dataAccess;
+            this._enviroment = enviroment;
             recipeItems = ImmutableList.Create<ShoppingListRecipeItem>();
         }
 
@@ -33,13 +33,13 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            UpdateRecipeItems(await ShoppingListRepository.GetRecipeItems(CurrentAccount)(dataAccess));
+            UpdateRecipeItems(await ShoppingListRepository.GetRecipeItems(CurrentAccount)(_enviroment));
         }
         
-        private Task<Option<UserMessage>> RecipeDeleteAction(IRecipe recipe, Func<DataAccess, ShoppingListRecipeItem, TryAsync<Unit>> action)
+        private Task<Option<UserMessage>> RecipeDeleteAction(IRecipe recipe, Func<Enviroment, ShoppingListRecipeItem, TryAsync<Unit>> action)
         {
             var item = recipeItems.First(r => r.Detail.Recipe.Equals(recipe));
-            return action(dataAccess, item).ToUserMessage(_ =>
+            return action(_enviroment, item).ToUserMessage(_ =>
             {
                 UpdateRecipeItems(recipeItems.Remove(item));
                 return UserMessage.Deleted();

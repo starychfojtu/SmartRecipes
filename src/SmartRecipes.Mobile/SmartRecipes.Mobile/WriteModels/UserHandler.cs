@@ -15,17 +15,17 @@ namespace SmartRecipes.Mobile.WriteModels
             var response = await apiClient.Post(request);
             return response.Match(
                 r => new AuthenticationResult(r.IsAuthorized, r.Token),
-                () => new AuthenticationResult(success: false, token: null)
+                () => new AuthenticationResult(success: false, token: None)
             );
         }
     }
 
     public class AuthenticationResult
     {
-        public AuthenticationResult(bool success, string token)
+        public AuthenticationResult(bool success, Option<string> token)
         {
             Success = success;
-            Token = Optional(token);
+            Token = token;
         }
 
         public bool Success { get; }

@@ -1,8 +1,8 @@
 ﻿namespace SmartRecipes.Mobile.Services
 {
-    public class DataAccess
+    public class Enviroment
     {
-        public DataAccess(ApiClient apiClient, Database database)
+        public Enviroment(ApiClient apiClient, Database database)
         {
             Api = apiClient;
             Db = database;

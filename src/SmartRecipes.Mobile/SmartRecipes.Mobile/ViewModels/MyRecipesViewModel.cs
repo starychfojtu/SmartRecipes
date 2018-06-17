@@ -14,11 +14,11 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class MyRecipesViewModel : ViewModel
     {
-        private readonly DataAccess dataAccess;
+        private readonly Enviroment _enviroment;
 
-        public MyRecipesViewModel(DataAccess dataAccess)
+        public MyRecipesViewModel(Enviroment enviroment)
         {
-            this.dataAccess = dataAccess;
+            this._enviroment = enviroment;
         }
 
         public IEnumerable<RecipeCellViewModel> Recipes { get; private set; }
@@ -30,7 +30,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public async Task UpdateRecipesAsync()
         {
-            var recipes = await RecipeRepository.GetRecipes()(dataAccess);
+            var recipes = await RecipeRepository.GetRecipes()(_enviroment);
             Recipes = recipes.Select(recipe => new RecipeCellViewModel(
                 recipe,
                 new UserAction<IRecipe>(r => AddToShoppingList(r), Icon.Plus(), 1),
@@ -46,7 +46,7 @@ namespace SmartRecipes.Mobile.ViewModels
         
         public async Task<Option<UserMessage>> EditRecipe(IRecipe recipe)
         {
-            var detail = await RecipeRepository.GetDetail(recipe)(dataAccess);
+            var detail = await RecipeRepository.GetDetail(recipe)(_enviroment);
             await Navigation.EditRecipe(detail);
             return None;
         }
@@ -54,7 +54,7 @@ namespace SmartRecipes.Mobile.ViewModels
         private Task<Option<UserMessage>> AddToShoppingList(IRecipe recipe)
         {
             return ShoppingListHandler
-                .AddToShoppingList(dataAccess, recipe, CurrentAccount, recipe.PersonCount)
+                .AddToShoppingList(_enviroment, recipe, CurrentAccount, recipe.PersonCount)
                 .ToUserMessage(_ => UserMessage.Added());
         }
     }

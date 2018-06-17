@@ -20,14 +20,11 @@ namespace SmartRecipes.Mobile.ViewModels
 
     public class EditRecipeViewModel : ViewModel
     {
-        private readonly ApiClient apiClient;
+        private readonly Enviroment enviroment;
 
-        private readonly Database database;
-
-        public EditRecipeViewModel(ApiClient apiClient, Database database)
+        public EditRecipeViewModel(Enviroment enviroment)
         {
-            this.apiClient = apiClient;
-            this.database = database;
+            this.enviroment = enviroment;
             Recipe = new FormDto();
             Ingredients = ImmutableDictionary.Create<IFoodstuff, IAmount>();
             Mode = EditRecipeMode.New;
@@ -74,7 +71,7 @@ namespace SmartRecipes.Mobile.ViewModels
                 Recipe.Text
             );
 
-            await MyRecipesHandler.Add(apiClient, database, recipe, getIngredients(recipe));
+            await MyRecipesHandler.Add(enviroment, recipe, getIngredients(recipe));
         }
 
         public async Task UpdateRecipe(Func<IRecipe, IEnumerable<IIngredientAmount>> getIngredients)
@@ -88,7 +85,7 @@ namespace SmartRecipes.Mobile.ViewModels
                 Recipe.Text
             );
 
-            await MyRecipesHandler.Update(apiClient, database, recipe, getIngredients(recipe));
+            await MyRecipesHandler.Update(enviroment, recipe, getIngredients(recipe));
         }
 
         private Task ChangeAmount(IFoodstuff foodstuff, Func<IAmount, IAmount, Option<IAmount>> action)

@@ -8,9 +8,9 @@ namespace SmartRecipes.Mobile.ReadModels
 {
     public static class Repository
     {
-        public static Monad.Reader<DataAccess, Task<TModel>> RetrievalAction<TModel, TResponse>(
+        public static Monad.Reader<Enviroment, Task<TModel>> RetrievalAction<TModel, TResponse>(
             Func<ApiClient, Task<Option<TResponse>>> apiCall,
-            Monad.Reader<DataAccess, Task<TModel>> databaseQuery,
+            Monad.Reader<Enviroment, Task<TModel>> databaseQuery,
             Func<TResponse, TModel> responseMapper,
             Func<TModel, IEnumerable<object>> envtabaseMapper)
         {
