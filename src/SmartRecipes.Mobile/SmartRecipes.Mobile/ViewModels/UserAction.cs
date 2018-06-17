@@ -1,11 +1,28 @@
 ﻿using System;
+using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
-    public class UserAction<T>
+    public sealed class Icon
     {
-        public UserAction(Func<T, Task> action, string icon, int order)
+        private Icon(string name)
+        {
+            ImageName = name;
+        }
+        
+        public string ImageName { get; }
+        
+        public static Icon Plus() => new Icon("add");
+        public static Icon Minus() => new Icon("remove");
+    }
+    
+    public sealed class UserAction<T>
+    {
+        
+        
+        public UserAction(Func<T, Task> action, Icon icon, int order)
         {
             Action = action;
             Icon = icon;
@@ -14,7 +31,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public Func<T, Task> Action { get; }
         
-        public string Icon { get; }
+        public Icon Icon { get; }
         
         public int Order { get; }
     }

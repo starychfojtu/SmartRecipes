@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Immutable;
+using System.Linq;
 using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;
 
@@ -6,9 +7,12 @@ namespace SmartRecipes.Mobile.Views
 {
     public partial class RecipeCell : ViewCell
     {
+        private IImmutableList<Button> actionButtons;
+        
         public RecipeCell()
         {
             InitializeComponent();
+            EditButton.Clicked += async (s, e) => await ViewModel.EditRecipe();
         }
 
         private RecipeCellViewModel ViewModel => BindingContext as RecipeCellViewModel;
@@ -19,13 +23,13 @@ namespace SmartRecipes.Mobile.Views
 
             if (ViewModel != null)
             {
-                var buttons = ViewModel.Actions.OrderBy(a => a.Order).Select(a =>
+                var newActionButtons = ViewModel.Actions.OrderBy(a => a.Order).Select(a =>
                 {
                     var actionButton = new Button
                     {
                         HeightRequest = 64,
                         WidthRequest = 64,
-                        Image = a.Icon,
+                        Image = a.Icon.ImageName,
                         VerticalOptions = LayoutOptions.Center,
                         BackgroundColor = Color.Transparent
                     };
@@ -34,7 +38,10 @@ namespace SmartRecipes.Mobile.Views
                 });
 
                 NameLabel.Text = ViewModel.Recipe.Name;
-                MainLayout.Children.AddRange(buttons);
+                
+                actionButtons.Iter(b => MainLayout.Children.Remove(b));
+                actionButtons = newActionButtons.ToImmutableList();
+                MainLayout.Children.AddRange(actionButtons);
 
                 // TODO: in future versions
                 // IngredientsStackLayout.Children.Clear();

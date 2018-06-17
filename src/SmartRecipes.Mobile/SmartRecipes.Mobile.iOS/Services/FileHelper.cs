@@ -1,16 +1,17 @@
 ﻿using System;
 using System.IO;
+using SmartRecipes.Mobile.Services;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(SmartRecipes.Mobile.iOS.Service.FileHelper))]
-namespace SmartRecipes.Mobile.iOS.Service
+[assembly: Dependency(typeof(SmartRecipes.Mobile.iOS.Services.FileHelper))]
+namespace SmartRecipes.Mobile.iOS.Services
 {
     public class FileHelper : IFileHelper
     {
         public string GetLocalFilePath(string filename)
         {
-            string docFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            string libFolder = Path.Combine(docFolder, "..", "Library", "Databases");
+            var docFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            var libFolder = Path.Combine(docFolder, "..", "Library", "Databases");
 
             if (!Directory.Exists(libFolder))
             {

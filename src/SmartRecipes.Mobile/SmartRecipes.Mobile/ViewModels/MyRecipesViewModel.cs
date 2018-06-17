@@ -38,7 +38,7 @@ namespace SmartRecipes.Mobile.ViewModels
                 r => RecipeRepository.GetDetail(r)(dataAccess),
                 new UserAction<IRecipe>(
                     r => ShoppingListHandler.AddToShoppingList(dataAccess, r, CurrentAccount, r.PersonCount),
-                    "plus",
+                    Icon.Plus(), 
                     1
                 )
             ));
