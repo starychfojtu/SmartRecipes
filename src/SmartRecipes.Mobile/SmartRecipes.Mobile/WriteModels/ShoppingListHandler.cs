@@ -16,28 +16,20 @@ namespace SmartRecipes.Mobile.WriteModels
 {
     public static class ShoppingListHandler
     {
-        public static IShoppingListItemAmount Increase(IShoppingListItemAmount foodstuffAmount, IFoodstuff foodstuff)
+        public static IShoppingListItemAmount Increase(ShoppingListItem item)
         {
-            return ChangeAmount((a1, a2) => Amount.Add(a1, a2), foodstuffAmount, foodstuff);
+            return ChangeAmount((a1, a2) => Amount.Add(a1, a2), item);
         }
 
-        public static IShoppingListItemAmount Decrease(IShoppingListItemAmount foodstuffAmount, IFoodstuff foodstuff)
+        public static IShoppingListItemAmount Decrease(ShoppingListItem item)
         {
-            return ChangeAmount((a1, a2) => Amount.Substract(a1, a2), foodstuffAmount, foodstuff);
+            return ChangeAmount((a1, a2) => Amount.Substract(a1, a2), item);
         }
 
-        private static IShoppingListItemAmount ChangeAmount(
-            Func<IAmount, IAmount, Option<IAmount>> action,
-            IShoppingListItemAmount foodstuffAmount,
-            IFoodstuff foodstuff)
+        private static IShoppingListItemAmount ChangeAmount(Func<IAmount, IAmount, Option<IAmount>> action, ShoppingListItem item)
         {
-            if (foodstuffAmount.FoodstuffId != foodstuff.Id)
-            {
-                throw new ArgumentException();
-            }
-
-            var newAmount = action(foodstuffAmount.Amount, foodstuff.AmountStep).IfNone(() => throw new ArgumentException());
-            return foodstuffAmount.WithAmount(newAmount);
+            var newAmount = action(item.ItemAmount.Amount, item.Foodstuff.AmountStep).IfNone(() => throw new ArgumentException());
+            return item.ItemAmount.WithAmount(newAmount);
         }
 
         public static TryAsync<Unit> AddToShoppingList(Enviroment enviroment, IRecipe recipe, IAccount owner, int personCount)

@@ -51,9 +51,9 @@ namespace SmartRecipes.Mobile.ViewModels
             UpdateShoppingListItems(allShoppingListItems);
         }
 
-        private async Task ShoppingListItemAction(ShoppingListItem shoppingListItem, Func<IShoppingListItemAmount, IFoodstuff, IShoppingListItemAmount> action)
+        private async Task ShoppingListItemAction(ShoppingListItem shoppingListItem, Func<ShoppingListItem, IShoppingListItemAmount> action)
         {
-            var newAmount = action(shoppingListItem.ItemAmount, shoppingListItem.Foodstuff);
+            var newAmount = action(shoppingListItem);
             var newShoppingListItem = shoppingListItem.WithItemAmount(newAmount);
 
             var oldItem = shoppingListItems.First(i => i.Foodstuff.Id == shoppingListItem.Foodstuff.Id);
@@ -75,8 +75,8 @@ namespace SmartRecipes.Mobile.ViewModels
                 shoppingListItem.Foodstuff,
                 shoppingListItem.Amount,
                 requiredAmounts.TryGetValue(shoppingListItem.Foodstuff),
-                () => ShoppingListItemAction(shoppingListItem, (ia, f) => ShoppingListHandler.Increase(ia, f)),
-                () => ShoppingListItemAction(shoppingListItem, (ia, f) => ShoppingListHandler.Decrease(ia, f))
+                () => ShoppingListItemAction(shoppingListItem, i => ShoppingListHandler.Increase(i)),
+                () => ShoppingListItemAction(shoppingListItem, i => ShoppingListHandler.Decrease(i))
             );
         }
     }
