@@ -2,11 +2,9 @@
 <ViewCell 
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-    x:Class="SmartRecipes.Mobile.Views.RecipeCell"
-    xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms">
+    x:Class="SmartRecipes.Mobile.Views.RecipeCell">
     <StackLayout>
         <StackLayout
-            x:Name="MainLayout"
             BackgroundColor="{StaticResource secondaryColor}"
             Orientation="Horizontal">
             <Label
@@ -14,27 +12,10 @@
                 Text="Lasagna"
                 HorizontalOptions="Start"
                 VerticalOptions="Center"/>
-            <Button
-                x:Name="OtherButton"
-                Image="add"
-                BackgroundColor="Transparent"
-                WidthRequest="64"
-                HeightRequest="64"
-                VerticalOptions="Center"/>
-            <Button
-                x:Name="PlusButton"
-                Image="add"
-                BackgroundColor="Transparent"
-                WidthRequest="64"
-                HeightRequest="64"
-                VerticalOptions="Center"/>
-            <Button
-                x:Name="EditButton"
-                Text="Edit"
-                BackgroundColor="Transparent"
-                WidthRequest="64"
-                HeightRequest="64"
-                VerticalOptions="Center"/>
+            <StackLayout
+                x:Name="ActionContainer"
+                Orientation="Horizontal">
+            </StackLayout>
         </StackLayout>
         
         <StackLayout

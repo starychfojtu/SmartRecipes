@@ -60,8 +60,8 @@ namespace SmartRecipes.Mobile.ViewModels
             return new RecipeCellViewModel(
                 item.Detail.Recipe,
                 r => Task.FromResult(item.Detail),
-                new UserAction<IRecipe>(r => Cook(r), Icon.Plus(), 1),
-                new UserAction<IRecipe>(r => Delete(r), Icon.Minus(), 2)
+                new UserAction<IRecipe>(r => Cook(r), Icon.Done(), 1),
+                new UserAction<IRecipe>(r => Delete(r), Icon.Delete(), 2)
             );
         }
     }

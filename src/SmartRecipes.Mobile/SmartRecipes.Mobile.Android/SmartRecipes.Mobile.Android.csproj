@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -110,18 +110,26 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\SmartRecipes.Mobile\SmartRecipes.Mobile.csproj">
       <Project>{F37E7463-43DC-4987-B1A5-5E2B36E5D176}</Project>
       <Name>SmartRecipes.Mobile</Name>
     </ProjectReference>
   </ItemGroup>
-
-
   <ItemGroup>
     <Folder Include="ControlRenderers\" />
     <Folder Include="Services\" />
   </ItemGroup>
- <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <ItemGroup>
+    <Content Include="Resources\drawable-hdpi\delete.png" />
+    <Content Include="Resources\drawable-hdpi\done.png" />
+    <Content Include="Resources\drawable-hdpi\edit.png" />
+    <Content Include="Resources\drawable-xhdpi\delete.png" />
+    <Content Include="Resources\drawable-xhdpi\done.png" />
+    <Content Include="Resources\drawable-xhdpi\edit.png" />
+    <Content Include="Resources\drawable-xxhdpi\delete.png" />
+    <Content Include="Resources\drawable-xxhdpi\done.png" />
+    <Content Include="Resources\drawable-xxhdpi\edit.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

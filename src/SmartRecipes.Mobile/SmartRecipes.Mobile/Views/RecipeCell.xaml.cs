@@ -1,5 +1,8 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using SmartRecipes.Mobile.Models;
 using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;
 
@@ -11,8 +14,8 @@ namespace SmartRecipes.Mobile.Views
         
         public RecipeCell()
         {
+            actionButtons = ImmutableList.Create<Button>();
             InitializeComponent();
-            EditButton.Clicked += async (s, e) => await ViewModel.EditRecipe();
         }
 
         private RecipeCellViewModel ViewModel => BindingContext as RecipeCellViewModel;
@@ -23,7 +26,9 @@ namespace SmartRecipes.Mobile.Views
 
             if (ViewModel != null)
             {
-                var newActionButtons = ViewModel.Actions.OrderBy(a => a.Order).Select(a =>
+                var actions = ViewModel.Actions.OrderBy(a => a.Order).ToImmutableList();
+                var allActions = actions.Add(new UserAction<IRecipe>(r => ViewModel.EditRecipe(), Icon.Edit(), int.MaxValue));
+                var newActionButtons = allActions.Select(a =>
                 {
                     var actionButton = new Button
                     {
@@ -33,21 +38,24 @@ namespace SmartRecipes.Mobile.Views
                         VerticalOptions = LayoutOptions.Center,
                         BackgroundColor = Color.Transparent
                     };
-                    actionButton.Clicked += async (s, e) => await a.Action(ViewModel.Recipe);
-                    return actionButton;
+                    return actionButton.Tee(b => b.Clicked += async (s, e) => await a.Action(ViewModel.Recipe));
                 });
 
                 NameLabel.Text = ViewModel.Recipe.Name;
+                ReplaceActions(newActionButtons);
                 
-                actionButtons.Iter(b => MainLayout.Children.Remove(b));
-                actionButtons = newActionButtons.ToImmutableList();
-                MainLayout.Children.AddRange(actionButtons);
-
                 // TODO: in future versions
                 // IngredientsStackLayout.Children.Clear();
                 //var thumbnails = ingredients.Select(i => Image.Thumbnail(i.Foodstuff.ImageUrl));
                 //IngredientsStackLayout.Children.AddRange(thumbnails);
             }
+        }
+
+        private void ReplaceActions(IEnumerable<Button> buttons)
+        {
+            actionButtons.Iter(b => ActionContainer.Children.Remove(b));
+            actionButtons = buttons.ToImmutableList();
+            ActionContainer.Children.AddRange(actionButtons);
         }
     }
 }
