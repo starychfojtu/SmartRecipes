@@ -64,8 +64,8 @@ namespace SmartRecipes.Mobile.WriteModels
 
         public static TryAsync<Unit> Cook(DataAccess dataAccess, ShoppingListRecipeItem recipeItem)
         {
-            // TODO: remove amount of ingredients required for this recipe
-            return RemoveFromShoppingList(dataAccess, recipeItem.RecipeInShoppingList);
+            return TryAsync<ShoppingListRecipeItem>(() => throw new InvalidOperationException("Not enought ingredients in shopping list."))
+                .Bind(i => RemoveFromShoppingList(dataAccess, i.RecipeInShoppingList));
         }
 
         public static TryAsync<Unit> RemoveFromShoppingList(DataAccess dataAccess, IRecipeInShoppingList recipe)
