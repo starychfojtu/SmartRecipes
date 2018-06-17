@@ -14,16 +14,15 @@ namespace SmartRecipes.Mobile.Extensions
             return list.Remove(item).Add(replacement);
         }
 
-        public class EntityEqualityComparer<T> : IEqualityComparer<T> where T : Entity
+        public static ImmutableDictionary<A, B> Merge<A, B>(
+            this ImmutableDictionary<A, B> first,
+            ImmutableDictionary<A, B> second,
+            Func<B, B, B> resolve)
         {
-            public bool Equals(T x, T y) => x.Equals(y);
-            public int GetHashCode(T obj) => obj.GetHashCode();
-        }
-
-        public static IEnumerable<T> Without<T>(this IEnumerable<T> first, IEnumerable<T> second)
-            where T : Entity
-        {
-            return first.Except(second, new EntityEqualityComparer<T>());
+            return second.Fold(first, (fst, kvp) => fst.SetItem(
+                kvp.Key, 
+                fst.ContainsKey(kvp.Key) ? resolve(fst[kvp.Key], kvp.Value) : kvp.Value
+            ));
         }
 
         public static IList<T> AddRange<T>(this IList<T> list, IEnumerable<T> items)

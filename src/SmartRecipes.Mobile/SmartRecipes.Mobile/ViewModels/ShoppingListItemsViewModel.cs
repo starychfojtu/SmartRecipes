@@ -15,7 +15,7 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class ShoppingListItemsViewModel : ViewModel
     {
-        private readonly Enviroment _enviroment;
+        private readonly Enviroment enviroment;
 
         private IImmutableList<ShoppingListItem> shoppingListItems { get; set; }
 
@@ -24,7 +24,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public ShoppingListItemsViewModel(Enviroment enviroment)
         {
             shoppingListItems = ImmutableList.Create<ShoppingListItem>();
-            this._enviroment = enviroment;
+            this.enviroment = enviroment;
         }
 
         public IEnumerable<FoodstuffAmountCellViewModel> ShoppingListItems
@@ -34,8 +34,8 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            requiredAmounts = await ShoppingListRepository.GetRequiredAmounts(CurrentAccount)(_enviroment);
-            UpdateShoppingListItems(await ShoppingListRepository.GetItems(CurrentAccount)(_enviroment));
+            requiredAmounts = await ShoppingListRepository.GetRequiredAmounts(CurrentAccount)(enviroment);
+            UpdateShoppingListItems(await ShoppingListRepository.GetItems(CurrentAccount)(enviroment));
         }
 
         public async Task Refresh()
@@ -46,7 +46,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public async Task OpenAddFoodstuffDialog()
         {
             var selected = await Navigation.SelectFoodstuffDialog();
-            var newShoppingListItems = await ShoppingListHandler.AddToShoppingList(_enviroment, CurrentAccount, selected);
+            var newShoppingListItems = await ShoppingListHandler.AddToShoppingList(enviroment, CurrentAccount, selected);
             var allShoppingListItems = shoppingListItems.Concat(newShoppingListItems);
             UpdateShoppingListItems(allShoppingListItems);
         }
@@ -59,7 +59,7 @@ namespace SmartRecipes.Mobile.ViewModels
             var oldItem = shoppingListItems.First(i => i.Foodstuff.Id == shoppingListItem.Foodstuff.Id);
             var newShoppingListItems = CollectionExtensions.Replace(shoppingListItems, oldItem, newShoppingListItem);
 
-            await ShoppingListHandler.Update(_enviroment, newShoppingListItem.ItemAmount.ToEnumerable().ToImmutableList());
+            await ShoppingListHandler.Update(enviroment, newShoppingListItem.ItemAmount.ToEnumerable().ToImmutableList());
             UpdateShoppingListItems(newShoppingListItems);
         }
 

@@ -16,22 +16,6 @@ namespace SmartRecipes.Mobile.WriteModels
 {
     public static class ShoppingListHandler
     {
-        public static IShoppingListItemAmount Increase(ShoppingListItem item)
-        {
-            return ChangeAmount((a1, a2) => Amount.Add(a1, a2), item);
-        }
-
-        public static IShoppingListItemAmount Decrease(ShoppingListItem item)
-        {
-            return ChangeAmount((a1, a2) => Amount.Substract(a1, a2), item);
-        }
-
-        private static IShoppingListItemAmount ChangeAmount(Func<IAmount, IAmount, Option<IAmount>> action, ShoppingListItem item)
-        {
-            var newAmount = action(item.ItemAmount.Amount, item.Foodstuff.AmountStep).IfNone(() => throw new ArgumentException());
-            return item.ItemAmount.WithAmount(newAmount);
-        }
-
         public static TryAsync<Unit> AddToShoppingList(Enviroment enviroment, IRecipe recipe, IAccount owner, int personCount)
         {
             return TryAsync(async () => await ShoppingListRepository
@@ -43,11 +27,26 @@ namespace SmartRecipes.Mobile.WriteModels
                 )
             );
         }
+        
+        public static IShoppingListItemAmount Increase(ShoppingListItem item)
+        {
+            return ChangeAmount((a1, a2) => Amount.Add(a1, a2), item);
+        }
+
+        public static IShoppingListItemAmount Decrease(ShoppingListItem item)
+        {
+            return ChangeAmount((a1, a2) => Amount.Substract(a1, a2), item);
+        }
 
         public static TryAsync<Unit> Cook(Enviroment enviroment, ShoppingListRecipeItem recipeItem)
         {
             return TryAsync<ShoppingListRecipeItem>(() =>
                 {
+                    // TODO: Implement
+                    var requiredAmounts = ShoppingListRepository.GetRequiredAmounts(recipeItem);
+                    var shoppingListItems = ShoppingListRepository.GetItems(null)(enviroment);
+                    // substract them - if not possible, throw exception
+                    // save new ShoppingListItems
                     throw new InvalidOperationException("Not enought ingredients in shopping list.");
                 })
                 .Bind(i => RemoveFromShoppingList(enviroment, i.RecipeInShoppingList));
@@ -80,6 +79,12 @@ namespace SmartRecipes.Mobile.WriteModels
             }
 
             await enviroment.Db.UpdateAsync(itemAmounts);
+        }
+        
+        private static IShoppingListItemAmount ChangeAmount(Func<IAmount, IAmount, Option<IAmount>> action, ShoppingListItem item)
+        {
+            var newAmount = action(item.ItemAmount.Amount, item.Foodstuff.AmountStep).IfNone(() => throw new ArgumentException());
+            return item.ItemAmount.WithAmount(newAmount);
         }
         
         private static async Task<Unit> CreateRecipeInShoppingList(Enviroment enviroment, IRecipe recipe, IAccount owner, int personCount)

@@ -34,19 +34,24 @@ namespace SmartRecipes.Mobile.ReadModels
 
         public static Monad.Reader<Enviroment, Task<ImmutableDictionary<IFoodstuff, IAmount>>> GetRequiredAmounts(IAccount owner)
         {
+            return GetRecipeItems(owner).Select(rs => rs.Fold(
+                ImmutableDictionary.Create<IFoodstuff, IAmount>(),
+                (r, item) => r.Merge(GetRequiredAmounts(item), (a1, a2) => Amount.Add(a1, a2).IfNone(a2))
+            ));
+        }
+        
+        public static ImmutableDictionary<IFoodstuff, IAmount> GetRequiredAmounts(ShoppingListRecipeItem item)
+        {
             var result = ImmutableDictionary.Create<IFoodstuff, IAmount>();
-            return GetRecipeItems(owner).Select(rs => rs.Fold(result, (r, item) =>
+            return item.Detail.Ingredients.Fold(result, (tempResult, i) =>
             {
-                return item.Detail.Ingredients.Fold(r, (tempResult, i) =>
-                {
-                    var personCountRatio = item.RecipeInShoppingList.PersonCount / item.Detail.Recipe.PersonCount;
-                    var newAmount = i.Amount.WithCount(i.Amount.Count * personCountRatio); 
-                    var totalAmount = tempResult.ContainsKey(i.Foodstuff)
-                        ? Amount.Add(tempResult[i.Foodstuff], newAmount).IfNone(newAmount)
-                        : newAmount;
-                    return tempResult.SetItem(i.Foodstuff, totalAmount);
-                });
-            }));
+                var personCountRatio = item.RecipeInShoppingList.PersonCount / item.Detail.Recipe.PersonCount;
+                var newAmount = i.Amount.WithCount(i.Amount.Count * personCountRatio); 
+                var totalAmount = tempResult.ContainsKey(i.Foodstuff)
+                    ? Amount.Add(tempResult[i.Foodstuff], newAmount).IfNone(newAmount)
+                    : newAmount;
+                return tempResult.SetItem(i.Foodstuff, totalAmount);
+            });
         }
 
         private static Monad.Reader<Enviroment, Task<IEnumerable<ShoppingListItem>>> GetShoppingListItems()
