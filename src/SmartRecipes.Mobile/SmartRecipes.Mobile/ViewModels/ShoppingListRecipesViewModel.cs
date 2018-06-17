@@ -1,10 +1,14 @@
-﻿using SmartRecipes.Mobile.Services;
+﻿using System;
+using SmartRecipes.Mobile.Services;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using System.Linq;
 using SmartRecipes.Mobile.Models;
 using System.Threading.Tasks;
+using LanguageExt;
+using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.ReadModels;
 
@@ -31,20 +35,15 @@ namespace SmartRecipes.Mobile.ViewModels
         {
             UpdateRecipeItems(await ShoppingListRepository.GetRecipeItems(CurrentAccount)(dataAccess));
         }
-
-        // TODO: refactor this
-        private async Task Cook(IRecipe recipe)
+        
+        private Task<Option<UserMessage>> RecipeDeleteAction(IRecipe recipe, Func<DataAccess, ShoppingListRecipeItem, TryAsync<Unit>> action)
         {
             var item = recipeItems.First(r => r.Detail.Recipe.Equals(recipe));
-            await ShoppingListHandler.Cook(dataAccess, item);
-            UpdateRecipeItems(recipeItems.Remove(item));
-        }
-
-        private async Task Delete(IRecipe recipe)
-        {
-            var item = recipeItems.First(r => r.Detail.Recipe.Equals(recipe));
-            await ShoppingListHandler.RemoveFromShoppingList(dataAccess, item.RecipeInShoppingList);
-            UpdateRecipeItems(recipeItems.Remove(item));
+            return action(dataAccess, item).ToUserMessage(_ =>
+            {
+                UpdateRecipeItems(recipeItems.Remove(item));
+                return UserMessage.Deleted();
+            });
         }
 
         private void UpdateRecipeItems(IEnumerable<ShoppingListRecipeItem> items)
@@ -57,9 +56,8 @@ namespace SmartRecipes.Mobile.ViewModels
         {
             return new RecipeCellViewModel(
                 item.Detail.Recipe,
-                r => Task.FromResult(item.Detail),
-                new UserAction<IRecipe>(r => Cook(r), Icon.Done(), 1),
-                new UserAction<IRecipe>(r => Delete(r), Icon.Delete(), 2)
+                new UserAction<IRecipe>(r => RecipeDeleteAction(r, (da, i) => ShoppingListHandler.Cook(da, i)), Icon.Done(), 1),
+                new UserAction<IRecipe>(r => RecipeDeleteAction(r, (da, i) => ShoppingListHandler.RemoveFromShoppingList(da, i.RecipeInShoppingList)), Icon.Delete(), 2)
             );
         }
     }

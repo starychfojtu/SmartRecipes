@@ -35,7 +35,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public override async Task InitializeAsync()
         {
             requiredAmounts = await ShoppingListRepository.GetRequiredAmounts(CurrentAccount)(dataAccess);
-            UpdateShoppingListItems((await ShoppingListRepository.GetItems(CurrentAccount)(dataAccess)));
+            UpdateShoppingListItems(await ShoppingListRepository.GetItems(CurrentAccount)(dataAccess));
         }
 
         public async Task Refresh()
@@ -59,7 +59,7 @@ namespace SmartRecipes.Mobile.ViewModels
             var oldItem = shoppingListItems.First(i => i.Foodstuff.Id == shoppingListItem.Foodstuff.Id);
             var newShoppingListItems = CollectionExtensions.Replace(shoppingListItems, oldItem, newShoppingListItem);
 
-            await ShoppingListHandler.Update(dataAccess, newShoppingListItem.ItemAmount.ToEnumerable());
+            await ShoppingListHandler.Update(dataAccess, newShoppingListItem.ItemAmount.ToEnumerable().ToImmutableList());
             UpdateShoppingListItems(newShoppingListItems);
         }
 

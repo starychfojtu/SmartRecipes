@@ -10,6 +10,7 @@ using System.Collections.Immutable;
 using SmartRecipes.Mobile.Extensions;
 using SmartRecipes.Mobile.ReadModels;
 using SmartRecipes.Mobile.ReadModels.Dto;
+using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.WriteModels
 {
@@ -36,34 +37,40 @@ namespace SmartRecipes.Mobile.WriteModels
             return foodstuffAmount.WithAmount(newAmount);
         }
 
-        public static async Task AddToShoppingList(
+        public static TryAsync<Unit> AddToShoppingList(
             DataAccess dataAccess,
             IRecipe recipe,
             IAccount owner,
             int personCount)
         {
-            var ingredients = await RecipeRepository.GetIngredients(recipe)(dataAccess);
-            var recipeFoodstuffs = ingredients.Select(i => i.Foodstuff);
+            return TryAsync(async () =>
+            {
+                var ingredients = await RecipeRepository.GetIngredients(recipe)(dataAccess);
+                var recipeFoodstuffs = ingredients.Select(i => i.Foodstuff);
 
-            var shoppingListItems = await ShoppingListRepository.GetItems(owner)(dataAccess);
-            var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
+                var shoppingListItems = await ShoppingListRepository.GetItems(owner)(dataAccess);
+                var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
 
-            var notAddedFoodstuffs = recipeFoodstuffs.Except(alreadyAddedFoodstuffs);
-            var itemAmounts = notAddedFoodstuffs.Select(f => ShoppingListItemAmount.Create(owner, f, Amount.Zero(f.BaseAmount.Unit)));
+                var notAddedFoodstuffs = recipeFoodstuffs.Except(alreadyAddedFoodstuffs);
+                var itemAmounts = notAddedFoodstuffs.Select(f =>
+                    ShoppingListItemAmount.Create(owner, f, Amount.Zero(f.BaseAmount.Unit)));
 
-            await dataAccess.Db.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount).ToEnumerable());
-            await dataAccess.Db.AddAsync(itemAmounts);
+                await dataAccess.Db.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount).ToEnumerable());
+                await dataAccess.Db.AddAsync(itemAmounts);
+                
+                return Unit.Default;
+            });
         }
 
-        public static async Task Cook(DataAccess dataAccess, ShoppingListRecipeItem recipeItem)
+        public static TryAsync<Unit> Cook(DataAccess dataAccess, ShoppingListRecipeItem recipeItem)
         {
             // TODO: remove amount of ingredients required for this recipe
-            await RemoveFromShoppingList(dataAccess, recipeItem.RecipeInShoppingList);
+            return RemoveFromShoppingList(dataAccess, recipeItem.RecipeInShoppingList);
         }
 
-        public static async Task RemoveFromShoppingList(DataAccess dataAccess, IRecipeInShoppingList recipe)
+        public static TryAsync<Unit> RemoveFromShoppingList(DataAccess dataAccess, IRecipeInShoppingList recipe)
         {
-            await dataAccess.Db.Delete(recipe);
+            return TryAsync(() => dataAccess.Db.Delete(recipe).Map(t => Unit.Default));
         }
 
         public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(DataAccess dataAccess, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)

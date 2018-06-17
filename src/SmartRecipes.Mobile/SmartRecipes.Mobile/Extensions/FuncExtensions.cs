@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using LanguageExt;
+using SmartRecipes.Mobile.Infrastructure;
+using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.Extensions
 {
@@ -43,6 +46,11 @@ namespace SmartRecipes.Mobile.Extensions
         public static Monad.Reader<E, Task<B>> Select<E, A, B>(this Monad.Reader<E, Task<A>> reader, Func<A, B> selector)
         {
             return env => reader(env).Map(r => selector(r));
+        }
+
+        public static Task<Option<UserMessage>> ToUserMessage<A>(this TryAsync<A> tryAsync, Func<A, Option<UserMessage>> mapper)
+        {
+            return tryAsync.Match(r => mapper(r), e => Some(UserMessage.Error(e)));
         }
     }
 }

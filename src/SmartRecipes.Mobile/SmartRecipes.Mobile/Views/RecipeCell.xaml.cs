@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.Models;
 using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;
@@ -26,9 +27,7 @@ namespace SmartRecipes.Mobile.Views
 
             if (ViewModel != null)
             {
-                var actions = ViewModel.Actions.OrderBy(a => a.Order).ToImmutableList();
-                var allActions = actions.Add(new UserAction<IRecipe>(r => ViewModel.EditRecipe(), Icon.Edit(), int.MaxValue));
-                var newActionButtons = allActions.Select(a =>
+                var newActionButtons = ViewModel.Actions.OrderBy(a => a.Order).Select(a =>
                 {
                     var actionButton = new Button
                     {
@@ -38,9 +37,9 @@ namespace SmartRecipes.Mobile.Views
                         VerticalOptions = LayoutOptions.Center,
                         BackgroundColor = Color.Transparent
                     };
-                    return actionButton.Tee(b => b.Clicked += async (s, e) => await a.Action(ViewModel.Recipe));
+                    return actionButton.Tee(b => b.Clicked += async (s, e) => await UserMessage.PopupAction(() => a.Action(ViewModel.Recipe)));
                 });
-
+                
                 NameLabel.Text = ViewModel.Recipe.Name;
                 ReplaceActions(newActionButtons);
                 

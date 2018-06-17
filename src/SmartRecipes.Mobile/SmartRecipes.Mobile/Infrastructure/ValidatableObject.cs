@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SmartRecipes.Mobile.Extensions
+namespace SmartRecipes.Mobile.Infrastructure
 {
-    public class ValidatableObject<T>
+    public sealed class ValidatableObject<T>
     {
         private T data;
 

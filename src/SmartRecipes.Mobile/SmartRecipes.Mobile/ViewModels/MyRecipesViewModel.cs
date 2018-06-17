@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LanguageExt;
+using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.ReadModels;
 using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.Models;
+using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -29,12 +33,8 @@ namespace SmartRecipes.Mobile.ViewModels
             var recipes = await RecipeRepository.GetRecipes()(dataAccess);
             Recipes = recipes.Select(recipe => new RecipeCellViewModel(
                 recipe,
-                r => RecipeRepository.GetDetail(r)(dataAccess),
-                new UserAction<IRecipe>(
-                    r => ShoppingListHandler.AddToShoppingList(dataAccess, r, CurrentAccount, r.PersonCount),
-                    Icon.Plus(), 
-                    1
-                )
+                new UserAction<IRecipe>(r => AddToShoppingList(r), Icon.Plus(), 1),
+                new UserAction<IRecipe>(r => EditRecipe(r), Icon.Minus(), 2)
             ));
             RaisePropertyChanged(nameof(Recipes));
         }
@@ -42,6 +42,20 @@ namespace SmartRecipes.Mobile.ViewModels
         public override async Task InitializeAsync()
         {
             await UpdateRecipesAsync();
+        }
+        
+        public async Task<Option<UserMessage>> EditRecipe(IRecipe recipe)
+        {
+            var detail = await RecipeRepository.GetDetail(recipe)(dataAccess);
+            await Navigation.EditRecipe(detail);
+            return None;
+        }
+
+        private Task<Option<UserMessage>> AddToShoppingList(IRecipe recipe)
+        {
+            return ShoppingListHandler
+                .AddToShoppingList(dataAccess, recipe, CurrentAccount, recipe.PersonCount)
+                .ToUserMessage(_ => UserMessage.Added());
         }
     }
 }

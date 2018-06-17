@@ -1,4 +1,5 @@
 ﻿using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Infrastructure;
 using Xamarin.Forms;
 
 namespace SmartRecipes.Mobile.Controls
