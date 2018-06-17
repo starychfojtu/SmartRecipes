@@ -71,7 +71,7 @@ namespace SmartRecipes.Mobile.WriteModels
             var shoppingListItems = await ShoppingListRepository.GetItems(owner)(dataAccess);
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
             var newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f);
-            var newItemAmounts = newFoodstuffs.Values.Select(f => ShoppingListItemAmount.Create(owner, f, f.BaseAmount));
+            var newItemAmounts = newFoodstuffs.Values.Select(f => ShoppingListItemAmount.Create(owner, f, f.BaseAmount)).ToImmutableList();
 
             await dataAccess.Db.AddAsync(newItemAmounts);
             await Update(dataAccess, newItemAmounts);
@@ -79,11 +79,11 @@ namespace SmartRecipes.Mobile.WriteModels
             return newItemAmounts.Select(fa => new ShoppingListItem(newFoodstuffs[fa.FoodstuffId], fa));
         }
 
-        public static async Task Update(DataAccess dataAccess, IEnumerable<IShoppingListItemAmount> itemAmounts)
+        public static async Task Update(DataAccess dataAccess, IImmutableList<IShoppingListItemAmount> itemAmounts)
         {
             foreach (var itemAmount in itemAmounts)
             {
-                // TODO: create job to update api when this fai
+                // TODO: create job to update api when this fails
                 var request = new ChangeFoodstuffAmountRequest(itemAmount.FoodstuffId, itemAmount.Amount);
                 var response = await dataAccess.Api.Post(request);
             }

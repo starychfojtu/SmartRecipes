@@ -21,6 +21,7 @@ namespace SmartRecipes.Mobile.Services
             {
                 { typeof(SignInPage), typeof(SignInViewModel) },
                 { typeof(ShoppingListItemsPage), typeof(ShoppingListItemsViewModel) },
+                { typeof(ShoppingListRecipesPage), typeof(ShoppingListRecipesViewModel) },
                 { typeof(FoodstuffSearchPage), typeof(FoodstuffSearchViewModel) },
                 { typeof(MyRecipesPage), typeof(MyRecipesViewModel) },
                 { typeof(EditRecipePage), typeof(EditRecipeViewModel) }
@@ -57,6 +58,7 @@ namespace SmartRecipes.Mobile.Services
             {
                 var appContainer = new AppContainer(
                     await GetPageAsync<ShoppingListItemsPage>(),
+                    await GetPageAsync<ShoppingListRecipesPage>(),
                     await GetPageAsync<MyRecipesPage>()
                 );
                 return appContainer as T;

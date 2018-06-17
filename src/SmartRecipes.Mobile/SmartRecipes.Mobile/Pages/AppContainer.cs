@@ -5,15 +5,16 @@ namespace SmartRecipes.Mobile.Pages
 {
     public class AppContainer : MasterDetailPage
     {
-        private readonly Page[] pages;
-
-        public AppContainer(ShoppingListItemsPage shoppingListItemsPage, MyRecipesPage myRecipesPage)
+        public AppContainer(
+            ShoppingListItemsPage shoppingListItemsPage,
+            ShoppingListRecipesPage shoppingListRecipesPage,
+            MyRecipesPage myRecipesPage)
         {
             NavigationPage.SetHasNavigationBar(this, false);
 
-            pages = new Page[]
+            var pages = new Page[]
             {
-                PageFactory.CreateTabbed("Shopping list", shoppingListItemsPage),
+                PageFactory.CreateTabbed("Shopping list", shoppingListItemsPage, shoppingListRecipesPage),
                 PageFactory.CreateTabbed("Recipes", myRecipesPage)
             };
 

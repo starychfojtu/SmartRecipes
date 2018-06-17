@@ -4,5 +4,13 @@
              x:Class="SmartRecipes.Mobile.Pages.ShoppingListRecipesPage"
              Title="Recipes">
     <ContentPage.Content>
+        <StackLayout
+            Padding="16, 16, 16, 16">
+            <ListView
+                x:Name="RecipeListView"
+                SeparatorColor="{StaticResource dividerColor}"
+                RowHeight="128"
+                CachingStrategy="RecycleElement"/>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>
