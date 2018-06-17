@@ -5,6 +5,7 @@ using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.Services;
 using System.Linq;
 using System;
+using SmartRecipes.Mobile.Extensions;
 
 namespace SmartRecipes.Mobile.ReadModels
 {

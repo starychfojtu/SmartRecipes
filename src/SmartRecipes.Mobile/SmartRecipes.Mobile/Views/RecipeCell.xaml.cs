@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using SmartRecipes.Mobile.Extensions;
 using SmartRecipes.Mobile.Models;
 using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;

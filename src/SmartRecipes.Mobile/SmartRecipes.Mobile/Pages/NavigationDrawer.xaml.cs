@@ -1,8 +1,8 @@
-﻿using Xamarin.Forms;
+﻿using System;
 using System.Linq;
-using System;
+using Xamarin.Forms;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Pages
 {
     public partial class NavigationDrawer : ContentPage
     {

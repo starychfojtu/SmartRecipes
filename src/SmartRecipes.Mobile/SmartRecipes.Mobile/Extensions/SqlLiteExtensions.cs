@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using SQLite;
-using System.Collections.Generic;
-using LanguageExt;
-using static LanguageExt.Prelude;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using LanguageExt;
+using SQLite;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Extensions
 {
     public static class SqlLiteExtensions
     {
@@ -25,7 +24,7 @@ namespace SmartRecipes.Mobile
         public static Task<Option<T>> FirstOptionAsync<T>(this AsyncTableQuery<T> tableQuery)
             where T : new()
         {
-            return tableQuery.FirstOrDefaultAsync().Map(t => Optional(t));
+            return tableQuery.FirstOrDefaultAsync().Map(t => Prelude.Optional(t));
         }
     }
 }

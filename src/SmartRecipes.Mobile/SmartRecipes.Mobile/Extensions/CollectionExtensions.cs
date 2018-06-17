@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
-using System;
-using SmartRecipes.Mobile.Models;
+using System.Linq;
 using System.Threading.Tasks;
+using SmartRecipes.Mobile.Models;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Extensions
 {
     public static class CollectionExtensions
     {
@@ -24,21 +24,6 @@ namespace SmartRecipes.Mobile
             where T : Entity
         {
             return first.Except(second, new EntityEqualityComparer<T>());
-        }
-
-        public static async Task<IEnumerable<U>> SelectAsync<T, U>(this IEnumerable<T> collection, Func<T, Task<U>> selector)
-        {
-            var newCollection = new List<U>();
-            foreach (var item in collection)
-            {
-                newCollection.Add(await selector(item));
-            }
-            return newCollection;
-        }
-
-        public static IEnumerable<T> ToSomeEnumerable<T>(this IEnumerable<T> enumerable)
-        {
-            return enumerable.Select(i => i);
         }
 
         public static IList<T> AddRange<T>(this IList<T> list, IEnumerable<T> items)

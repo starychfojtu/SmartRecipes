@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;
 using System.Collections.Immutable;
+using SmartRecipes.Mobile.Extensions;
 using SmartRecipes.Mobile.ReadModels.Dto;
 
 namespace SmartRecipes.Mobile.Services

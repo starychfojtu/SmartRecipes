@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Extensions
 {
     public static class FuncExtensions
     {

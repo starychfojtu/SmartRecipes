@@ -1,17 +1,16 @@
-﻿using SmartRecipes.Mobile.WriteModels;
-using System;
-using SmartRecipes.Mobile.ViewModels;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Collections.Generic;
-using SmartRecipes.Mobile.Services;
-using SmartRecipes.Mobile.Models;
+using System.Threading.Tasks;
 using LanguageExt;
-using static LanguageExt.Prelude;
+using SmartRecipes.Mobile.Models;
+using SmartRecipes.Mobile.Services;
+using SmartRecipes.Mobile.WriteModels;
 using Xamarin.Forms;
+using static LanguageExt.Prelude;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.ViewModels
 {
     public enum EditRecipeMode
     {
@@ -56,7 +55,7 @@ namespace SmartRecipes.Mobile
 
         public async Task Submit()
         {
-            var getIngredients = fun<IRecipe, IEnumerable<IIngredientAmount>>(r => Ingredients.Select(kvp => IngredientAmount.Create(r, kvp.Key, kvp.Value)));
+            var getIngredients = fun((IRecipe r) => Ingredients.Select(kvp => IngredientAmount.Create(r, kvp.Key, kvp.Value)));
             var submitTask = Mode == EditRecipeMode.New
                 ? CreateRecipe(getIngredients)
                 : UpdateRecipe(getIngredients);

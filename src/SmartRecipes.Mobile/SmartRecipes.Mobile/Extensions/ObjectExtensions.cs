@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Xamarin.Forms;
-using SmartRecipes.Mobile.Controls;
 using System.Threading.Tasks;
+using SmartRecipes.Mobile.Controls;
+using Xamarin.Forms;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Extensions
 {
     public static class ObjectExtensions
     {

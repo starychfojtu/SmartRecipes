@@ -7,7 +7,7 @@ namespace SmartRecipes.Mobile.ViewModels
     {
         private Icon(string name)
         {
-            ImageName = name;
+            ImageName = $"{name}.png";
         }
         
         public string ImageName { get; }
@@ -21,8 +21,6 @@ namespace SmartRecipes.Mobile.ViewModels
     
     public sealed class UserAction<T>
     {
-        
-        
         public UserAction(Func<T, Task> action, Icon icon, int order)
         {
             Action = action;

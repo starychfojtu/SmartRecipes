@@ -1,7 +1,7 @@
-﻿using Xamarin.Forms;
-using SmartRecipes.Mobile.Controls;
+﻿using SmartRecipes.Mobile.Extensions;
+using Xamarin.Forms;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Controls
 {
     // TODO: Not used so far...
     public class ValidatableInput<T> : ContentView

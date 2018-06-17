@@ -7,6 +7,7 @@ using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Immutable;
+using SmartRecipes.Mobile.Extensions;
 
 namespace SmartRecipes.Mobile.ReadModels
 {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using LanguageExt;
 using SmartRecipes.Mobile.Services;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.ReadModels
 {
     public static class Repository
     {

@@ -2,6 +2,7 @@
 using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.Services;
 using System.Collections.Generic;
+using SmartRecipes.Mobile.Extensions;
 
 namespace SmartRecipes.Mobile.WriteModels
 {

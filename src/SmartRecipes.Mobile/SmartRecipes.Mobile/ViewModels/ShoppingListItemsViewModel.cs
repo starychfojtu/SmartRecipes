@@ -9,6 +9,7 @@ using SmartRecipes.Mobile.Services;
 using System.Collections.Immutable;
 using SmartRecipes.Mobile.Models;
 using LanguageExt;
+using SmartRecipes.Mobile.Extensions;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -56,7 +57,7 @@ namespace SmartRecipes.Mobile.ViewModels
             var newShoppingListItem = shoppingListItem.WithItemAmount(newAmount);
 
             var oldItem = shoppingListItems.First(i => i.Foodstuff.Id == shoppingListItem.Foodstuff.Id);
-            var newShoppingListItems = shoppingListItems.Replace(oldItem, newShoppingListItem);
+            var newShoppingListItems = CollectionExtensions.Replace(shoppingListItems, oldItem, newShoppingListItem);
 
             await ShoppingListHandler.Update(dataAccess, newShoppingListItem.ItemAmount.ToEnumerable());
             UpdateShoppingListItems(newShoppingListItems);

@@ -6,6 +6,7 @@ using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Services;
 using System;
+using SmartRecipes.Mobile.Extensions;
 
 namespace SmartRecipes.Mobile.ReadModels
 {

@@ -3,7 +3,7 @@ using FFImageLoading.Forms;
 using FFImageLoading.Transformations;
 using Xamarin.Forms;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Extensions
 {
     public static class Image
     {

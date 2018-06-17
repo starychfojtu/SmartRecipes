@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SmartRecipes.Mobile
+namespace SmartRecipes.Mobile.Extensions
 {
     public class ValidatableObject<T>
     {
