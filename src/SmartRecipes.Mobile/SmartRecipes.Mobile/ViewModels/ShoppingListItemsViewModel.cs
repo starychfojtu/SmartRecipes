@@ -23,8 +23,8 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public ShoppingListItemsViewModel(Enviroment enviroment)
         {
-            shoppingListItems = ImmutableList.Create<ShoppingListItem>();
             this.enviroment = enviroment;
+            shoppingListItems = ImmutableList.Create<ShoppingListItem>();
         }
 
         public IEnumerable<FoodstuffAmountCellViewModel> ShoppingListItems
@@ -35,7 +35,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public override async Task InitializeAsync()
         {
             requiredAmounts = await ShoppingListRepository.GetRequiredAmounts(CurrentAccount)(enviroment);
-            UpdateShoppingListItems(await ShoppingListRepository.GetItems(CurrentAccount)(enviroment));
+            UpdateShoppingListItems(await ShoppingListRepository.GetItems(CurrentAccount.Id)(enviroment));
         }
 
         public async Task Refresh()
@@ -56,7 +56,7 @@ namespace SmartRecipes.Mobile.ViewModels
             var newAmount = action(shoppingListItem);
             var newShoppingListItem = shoppingListItem.WithItemAmount(newAmount);
 
-            var oldItem = shoppingListItems.First(i => i.Foodstuff.Id == shoppingListItem.Foodstuff.Id);
+            var oldItem = shoppingListItems.First(i => i.Foodstuff.Equals(shoppingListItem.Foodstuff));
             var newShoppingListItems = CollectionExtensions.Replace(shoppingListItems, oldItem, newShoppingListItem);
 
             await ShoppingListHandler.Update(enviroment, newShoppingListItem.ItemAmount.ToEnumerable().ToImmutableList());

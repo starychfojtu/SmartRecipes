@@ -13,12 +13,12 @@ namespace SmartRecipes.Mobile.ReadModels
 {
     public static class ShoppingListRepository
     {
-        public static Monad.Reader<Enviroment, Task<IEnumerable<ShoppingListItem>>> GetItems(IAccount owner)
+        public static Monad.Reader<Enviroment, Task<IEnumerable<ShoppingListItem>>> GetItems(Guid ownerId)
         {
             return Repository.RetrievalAction(
                 client => client.GetShoppingList(),
                 GetShoppingListItems(),
-                response => response.Items.Select(i => ToShoppingListItem(i, owner)),
+                response => response.Items.Select(i => ToShoppingListItem(i, ownerId)),
                 items => items.SelectMany(i => new object[] { i.Foodstuff, i.ItemAmount })
             );
         }
@@ -79,7 +79,7 @@ namespace SmartRecipes.Mobile.ReadModels
                 .ToEnumerableAsync<RecipeInShoppingList, IRecipeInShoppingList>();
         }
         
-        private static ShoppingListItem ToShoppingListItem(ShoppingListResponse.Item i, IAccount owner)
+        private static ShoppingListItem ToShoppingListItem(ShoppingListResponse.Item i, Guid ownerId)
         {
             var foodstuff = Foodstuff.Create(
                 i.FoodstuffDto.Id,
@@ -88,7 +88,7 @@ namespace SmartRecipes.Mobile.ReadModels
                 i.FoodstuffDto.BaseAmount,
                 i.FoodstuffDto.AmountStep
             );
-            return new ShoppingListItem(foodstuff, ShoppingListItemAmount.Create(i.Id, owner.Id, foodstuff.Id, i.Amount));
+            return new ShoppingListItem(foodstuff, ShoppingListItemAmount.Create(i.Id, ownerId, foodstuff.Id, i.Amount));
         }
     }
 }

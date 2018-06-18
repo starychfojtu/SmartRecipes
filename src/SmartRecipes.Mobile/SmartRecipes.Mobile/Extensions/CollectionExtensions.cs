@@ -43,5 +43,11 @@ namespace SmartRecipes.Mobile.Extensions
             }
             return list;
         }
+        
+        public static void Deconstruct<A, B>(this KeyValuePair<A, B> kvp, out A key, out B value)
+        {
+            key = kvp.Key;
+            value = kvp.Value;
+        }
     }
 }

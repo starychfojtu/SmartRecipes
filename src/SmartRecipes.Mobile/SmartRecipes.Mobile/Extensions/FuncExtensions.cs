@@ -52,5 +52,10 @@ namespace SmartRecipes.Mobile.Extensions
         {
             return tryAsync.Match(r => mapper(r), e => Some(UserMessage.Error(e)));
         }
+        
+        public static Task<Unit> ToUnitTask<A>(this Task<A> task)
+        {
+            return task.Map(_ => Unit.Default);
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace SmartRecipes.Mobile.ReadModels
                 {
                     var model = responseMapper(r);
                     var newItems = envtabaseMapper(model);
-                    var updateTask = newItems.Fold(Task.FromResult(0), (t, i) => t.Bind(_ => env.Db.AddOrReplaceAsync(i)));
+                    var updateTask = newItems.Fold(Task.FromResult(Unit.Default), (t, i) => t.Bind(_ => env.Db.AddOrReplaceAsync(i)));
                     return updateTask.Map(_ => model);
                 },
                 () => databaseQuery(env)

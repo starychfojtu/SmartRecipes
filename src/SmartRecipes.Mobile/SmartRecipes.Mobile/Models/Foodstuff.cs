@@ -51,11 +51,6 @@ namespace SmartRecipes.Mobile.Models
             }
         }
 
-        public bool Equals(IFoodstuff foodstuff)
-        {
-            return Id == foodstuff.Id;
-        }
-
         public static IFoodstuff Create(Guid id, string name, Uri imageUrl, IAmount baseAmount, IAmount amountStep)
         {
             return new Foodstuff(id, name, imageUrl, baseAmount, amountStep);

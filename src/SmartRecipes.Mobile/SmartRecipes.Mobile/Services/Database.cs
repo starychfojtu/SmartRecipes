@@ -2,6 +2,8 @@
 using Xamarin.Forms;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using LanguageExt;
+using SmartRecipes.Mobile.Extensions;
 using SmartRecipes.Mobile.Models;
 
 namespace SmartRecipes.Mobile.Services
@@ -12,34 +14,34 @@ namespace SmartRecipes.Mobile.Services
 
         private SQLiteAsyncConnection connection;
 
-        public async Task<int> AddAsync<T>(IEnumerable<T> items)
+        public Task<Unit> AddAsync<T>(IEnumerable<T> items)
         {
-            return await Connection.InsertAllAsync(items);
+            return Connection.InsertAllAsync(items).ToUnitTask();
         }
         
-        public async Task<int> AddAsync<T>(T item)
+        public Task<Unit> AddAsync<T>(T item)
         {
-            return await Connection.InsertAsync(item);
+            return Connection.InsertAsync(item).ToUnitTask();
         }
 
-        public async Task<int> UpdateAsync<T>(IEnumerable<T> items)
+        public Task<Unit> UpdateAsync<T>(IEnumerable<T> items)
         {
-            return await Connection.UpdateAllAsync(items);
+            return Connection.UpdateAllAsync(items).ToUnitTask();
         }
         
-        public async Task<int> UpdateAsync<T>(T item)
+        public Task<Unit> UpdateAsync<T>(T item)
         {
-            return await Connection.UpdateAsync(item);
+            return Connection.UpdateAsync(item).ToUnitTask();
         }
 
-        public async Task<int> AddOrReplaceAsync<T>(T item)
+        public Task<Unit> AddOrReplaceAsync<T>(T item)
         {
-            return await Connection.InsertOrReplaceAsync(item);
+            return Connection.InsertOrReplaceAsync(item).ToUnitTask();
         }
 
-        public async Task<int> Delete<T>(T item)
+        public Task<Unit> Delete<T>(T item)
         {
-            return await Connection.DeleteAsync(item);
+            return Connection.DeleteAsync(item).ToUnitTask();
         }
 
         public async Task<IEnumerable<T>> Execute<T>(string sql, params object[] args)

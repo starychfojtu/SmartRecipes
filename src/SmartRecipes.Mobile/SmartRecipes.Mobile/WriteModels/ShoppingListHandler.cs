@@ -40,26 +40,48 @@ namespace SmartRecipes.Mobile.WriteModels
 
         public static TryAsync<Unit> Cook(Enviroment enviroment, ShoppingListRecipeItem recipeItem)
         {
-            return TryAsync<ShoppingListRecipeItem>(() =>
+            // TODO: refactor, consider using linq
+            return TryAsync(() =>
+            {
+                var ownerId = recipeItem.RecipeInShoppingList.ShoppingListOwnerId;
+                var requiredAmounts = ShoppingListRepository.GetRequiredAmounts(recipeItem);
+                var shoppingListItemsTask = ShoppingListRepository.GetItems(ownerId)(enviroment);
+                var itemDictionaryTask = shoppingListItemsTask.Map(items => items.ToImmutableDictionary(i => i.Foodstuff, i => i.ItemAmount));
+
+                var substractedItemsTask = itemDictionaryTask.Map(dict =>
                 {
-                    // TODO: Implement
-                    var requiredAmounts = ShoppingListRepository.GetRequiredAmounts(recipeItem);
-                    var shoppingListItems = ShoppingListRepository.GetItems(null)(enviroment);
-                    // substract them - if not possible, throw exception
-                    // save new ShoppingListItems
-                    throw new InvalidOperationException("Not enought ingredients in shopping list.");
-                })
-                .Bind(i => RemoveFromShoppingList(enviroment, i.RecipeInShoppingList));
+                    return requiredAmounts.Fold(Optional(dict), (d, kvp) => d.Bind(items =>
+                    {
+                        var (foodstuff, requiredAmount) = kvp;
+                        var item = items[foodstuff];
+
+                        if (Amount.IsLessThan(item.Amount, requiredAmount))
+                        {
+                            return None;
+                        }
+
+                        var newAmount = Amount.Substract(item.Amount, requiredAmount).IfNone(item.Amount);
+                        return Some(items.SetItem(foodstuff, item.WithAmount(newAmount)));
+                    }));
+                });
+                 
+                return substractedItemsTask.Bind(items =>
+                {
+                    var itemsToUpdate = items.IfNone(() => throw new InvalidOperationException("Not enought ingredients in shopping list."));
+                    return enviroment.Db.UpdateAsync(itemsToUpdate.Values);
+                });
+            })
+            .Bind(_ => RemoveFromShoppingList(enviroment, recipeItem.RecipeInShoppingList));
         }
 
         public static TryAsync<Unit> RemoveFromShoppingList(Enviroment enviroment, IRecipeInShoppingList recipe)
         {
-            return TryAsync(() => enviroment.Db.Delete(recipe).Map(t => Unit.Default));
+            return TryAsync(() => enviroment.Db.Delete(recipe));
         }
 
         public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(Enviroment enviroment, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
         {
-            var shoppingListItems = await ShoppingListRepository.GetItems(owner)(enviroment);
+            var shoppingListItems = await ShoppingListRepository.GetItems(owner.Id)(enviroment);
             var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
             var newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f);
             var newItemAmounts = newFoodstuffs.Values.Select(f => ShoppingListItemAmount.Create(owner, f, f.BaseAmount)).ToImmutableList();
@@ -99,14 +121,14 @@ namespace SmartRecipes.Mobile.WriteModels
 
         private static Task<Unit> AddPersonCount(Enviroment enviroment, IRecipeInShoppingList recipe, int personCount)
         {
-            return enviroment.Db.UpdateAsync(recipe.AddPersons(personCount)).Map(_ => Unit.Default);
+            return enviroment.Db.UpdateAsync(recipe.AddPersons(personCount));
         }
 
         private static Monad.Reader<Enviroment, Task<IEnumerable<IShoppingListItemAmount>>> GetRecipeComplementOfShoppingList(IRecipe recipe, IAccount owner)
         {
             return
                 from ingredients in RecipeRepository.GetIngredients(recipe)
-                from items in ShoppingListRepository.GetItems(owner)
+                from items in ShoppingListRepository.GetItems(owner.Id)
                 let foodstuffs = ingredients.Select(i => i.Foodstuff)
                 let addedFoodstuffs = items.Select(i => i.Foodstuff)
                 select foodstuffs.Except(addedFoodstuffs).Select(f => ShoppingListItemAmount.Create(owner, f, Amount.Zero(f.BaseAmount.Unit)));

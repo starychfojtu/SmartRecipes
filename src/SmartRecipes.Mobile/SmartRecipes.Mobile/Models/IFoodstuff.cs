@@ -2,7 +2,7 @@
 
 namespace SmartRecipes.Mobile.Models
 {
-    public interface IFoodstuff : IEquatable<IFoodstuff>
+    public interface IFoodstuff
     {
         Guid Id { get; }
 
