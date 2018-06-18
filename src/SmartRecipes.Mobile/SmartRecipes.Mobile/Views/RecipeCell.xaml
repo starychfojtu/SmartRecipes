@@ -9,7 +9,6 @@
         Margin="4, 4, 4, 4">
         <StackLayout>
             <StackLayout
-                BackgroundColor="{StaticResource secondaryColor}"
                 Orientation="Horizontal"
                 HeightRequest="64"
                 Padding="8, 0">
@@ -35,10 +34,29 @@
             </StackLayout>
             
             <StackLayout
-                x:Name="IngredientsStackLayout"
                 Padding="8, 4"
                 HeightRequest="40"
                 Orientation="Horizontal">
+                
+                <Label
+                    x:Name="PersonCount"
+                    Margin="8, 0, 0, 0"
+                    HorizontalOptions="Start"
+                    FontSize="Medium"
+                    VerticalOptions="Center"/>
+                
+                <Image
+                    Source="person.png"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Start"
+                    HeightRequest="32"
+                    WidthRequest="32"/>
+                
+                <StackLayout
+                    x:Name="IngredientsStackLayout"
+                    Orientation="Horizontal"
+                    HorizontalOptions="EndAndExpand">
+                </StackLayout>
             </StackLayout>
         </StackLayout>
     </controls:CardView>

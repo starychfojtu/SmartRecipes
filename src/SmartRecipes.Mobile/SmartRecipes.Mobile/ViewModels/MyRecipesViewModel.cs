@@ -14,39 +14,40 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class MyRecipesViewModel : ViewModel
     {
-        private readonly Enviroment _enviroment;
+        private readonly Enviroment enviroment;
 
         public MyRecipesViewModel(Enviroment enviroment)
         {
-            this._enviroment = enviroment;
+            this.enviroment = enviroment;
         }
 
         public IEnumerable<RecipeCellViewModel> Recipes { get; private set; }
-
-        public async Task AddRecipe()
+        
+        public override async Task InitializeAsync()
         {
-            await Navigation.CreateRecipe();
+            await UpdateRecipesAsync();
+        }
+
+        public Task AddRecipe()
+        {
+            return Navigation.CreateRecipe();
         }
 
         public async Task UpdateRecipesAsync()
         {
-            var recipes = await RecipeRepository.GetRecipes()(_enviroment);
-            Recipes = recipes.Select(recipe => new RecipeCellViewModel(
-                recipe,
+            var recipeDetails = await RecipeRepository.GetMyRecipeDetails()(enviroment);
+            Recipes = recipeDetails.Select(detail => new RecipeCellViewModel(
+                detail,
+                None,
                 new UserAction<IRecipe>(r => AddToShoppingList(r), Icon.Plus(), 1),
                 new UserAction<IRecipe>(r => EditRecipe(r), Icon.Minus(), 2)
             ));
             RaisePropertyChanged(nameof(Recipes));
         }
-
-        public override async Task InitializeAsync()
-        {
-            await UpdateRecipesAsync();
-        }
         
         public async Task<Option<UserMessage>> EditRecipe(IRecipe recipe)
         {
-            var detail = await RecipeRepository.GetDetail(recipe)(_enviroment);
+            var detail = await RecipeRepository.GetDetail(recipe)(enviroment);
             await Navigation.EditRecipe(detail);
             return None;
         }
@@ -54,7 +55,7 @@ namespace SmartRecipes.Mobile.ViewModels
         private Task<Option<UserMessage>> AddToShoppingList(IRecipe recipe)
         {
             return ShoppingListHandler
-                .AddToShoppingList(_enviroment, recipe, CurrentAccount, recipe.PersonCount)
+                .AddToShoppingList(enviroment, recipe, CurrentAccount, recipe.PersonCount)
                 .ToUserMessage(_ => UserMessage.Added());
         }
     }

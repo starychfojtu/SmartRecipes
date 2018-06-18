@@ -12,7 +12,7 @@ namespace SmartRecipes.Mobile.ReadModels
 {
     public static class RecipeRepository
     {
-        public static Monad.Reader<Enviroment, Task<IEnumerable<IRecipe>>> GetRecipes()
+        public static Monad.Reader<Enviroment, Task<IEnumerable<IRecipe>>> GetMyRecipes()
         {
             return Repository.RetrievalAction(
                 client => client.GetMyRecipes(),
@@ -21,10 +21,10 @@ namespace SmartRecipes.Mobile.ReadModels
                 recipes => recipes
             );
         }
-
-        public static Monad.Reader<Enviroment, Task<RecipeDetail>> GetDetail(Guid recipeId)
+        
+        public static Monad.Reader<Enviroment, Task<IEnumerable<RecipeDetail>>> GetMyRecipeDetails()
         {
-            return GetRecipe(recipeId).Bind(r => GetDetail(r));
+            return GetMyRecipes().Bind(rs => GetDetails(rs));
         }
 
         public static Monad.Reader<Enviroment, Task<RecipeDetail>> GetDetail(IRecipe recipe)

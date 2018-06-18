@@ -3,7 +3,6 @@ using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.Services;
 using System.Collections.Generic;
 using LanguageExt;
-using SmartRecipes.Mobile.Extensions;
 
 namespace SmartRecipes.Mobile.WriteModels
 {

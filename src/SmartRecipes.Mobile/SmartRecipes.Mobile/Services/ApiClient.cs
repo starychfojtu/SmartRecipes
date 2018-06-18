@@ -153,6 +153,9 @@ namespace SmartRecipes.Mobile.Services
 
         private Task SimulateRequest()
         {
+            // TODO: comment out to turn API on
+            throw new HttpRequestException();
+            
             // TODO: Implement returning None when request fails
             return client.GetAsync("https://google.com");
         }

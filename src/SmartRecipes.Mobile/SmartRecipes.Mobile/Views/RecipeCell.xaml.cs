@@ -25,21 +25,20 @@ namespace SmartRecipes.Mobile.Views
 
             if (ViewModel != null)
             {
+                var recipe = ViewModel.Detail.Recipe;
+                var thumbnails = ViewModel.Detail.Ingredients.Select(i => Controls.Image.Thumbnail(i.Foodstuff.ImageUrl));
                 var newActionButtons = ViewModel.Actions.OrderBy(a => a.Order).Select(a =>
                 {
                     return Controls.Controls.ActionButton(a.Icon).Tee(b => 
-                        b.Clicked += async (s, e) => await UserMessage.PopupAction(() => a.Action(ViewModel.Recipe))
+                        b.Clicked += async (s, e) => await UserMessage.PopupAction(() => a.Action(recipe))
                     );
                 });
                 
-                NameLabel.Text = ViewModel.Recipe.Name;
-                Image.Source = ImageSource.FromUri(ViewModel.Recipe.ImageUrl);
+                NameLabel.Text = recipe.Name;
+                Image.Source = ImageSource.FromUri(recipe.ImageUrl);
+                PersonCount.Text = ViewModel.PersonCount.ToString();
                 ReplaceActions(newActionButtons);
-                
-                //var thumbnails = ingredients.Select(i => Image.Thumbnail(i.Foodstuff.ImageUrl));
-                var t1 = Controls.Image.Thumbnail(ViewModel.Recipe.ImageUrl);
-                var t2 = Controls.Image.Thumbnail(ViewModel.Recipe.ImageUrl);
-                ReplaceIngredients(new [] {t1, t2});
+                ReplaceIngredients(thumbnails);
             }
         }
 

@@ -143,4 +143,7 @@
   <ItemGroup>
     <Folder Include="Services\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\person.png" />
+  </ItemGroup>
 </Project>

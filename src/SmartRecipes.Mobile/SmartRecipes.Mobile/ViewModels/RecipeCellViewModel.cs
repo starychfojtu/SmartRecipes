@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LanguageExt;
 using SmartRecipes.Mobile.Models;
-using SmartRecipes.Mobile.ReadModels.Dto;
-using System.Threading.Tasks;
 using SmartRecipes.Mobile.Infrastructure;
-using SmartRecipes.Mobile.Services;
+using SmartRecipes.Mobile.ReadModels.Dto;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
     public class RecipeCellViewModel
     {
-        public RecipeCellViewModel(
-            IRecipe recipe,
-            params UserAction<IRecipe>[] actions)
+        public RecipeCellViewModel(RecipeDetail detail, Option<int> personCount, params UserAction<IRecipe>[] actions)
         {
-            Recipe = recipe;
+            Detail = detail;
             Actions = actions;
+            PersonCount = personCount.IfNone(detail.Recipe.PersonCount);
         }
 
-        public IRecipe Recipe { get; }
+        public RecipeDetail Detail { get; }
         
         public IEnumerable<UserAction<IRecipe>> Actions { get; }
+
+        public int PersonCount { get; }
     }
 }

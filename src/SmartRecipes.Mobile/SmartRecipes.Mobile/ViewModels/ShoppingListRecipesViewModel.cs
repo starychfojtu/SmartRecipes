@@ -16,13 +16,13 @@ namespace SmartRecipes.Mobile.ViewModels
 {
     public class ShoppingListRecipesViewModel : ViewModel
     {
-        private readonly Enviroment _enviroment;
+        private readonly Enviroment enviroment;
 
         private IImmutableList<ShoppingListRecipeItem> recipeItems;
 
         public ShoppingListRecipesViewModel(Enviroment enviroment)
         {
-            this._enviroment = enviroment;
+            this.enviroment = enviroment;
             recipeItems = ImmutableList.Create<ShoppingListRecipeItem>();
         }
 
@@ -33,13 +33,13 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            UpdateRecipeItems(await ShoppingListRepository.GetRecipeItems(CurrentAccount)(_enviroment));
+            UpdateRecipeItems(await ShoppingListRepository.GetRecipeItems(CurrentAccount)(enviroment));
         }
         
         private Task<Option<UserMessage>> RecipeDeleteAction(IRecipe recipe, Func<Enviroment, ShoppingListRecipeItem, TryAsync<Unit>> action)
         {
             var item = recipeItems.First(r => r.Detail.Recipe.Equals(recipe));
-            return action(_enviroment, item).ToUserMessage(_ =>
+            return action(enviroment, item).ToUserMessage(_ =>
             {
                 UpdateRecipeItems(recipeItems.Remove(item));
                 return UserMessage.Deleted();
@@ -55,7 +55,8 @@ namespace SmartRecipes.Mobile.ViewModels
         private RecipeCellViewModel ToViewModel(ShoppingListRecipeItem item)
         {
             return new RecipeCellViewModel(
-                item.Detail.Recipe,
+                item.Detail,
+                item.RecipeInShoppingList.PersonCount,
                 new UserAction<IRecipe>(r => RecipeDeleteAction(r, (da, i) => ShoppingListHandler.Cook(da, i)), Icon.Done(), 1),
                 new UserAction<IRecipe>(r => RecipeDeleteAction(r, (da, i) => ShoppingListHandler.RemoveFromShoppingList(da, i.RecipeInShoppingList)), Icon.Delete(), 2)
             );
