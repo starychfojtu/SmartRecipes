@@ -49,8 +49,8 @@
                     Source="person.png"
                     VerticalOptions="Center"
                     HorizontalOptions="Start"
-                    HeightRequest="32"
-                    WidthRequest="32"/>
+                    HeightRequest="16"
+                    WidthRequest="16"/>
                 
                 <StackLayout
                     x:Name="IngredientsStackLayout"

@@ -22,7 +22,7 @@ namespace SmartRecipes.Mobile.ViewModels
         }
 
         public IEnumerable<RecipeCellViewModel> Recipes { get; private set; }
-        
+
         public override async Task InitializeAsync()
         {
             await UpdateRecipesAsync();
@@ -39,12 +39,12 @@ namespace SmartRecipes.Mobile.ViewModels
             Recipes = recipeDetails.Select(detail => new RecipeCellViewModel(
                 detail,
                 None,
-                new UserAction<IRecipe>(r => AddToShoppingList(r), Icon.Plus(), 1),
-                new UserAction<IRecipe>(r => EditRecipe(r), Icon.Minus(), 2)
+                new UserAction<IRecipe>(r => AddToShoppingList(r), Icon.CartAdd(), 1),
+                new UserAction<IRecipe>(r => EditRecipe(r), Icon.Edit(), 2)
             ));
             RaisePropertyChanged(nameof(Recipes));
         }
-        
+
         public async Task<Option<UserMessage>> EditRecipe(IRecipe recipe)
         {
             var detail = await RecipeRepository.GetDetail(recipe)(enviroment);

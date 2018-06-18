@@ -99,6 +99,18 @@
     <AndroidResource Include="Resources\drawable-hdpi\remove.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\remove.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\remove.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\remove_cart.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\remove_cart.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\remove_cart.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\done.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\done.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\done.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\edit.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\edit.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\edit.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\add_cart.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\add_cart.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\add_cart.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
@@ -119,12 +131,6 @@
   <ItemGroup>
     <Folder Include="ControlRenderers\" />
     <Folder Include="Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\drawable\delete.xml" />
-    <Content Include="Resources\drawable\done.xml" />
-    <Content Include="Resources\drawable\edit.xml" />
-    <Content Include="Resources\drawable\person.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
