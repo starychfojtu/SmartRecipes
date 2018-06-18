@@ -1,9 +1,10 @@
 ﻿using System;
 using FFImageLoading.Forms;
 using FFImageLoading.Transformations;
+using SmartRecipes.Mobile.Extensions;
 using Xamarin.Forms;
 
-namespace SmartRecipes.Mobile.Extensions
+namespace SmartRecipes.Mobile.Controls
 {
     public static class Image
     {

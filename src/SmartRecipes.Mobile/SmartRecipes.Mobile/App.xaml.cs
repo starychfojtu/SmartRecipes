@@ -16,15 +16,5 @@ namespace SmartRecipes.Mobile
             base.OnStart();
             Current.MainPage = await PageFactory.GetPageAsync<SignInPage>();
         }
-
-        protected override void OnSleep()
-        {
-            base.OnSleep();
-        }
-
-        protected override void OnResume()
-        {
-            base.OnResume();
-        }
     }
 }

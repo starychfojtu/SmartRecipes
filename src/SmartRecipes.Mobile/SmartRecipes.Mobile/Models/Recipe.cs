@@ -6,7 +6,7 @@ namespace SmartRecipes.Mobile.Models
 {
     public class Recipe : Entity, IRecipe
     {
-        private const string DefaultImageUrl = "https://thumbs.dreamstime.com/z/empty-dish-14513513.jpg";
+        private const string DefaultImageUrl = "https://cdn1.iconfinder.com/data/icons/food-solid-icons-volume-4-1/128/171-512.png";
 
         private Recipe(Guid id, Guid ownerId, string name, Uri imageUrl, int personCount, Option<string> text) : base(id)
         {

@@ -10,7 +10,8 @@
                 x:Name="RecipeListView"
                 SeparatorColor="{StaticResource dividerColor}"
                 RowHeight="128"
-                CachingStrategy="RecycleElement"/>
+                CachingStrategy="RecycleElement"
+                SeparatorVisibility="None"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

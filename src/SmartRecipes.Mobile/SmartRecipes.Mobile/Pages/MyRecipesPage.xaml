@@ -12,7 +12,8 @@
                 x:Name="RecipeListView"
                 SeparatorColor="{StaticResource dividerColor}"
                 RowHeight="128"
-                CachingStrategy="RecycleElement"/>
+                CachingStrategy="RecycleElement"
+                SeparatorVisibility="None"/>
             <suave:FloatingActionButton 
                 x:Name="AddRecipeButton"
                 HorizontalOptions="End" 

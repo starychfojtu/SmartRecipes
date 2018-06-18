@@ -1,4 +1,5 @@
 ﻿using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
 
 namespace SmartRecipes.Mobile.Controls
 {
@@ -7,10 +8,11 @@ namespace SmartRecipes.Mobile.Controls
         public CardView()
         {
             Padding = 0;
+
             if (Device.RuntimePlatform == Device.iOS)
             {
                 HasShadow = false;
-                OutlineColor = Color.Transparent;
+                BorderColor = Color.Transparent;
                 BackgroundColor = Color.Transparent;
             }
         }
