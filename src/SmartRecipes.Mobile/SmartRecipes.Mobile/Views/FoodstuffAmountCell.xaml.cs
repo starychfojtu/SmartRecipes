@@ -12,11 +12,11 @@ namespace SmartRecipes.Mobile.Views
 
             Image.Transformations.Add(new CircleTransformation());
 
-            MinusButton.Clicked += async (s, e) => await ViewModel.OnMinus?.Invoke();
+            MinusButton.Clicked += async (s, e) => await ViewModel.OnMinus.Invoke();
             PlusButton.Clicked += async (s, e) => await ViewModel.OnPlus.Invoke();
         }
 
-        private FoodstuffAmountCellViewModel ViewModel => (BindingContext as FoodstuffAmountCellViewModel);
+        private FoodstuffAmountCellViewModel ViewModel => BindingContext as FoodstuffAmountCellViewModel;
 
         protected override void OnBindingContextChanged()
         {

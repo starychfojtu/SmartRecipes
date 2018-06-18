@@ -100,7 +100,7 @@ namespace SmartRecipes.Mobile.WriteModels
                 var response = await enviroment.Api.Post(request);
             }
 
-            await enviroment.Db.UpdateAsync(itemAmounts);
+            await enviroment.Db.UpdateAsync((IEnumerable<IShoppingListItemAmount>) itemAmounts);
         }
         
         private static IShoppingListItemAmount ChangeAmount(Func<IAmount, IAmount, Option<IAmount>> action, ShoppingListItem item)
