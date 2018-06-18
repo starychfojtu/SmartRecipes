@@ -6,7 +6,7 @@
     xmlns:controls="clr-namespace:SmartRecipes.Mobile.Controls;assembly=SmartRecipes.Mobile"
     x:Class="SmartRecipes.Mobile.Views.RecipeCell">
     <controls:CardView 
-        Margin="4, 4, 4, 4">
+        Margin="16, 8">
         <StackLayout>
             <StackLayout
                 Orientation="Horizontal"

@@ -13,7 +13,7 @@ namespace SmartRecipes.Mobile.Controls
                 WidthRequest = 32,
                 Image = icon.ImageName,
                 VerticalOptions = LayoutOptions.Center,
-                BackgroundColor = (Color) Application.Current.Resources["accentColor"],
+                BackgroundColor = Color.White,
                 CornerRadius = 16
             };
         }

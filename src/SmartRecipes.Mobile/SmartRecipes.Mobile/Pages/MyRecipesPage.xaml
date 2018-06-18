@@ -6,15 +6,14 @@
     xmlns:suave="clr-namespace:SuaveControls.Views;assembly=SuaveControls.FloatingActionButton"
     Title="My recipes">
     <ContentPage.Content>
-        <StackLayout
-            Padding="16, 16, 16, 16">
+        <StackLayout>
             <ListView
                 x:Name="RecipeListView"
                 SeparatorColor="{StaticResource dividerColor}"
                 RowHeight="128"
                 CachingStrategy="RecycleElement"
                 SeparatorVisibility="None"/>
-            <suave:FloatingActionButton 
+            <suave:FloatingActionButton
                 x:Name="AddRecipeButton"
                 HorizontalOptions="End" 
                 VerticalOptions="End"
