@@ -9,12 +9,12 @@ namespace SmartRecipes.Mobile.Controls
         {
             return new Button
             {
-                HeightRequest = 64,
-                WidthRequest = 64,
+                HeightRequest = 32,
+                WidthRequest = 32,
                 Image = icon.ImageName,
                 VerticalOptions = LayoutOptions.Center,
-                BackgroundColor = Color.FromHex((string) Application.Current.Resources["primaryColor"]),
-                CornerRadius = 32
+                BackgroundColor = (Color) Application.Current.Resources["accentColor"],
+                CornerRadius = 16
             };
         }
     }
