@@ -111,6 +111,9 @@
     <AndroidResource Include="Resources\drawable-hdpi\add_cart.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\add_cart.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\add_cart.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\person.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\person.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\person.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
