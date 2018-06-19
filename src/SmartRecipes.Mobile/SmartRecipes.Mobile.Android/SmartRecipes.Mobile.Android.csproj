@@ -114,6 +114,9 @@
     <AndroidResource Include="Resources\drawable-hdpi\person.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\person.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\person.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\delete.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\delete.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\delete.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />

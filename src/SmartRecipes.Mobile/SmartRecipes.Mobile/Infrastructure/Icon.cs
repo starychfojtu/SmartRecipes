@@ -16,5 +16,6 @@
         public static Icon CartAdd() => new Icon("add_cart");
         public static Icon Edit() => new Icon("edit");
         public static Icon Done() => new Icon("done");
+        public static Icon Delete() => new Icon("delete");
     }
 }

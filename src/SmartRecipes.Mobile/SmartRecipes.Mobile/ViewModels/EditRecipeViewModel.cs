@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
+using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.WriteModels;
@@ -88,20 +89,25 @@ namespace SmartRecipes.Mobile.ViewModels
             await MyRecipesHandler.Update(enviroment, recipe, getIngredients(recipe));
         }
 
-        private Task ChangeAmount(IFoodstuff foodstuff, Func<IAmount, IAmount, Option<IAmount>> action)
+        private Task<Unit> ChangeAmount(IFoodstuff foodstuff, Func<IAmount, IAmount, Option<IAmount>> action)
         {
             var newAmount = action(Ingredients[foodstuff], foodstuff.AmountStep).IfNone(foodstuff.BaseAmount);
             var newIngredients = Ingredients.SetItem(foodstuff, newAmount);
 
-            UpdateIngredients(newIngredients);
-            return Task.CompletedTask;
+            return Task.FromResult(UpdateIngredients(newIngredients));
+        }
+        
+        private Task<Option<UserMessage>> DeleteIngredient(IFoodstuff foodstuff)
+        {
+            return Task.FromResult(UpdateIngredients(Ingredients.Remove(foodstuff))).Map(_ => Option<UserMessage>.None);
         }
 
-        private void UpdateIngredients(IImmutableDictionary<IFoodstuff, IAmount> newIngredients)
+        private Unit UpdateIngredients(IImmutableDictionary<IFoodstuff, IAmount> newIngredients)
         {
             Ingredients = newIngredients;
             RaisePropertyChanged(nameof(Ingredients));
             RaisePropertyChanged(nameof(IngredientViewModels));
+            return Unit.Default;
         }
 
         private FoodstuffAmountCellViewModel ToViewModel(IFoodstuff foodstuff, IAmount amount)
@@ -111,7 +117,8 @@ namespace SmartRecipes.Mobile.ViewModels
                 amount,
                 None,
                 () => ChangeAmount(foodstuff, (a1, a2) => Amount.Add(a1, a2)),
-                () => ChangeAmount(foodstuff, (a1, a2) => Amount.Substract(a1, a2))
+                () => ChangeAmount(foodstuff, (a1, a2) => Amount.Substract(a1, a2)),
+                new UserAction<Unit>(_ => DeleteIngredient(foodstuff), Icon.Delete(), 1)
             );
         }
 

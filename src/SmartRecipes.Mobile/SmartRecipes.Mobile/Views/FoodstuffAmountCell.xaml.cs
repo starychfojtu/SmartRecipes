@@ -1,6 +1,8 @@
-﻿using Xamarin.Forms;
+﻿using System.Linq;
+using Xamarin.Forms;
 using SmartRecipes.Mobile.ViewModels;
 using FFImageLoading.Transformations;
+using SmartRecipes.Mobile.Infrastructure;
 
 namespace SmartRecipes.Mobile.Views
 {
@@ -14,6 +16,9 @@ namespace SmartRecipes.Mobile.Views
 
             MinusButton.Clicked += async (s, e) => await ViewModel.OnMinus.Invoke();
             PlusButton.Clicked += async (s, e) => await ViewModel.OnPlus.Invoke();
+
+            var actions = ViewModel.MenuActions.Select(a => Controls.Controls.MenuItem(a, a.Icon.Equals(Icon.Delete())));
+            actions.Iter(a => ContextActions.Add(a));
         }
 
         private FoodstuffAmountCellViewModel ViewModel => BindingContext as FoodstuffAmountCellViewModel;
