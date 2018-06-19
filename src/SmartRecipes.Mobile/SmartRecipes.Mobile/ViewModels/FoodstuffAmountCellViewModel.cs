@@ -13,7 +13,7 @@ namespace SmartRecipes.Mobile.ViewModels
             IAmount amount,
             Option<IAmount> requiredAmount,
             Func<Task> onPlus,
-            Func<Task> onMinus = null,
+            Func<Task> onMinus,
             params UserAction<Unit>[] menuActions)
         {
             Foodstuff = foodstuff;

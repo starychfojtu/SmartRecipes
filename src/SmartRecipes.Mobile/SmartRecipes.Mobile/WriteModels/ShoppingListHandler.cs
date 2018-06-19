@@ -78,6 +78,18 @@ namespace SmartRecipes.Mobile.WriteModels
         {
             return TryAsync(() => enviroment.Db.Delete(recipe));
         }
+        
+        public static TryAsync<Unit> RemoveFromShoppingList(Enviroment enviroment, ShoppingListItem item, IAccount owner)
+        {
+            return TryAsync(() =>
+            {
+                var requiredAmounts = ShoppingListRepository.GetRequiredAmounts(owner)(enviroment);
+                return requiredAmounts.Bind(amounts => amounts.ContainsKey(item.Foodstuff)
+                    ? throw new InvalidOperationException("Cannot remove ingredient of recipe in shopping list. Remvoe the recipe first.")
+                    : enviroment.Db.Delete(item.ItemAmount)
+                );
+            });
+        }
 
         public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(Enviroment enviroment, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
         {

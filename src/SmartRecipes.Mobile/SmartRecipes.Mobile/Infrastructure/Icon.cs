@@ -1,6 +1,6 @@
 ﻿namespace SmartRecipes.Mobile.Infrastructure
 {
-    public sealed class Icon
+    public struct Icon
     {
         private Icon(string name)
         {

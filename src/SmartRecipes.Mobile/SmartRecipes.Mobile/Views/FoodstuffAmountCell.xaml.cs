@@ -16,9 +16,6 @@ namespace SmartRecipes.Mobile.Views
 
             MinusButton.Clicked += async (s, e) => await ViewModel.OnMinus.Invoke();
             PlusButton.Clicked += async (s, e) => await ViewModel.OnPlus.Invoke();
-
-            var actions = ViewModel.MenuActions.Select(a => Controls.Controls.MenuItem(a, a.Icon.Equals(Icon.Delete())));
-            actions.Iter(a => ContextActions.Add(a));
         }
 
         private FoodstuffAmountCellViewModel ViewModel => BindingContext as FoodstuffAmountCellViewModel;
@@ -38,6 +35,10 @@ namespace SmartRecipes.Mobile.Views
                 AmountLabel.Text = amountText;
                 MinusButton.IsVisible = ViewModel.OnMinus != null;
                 Image.Source = ViewModel.Foodstuff.ImageUrl;
+                
+                var actions = ViewModel.MenuActions.Select(a => Controls.Controls.MenuItem(a));
+                ContextActions.Clear();
+                actions.Iter(a => ContextActions.Add(a));
             }
         }
     }

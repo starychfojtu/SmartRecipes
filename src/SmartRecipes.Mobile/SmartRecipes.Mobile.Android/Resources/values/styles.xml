@@ -16,9 +16,9 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="android:datePickerDialogTheme">@style/AppCompatDialogStyle</item>
         <item name="android:textAllCaps">false</item>
-
         <item name="android:colorActivatedHighlight">@android:color/transparent</item>
-        <item name="actionModeBackground">#FFFFFF</item>
+        <item name="actionModeBackground">@android:color/white</item>
+        <item name="android:actionModeCloseDrawable">@drawable/done</item>
     </style>
     <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">#FF4081</item>

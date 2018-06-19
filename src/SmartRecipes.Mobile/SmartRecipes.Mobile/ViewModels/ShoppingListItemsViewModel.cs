@@ -10,6 +10,8 @@ using System.Collections.Immutable;
 using SmartRecipes.Mobile.Models;
 using LanguageExt;
 using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Infrastructure;
+using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -62,21 +64,32 @@ namespace SmartRecipes.Mobile.ViewModels
             await ShoppingListHandler.Update(enviroment, newShoppingListItem.ItemAmount.ToEnumerable().ToImmutableList());
             UpdateShoppingListItems(newShoppingListItems);
         }
+        
+        private Task<Option<UserMessage>> DeleteItem(ShoppingListItem item)
+        {
+            return ShoppingListHandler.RemoveFromShoppingList(enviroment, item, CurrentAccount).ToUserMessage(_ =>
+            {
+                UpdateShoppingListItems(shoppingListItems.Remove(item));
+                return None;
+            });
+        }
 
-        private void UpdateShoppingListItems(IEnumerable<ShoppingListItem> newShoppingListItems)
+        private Unit UpdateShoppingListItems(IEnumerable<ShoppingListItem> newShoppingListItems)
         {
             shoppingListItems = newShoppingListItems.OrderBy(i => i.Foodstuff.Name).ToImmutableList();
             RaisePropertyChanged(nameof(ShoppingListItems));
+            return Unit.Default;
         }
 
-        private FoodstuffAmountCellViewModel ToViewModel(ShoppingListItem shoppingListItem)
+        private FoodstuffAmountCellViewModel ToViewModel(ShoppingListItem item)
         {
             return new FoodstuffAmountCellViewModel(
-                shoppingListItem.Foodstuff,
-                shoppingListItem.Amount,
-                requiredAmounts.TryGetValue(shoppingListItem.Foodstuff),
-                () => ShoppingListItemAction(shoppingListItem, i => ShoppingListHandler.Increase(i)),
-                () => ShoppingListItemAction(shoppingListItem, i => ShoppingListHandler.Decrease(i))
+                item.Foodstuff,
+                item.Amount,
+                requiredAmounts.TryGetValue(item.Foodstuff),
+                () => ShoppingListItemAction(item, i => ShoppingListHandler.Increase(i)),
+                () => ShoppingListItemAction(item, i => ShoppingListHandler.Decrease(i)),
+                new UserAction<Unit>(_ => DeleteItem(item), Icon.Delete(), 1)
             );
         }
     }
