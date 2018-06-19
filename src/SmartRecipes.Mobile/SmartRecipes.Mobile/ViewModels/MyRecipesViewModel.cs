@@ -56,7 +56,7 @@ namespace SmartRecipes.Mobile.ViewModels
         public Task<Option<UserMessage>> DeleteRecipe(IRecipe recipe)
         {
             return MyRecipesHandler.Delete(enviroment, recipe)
-                .Bind(_ => TryAsync(() => InitializeAsync().ContinueWith(_ => Unit.Default)))
+                .Bind(_ => TryAsync(() => InitializeAsync().ContinueWith(r => Unit.Default)))
                 .MapToUserMessage(_ => UserMessage.Deleted());
         }
 
