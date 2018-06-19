@@ -48,7 +48,7 @@ namespace SmartRecipes.Mobile.Extensions
             return env => reader(env).Map(r => selector(r));
         }
 
-        public static Task<Option<UserMessage>> ToUserMessage<A>(this TryAsync<A> tryAsync, Func<A, Option<UserMessage>> mapper)
+        public static Task<Option<UserMessage>> MapToUserMessage<A>(this TryAsync<A> tryAsync, Func<A, Option<UserMessage>> mapper)
         {
             return tryAsync.Match(r => mapper(r), e => Some(UserMessage.Error(e)));
         }

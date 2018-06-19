@@ -67,7 +67,7 @@ namespace SmartRecipes.Mobile.ViewModels
         
         private Task<Option<UserMessage>> DeleteItem(ShoppingListItem item)
         {
-            return ShoppingListHandler.RemoveFromShoppingList(enviroment, item, CurrentAccount).ToUserMessage(_ =>
+            return ShoppingListHandler.RemoveFromShoppingList(enviroment, item, CurrentAccount).MapToUserMessage(_ =>
             {
                 UpdateShoppingListItems(shoppingListItems.Remove(item));
                 return None;

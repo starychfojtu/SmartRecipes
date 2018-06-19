@@ -3,6 +3,8 @@ using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.Services;
 using System.Collections.Generic;
 using LanguageExt;
+using SmartRecipes.Mobile.Extensions;
+using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.WriteModels
 {
@@ -24,6 +26,25 @@ namespace SmartRecipes.Mobile.WriteModels
                 .Bind(_ => DeleteIngredients(enviroment.Db, recipe))
                 .Bind(_ => enviroment.Db.AddAsync(ingredients))
                 .Map(_ => Unit.Default);
+        }
+        
+        public static TryAsync<Unit> Delete(Enviroment enviroment, IRecipe recipe)
+        {
+            return TryAsync(() =>
+            {
+                var recipeInShoppingList = enviroment.Db.GetTableMapping<RecipeInShoppingList>();
+                var recipeInShoppingListRecipeId = recipeInShoppingList.FindColumnWithPropertyName(nameof(RecipeInShoppingList.RecipeId));
+                var deleteRecipesInShoppingLists = $"DELETE FROM {recipeInShoppingList.TableName} WHERE {recipeInShoppingListRecipeId.Name} = ?";
+                
+                var ingredientAmounts = enviroment.Db.GetTableMapping<IngredientAmount>();
+                var ingredientAmountRecipeId = recipeInShoppingList.FindColumnWithPropertyName(nameof(IngredientAmount.RecipeId));
+                var deleteIngredientAMounts = $"DELETE FROM {ingredientAmounts.TableName} WHERE {ingredientAmountRecipeId.Name} = ?";
+                
+                return enviroment.Db.Execute<int>(deleteRecipesInShoppingLists, recipe.Id)
+                    .Bind(_ => enviroment.Db.Execute<int>(deleteIngredientAMounts, recipe.Id))
+                    .Bind(_ => enviroment.Db.Delete(recipe))
+                    .ToUnitTask();
+            });
         }
 
         private static Task<Unit> DeleteIngredients(Database database, IRecipe recipe)

@@ -40,7 +40,8 @@ namespace SmartRecipes.Mobile.ViewModels
                 detail,
                 None,
                 new UserAction<IRecipe>(r => AddToShoppingList(r), Icon.CartAdd(), 1),
-                new UserAction<IRecipe>(r => EditRecipe(r), Icon.Edit(), 2)
+                new UserAction<IRecipe>(r => EditRecipe(r), Icon.Edit(), 2),
+                new UserAction<IRecipe>(r => DeleteRecipe(r), Icon.Delete(), 3)
             ));
             RaisePropertyChanged(nameof(Recipes));
         }
@@ -51,12 +52,19 @@ namespace SmartRecipes.Mobile.ViewModels
             await Navigation.EditRecipe(detail);
             return None;
         }
+        
+        public Task<Option<UserMessage>> DeleteRecipe(IRecipe recipe)
+        {
+            return MyRecipesHandler.Delete(enviroment, recipe)
+                .Bind(_ => TryAsync(() => InitializeAsync().ContinueWith(_ => Unit.Default)))
+                .MapToUserMessage(_ => UserMessage.Deleted());
+        }
 
         private Task<Option<UserMessage>> AddToShoppingList(IRecipe recipe)
         {
             return ShoppingListHandler
                 .AddToShoppingList(enviroment, recipe, CurrentAccount, recipe.PersonCount)
-                .ToUserMessage(_ => UserMessage.Added());
+                .MapToUserMessage(_ => UserMessage.Added());
         }
     }
 }
