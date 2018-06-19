@@ -9,7 +9,7 @@ namespace SmartRecipes.Mobile.Models
         public Amount(int count, AmountUnit unit)
         {
             Unit = unit;
-            Count = count;
+            Count = count < 0 ? 0 : count;
         }
 
         public int Count { get; }
