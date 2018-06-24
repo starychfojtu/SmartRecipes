@@ -52,7 +52,7 @@ namespace SmartRecipes.Mobile.ViewModels
             await Navigation.EditRecipe(detail);
             return None;
         }
-        
+
         public Task<Option<UserMessage>> DeleteRecipe(IRecipe recipe)
         {
             return MyRecipesHandler.Delete(enviroment, recipe)

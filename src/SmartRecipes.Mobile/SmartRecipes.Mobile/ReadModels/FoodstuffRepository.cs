@@ -33,7 +33,7 @@ namespace SmartRecipes.Mobile.ReadModels
                 var foodstuffs = env.Db.GetTableMapping<Foodstuff>();
                 var foodstuffName = foodstuffs.FindColumnWithPropertyName(nameof(Foodstuff.Name)).Name; // TODO: add helper that takes lambenv
                 var sql = $@"SELECT * FROM {foodstuffs.TableName} WHERE LOWER({foodstuffName}) LIKE ?";
-                return env.Db.Execute<Foodstuff>(sql, $"%{searchQuery}%").Map(fs => fs.Select(f => f as IFoodstuff));
+                return env.Db.Query<Foodstuff>(sql, $"%{searchQuery}%").Map(fs => fs.Select(f => f as IFoodstuff));
             };
         }
 

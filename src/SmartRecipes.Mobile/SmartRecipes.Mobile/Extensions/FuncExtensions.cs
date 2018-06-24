@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using LanguageExt;
 using SmartRecipes.Mobile.Infrastructure;
@@ -22,13 +23,11 @@ namespace SmartRecipes.Mobile.Extensions
             return propertyPathName;
         }
 
-        // TODO: Generalize this or find this function in API !!
         public static Monad.Reader<E, Task<B>> Bind<E, A, B>(this Monad.Reader<E, Task<A>> reader, Func<A, Monad.Reader<E, Task<B>>> binder)
         {
-            return env => reader(env).Bind(a => binder(a)(env));
+            return reader.SelectMany(a => binder(a), (r1, r2) => r2);
         }
 
-        // TODO: Generalize this or find this function in API !!
         public static Monad.Reader<E, Task<C>> SelectMany<E, A, B, C>(
             this Monad.Reader<E, Task<A>> reader,
             Func<A, Monad.Reader<E, Task<B>>> binder,
@@ -42,7 +41,6 @@ namespace SmartRecipes.Mobile.Extensions
             };
         }
         
-        // TODO: Generalize this or find this function in API !!
         public static Monad.Reader<E, Task<B>> Select<E, A, B>(this Monad.Reader<E, Task<A>> reader, Func<A, B> selector)
         {
             return env => reader(env).Map(r => selector(r));

@@ -44,10 +44,15 @@ namespace SmartRecipes.Mobile.Services
             return Connection.DeleteAsync(item).ToUnitTask();
         }
 
-        public async Task<IEnumerable<T>> Execute<T>(string sql, params object[] args)
+        public Task<IEnumerable<T>> Query<T>(string sql, params object[] args)
             where T : new()
         {
-            return await connection.QueryAsync<T>(sql, args);
+            return connection.QueryAsync<T>(sql, args).Map(t => (IEnumerable<T>)t);
+        }
+        
+        public Task<Unit> Execute(string sql, params object[] args)
+        {
+            return connection.QueryAsync<int>(sql, args).ToUnitTask();
         }
 
         public TableMapping GetTableMapping<T>()
