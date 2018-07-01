@@ -10,6 +10,7 @@ using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.WriteModels;
 using Xamarin.Forms;
 using static LanguageExt.Prelude;
+using Validation = SmartRecipes.Mobile.Services.Validation;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -26,7 +27,10 @@ namespace SmartRecipes.Mobile.ViewModels
         public EditRecipeViewModel(Enviroment enviroment)
         {
             this.enviroment = enviroment;
-            Recipe = new FormDto();
+            Recipe = new FormDto(
+                new ValidatableObject<string>("", n => Validation.NotEmpty(n), _ => RaisePropertyChanged(nameof(Recipe))),
+                new ValidatableObject<int>(4, c => c > 0, _ => RaisePropertyChanged(nameof(Recipe)))
+            );
             Ingredients = ImmutableDictionary.Create<IFoodstuff, IAmount>();
             Mode = EditRecipeMode.New;
         }
@@ -51,8 +55,13 @@ namespace SmartRecipes.Mobile.ViewModels
             UpdateIngredients(newIngredients);
         }
 
-        public async Task Submit()
+        public async Task<Option<UserMessage>> Submit()
         {
+            if (!Recipe.IsValid)
+            {
+                return UserMessage.Error("Cannot submit, some of the fields are invalid.");
+            }
+
             var getIngredients = fun((IRecipe r) => Ingredients.Select(kvp => IngredientAmount.Create(r, kvp.Key, kvp.Value)));
             var submitTask = Mode == EditRecipeMode.New
                 ? CreateRecipe(getIngredients)
@@ -60,15 +69,16 @@ namespace SmartRecipes.Mobile.ViewModels
 
             await submitTask;
             await Application.Current.MainPage.Navigation.PopAsync();
+            return None;
         }
 
         public async Task CreateRecipe(Func<IRecipe, IEnumerable<IIngredientAmount>> getIngredients)
         {
             var recipe = Models.Recipe.Create(
                 CurrentAccount,
-                Recipe.Name,
+                Recipe.Name.Data,
                 Optional(Recipe.ImageUrl).Map(url => new Uri(url)),
-                Recipe.PersonCount,
+                Recipe.PersonCount.Data,
                 Recipe.Text
             );
 
@@ -80,9 +90,9 @@ namespace SmartRecipes.Mobile.ViewModels
             var recipe = Models.Recipe.Create(
                 Recipe.Id.Value,
                 CurrentAccount.Id,
-                Recipe.Name,
+                Recipe.Name.Data,
                 Optional(Recipe.ImageUrl).Map(url => new Uri(url)),
-                Recipe.PersonCount,
+                Recipe.PersonCount.Data,
                 Recipe.Text
             );
 
@@ -96,7 +106,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
             return Task.FromResult(UpdateIngredients(newIngredients));
         }
-        
+
         private Task<Option<UserMessage>> DeleteIngredient(IFoodstuff foodstuff)
         {
             return Task.FromResult(UpdateIngredients(Ingredients.Remove(foodstuff))).Map(_ => Option<UserMessage>.None);
@@ -124,15 +134,26 @@ namespace SmartRecipes.Mobile.ViewModels
 
         public class FormDto
         {
+            public FormDto(ValidatableObject<string> name, ValidatableObject<int> personCount)
+            {
+                Name = name;
+                PersonCount = personCount;
+            }
+
             public Guid? Id { get; set; }
 
-            public string Name { get; set; }
+            public ValidatableObject<string> Name { get; set; }
 
             public string ImageUrl { get; set; }
 
-            public int PersonCount { get; set; }
+            public ValidatableObject<int> PersonCount { get; set; }
 
             public string Text { get; set; }
+
+            public bool IsValid
+            {
+                get { return Name.IsValid && PersonCount.IsValid; }
+            }
         }
     }
 }

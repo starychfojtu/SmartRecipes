@@ -16,15 +16,15 @@ namespace SmartRecipes.Mobile.Controls
         {
             var entry = bindable as ValidatableEntry;
 
-            if (entry.NonErrorTextColor == default(Color))
+            if (entry.NonErrorTextColor == null)
             {
                 entry.NonErrorTextColor = entry.TextColor;
             }
 
-            entry.TextColor = (bool)isValid ? entry.NonErrorTextColor : Color.Red;
+            entry.TextColor = (bool)isValid ? entry.NonErrorTextColor.Value : Color.Red;
         }
 
-        private Color NonErrorTextColor { get; set; }
+        private Color? NonErrorTextColor { get; set; }
 
         public bool IsValid
         {

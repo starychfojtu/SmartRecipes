@@ -54,12 +54,12 @@ namespace SmartRecipes.Mobile.Pages
             if (screenAspectRation > backgroundAspectRatio)
             {
                 var aspectedHeight = (BackgroundHeight / BackgroundWidth) * width;
-                BackgroundImage.Scale = errorDeviation + (aspectedHeight / height);
+                BackgroundImage.Scale = errorDeviation + aspectedHeight / height;
             }
             else
             {
                 var aspectedWidth = backgroundAspectRatio * height;
-                BackgroundImage.Scale = errorDeviation + (aspectedWidth / width);
+                BackgroundImage.Scale = errorDeviation + aspectedWidth / width;
             }
         }
     }

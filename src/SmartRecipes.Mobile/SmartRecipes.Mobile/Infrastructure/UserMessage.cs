@@ -25,9 +25,14 @@ namespace SmartRecipes.Mobile.Infrastructure
                 .IfNone(Task.CompletedTask);
         }
         
+        public static UserMessage Error(string s)
+        {
+            return new UserMessage("Error", s);
+        }
+        
         public static UserMessage Error(Exception e)
         {
-            return new UserMessage("Error", e.Message);
+            return Error(e.Message);
         }
 
         public static UserMessage Deleted()

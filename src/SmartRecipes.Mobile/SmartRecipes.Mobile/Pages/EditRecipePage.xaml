@@ -4,6 +4,7 @@
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     x:Class="SmartRecipes.Mobile.Pages.EditRecipePage"
+    xmlns:controls="clr-namespace:SmartRecipes.Mobile.Controls;assembly=SmartRecipes.Mobile"
     xmlns:suave="clr-namespace:SuaveControls.Views;assembly=SuaveControls.FloatingActionButton">
     <ContentPage.Content>
         <StackLayout>
@@ -19,7 +20,7 @@
                         
                         <Label
                             Text="Name"/>
-                        <Entry
+                        <controls:ValidatableEntry
                             x:Name="NameEntry"/>
 
                         <Label
@@ -29,8 +30,9 @@
 
                         <Label
                             Text="Person count"/>
-                        <Entry
-                            x:Name="PersonCountEntry"/>
+                        <controls:ValidatableEntry
+                            x:Name="PersonCountEntry"
+                            Keyboard="Numeric" />
 
                         <Label
                             Text="Text"/>
