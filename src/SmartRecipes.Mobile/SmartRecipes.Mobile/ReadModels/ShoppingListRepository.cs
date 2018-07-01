@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.ApiDto;
-using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.ReadModels.Dto;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Immutable;
 using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Infrastructure;
 
 namespace SmartRecipes.Mobile.ReadModels
 {

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace SmartRecipes.Mobile.Services
+namespace SmartRecipes.Mobile.Infrastructure
 {
     public static class Validation
     {

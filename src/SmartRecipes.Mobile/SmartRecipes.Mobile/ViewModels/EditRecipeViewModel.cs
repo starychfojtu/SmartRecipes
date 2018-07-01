@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 using LanguageExt;
 using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.Models;
-using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.WriteModels;
 using Xamarin.Forms;
 using static LanguageExt.Prelude;
-using Validation = SmartRecipes.Mobile.Services.Validation;
+using Validation = SmartRecipes.Mobile.Infrastructure.Validation;
 
 namespace SmartRecipes.Mobile.ViewModels
 {

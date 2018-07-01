@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using SmartRecipes.Mobile.Services;
+using SmartRecipes.Mobile.Infrastructure;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(SmartRecipes.Mobile.iOS.Services.FileHelper))]

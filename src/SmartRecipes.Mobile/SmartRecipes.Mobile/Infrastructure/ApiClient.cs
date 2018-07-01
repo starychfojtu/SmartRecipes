@@ -1,12 +1,9 @@
 ﻿using System.Net.Http;
-using SmartRecipes.Mobile.ApiDto;
-using System;
 using System.Threading.Tasks;
 using LanguageExt;
-using static LanguageExt.Prelude;
-using SmartRecipes.Mobile.Models;
+using SmartRecipes.Mobile.ApiDto;
 
-namespace SmartRecipes.Mobile.Services
+namespace SmartRecipes.Mobile.Infrastructure
 {
     // TODO: make static
     public class ApiClient
@@ -45,10 +42,10 @@ namespace SmartRecipes.Mobile.Services
             }
             catch (HttpRequestException)
             {
-                return None;
+                return Prelude.None;
             }
 
-            return None;
+            return Prelude.None;
         }
 
         public async Task<Option<ShoppingListResponse>> Post(ChangeFoodstuffAmountRequest request)
@@ -59,7 +56,7 @@ namespace SmartRecipes.Mobile.Services
             }
             catch (HttpRequestException)
             {
-                return None;
+                return Prelude.None;
             }
 
             return await GetShoppingList();
@@ -73,10 +70,10 @@ namespace SmartRecipes.Mobile.Services
             }
             catch (HttpRequestException)
             {
-                return None;
+                return Prelude.None;
             }
 
-            return None;
+            return Prelude.None;
         }
 
         public async Task<Option<MyRecipesResponse>> GetMyRecipes()
@@ -87,10 +84,10 @@ namespace SmartRecipes.Mobile.Services
             }
             catch (HttpRequestException)
             {
-                return None;
+                return Prelude.None;
             }
 
-            return None;
+            return Prelude.None;
         }
 
         public async Task<Option<SearchFoodstuffResponse>> SearchFoodstuffs(SearchFoodstuffRequest request)
@@ -101,10 +98,10 @@ namespace SmartRecipes.Mobile.Services
             }
             catch (HttpRequestException)
             {
-                return None;
+                return Prelude.None;
             }
 
-            return None;
+            return Prelude.None;
         }
 
         private Task SimulateRequest()

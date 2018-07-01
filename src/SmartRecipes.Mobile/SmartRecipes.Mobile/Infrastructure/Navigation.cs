@@ -1,11 +1,11 @@
-﻿using Xamarin.Forms;
-using SmartRecipes.Mobile.Pages;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.Models;
-using System.Collections.Generic;
+using SmartRecipes.Mobile.Pages;
 using SmartRecipes.Mobile.ReadModels.Dto;
+using Xamarin.Forms;
 
-namespace SmartRecipes.Mobile.Services
+namespace SmartRecipes.Mobile.Infrastructure
 {
     public static class Navigation
     {

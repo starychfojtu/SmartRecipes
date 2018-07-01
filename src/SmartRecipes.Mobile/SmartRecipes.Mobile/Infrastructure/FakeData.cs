@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SmartRecipes.Mobile.Models;
 
-namespace SmartRecipes.Mobile.Services
+namespace SmartRecipes.Mobile.Infrastructure
 {
     public static class FakeData
     {

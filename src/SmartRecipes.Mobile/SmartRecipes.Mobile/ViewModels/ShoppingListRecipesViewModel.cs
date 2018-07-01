@@ -1,5 +1,4 @@
 ﻿using System;
-using SmartRecipes.Mobile.Services;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using SmartRecipes.Mobile.ReadModels.Dto;

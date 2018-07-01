@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.ReadModels;
-using SmartRecipes.Mobile.Services;
 
 namespace SmartRecipes.Mobile.ViewModels
 {

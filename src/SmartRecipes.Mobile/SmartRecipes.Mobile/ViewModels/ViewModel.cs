@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Threading.Tasks;
+using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.Models;
-using SmartRecipes.Mobile.Services;
 
 namespace SmartRecipes.Mobile.ViewModels
 {

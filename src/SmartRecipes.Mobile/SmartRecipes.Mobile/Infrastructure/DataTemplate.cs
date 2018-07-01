@@ -1,4 +1,4 @@
-﻿namespace SmartRecipes.Mobile.Extensions
+﻿namespace SmartRecipes.Mobile.Infrastructure
 {
     public class DataTemplate<T> : Xamarin.Forms.DataTemplate
     {

@@ -1,8 +1,8 @@
-﻿using Autofac;
-using System.Net.Http;
+﻿using System.Net.Http;
+using Autofac;
 using SmartRecipes.Mobile.ViewModels;
 
-namespace SmartRecipes.Mobile.Services
+namespace SmartRecipes.Mobile.Infrastructure
 {
     public class DIContainer
     {

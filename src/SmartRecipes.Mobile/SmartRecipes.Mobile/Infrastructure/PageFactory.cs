@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Autofac;
-using SmartRecipes.Mobile.Pages;
-using System.Collections.Generic;
-using Xamarin.Forms;
-using SmartRecipes.Mobile.ViewModels;
-using System.Collections.Immutable;
 using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Pages;
 using SmartRecipes.Mobile.ReadModels.Dto;
+using SmartRecipes.Mobile.ViewModels;
+using Xamarin.Forms;
 
-namespace SmartRecipes.Mobile.Services
+namespace SmartRecipes.Mobile.Infrastructure
 {
     public static class PageFactory
     {

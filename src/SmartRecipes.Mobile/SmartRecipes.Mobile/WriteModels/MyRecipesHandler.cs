@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using SmartRecipes.Mobile.Models;
-using SmartRecipes.Mobile.Services;
 using System.Collections.Generic;
 using LanguageExt;
 using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Infrastructure;
 using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.WriteModels

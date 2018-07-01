@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LanguageExt;
-using SmartRecipes.Mobile.Services;
+using SmartRecipes.Mobile.Infrastructure;
 
 namespace SmartRecipes.Mobile.ReadModels
 {

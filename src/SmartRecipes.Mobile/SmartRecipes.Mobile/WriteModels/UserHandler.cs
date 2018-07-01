@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using LanguageExt;
 using SmartRecipes.Mobile.ApiDto;
+using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.Models;
-using SmartRecipes.Mobile.Services;
 using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.WriteModels

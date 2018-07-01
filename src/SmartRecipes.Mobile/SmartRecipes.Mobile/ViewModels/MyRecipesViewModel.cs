@@ -5,7 +5,6 @@ using LanguageExt;
 using SmartRecipes.Mobile.Extensions;
 using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.ReadModels;
-using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.Models;
 using static LanguageExt.Prelude;

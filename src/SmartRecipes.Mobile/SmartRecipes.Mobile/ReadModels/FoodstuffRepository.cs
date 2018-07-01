@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.ApiDto;
 using SmartRecipes.Mobile.Models;
-using SmartRecipes.Mobile.Services;
 using System.Linq;
 using System;
 using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Infrastructure;
 
 namespace SmartRecipes.Mobile.ReadModels
 {

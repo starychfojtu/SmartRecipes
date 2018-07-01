@@ -1,6 +1,6 @@
-﻿using SmartRecipes.Mobile.Pages;
+﻿using SmartRecipes.Mobile.Infrastructure;
+using SmartRecipes.Mobile.Pages;
 using Xamarin.Forms;
-using SmartRecipes.Mobile.Services;
 using Xamarin.Forms.Xaml;
 
 [assembly: XamlCompilation (XamlCompilationOptions.Compile)]

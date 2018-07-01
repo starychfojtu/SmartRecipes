@@ -1,4 +1,4 @@
-﻿namespace SmartRecipes.Mobile.Services
+﻿namespace SmartRecipes.Mobile.Infrastructure
 {
     public interface IFileHelper
     {

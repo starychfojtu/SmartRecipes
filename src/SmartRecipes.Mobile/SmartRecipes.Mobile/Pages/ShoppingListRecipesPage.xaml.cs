@@ -1,4 +1,5 @@
 ﻿using SmartRecipes.Mobile.Extensions;
+using SmartRecipes.Mobile.Infrastructure;
 using SmartRecipes.Mobile.ViewModels;
 using SmartRecipes.Mobile.Views;
 using Xamarin.Forms;

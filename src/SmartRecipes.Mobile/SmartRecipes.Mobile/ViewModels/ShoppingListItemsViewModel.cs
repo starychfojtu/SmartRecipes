@@ -5,7 +5,6 @@ using SmartRecipes.Mobile.ReadModels;
 using System;
 using SmartRecipes.Mobile.WriteModels;
 using SmartRecipes.Mobile.ReadModels.Dto;
-using SmartRecipes.Mobile.Services;
 using System.Collections.Immutable;
 using SmartRecipes.Mobile.Models;
 using LanguageExt;

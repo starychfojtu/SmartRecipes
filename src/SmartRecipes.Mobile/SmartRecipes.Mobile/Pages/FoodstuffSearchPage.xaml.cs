@@ -5,6 +5,7 @@ using SmartRecipes.Mobile.ViewModels;
 using System;
 using SmartRecipes.Mobile.Models;
 using System.Collections.Generic;
+using SmartRecipes.Mobile.Infrastructure;
 
 namespace SmartRecipes.Mobile.Pages
 {

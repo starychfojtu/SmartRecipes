@@ -1,5 +1,4 @@
 ﻿using SmartRecipes.Mobile.Models;
-using SmartRecipes.Mobile.Services;
 using SmartRecipes.Mobile.WriteModels;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.Infrastructure;

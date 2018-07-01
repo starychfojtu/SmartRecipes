@@ -1,12 +1,12 @@
-﻿using SQLite;
-using Xamarin.Forms;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using LanguageExt;
 using SmartRecipes.Mobile.Extensions;
 using SmartRecipes.Mobile.Models;
+using SQLite;
+using Xamarin.Forms;
 
-namespace SmartRecipes.Mobile.Services
+namespace SmartRecipes.Mobile.Infrastructure
 {
     public class Database
     {
