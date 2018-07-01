@@ -3,6 +3,7 @@ using SmartRecipes.Mobile.Models;
 using SmartRecipes.Mobile.Services;
 using System.Collections.Generic;
 using LanguageExt;
+using SmartRecipes.Mobile.Extensions;
 using static LanguageExt.Prelude;
 
 namespace SmartRecipes.Mobile.WriteModels
@@ -11,7 +12,7 @@ namespace SmartRecipes.Mobile.WriteModels
     {
         public static Task<Unit> Add(Enviroment enviroment, IRecipe recipe, IEnumerable<IFoodstuffAmount> ingredients)
         {
-            return enviroment.Db.AddAsync(recipe)
+            return enviroment.Db.AddAsync(recipe.ToEnumerable())
                 .Bind(_ => enviroment.Db.AddAsync(ingredients));
         }
 

@@ -91,20 +91,19 @@ namespace SmartRecipes.Mobile.WriteModels
             });
         }
 
-        public static async Task<IEnumerable<ShoppingListItem>> AddToShoppingList(Enviroment enviroment, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
+        public static Task<IEnumerable<ShoppingListItem>> AddToShoppingList(Enviroment enviroment, IAccount owner, IEnumerable<IFoodstuff> foodstuffs)
         {
-            var shoppingListItems = await ShoppingListRepository.GetItems(owner.Id)(enviroment);
-            var alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff);
-            var newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f);
-            var newItemAmounts = newFoodstuffs.Values.Select(f => ShoppingListItemAmount.Create(owner, f, f.BaseAmount)).ToImmutableList();
-
-            await enviroment.Db.AddAsync(newItemAmounts);
-            await Update(enviroment, newItemAmounts);
-
-            return newItemAmounts.Select(fa => new ShoppingListItem(newFoodstuffs[fa.FoodstuffId], fa));
+            return
+                from shoppingListItems in ShoppingListRepository.GetItems(owner.Id)(enviroment)
+                let alreadyAddedFoodstuffs = shoppingListItems.Select(i => i.Foodstuff)
+                let newFoodstuffs = foodstuffs.Except(alreadyAddedFoodstuffs).ToImmutableDictionary(f => f.Id, f => f)
+                let newItemAmounts = newFoodstuffs.Values.Select(f => ShoppingListItemAmount.Create(owner, f, f.BaseAmount)).ToImmutableList()
+                from _1 in enviroment.Db.AddAsync(newItemAmounts)
+                from _2 in Update(enviroment, newItemAmounts)
+                select newItemAmounts.Select(fa => new ShoppingListItem(newFoodstuffs[fa.FoodstuffId], fa));
         }
 
-        public static async Task Update(Enviroment enviroment, IImmutableList<IShoppingListItemAmount> itemAmounts)
+        public static async Task<Unit> Update(Enviroment enviroment, IImmutableList<IShoppingListItemAmount> itemAmounts)
         {
             foreach (var itemAmount in itemAmounts)
             {
@@ -113,6 +112,7 @@ namespace SmartRecipes.Mobile.WriteModels
             }
 
             await enviroment.Db.UpdateAsync((IEnumerable<IShoppingListItemAmount>) itemAmounts);
+            return Unit.Default;
         }
         
         private static IShoppingListItemAmount ChangeAmount(Func<IAmount, IAmount, Option<IAmount>> action, ShoppingListItem item)
@@ -125,7 +125,7 @@ namespace SmartRecipes.Mobile.WriteModels
         {
             var newItemAmounts = await GetRecipeComplementOfShoppingList(recipe, owner)(enviroment);
 
-            await enviroment.Db.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount));
+            await enviroment.Db.AddAsync(RecipeInShoppingList.Create(recipe, owner, personCount).ToEnumerable());
             await enviroment.Db.AddAsync(newItemAmounts);
 
             return Unit.Default;

@@ -18,11 +18,6 @@ namespace SmartRecipes.Mobile.Services
         {
             return Connection.InsertAllAsync(items).ToUnitTask();
         }
-        
-        public Task<Unit> AddAsync<T>(T item)
-        {
-            return Connection.InsertAsync(item).ToUnitTask();
-        }
 
         public Task<Unit> UpdateAsync<T>(IEnumerable<T> items)
         {

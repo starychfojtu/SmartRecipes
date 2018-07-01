@@ -18,20 +18,23 @@ namespace SmartRecipes.Mobile.Services
             this.client = client;
         }
 
-        private string AuthenticationToken { get; set; }
-
         public async Task<Option<SignInResponse>> Post(SignInRequest request)
         {
-            return new SignInResponse(true, "");
-
-            /* 
+            try
+            {
+                await SimulateRequest();
+            }
+            catch (HttpRequestException)
+            {
+                // Do nothing for now
+            }
+            
             if (request.Email == "test@gmail.com" && request.Password == "1234")
             {
-                return new SignInResponse(true, AuthenticationToken);
+                return new SignInResponse(true, "");
             }
 
             return new SignInResponse(false, "");
-            */
         }
 
         public async Task<Option<SignUpResponse>> Post(SignUpRequest request)
@@ -44,6 +47,7 @@ namespace SmartRecipes.Mobile.Services
             {
                 return None;
             }
+            
             return new SignUpResponse(new SignUpResponse.Account("fake@gmail.com"));
         }
 
@@ -57,6 +61,7 @@ namespace SmartRecipes.Mobile.Services
             {
                 return None;
             }
+            
             return await GetShoppingList();
         }
 
@@ -118,6 +123,7 @@ namespace SmartRecipes.Mobile.Services
                 new MyRecipesResponse.Recipe(Guid.Parse("a198fb84-42ca-41f8-bf23-2df76eb59b96"), "Lasagna", new Uri(imageUrl), owner.Id, 1, "Cook me"),
                 new MyRecipesResponse.Recipe(Guid.Parse("110d81a1-a18b-43fb-9435-83ea8a1d4678"), "Lasagna 2", new Uri(imageUrl), owner.Id, 2, "Cook me twice")
             };
+            
             return new MyRecipesResponse(recipes);
         }
 
@@ -153,10 +159,9 @@ namespace SmartRecipes.Mobile.Services
 
         private Task SimulateRequest()
         {
-            // TODO: comment out to turn API on
-            throw new HttpRequestException();
+            // TODO: Tento řádek je nutný odkomentovat k vypnutí simulování API kompletně.
+            // throw new HttpRequestException();
             
-            // TODO: Implement returning None when request fails
             return client.GetAsync("https://google.com");
         }
     }
