@@ -23,7 +23,7 @@ namespace SmartRecipes.Mobile.Services
         {
             return Connection.UpdateAllAsync(items).ToUnitTask();
         }
-        
+
         public Task<Unit> UpdateAsync<T>(T item)
         {
             return Connection.UpdateAsync(item).ToUnitTask();
@@ -44,7 +44,7 @@ namespace SmartRecipes.Mobile.Services
         {
             return connection.QueryAsync<T>(sql, args).Map(t => (IEnumerable<T>)t);
         }
-        
+
         public Task<Unit> Execute(string sql, params object[] args)
         {
             return connection.QueryAsync<int>(sql, args).ToUnitTask();
@@ -78,6 +78,14 @@ namespace SmartRecipes.Mobile.Services
         public AsyncTableQuery<RecipeInShoppingList> RecipeInShoppingLists
         {
             get { return Connection.Table<RecipeInShoppingList>(); }
+        }
+        
+        public Task<Unit> Seed()
+        {
+            var foodstuffs = Foodstuffs.CountAsync().Bind(c => c == 0 ? AddAsync(FakeData.FakeFoodstuffs()) : Task.FromResult(Unit.Default));
+            var recipes = Recipes.CountAsync().Bind(c => c == 0 ? AddAsync(FakeData.FakeRecipes()) : Task.FromResult(Unit.Default));
+
+            return foodstuffs.Bind(_ => recipes);
         }
 
         private SQLiteAsyncConnection Connection

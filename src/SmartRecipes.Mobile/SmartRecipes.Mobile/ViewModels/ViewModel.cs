@@ -1,7 +1,7 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Threading.Tasks;
 using SmartRecipes.Mobile.Models;
+using SmartRecipes.Mobile.Services;
 
 namespace SmartRecipes.Mobile.ViewModels
 {
@@ -11,8 +11,7 @@ namespace SmartRecipes.Mobile.ViewModels
 
         protected static IAccount CurrentAccount
         {
-            get { return clientAccount ?? (clientAccount = new Account(Guid.Parse("13cb78ee-0aca-4287-9ecb-b87b4e83411b"), "someEmail@gmail.com")); }
-            set { clientAccount = value; }
+            get { return clientAccount ?? (clientAccount = FakeData.FakeAccount()); }
         }
 
         protected void RaisePropertyChanged(string propertyName)
