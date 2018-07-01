@@ -33,16 +33,18 @@
                 <Button
                     x:Name="MinusButton"
                     Image="remove"
-                    BackgroundColor="Transparent"
-                    WidthRequest="64"
-                    HeightRequest="64"
+                    BackgroundColor="{StaticResource pageBackground}"
+                    CornerRadius="24"
+                    WidthRequest="48"
+                    HeightRequest="48"
                     VerticalOptions="Center"/>
                 <Button
                     x:Name="PlusButton"
                     Image="add"
-                    BackgroundColor="Transparent"
-                    WidthRequest="64"
-                    HeightRequest="64"
+                    BackgroundColor="{StaticResource pageBackground}"
+                    CornerRadius="24"
+                    WidthRequest="48"
+                    HeightRequest="48"
                     VerticalOptions="Center"/>
             </StackLayout>
         </StackLayout>

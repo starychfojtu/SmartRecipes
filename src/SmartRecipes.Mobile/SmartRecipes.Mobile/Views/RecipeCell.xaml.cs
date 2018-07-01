@@ -22,6 +22,7 @@ namespace SmartRecipes.Mobile.Views
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
+            Reset();
 
             if (ViewModel != null)
             {
@@ -37,21 +38,18 @@ namespace SmartRecipes.Mobile.Views
                 NameLabel.Text = recipe.Name;
                 Image.Source = ImageSource.FromUri(recipe.ImageUrl);
                 PersonCount.Text = ViewModel.PersonCount.ToString();
-                ReplaceActions(newActionButtons);
-                ReplaceIngredients(thumbnails);
+                ActionContainer.Children.AddRange(newActionButtons);
+                IngredientsStackLayout.Children.AddRange(thumbnails);
             }
         }
 
-        private void ReplaceActions(IEnumerable<Button> buttons)
+        private void Reset()
         {
+            NameLabel.Text = "";
+            Image.Source = null;
+            PersonCount.Text = "";
             ActionContainer.Children.Clear();
-            ActionContainer.Children.AddRange(buttons);
-        }
-        
-        private void ReplaceIngredients(IEnumerable<CachedImage> thumbnails)
-        {
             IngredientsStackLayout.Children.Clear();
-            IngredientsStackLayout.Children.AddRange(thumbnails);
         }
     }
 }

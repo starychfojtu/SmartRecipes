@@ -15,10 +15,11 @@
             <Color x:Key="darkTextColor">#212121</Color>
             <Color x:Key="secondaryTextColor">#757575</Color>
             <Color x:Key="dividerColor">#BDBDBD</Color>
+            <Color x:Key="pageBackground">#FFFFFF</Color>
 
             <!-- Pages -->
             <Style x:Key="page" TargetType="ContentPage">
-                <Setter Property="BackgroundColor" Value="{StaticResource lightTextColor}" />
+                <Setter Property="BackgroundColor" Value="{StaticResource pageBackground}" />
             </Style>
 
             <!-- Buttons -->

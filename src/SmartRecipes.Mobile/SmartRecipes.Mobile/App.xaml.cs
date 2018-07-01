@@ -1,7 +1,9 @@
 ﻿using SmartRecipes.Mobile.Pages;
 using Xamarin.Forms;
 using SmartRecipes.Mobile.Services;
+using Xamarin.Forms.Xaml;
 
+[assembly: XamlCompilation (XamlCompilationOptions.Compile)]
 namespace SmartRecipes.Mobile
 {
     public partial class App : Application

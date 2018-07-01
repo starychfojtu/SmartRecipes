@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
-             x:Class="SmartRecipes.Mobile.Pages.SignInPage"
-             xmlns:abstractions="clr-namespace:RoundedBoxView.Forms.Plugin.Abstractions;assembly=RoundedBoxView.Forms.Plugin.Abstractions"
-             xmlns:controls="clr-namespace:SmartRecipes.Mobile.Controls;assembly=SmartRecipes.Mobile"
-             Style="{StaticResource page}">
-    
+<ContentPage
+    Style="{StaticResource page}"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+    x:Class="SmartRecipes.Mobile.Pages.SignInPage"
+    xmlns:controls="clr-namespace:SmartRecipes.Mobile.Controls;assembly=SmartRecipes.Mobile">
     <ContentPage.Content>
          <Grid
             IsClippedToBounds="true">
@@ -24,8 +23,6 @@
                 VerticalOptions="Center"
                 Aspect="AspectFit"
                 Source="blurbg"/>
-            
-
 
             <!-- Heading -->
             <StackLayout

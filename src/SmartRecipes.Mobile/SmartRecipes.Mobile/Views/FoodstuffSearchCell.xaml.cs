@@ -20,6 +20,7 @@ namespace SmartRecipes.Mobile.Views
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
+            Reset();
 
             if (ViewModel != null)
             {
@@ -28,14 +29,8 @@ namespace SmartRecipes.Mobile.Views
                 Image.Source = ViewModel.Foodstuff.ImageUrl;
             }
         }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            OnBindingContextChanged();
-        }
-
-        protected override void OnDisappearing()
+        
+        private void Reset()
         {
             NameLabel.Text = "";
             AmountLabel.Text = "";

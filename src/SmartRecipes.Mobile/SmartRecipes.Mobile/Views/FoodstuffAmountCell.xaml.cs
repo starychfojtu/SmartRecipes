@@ -23,7 +23,8 @@ namespace SmartRecipes.Mobile.Views
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
-
+            Reset();
+            
             if (ViewModel != null)
             {
                 var amountText = ViewModel.RequiredAmount.Match(
@@ -40,6 +41,15 @@ namespace SmartRecipes.Mobile.Views
                 ContextActions.Clear();
                 actions.Iter(a => ContextActions.Add(a));
             }
+        }
+        
+        private void Reset()
+        {
+            NameLabel.Text = "";
+            AmountLabel.Text = "";
+            MinusButton.IsVisible = false;
+            Image.Source = null;
+            ContextActions.Clear();
         }
     }
 }
