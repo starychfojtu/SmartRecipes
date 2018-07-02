@@ -1,8 +1,7 @@
-﻿namespace SmartRecipes.DataAccess
-
-open Microsoft.EntityFrameworkCore
+﻿open Microsoft.EntityFrameworkCore
 open FSharp.Core
-open SmartRecipes.Models
+open Model
+open System
 
 type SmartRecipesContext =
     inherit DbContext
@@ -23,12 +22,6 @@ type SmartRecipesContext =
         and set v = c.foodstuff <- v
 
     [<DefaultValue>]
-    val mutable recipeSteps:DbSet<RecipeStep>
-    member c.RecipeSteps
-        with get() = c.recipeSteps 
-        and set v = c.recipeSteps <- v
-
-    [<DefaultValue>]
     val mutable ingredients:DbSet<Ingredient>
     member c.Ingredients 
         with get() = c.ingredients 
@@ -42,21 +35,16 @@ type SmartRecipesContext =
 
     override this.OnModelCreating mb =
         mb.Entity<Account>().HasKey(fun a -> a.id :> obj) |> ignore
-        mb.Entity<Account>().OwnsOne(fun a -> a.signInInfo) |> ignore
 
         mb.Entity<Foodstuff>().HasKey(fun a -> a.id :> obj) |> ignore
-        mb.Entity<Foodstuff>().OwnsOne(fun f -> f.nutritionValues) |> ignore
-        mb.Entity<Foodstuff>().OwnsOne(fun f -> f.baseAmount).OwnsOne(fun a -> a.unit) |> ignore
-
-        mb.Entity<RecipeStep>().HasKey(fun a -> a.id :> obj) |> ignore
-        mb.Entity<RecipeStep>().HasOne(fun s -> s.recipe) |> ignore
-
-        mb.Entity<Ingredient>().HasKey(fun a -> a.id :> obj) |> ignore
-        mb.Entity<Ingredient>().HasOne(fun i -> i.recipe) |> ignore
-        mb.Entity<Ingredient>().HasOne(fun i -> i.food) |> ignore
 
         mb.Entity<Recipe>().HasKey(fun a -> a.id :> obj) |> ignore
-        mb.Entity<Recipe>().HasOne(fun r -> r.creator) |> ignore
+        mb.Entity<Recipe>().HasOne<Account>().WithMany().HasForeignKey(fun r -> r.creatorId :> obj) |> ignore
+        
+        mb.Entity<Ingredient>().HasKey(fun a -> a.id :> obj) |> ignore
+        mb.Entity<Ingredient>().HasOne<Recipe>().WithMany().HasForeignKey(fun r -> r.recipeId :> obj) |> ignore
+        mb.Entity<Ingredient>().HasOne<Foodstuff>().WithMany().HasForeignKey(fun r -> r.foodstuffId :> obj) |> ignore
+
 
  module SmartRecipesContext =
 

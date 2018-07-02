@@ -2,17 +2,18 @@
 
 open System
 
+type AccountId = Guid
 type Email = string
 type Password = string
 
 [<CLIMutable>]
-type SignInInfo = {
+type Credentials = {
     email: Email;
     password: Password;
 }
 
 [<CLIMutable>]
 type Account = {
-    id: Guid;
-    signInInfo: SignInInfo;
+    id: AccountId;
+    credentials: Credentials;
 }

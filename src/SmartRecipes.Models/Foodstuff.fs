@@ -8,19 +8,17 @@ type MetricUnit =
     | Piece
 
 [<CLIMutable>]
-type MetricUnitValue = {
+type Amount = {
     unit: MetricUnit;
-    amount: int
+    amount: float
 }
 
-type NutritionValues = {
-    calories: int;
-}
+type FoodstuffId = Guid
 
 [<CLIMutable>]
 type Foodstuff = {
-    id: Guid
+    id: FoodstuffId
     name: string;
-    nutritionValues: NutritionValues;
-    baseAmount: MetricUnitValue
+    baseAmount: Amount
+    amountStep: Amount
 }

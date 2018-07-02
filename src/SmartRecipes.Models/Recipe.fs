@@ -2,25 +2,21 @@ namespace SmartRecipes.Models
 
 open System
 
+type RecipeId = Guid
+
 [<CLIMutable>]
 type Recipe = {
-    id: Guid;
+    id: RecipeId;
     name: string;
-    creator: Account;
+    creatorId: AccountId;
 }
+
+type IngredientId = Guid
 
 [<CLIMutable>]
 type Ingredient = {
-    id: Guid;
-    food: Foodstuff;
-    amount: int;
-    recipe: Recipe;
-}
-
-[<CLIMutable>]
-type RecipeStep = {
-    id: Guid;
-    number: int;
-    text: string;
-    recipe: Recipe;
+    id: IngredientId;
+    recipeId: RecipeId;
+    foodstuffId: FoodstuffId;
+    amount: Amount;
 }

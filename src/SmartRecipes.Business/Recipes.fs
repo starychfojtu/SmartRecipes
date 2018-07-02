@@ -7,10 +7,10 @@ open SmartRecipes.DataAccess
 [<RequireQualifiedAccess>]
 module Recipes =
 
-    let create name = { 
+    let create name creatorId = { 
         id = Guid.NewGuid();
         name = name;
-        creator = { id = Guid.Empty; signInInfo = {email=""; password=""}};
+        creatorId = creatorId
     }
 
     let add recipe =

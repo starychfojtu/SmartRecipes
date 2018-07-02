@@ -17,11 +17,11 @@ module Generic =
 
     let (>>=) = bind
 
-    let bindParameters<'parameters, 'error> (ctx: HttpContext): Result<'parameters, 'error> =
-        ctx.BindJsonAsync<'parameters>() 
-        |> Async.AwaitTask 
-        |> Async.RunSynchronously 
-        |> Success
+    let bindParameters<parameters, 'error> (ctx: HttpContext): Result<'parameters, 'error> =
+        async { 
+            let! a = ctx.BindJsonAsync<'parameters>()
+            
+        }
 
     let showResponse = function
         | Success entity -> json entity
@@ -29,8 +29,8 @@ module Generic =
 
     let detail query id =
         match Guid.TryParse(id) with
-            | (true, guid) -> 
-                match query guid with
-                    | Some entity -> json entity 
-                    | None -> setStatusCode 404
-            | (false, _) -> setStatusCode 400
+        | (true, guid) -> 
+            match query guid with
+                | Some entity -> json entity 
+                | None -> setStatusCode 404
+        | (false, _) -> setStatusCode 400
