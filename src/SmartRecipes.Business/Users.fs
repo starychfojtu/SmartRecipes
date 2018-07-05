@@ -1,47 +1,46 @@
 [<RequireQualifiedAccess>]
 module Business.Users
-open FSharpPlus.Data
-open FSharpPlus.Data
-open System
-open System.Net.Mail
+    open FSharpPlus
+    open FSharpPlus.Data
+    open System
+    open System.Net.Mail
+    open Models.User
+    open Validation
     
-    type EmailError =
-        | MustContaintAt
-        | NonEmpty
+    
+    (* Email *) 
         
+    type EmailError =
+        | InvalidMailAddress
+            
+    let mkEmail s =
+        try
+            Success (new MailAddress(s))
+        with
+        | ex -> Failure [ InvalidMailAddress ]
+        
+    (* Password *)
+    
     type PasswordError =
-        | NonEmpty
-        | MustCotainNumber
+        | MustBe10CharactersLong
+        
+    let private is10CharacterLong (s: string) =
+        match s.Length > 10 with 
+        | true -> Success <| Password s
+        | false -> Failure [  MustBe10CharactersLong ]
+        
+    let mkPassword s =
+        is10CharacterLong s
+        
+    (* Credentials *)
     
     type CredentialsError =
         | EmailError of EmailError
         | PasswordError of PasswordError
-    
-    type ValidationMessage = ValidationMessage of string
         
-    let (|NullOrEmpty|NotNullNorEmpty|) s = 
-        match String.IsNullOrEmpty s with 
-        | true -> NullOrEmpty
-        | false -> NotNullNorEmpty
-        
-    let validatePassword password =
-        match password with 
-        | NullOrEmpty -> Failure(PasswordError NonEmpty)
-        | NotNullNorEmpty -> Success password
-        
-    let tryCreateEmail s = 
-        try
-            let mail = new MailAddress(s)
-            Some(mail)
-        with
-        | ex -> None
-        
-    let validateEmail email =
-        match tryCreateEmail email with 
-        | Some mail -> Success mail
-        | None -> Failure(ValidationMessage "Invalid email address.")
-        
-    let validateCredentials credentials =
-        validateEmail credentials.email
-        >=> validatePassword 
-            ()
+    let mkCredentials email pass =
+        let mailAddress = mkEmail email
+        let b = map mailAddress (fun ma -> ma)
+        let password = mkEmail pass
+        let a = apply mailAddress password
+        ()

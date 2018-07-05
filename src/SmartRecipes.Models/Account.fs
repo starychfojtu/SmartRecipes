@@ -2,6 +2,7 @@
     open System.Net.Mail
     open System.Text.RegularExpressions
     open System
+    open FSharpPlus.Data
     
     type AccountId = AccountId of Guid
     type Password = Password of string
