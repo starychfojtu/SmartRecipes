@@ -1,31 +1,24 @@
-namespace SmartRecipes.Api
-
-open System
-open System.IO
-open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Cors.Infrastructure
-open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.Authentication.JwtBearer
-open Microsoft.AspNetCore.Authentication
-open Microsoft.Extensions.Logging
-open Microsoft.Extensions.DependencyInjection
-open Microsoft.EntityFrameworkCore
-open Giraffe
-open SmartRecipes.DataAccess
-
-module Api =
+module Api
+    open System
+    open System.IO
+    open Microsoft.AspNetCore.Builder
+    open Microsoft.AspNetCore.Cors.Infrastructure
+    open Microsoft.AspNetCore.Hosting
+    open Microsoft.AspNetCore.Authentication.JwtBearer
+    open Microsoft.AspNetCore.Authentication
+    open Microsoft.Extensions.Logging
+    open Microsoft.Extensions.DependencyInjection
+    open Microsoft.EntityFrameworkCore
+    open Giraffe
+    open SmartRecipes.DataAccess
 
     // ---------------------------------
     // Authentication
     // ---------------------------------
 
-
     let authenticationOptions (o : AuthenticationOptions) =
         o.DefaultAuthenticateScheme <- JwtBearerDefaults.AuthenticationScheme
         o.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme
-    
-    let authorize =
-        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
 
     // ---------------------------------
     // Web app
