@@ -26,12 +26,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     <ProjectReference Include="..\SmartRecipes.Business\SmartRecipes.Business.fsproj" />
     <ProjectReference Include="..\SmartRecipes.DataAccess\SmartRecipes.DataAccess.fsproj" />
     <ProjectReference Include="..\SmartRecipes.Models\SmartRecipes.Models.fsproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.3.4" />
