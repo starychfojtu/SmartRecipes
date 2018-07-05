@@ -32,7 +32,7 @@ namespace SmartRecipes.Mobile.Infrastructure
             yield return Foodstuff.Create(
                 Guid.Parse("cb3d0f54-c99d-43f1-ade4-e316b0e6543d"),
                 "Carrot",
-                new Uri("https://www.znaturalfoods.com/698-thickbox_default/carrot-powder-organic.jpg"),
+                new Uri("https://www.marshalls-seeds.co.uk/images/products/product_9338.jpg"),
                 new Amount(1, AmountUnit.Piece),
                 new Amount(1, AmountUnit.Piece)
             );
@@ -52,7 +52,7 @@ namespace SmartRecipes.Mobile.Infrastructure
 
         public static IEnumerable<Recipe> FakeRecipes()
         {
-            var imageUrl = "https://www.recipetineats.com/wp-content/uploads/2017/05/Lasagne-recipe-3-main-680x952.jpg";
+            var imageUrl = "https://d2mkh7ukbp9xav.cloudfront.net/recipeimage/mik71rvx-06e07-496278-cfcd2-6tl9kcup/c15867d1-e1dd-452e-8820-980858391160/main/the-perfect-lasagne.jpg";
             yield return Recipe.Create(Guid.Parse("a198fb84-42ca-41f8-bf23-2df76eb59b96"), FakeAccount().Id, "Lasagna", new Uri(imageUrl), 1, "Cook me");
         }
     }

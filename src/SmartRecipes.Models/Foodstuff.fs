@@ -1,24 +1,22 @@
-namespace SmartRecipes.Models
-
-open System
-
-type MetricUnit = 
-    | Liter
-    | Gram
-    | Piece
-
-[<CLIMutable>]
-type Amount = {
-    unit: MetricUnit;
-    amount: float
-}
-
-type FoodstuffId = Guid
-
-[<CLIMutable>]
-type Foodstuff = {
-    id: FoodstuffId
-    name: string;
-    baseAmount: Amount
-    amountStep: Amount
-}
+module Models.Foodstuff
+    open System
+    open System
+    
+    type MetricUnit = 
+        | Liter
+        | Gram
+        | Piece
+    
+    type Amount = {
+        unit: MetricUnit;
+        amount: float
+    }
+    
+    type FoodstuffId = FoodstuffId of Guid
+    
+    type Foodstuff = {
+        id: FoodstuffId
+        name: string;
+        baseAmount: Amount
+        amountStep: Amount
+    }

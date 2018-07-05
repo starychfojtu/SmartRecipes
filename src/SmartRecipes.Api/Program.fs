@@ -35,12 +35,7 @@ module Api =
         choose [
             GET >=>
                 choose [
-                    route "/recipes" >=> Recipes.index
-                    routef "/recipes/%s" Recipes.detail
-                ]
-            POST >=>
-                choose [
-                    route "/recipes" >=> authorize >=> Recipes.create
+                    route "/recipes" >=> json Recipes.getAll 
                 ]
             setStatusCode 404 >=> text "Not Found" ]
 
@@ -70,17 +65,11 @@ module Api =
             .UseCors(configureCors)
             .UseStaticFiles()
             .UseGiraffe(webApp)
-
-    let initializeDatabase _ =
-        let database = SmartRecipesContext.create.Database
-        database.EnsureCreated() |> ignore
-        database.Migrate() |> ignore
  
     let configureServices (services : IServiceCollection) =
         services.AddCors()    |> ignore
         services.AddGiraffe() |> ignore
         services.AddAuthentication(authenticationOptions).AddJwtBearer() |> ignore
-        initializeDatabase ()
 
     let configureLogging (builder : ILoggingBuilder) =
         let filter (l : LogLevel) = l.Equals LogLevel.Error

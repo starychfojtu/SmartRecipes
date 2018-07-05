@@ -1,23 +1,12 @@
-namespace SmartRecipes.Business
-
-open System
-open SmartRecipes.Models
-open SmartRecipes.DataAccess
-
 [<RequireQualifiedAccess>]
-module Recipes =
+module Recipes
+    open Models.Recipe
+    open System
+
+    let private getId = Guid.NewGuid();
 
     let create name creatorId = { 
-        id = Guid.NewGuid();
+        id = RecipeId getId;
         name = name;
         creatorId = creatorId
     }
-
-    let add recipe =
-        Recipes.command.create recipe
-
-    let update recipe =
-        Recipes.command.update recipe
-
-    let delete recipe =
-        Recipes.command.delete recipe
