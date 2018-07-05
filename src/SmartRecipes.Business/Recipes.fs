@@ -1,5 +1,5 @@
 [<RequireQualifiedAccess>]
-module Recipes
+module Business.Recipes
     open Models.Recipe
     open System
 

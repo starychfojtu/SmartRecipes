@@ -13,6 +13,7 @@
     <EmbeddedResource Remove="WebRoot\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Users.fs" />
     <Compile Include="Program.fs" />
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
     <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />

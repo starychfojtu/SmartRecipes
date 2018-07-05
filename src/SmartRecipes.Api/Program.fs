@@ -30,7 +30,12 @@ module Api
                 choose [
                     route "/recipes" >=> json Recipes.getAll 
                 ]
-            setStatusCode 404 >=> text "Not Found" ]
+            POST >=>
+                choose [
+                    route "/signUp" >=> json "ahoj"
+                ]
+            setStatusCode 404 >=> text "Not Found" 
+        ]
 
     // ---------------------------------
     // Error handler

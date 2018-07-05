@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Recipes.fs" />
+    <Compile Include="Users.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SmartRecipes.DataAccess\SmartRecipes.DataAccess.fsproj" />
