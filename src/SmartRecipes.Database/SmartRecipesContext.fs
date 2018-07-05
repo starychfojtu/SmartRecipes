@@ -37,16 +37,19 @@
         override this.OnModelCreating mb =
             mb.Entity<Account>().HasKey(fun a -> a.id :> obj) |> ignore
     
-            mb.Entity<Foodstuff>().HasKey(fun a -> a.id :> obj) |> ignore
+            mb.Entity<Foodstuff>().HasKey(fun f -> f.id :> obj) |> ignore
+            mb.Entity<Foodstuff>().OwnsOne(fun f -> f.amountStep) |> ignore
+            mb.Entity<Foodstuff>().OwnsOne(fun f -> f.baseAmount) |> ignore
     
-            mb.Entity<Recipe>().HasKey(fun a -> a.id :> obj) |> ignore
+            mb.Entity<Recipe>().HasKey(fun r -> r.id :> obj) |> ignore
             mb.Entity<Recipe>().HasOne<Account>().WithMany().HasForeignKey(fun r -> r.creatorId :> obj) |> ignore
             
-            mb.Entity<Ingredient>().HasKey(fun a -> a.id :> obj) |> ignore
+            mb.Entity<Ingredient>().HasKey(fun i -> i.id :> obj) |> ignore
             mb.Entity<Ingredient>().HasOne<Recipe>().WithMany().HasForeignKey(fun r -> r.recipeId :> obj) |> ignore
             mb.Entity<Ingredient>().HasOne<Foodstuff>().WithMany().HasForeignKey(fun r -> r.foodstuffId :> obj) |> ignore
+            mb.Entity<Ingredient>().OwnsOne(fun i -> i.amount) |> ignore
 
-    let create = 
+    let createContext = 
         let optionsBuilder = new DbContextOptionsBuilder<Context>();
         optionsBuilder.UseInMemoryDatabase("SmartRecipes") |> ignore
         new Context(optionsBuilder.Options)

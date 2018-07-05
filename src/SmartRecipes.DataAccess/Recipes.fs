@@ -2,9 +2,12 @@ namespace SmartRecipes.DataAccess
 
 [<RequireQualifiedAccess>]
 module Recipes =
+    open FSharpPlus.Data
+    open System.Net.Http
     open System
     open Models.Recipe
     open Models.User
+    open Database.Context
     
     let private mapUnit (unit: Database.Model.MetricUnit): Models.Foodstuff.MetricUnit =
         match unit with
@@ -19,9 +22,8 @@ module Recipes =
         creatorId = AccountId recipe.creatorId
     }
     
-    let private context = Database.Context.create
-    
-    let getAll =
-        context.Recipes
+    let getAll: Reader<Context, seq<Recipe>> = Reader (fun ctx ->
+        ctx.Recipes
         |> Seq.toList
         |> Seq.map map
+    )
