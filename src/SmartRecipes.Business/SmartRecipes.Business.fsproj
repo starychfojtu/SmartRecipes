@@ -3,8 +3,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Recipes.fs" />
     <Compile Include="Users.fs" />
+    <Compile Include="Recipes.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SmartRecipes.DataAccess\SmartRecipes.DataAccess.fsproj" />

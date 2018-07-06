@@ -7,17 +7,16 @@ module Business.Users
     open Models.User
     open Validation
     
-    
     (* Email *) 
         
     type EmailError =
-        | InvalidMailAddress
+        | Invalid
             
     let mkEmail s =
         try
             Success (new MailAddress(s))
         with
-        | ex -> Failure [ InvalidMailAddress ]
+        | ex -> Failure [ Invalid ]
         
     (* Password *)
     
@@ -27,7 +26,7 @@ module Business.Users
     let private is10CharacterLong (s: string) =
         match s.Length > 10 with 
         | true -> Success <| Password s
-        | false -> Failure [  MustBe10CharactersLong ]
+        | false -> Failure [ MustBe10CharactersLong ]
         
     let mkPassword s =
         is10CharacterLong s
@@ -35,12 +34,23 @@ module Business.Users
     (* Credentials *)
     
     type CredentialsError =
-        | EmailError of EmailError
-        | PasswordError of PasswordError
-        
+        | InvalidEmail of EmailError list
+        | InvalidPassword of PasswordError list
+    
+    let private createCredentials email password = { email = email; password = password }
+      
     let mkCredentials email pass =
-        let mailAddress = mkEmail email
-        let b = map mailAddress (fun ma -> ma)
-        let password = mkEmail pass
-        let a = apply mailAddress password
-        ()
+        let createEmail = email |> mkEmail |> bimap (fun e -> [ InvalidEmail e ]) (fun a -> a)
+        let createPassword = pass |> mkPassword  |> bimap (fun e -> [ InvalidPassword e ]) (fun a -> a)
+        createCredentials 
+        <!> createEmail
+        <*> createPassword
+        
+    (* Account *)
+    
+    let private getId _ = AccountId <| Guid.NewGuid();
+    let private createAccount credentials = { id = getId (); credentials = credentials }
+    
+    let mkAccount email password =
+        createAccount 
+        <!> mkCredentials email password
