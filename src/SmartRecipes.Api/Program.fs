@@ -1,4 +1,5 @@
-module Api
+module Api.Main
+    open Business
     open System
     open System.IO
     open Microsoft.AspNetCore.Builder
@@ -11,6 +12,7 @@ module Api
     open Microsoft.EntityFrameworkCore
     open Giraffe
     open SmartRecipes.DataAccess
+    open Api.Users
 
     // ---------------------------------
     // Authentication
@@ -32,7 +34,7 @@ module Api
                 ]
             POST >=>
                 choose [
-                    route "/signUp" >=> json "ahoj"
+                    route "/signUp" >=> signUpHandler
                 ]
             setStatusCode 404 >=> text "Not Found" 
         ]

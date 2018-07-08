@@ -49,7 +49,7 @@
             mb.Entity<Ingredient>().HasOne<Foodstuff>().WithMany().HasForeignKey(fun r -> r.foodstuffId :> obj) |> ignore
             mb.Entity<Ingredient>().OwnsOne(fun i -> i.amount) |> ignore
 
-    let createContext = 
+    let createContext () = 
         let optionsBuilder = new DbContextOptionsBuilder<Context>();
         optionsBuilder.UseInMemoryDatabase("SmartRecipes") |> ignore
         new Context(optionsBuilder.Options)
