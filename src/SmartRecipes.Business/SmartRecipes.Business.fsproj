@@ -7,7 +7,6 @@
     <Compile Include="Recipes.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartRecipes.DataAccess\SmartRecipes.DataAccess.fsproj" />
     <ProjectReference Include="..\SmartRecipes.Models\SmartRecipes.Models.fsproj" />
   </ItemGroup>
   <ItemGroup>
