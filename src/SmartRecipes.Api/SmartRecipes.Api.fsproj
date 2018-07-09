@@ -13,10 +13,12 @@
     <EmbeddedResource Remove="WebRoot\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Users.fs" />
     <Compile Include="Program.fs" />
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
-    <PackageReference Include="FSharp.Core" Version="4.5.0" />
     <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
@@ -35,8 +37,5 @@
     <ProjectReference Include="..\SmartRecipes.DataAccess\SmartRecipes.DataAccess.fsproj" />
     <ProjectReference Include="..\SmartRecipes.Models\SmartRecipes.Models.fsproj" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.2.3" />
   </ItemGroup>
 </Project>

@@ -12,7 +12,9 @@
     <ProjectReference Include="..\SmartRecipes.Models\SmartRecipes.Models.fsproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.3.4" />
+    <PackageReference Update="FSharp.Core" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
   </ItemGroup>
