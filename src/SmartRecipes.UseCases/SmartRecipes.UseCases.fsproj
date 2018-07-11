@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Users.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SmartRecipes.Business\SmartRecipes.Business.fsproj" />
+    <ProjectReference Include="..\SmartRecipes.DataAccess\SmartRecipes.DataAccess.fsproj" />
+    <ProjectReference Include="..\SmartRecipes.Models\SmartRecipes.Models.fsproj" />
+  </ItemGroup>
+</Project>

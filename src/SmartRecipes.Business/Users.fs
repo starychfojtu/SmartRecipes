@@ -9,10 +9,10 @@ module Business.Users
         | InvalidParameters of CredentialsError list
         | AccountAlreadyExits of Account
         
-    let signUp email password userWithGivenEmail =
+    let signUp email password getUserByEmail =
         match mkAccount email password with 
         | Success a ->
-            match userWithGivenEmail with
+            match getUserByEmail a.credentials.email with
                 | Some a -> AccountAlreadyExits a |> Error
                 | None -> Ok a
         | Failure e -> InvalidParameters e |> Error
