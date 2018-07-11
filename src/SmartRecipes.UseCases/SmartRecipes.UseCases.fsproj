@@ -6,6 +6,9 @@
     <Compile Include="Users.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\SmartRecipes.Business\SmartRecipes.Business.fsproj" />
     <ProjectReference Include="..\SmartRecipes.DataAccess\SmartRecipes.DataAccess.fsproj" />
     <ProjectReference Include="..\SmartRecipes.Models\SmartRecipes.Models.fsproj" />
