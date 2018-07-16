@@ -37,7 +37,7 @@
         Hashing.hash s |> Password
     
     type PasswordError =
-            | MustBe10CharactersLong
+        | MustBe10CharactersLong
                 
     let private is10CharacterLong (s: string) =
         match s.Length > 10 with 

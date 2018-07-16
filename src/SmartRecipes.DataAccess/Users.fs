@@ -10,10 +10,13 @@ module DataAccess.Users
         password = match account.credentials.password with | Password p -> p
     }
     
-    let private toModel (dbAccount: Database.Model.Account): Models.User.Account option =
-        match mkCredentials dbAccount.email dbAccount.password with 
-        | Success c -> Some { id = AccountId dbAccount.id; credentials = c }
-        | Failure _ -> None
+    let private toModel (dbAccount: Database.Model.Account): Models.User.Account = { 
+        id = AccountId dbAccount.id
+        credentials = {
+            email = new MailAddress(dbAccount.email)
+            password = Password dbAccount.password
+        }
+    }
         
     let add (context: Context) account =
         toDbModel account |> context.Add |> ignore
@@ -25,5 +28,5 @@ module DataAccess.Users
             ctx.Accounts 
             |> Seq.filter (fun a -> a.email = email.Address)
             |> Seq.tryHead
-            |> Option.bind (fun a -> toModel a)
+            |> Option.map (fun a -> toModel a)
         )

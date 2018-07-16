@@ -36,6 +36,7 @@ module SmartRecipes.Api.App
             POST >=>
                 choose [
                     route "/signUp" >=> Users.signUpHandler
+                    route "/signIn" >=> Users.signInHandler
                 ]
             setStatusCode 404 >=> text "Not Found" 
         ]
