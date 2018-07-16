@@ -8,9 +8,31 @@ module SmartRecipes.Api.App
     open Microsoft.Extensions.Logging
     open Microsoft.Extensions.DependencyInjection
     open Giraffe
-
+    open Microsoft.AspNetCore.Authentication
+    open Microsoft.AspNetCore.Authentication.JwtBearer
+    open Microsoft.AspNetCore.Http
+    open Microsoft.IdentityModel.Tokens
+    open Models.User
+    
+    type Claim = { accountId: AccountId }
+    type SimpleClaim = { Type: string; Value: string }
+    
+    let authorize =
+        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
+    
+    let showClaims =
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            let simpleClaims = 
+                ctx.User.Claims
+                |> Seq.map (fun (i : Security.Claims.Claim) -> {Type = i.Type; Value = i.Value})
+            json simpleClaims next ctx
+    
     let webApp =
         choose [
+            GET >=> 
+                choose [
+                    route "/claims" >=> authorize >=> showClaims
+                ]  
             POST >=>
                 choose [
                     route "/signUp" >=> Users.signUpHandler
@@ -43,11 +65,28 @@ module SmartRecipes.Api.App
         | false -> app.UseGiraffeErrorHandler errorHandler)
             .UseCors(configureCors)
             .UseStaticFiles()
+            .UseAuthentication()
             .UseGiraffe(webApp)
     
+    let authenticationOptions (o : AuthenticationOptions) =
+        o.DefaultAuthenticateScheme <- JwtBearerDefaults.AuthenticationScheme
+        o.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme
+    
+    let jwtBearerOptions (cfg : JwtBearerOptions) =
+        cfg.SaveToken <- true
+        cfg.IncludeErrorDetails <- true
+        cfg.Authority <- "https://accounts.google.com"
+        cfg.Audience <- "your-oauth-2.0-client-id.apps.googleusercontent.com"
+        cfg.TokenValidationParameters <- TokenValidationParameters (
+            ValidIssuer = "accounts.google.com"
+        )
+    
     let configureServices (services : IServiceCollection) =
-        services.AddCors()    |> ignore
-        services.AddGiraffe() |> ignore
+        services
+            .AddCors()
+            .AddGiraffe()
+            .AddAuthentication(authenticationOptions)
+            .AddJwtBearer(Action<JwtBearerOptions> jwtBearerOptions) |> ignore
     
     let configureLogging (builder : ILoggingBuilder) =
         let filter (l : LogLevel) = l.Equals LogLevel.Error

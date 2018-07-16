@@ -4,6 +4,8 @@
     open System
     open FSharpPlus.Data
     open FSharpPlus
+    open Infrastructure
+    open Infrastructure
     
     type AccountId = AccountId of Guid
     type Password = Password of string
@@ -31,16 +33,20 @@
         
     (* Password *)
     
+    let private password s =
+        Hashing.hash s |> Password
+    
     type PasswordError =
-        | MustBe10CharactersLong
-        
+            | MustBe10CharactersLong
+                
     let private is10CharacterLong (s: string) =
         match s.Length > 10 with 
-        | true -> Success <| Password s
+        | true -> Success <| s
         | false -> Failure [ MustBe10CharactersLong ]
         
     let mkPassword s =
         is10CharacterLong s
+        |> Validation.map (fun s -> password s )
         
     (* Credentials *)
     

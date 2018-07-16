@@ -12,6 +12,7 @@
     <PackageReference Update="FSharp.Core" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SmartRecipes.Infrastructure\SmartRecipes.Infrastructure.fsproj" />
     <ProjectReference Include="..\SmartRecipes.Models\SmartRecipes.Models.fsproj" />
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Account.fs" />
+    <Compile Include="User.fs" />
     <Compile Include="Foodstuff.fs" />
     <Compile Include="Recipe.fs" />
   </ItemGroup>
@@ -14,5 +14,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SmartRecipes.Infrastructure\SmartRecipes.Infrastructure.fsproj" />
   </ItemGroup>
 </Project>

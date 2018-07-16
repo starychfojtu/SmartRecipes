@@ -1,36 +1,26 @@
 module UseCases.Users
     open System.Net.Mail
     open Business
+    open Business
+    open DataAccess
     open Database.Context
     open Database.Model
-    open Models.User
+    open FSharpPlus
     open FSharpPlus.Data
-    
-    // TODO: move this to data access
-    let toDbModel (account: Models.User.Account): Database.Model.Account = {
-        id = match account.id with | AccountId id -> id
-        email = account.credentials.email.Address
-        password = match account.credentials.password with | Password p -> p
-    }
-    
-    let toModel (dbAccount: Database.Model.Account): Models.User.Account option =
-        match mkCredentials dbAccount.email dbAccount.password with 
-        | Success c -> Some { id = AccountId dbAccount.id; credentials = c }
-        | Failure _ -> None
-        
-    let getUserByEmail (context: Context) (email: MailAddress) =
-        context.Accounts 
-        |> Seq.filter (fun a -> a.email = email.Address)
-        |> Seq.tryHead
-        |> Option.bind (fun a -> toModel a)
-        
     
     let signUp email password = 
         let context = createDbContext ()
-        let result = Users.signUp email password <| getUserByEmail context
-        match result with
-        | Ok a ->
-            context.Add(toDbModel a) |> ignore
-            context.SaveChanges() |> ignore
-            Ok a
-        | Error e -> Error e  
+        let getUserByEmail = (fun email -> Users.getUserByEmail email |> Reader.run <| context) // TODO: refactor
+        let result = Users.signUp email password getUserByEmail
+        Result.map (fun a -> Users.add context a) result
+        
+    let signIn email password =
+        let authenticate = monad { 
+            let! user = Users.getUserByEmail email
+            let signedIn = Option.map (fun u -> Users.signIn u password) user
+            return match signedIn with
+            | Some(true) -> true
+            | _ -> false
+        }
+        Reader.run authenticate <| createDbContext ()
+        
