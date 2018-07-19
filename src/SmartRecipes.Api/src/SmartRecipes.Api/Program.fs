@@ -84,10 +84,10 @@ module SmartRecipes.Api.App
         cfg.SaveToken <- true
         cfg.IncludeErrorDetails <- true
         cfg.TokenValidationParameters <- TokenValidationParameters (
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateIssuerSigningKey = false,
-            ValidateLifetime = false,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
             ValidIssuer = issuer,
             ValidAudience = issuer,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue))

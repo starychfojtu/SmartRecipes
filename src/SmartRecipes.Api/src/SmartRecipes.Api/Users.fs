@@ -41,7 +41,8 @@ module Api.Users
             let issuer = "http://localhost:5000";
             let key = SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue))
             let creds = SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-            let token = JwtSecurityToken(issuer, issuer, signingCredentials = creds)
+            let expirationDate = Nullable<DateTime>(DateTime.Now.AddHours(1.0))
+            let token = JwtSecurityToken(issuer, issuer, expires = expirationDate, signingCredentials = creds)
             let encodedToken = (JwtSecurityTokenHandler()).WriteToken(token);
             return! text encodedToken next ctx
         }
