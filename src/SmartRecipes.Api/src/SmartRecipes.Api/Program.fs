@@ -1,4 +1,5 @@
 module SmartRecipes.Api.App
+    open System.Text
     open Api
     open System
     open System.IO
@@ -11,6 +12,9 @@ module SmartRecipes.Api.App
     open Microsoft.AspNetCore.Authentication
     open Microsoft.AspNetCore.Authentication.JwtBearer
     open Microsoft.AspNetCore.Http
+    open Microsoft.IdentityModel.Tokens
+    open Microsoft.IdentityModel.Tokens
+    open Microsoft.IdentityModel.Tokens
     open Microsoft.IdentityModel.Tokens
     open Models.User
     
@@ -73,13 +77,20 @@ module SmartRecipes.Api.App
         o.DefaultAuthenticateScheme <- JwtBearerDefaults.AuthenticationScheme
         o.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme
     
+    let keyValue = "ThisIsVerySecretKey";
+    let issuer = "http://localhost:5000";
+                
     let jwtBearerOptions (cfg : JwtBearerOptions) =
         cfg.SaveToken <- true
         cfg.IncludeErrorDetails <- true
-        cfg.Authority <- "https://accounts.google.com"
-        cfg.Audience <- "your-oauth-2.0-client-id.apps.googleusercontent.com"
         cfg.TokenValidationParameters <- TokenValidationParameters (
-            ValidIssuer = "accounts.google.com"
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateIssuerSigningKey = false,
+            ValidateLifetime = false,
+            ValidIssuer = issuer,
+            ValidAudience = issuer,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue))
         )
     
     let configureServices (services : IServiceCollection) =
