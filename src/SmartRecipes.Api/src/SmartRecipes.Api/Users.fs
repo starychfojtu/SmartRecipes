@@ -33,17 +33,10 @@ module Api.Users
     let signInHandler (next : HttpFunc) (ctx : HttpContext) =
         task {
             let! parameters = ctx.BindModelAsync<SignInParameters>()
-            let result = 
+            let isAuthenticated = 
                 User.mkEmail parameters.email
                 |> Validation.map (fun e -> Users.signIn e parameters.password)
-            let config = ctx.GetService<IConfiguration>();
-            let keyValue = "ThisIsVerySecretKey";
-            let issuer = "http://localhost:5000";
-            let key = SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue))
-            let creds = SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-            let expirationDate = Nullable<DateTime>(DateTime.Now.AddHours(1.0))
-            let token = JwtSecurityToken(issuer, issuer, expires = expirationDate, signingCredentials = creds)
-            let encodedToken = (JwtSecurityTokenHandler()).WriteToken(token);
+            
             return! text encodedToken next ctx
         }
         

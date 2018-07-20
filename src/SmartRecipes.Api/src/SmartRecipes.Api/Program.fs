@@ -1,6 +1,7 @@
 module SmartRecipes.Api.App
     open System.Text
     open Api
+    open Api
     open System
     open System.IO
     open Microsoft.AspNetCore.Builder
@@ -17,12 +18,7 @@ module SmartRecipes.Api.App
     open Microsoft.IdentityModel.Tokens
     open Microsoft.IdentityModel.Tokens
     open Models.User
-    
-    type Claim = { accountId: AccountId }
-    type SimpleClaim = { Type: string; Value: string }
-    
-    let authorize =
-        requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
+    open Configuration
     
     let showClaims =
         fun (next : HttpFunc) (ctx : HttpContext) ->
@@ -58,10 +54,11 @@ module SmartRecipes.Api.App
     // ---------------------------------
     
     let configureCors (builder : CorsPolicyBuilder) =
-        builder.WithOrigins("http://localhost:8080")
-               .AllowAnyMethod()
-               .AllowAnyHeader()
-               |> ignore
+        builder
+            .WithOrigins("http://localhost:8080")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            |> ignore
     
     let configureApp (app : IApplicationBuilder) =
         let env = app.ApplicationServices.GetService<IHostingEnvironment>()
@@ -70,35 +67,13 @@ module SmartRecipes.Api.App
         | false -> app.UseGiraffeErrorHandler errorHandler)
             .UseCors(configureCors)
             .UseStaticFiles()
-            .UseAuthentication()
             .UseGiraffe(webApp)
-    
-    let authenticationOptions (o : AuthenticationOptions) =
-        o.DefaultAuthenticateScheme <- JwtBearerDefaults.AuthenticationScheme
-        o.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme
-    
-    let keyValue = "ThisIsVerySecretKey";
-    let issuer = "http://localhost:5000";
-                
-    let jwtBearerOptions (cfg : JwtBearerOptions) =
-        cfg.SaveToken <- true
-        cfg.IncludeErrorDetails <- true
-        cfg.TokenValidationParameters <- TokenValidationParameters (
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidateLifetime = true,
-            ValidIssuer = issuer,
-            ValidAudience = issuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue))
-        )
     
     let configureServices (services : IServiceCollection) =
         services
             .AddCors()
-            .AddGiraffe()
-            .AddAuthentication(authenticationOptions)
-            .AddJwtBearer(Action<JwtBearerOptions> jwtBearerOptions) |> ignore
+            .AddGiraffe() 
+            |> ignore
     
     let configureLogging (builder : ILoggingBuilder) =
         let filter (l : LogLevel) = l.Equals LogLevel.Error
@@ -107,7 +82,7 @@ module SmartRecipes.Api.App
     [<EntryPoint>]
     let main _ =
         let contentRoot = Directory.GetCurrentDirectory()
-        let webRoot     = Path.Combine(contentRoot, "WebRoot")
+        let webRoot = Path.Combine(contentRoot, "WebRoot")
         WebHostBuilder()
             .UseKestrel()
             .UseContentRoot(contentRoot)
