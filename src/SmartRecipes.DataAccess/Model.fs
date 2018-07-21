@@ -2,42 +2,42 @@ module DataAccess.Model
     open System
 
     [<CLIMutable>]
-    type Account = {
+    type DbAccount = {
         id: Guid;
         email: string;
         password: string;
     }
     
-    type MetricUnit = 
+    type DbMetricUnit = 
         | Liter = 0
         | Gram = 1
         | Piece = 2
     
     [<CLIMutable>]
-    type Amount = {
-        unit: MetricUnit;
+    type DbAmount = {
+        unit: DbMetricUnit;
         amount: float
     }
     
     [<CLIMutable>]
-    type Foodstuff = {
+    type DbFoodstuff = {
         id: Guid
         name: string;
-        baseAmount: Amount
-        amountStep: Amount
+        baseAmount: DbAmount
+        amountStep: DbAmount
     }
     
     [<CLIMutable>]
-    type Recipe = {
+    type DbRecipe = {
         id: Guid;
         name: string;
         creatorId: Guid;
     }
     
     [<CLIMutable>]
-    type Ingredient = {
+    type DbIngredient = {
         id: Guid;
         recipeId: Guid;
         foodstuffId: Guid;
-        amount: Amount;
+        amount: DbAmount;
     }

@@ -3,9 +3,7 @@ module UseCases.Users
     open Business
     open Business.Users
     open DataAccess
-    open Database.Context
-    open Database.Model
-    open FSharpPlus
+    open DataAccess.Context
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
     open Models
@@ -17,7 +15,7 @@ module UseCases.Users
     let signUp email password = 
         Users.getAccountByEmail
         |> Reader.map (Users.signUp email password)
-        |> Reader.bindResult (fun a -> Users.add a |> Reader.map (fun a -> Ok a)) // Use ReaderT to implement this
+        |> Reader.bindResult (fun a -> Users.add a |> Reader.map (fun a -> Ok a))
         |> Reader.execute (createDbContext ())
         
     let private validateEmail email = 

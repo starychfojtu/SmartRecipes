@@ -2,28 +2,29 @@ namespace SmartRecipes.DataAccess
 
 [<RequireQualifiedAccess>]
 module Recipes =
+    open DataAccess.Context
     open FSharpPlus.Data
     open System.Net.Http
     open System
     open Models.Recipe
     open Models.Account
-    open Database.Context
+    open DataAccess.Model
+    open Models.Foodstuff
     
-    let private mapUnit (unit: Database.Model.MetricUnit): Models.Foodstuff.MetricUnit =
+    let private toDb unit =
         match unit with
-        | Database.Model.MetricUnit.Liter -> Models.Foodstuff.MetricUnit.Liter
-        | Database.Model.MetricUnit.Gram -> Models.Foodstuff.MetricUnit.Gram
-        | Database.Model.MetricUnit.Piece -> Models.Foodstuff.MetricUnit.Piece
-        | _ -> Models.Foodstuff.MetricUnit.Piece
+        | DbMetricUnit.Liter -> MetricUnit.Liter
+        | DbMetricUnit.Gram -> MetricUnit.Gram
+        | DbMetricUnit.Piece -> MetricUnit.Piece
     
-    let private map (recipe: Database.Model.Recipe): Recipe = {
+    let private toModel (recipe: DbRecipe): Recipe = {
         id = RecipeId recipe.id;
         name = recipe.name;
         creatorId = AccountId recipe.creatorId
     }
     
-    let getAll: Reader<Context, seq<Recipe>> = Reader (fun ctx ->
+    let getAll = Reader (fun (ctx: Context) ->
         ctx.Recipes
         |> Seq.toList
-        |> Seq.map map
+        |> Seq.map toModel
     )

@@ -1,17 +1,18 @@
 module DataAccess.Users
     open System.Net.Mail
-    open Database.Context
+    open Context
+    open DataAccess.Model
     open Models.Account
     open Models.Password
     open FSharpPlus.Data
     
-    let private toDbModel (account: Models.Account.Account): Database.Model.Account = {
-        id = match account.id with | AccountId id -> id
+    let private toDb account = {
+        id = match account.id with AccountId id -> id
         email = account.credentials.email.Address
-        password = match account.credentials.password with | Password p -> p
+        password = match account.credentials.password with Password p -> p
     }
     
-    let private toModel (dbAccount: Database.Model.Account): Models.Account.Account = { 
+    let private toModel (dbAccount: DbAccount): Account = { 
         id = AccountId dbAccount.id
         credentials = 
         {
@@ -22,7 +23,7 @@ module DataAccess.Users
         
     let add account =
         Reader(fun (ctx: Context) ->
-            toDbModel account |> ctx.Add |> ignore
+            toDb account |> ctx.Add |> ignore
             ctx.SaveChanges () |> ignore
             account
         )
