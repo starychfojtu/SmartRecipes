@@ -3,6 +3,7 @@ module UseCases.Users
     open Business
     open Business.Users
     open DataAccess
+    open DataAccess
     open DataAccess.Context
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
@@ -39,6 +40,6 @@ module UseCases.Users
         |> Reader.id
         |> Reader.bindResult getAccount
         |> Reader.map (fun r -> Result.bind (authenticate password) r)
-        // TODO: Add token to db
+        |> Reader.bindResult (fun t -> Tokens.add t |> Reader.map (fun t -> Ok t))
         |> Reader.execute (createDbContext ())
         

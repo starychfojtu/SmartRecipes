@@ -15,6 +15,12 @@
         member c.Accounts
             with get() = c.accounts 
             and set v = c.accounts <- v
+            
+        [<DefaultValue>]
+        val mutable accessTokens:DbSet<DbAccessToken>
+        member c.AccessTokens
+            with get() = c.accessTokens 
+            and set v = c.accessTokens <- v
     
         [<DefaultValue>]
         val mutable foodstuff:DbSet<DbFoodstuff>
@@ -36,6 +42,9 @@
     
         override this.OnModelCreating mb =
             mb.Entity<DbAccount>().HasKey(fun a -> a.id :> obj) |> ignore
+            
+            mb.Entity<DbAccessToken>().HasKey(fun t -> t.value :> obj) |> ignore
+            mb.Entity<DbAccessToken>().HasOne<DbAccount>().WithMany().HasForeignKey(fun t -> t.accountId :> obj) |> ignore
     
             mb.Entity<DbFoodstuff>().HasKey(fun f -> f.id :> obj) |> ignore
             mb.Entity<DbFoodstuff>().OwnsOne(fun f -> f.amountStep) |> ignore

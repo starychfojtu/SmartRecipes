@@ -5,6 +5,7 @@ module DataAccess.Users
     open Models.Account
     open Models.Password
     open FSharpPlus.Data
+    open Models.Token
     
     let private toDb account = {
         id = match account.id with AccountId id -> id
@@ -12,7 +13,7 @@ module DataAccess.Users
         password = match account.credentials.password with Password p -> p
     }
     
-    let private toModel (dbAccount: DbAccount): Account = { 
+    let private toModel (dbAccount: DbAccount): Account = {
         id = AccountId dbAccount.id
         credentials = 
         {

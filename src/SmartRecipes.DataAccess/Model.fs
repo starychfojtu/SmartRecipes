@@ -8,6 +8,13 @@ module DataAccess.Model
         password: string;
     }
     
+    [<CLIMutable>]
+    type DbAccessToken = {
+        accountId: Guid
+        value: string
+        expiration: DateTime
+    }
+    
     type DbMetricUnit = 
         | Liter = 0
         | Gram = 1

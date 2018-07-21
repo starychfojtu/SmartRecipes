@@ -6,7 +6,7 @@ module Models.Token
     open System
     open System
     
-    type Token = private Token of string
+    type Token = Token of string
             
     let value (Token v) = v
         
