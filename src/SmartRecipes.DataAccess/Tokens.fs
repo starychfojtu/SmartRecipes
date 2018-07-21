@@ -24,11 +24,11 @@ module DataAccess.Tokens
             accessToken
         )
         
-    let getAccessToken =
-        Reader(fun (ctx: Context) -> (fun (AccountId accountId) ->
+    let get value =
+        Reader(fun (ctx: Context) -> 
             ctx.AccessTokens 
-            |> Seq.filter (fun t -> t.accountId = accountId)
+            |> Seq.filter (fun t -> t.value = value)
             |> Seq.sortByDescending (fun t -> t.expiration)
             |> Seq.tryHead
             |> Option.map (fun t -> toModel t)
-        ))
+        )

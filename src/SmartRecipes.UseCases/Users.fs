@@ -16,21 +16,20 @@ module UseCases.Users
     let signUp email password = 
         Users.getAccountByEmail
         |> Reader.map (Users.signUp email password)
-        |> Reader.bindResult (fun a -> Users.add a |> Reader.map (fun a -> Ok a))
+        |> Reader.bindResult (fun a -> Users.add a |> Reader.map Ok)
         |> Reader.execute (createDbContext ())
         
     let private validateEmail email = 
         mkEmail email
-        |> mapFailure (fun e -> Users.InvalidCredentials)
+        |> mapFailure (fun _ -> Users.InvalidCredentials)
         |> toResult
         
     let private getAccount email =
         Users.getAccountByEmail
-        |> Reader.map
-            (fun getAccount ->
-                match getAccount email with
-                | Some a -> Ok a
-                | None -> Error InvalidCredentials)
+        |> Reader.map (fun getAccount ->
+            match getAccount email with
+            | Some a -> Ok a
+            | None -> Error InvalidCredentials)
         
     let private authenticate password account =
         Users.signIn account password
@@ -39,7 +38,11 @@ module UseCases.Users
         validateEmail email
         |> Reader.id
         |> Reader.bindResult getAccount
-        |> Reader.map (fun r -> Result.bind (authenticate password) r)
-        |> Reader.bindResult (fun t -> Tokens.add t |> Reader.map (fun t -> Ok t))
+        |> Reader.map (authenticate password |> Result.bind)
+        |> Reader.bindResult (fun t -> Tokens.add t |> Reader.map Ok)
         |> Reader.execute (createDbContext ())
+        
+    let authorize error (accessTokenValue: string) =
+        Tokens.get accessTokenValue
+        |> Reader.map (fun t -> verifyAccessToken error t)
         

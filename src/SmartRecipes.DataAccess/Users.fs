@@ -36,3 +36,11 @@ module DataAccess.Users
             |> Seq.tryHead
             |> Option.map (fun a -> toModel a)
         ))
+        
+    let getById (AccountId id)= 
+        Reader(fun (ctx: Context) ->
+            ctx.Accounts 
+            |> Seq.filter (fun a -> a.id = id)
+            |> Seq.tryHead
+            |> Option.map (fun a -> toModel a)
+        )

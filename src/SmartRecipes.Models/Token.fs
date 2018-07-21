@@ -1,4 +1,5 @@
 module Models.Token
+    open System.Globalization
     open System.Security.Cryptography
     open Account
     open FSharpPlus
@@ -24,6 +25,7 @@ module Models.Token
         cryptoService.GetBytes(bytes) |> ignore
         BitConverter.ToString bytes
         |> String.replace "-" ""
+        |> String.toLower
     
     let mkAccessToken accountId = 
         let token = generateRandomToken ()
@@ -36,4 +38,7 @@ module Models.Token
             expiration = expiration
         }
         accessToken
+        
+    let isFresh accessToken nowUtc = 
+        nowUtc < accessToken.expiration
         

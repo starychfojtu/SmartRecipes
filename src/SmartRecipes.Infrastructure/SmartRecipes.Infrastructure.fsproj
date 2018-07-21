@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Hashing.fs" />
+    <Compile Include="Option.fs" />
     <Compile Include="Reader.fs" />
     <Compile Include="Validation.fs" />
   </ItemGroup>

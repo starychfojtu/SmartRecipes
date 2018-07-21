@@ -23,8 +23,8 @@ module Recipes =
         creatorId = AccountId recipe.creatorId
     }
     
-    let getAll = Reader (fun (ctx: Context) ->
+    let getByAccount (AccountId accountId) = Reader (fun (ctx: Context) ->
         ctx.Recipes
-        |> Seq.toList
+        |> Seq.filter (fun r -> r.creatorId = accountId)
         |> Seq.map toModel
     )

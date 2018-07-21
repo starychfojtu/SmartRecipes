@@ -16,7 +16,7 @@ module SmartRecipes.Api.App
         choose [
             GET >=> 
                 choose [
-                    route "/ahoj" >=> text "ahoj"
+                    route "/recipes" >=> Recipes.indexHandler
                 ]  
             POST >=>
                 choose [

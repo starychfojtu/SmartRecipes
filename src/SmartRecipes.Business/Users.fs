@@ -30,4 +30,7 @@ module Business.Users
         | true -> mkAccessToken account.id |> Ok
         | false -> Error InvalidCredentials
         
-        
+    let verifyAccessToken error accessToken = 
+        match Option.filter (fun t -> isFresh t DateTime.UtcNow) accessToken with
+        | Some _ -> Ok ()
+        | None -> Error error

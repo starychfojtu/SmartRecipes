@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Users.fs" />
+    <Compile Include="Recipes.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
