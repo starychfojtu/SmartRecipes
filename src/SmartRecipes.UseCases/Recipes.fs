@@ -10,7 +10,7 @@ module UseCases.Recipes
     open SmartRecipes.DataAccess
     open System
     open Infrastructure.Option
-    open UseCases.Users
+    open Users
                 
     type RecipesByAccountError =
         | Unauthorized
@@ -19,6 +19,6 @@ module UseCases.Recipes
     let getAllbyAccount accessTokenValue id =
         authorize Unauthorized accessTokenValue
         |> Reader.bind (fun _ -> Users.getById (AccountId id))
-        |> Reader.map (toResult UserNotFound)
+        |> Reader.map (toResult UserNotFound) // TODO FIX -> always overrides unauthorized error
         |> Reader.bindResult (fun a -> Recipes.getByAccount a.id |> Reader.map Ok)
         |> Reader.execute (createDbContext ())
