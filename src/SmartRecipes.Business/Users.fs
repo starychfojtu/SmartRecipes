@@ -1,9 +1,11 @@
-[<RequireQualifiedAccess>]
 module Business.Users
     open DevOne.Security.Cryptography.BCrypt
     open FSharpPlus.Data
     open Infrastructure
-    open Models.User
+    open Models.Account
+    open Models.Credentials
+    open Models.Password
+    open Models.Token
     open System
     open System.Net.Mail
     
@@ -19,8 +21,14 @@ module Business.Users
                 | None -> Ok a
         | Failure e -> InvalidParameters e |> Error 
     
-    let signIn (account : Account) password =
-        match account.credentials.password with
-        | Password p -> Hashing.verify p password
+    type SignInError = 
+        | InvalidCredentials
+            
+    let signIn account password =
+        let (Password accountPassword) = account.credentials.password
+        let verified = Hashing.verify accountPassword password
+        match verified with
+        | true -> mkAccessToken account.id |> Ok
+        | false -> Error InvalidCredentials
         
         

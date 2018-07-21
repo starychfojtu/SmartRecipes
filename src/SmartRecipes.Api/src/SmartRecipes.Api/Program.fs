@@ -10,28 +10,13 @@ module SmartRecipes.Api.App
     open Microsoft.Extensions.Logging
     open Microsoft.Extensions.DependencyInjection
     open Giraffe
-    open Microsoft.AspNetCore.Authentication
-    open Microsoft.AspNetCore.Authentication.JwtBearer
     open Microsoft.AspNetCore.Http
-    open Microsoft.IdentityModel.Tokens
-    open Microsoft.IdentityModel.Tokens
-    open Microsoft.IdentityModel.Tokens
-    open Microsoft.IdentityModel.Tokens
-    open Models.User
-    open Configuration
-    
-    let showClaims =
-        fun (next : HttpFunc) (ctx : HttpContext) ->
-            let simpleClaims = 
-                ctx.User.Claims
-                |> Seq.map (fun (i : Security.Claims.Claim) -> {Type = i.Type; Value = i.Value})
-            json simpleClaims next ctx
     
     let webApp =
         choose [
             GET >=> 
                 choose [
-                    route "/claims" >=> authorize >=> showClaims
+                    route "/ahoj" >=> text "ahoj"
                 ]  
             POST >=>
                 choose [

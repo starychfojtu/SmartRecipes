@@ -1,26 +1,45 @@
 module UseCases.Users
     open System.Net.Mail
     open Business
-    open Business
+    open Business.Users
     open DataAccess
     open Database.Context
     open Database.Model
     open FSharpPlus
     open FSharpPlus.Data
+    open FSharpPlus.Data.Validation
+    open Models
+    open Models.Token
+    open Models.Email
+    open Infrastructure.Validation
+    open Infrastructure
     
     let signUp email password = 
-        let context = createDbContext ()
-        let getUserByEmail = (fun email -> Users.getUserByEmail email |> Reader.run <| context) // TODO: refactor
-        let result = Users.signUp email password getUserByEmail
-        Result.map (fun a -> Users.add context a) result
+        Users.getAccountByEmail
+        |> Reader.map (Users.signUp email password)
+        |> Reader.bindResult (fun a -> Users.add a |> Reader.map (fun a -> Ok a)) // Use ReaderT to implement this
+        |> Reader.execute (createDbContext ())
         
+    let private validateEmail email = 
+        mkEmail email
+        |> mapFailure (fun e -> Users.InvalidCredentials)
+        |> toResult
+        
+    let private getAccount email =
+        Users.getAccountByEmail
+        |> Reader.map
+            (fun getAccount ->
+                match getAccount email with
+                | Some a -> Ok a
+                | None -> Error InvalidCredentials)
+        
+    let private authenticate password account =
+        Users.signIn account password
+       
     let signIn email password =
-        let authenticate = monad { 
-            let! user = Users.getUserByEmail email
-            let signedIn = Option.map (fun u -> Users.signIn u password) user
-            return match signedIn with
-            | Some(true) -> true
-            | _ -> false
-        }
-        Reader.run authenticate <| createDbContext ()
+        validateEmail email
+        |> Reader.id
+        |> Reader.bindResult getAccount
+        |> Reader.map (fun r -> Result.bind (authenticate password) r)
+        |> Reader.execute (createDbContext ())
         

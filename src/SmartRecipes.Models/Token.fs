@@ -1,11 +1,14 @@
 module Models.Token
     open System.Security.Cryptography
     open Account
+    open FSharpPlus
     open System
     open System
     open System
     
     type Token = private Token of string
+            
+    let value (Token v) = v
         
     type AccessToken = {
         accountId: AccountId
@@ -20,6 +23,7 @@ module Models.Token
         use cryptoService = new RNGCryptoServiceProvider ()
         cryptoService.GetBytes(bytes) |> ignore
         BitConverter.ToString bytes
+        |> String.replace "-" ""
     
     let mkAccessToken accountId = 
         let token = generateRandomToken ()

@@ -6,7 +6,7 @@ module Recipes =
     open System.Net.Http
     open System
     open Models.Recipe
-    open Models.User
+    open Models.Account
     open Database.Context
     
     let private mapUnit (unit: Database.Model.MetricUnit): Models.Foodstuff.MetricUnit =

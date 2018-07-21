@@ -1,6 +1,6 @@
 module Models.Recipe
     open System
-    open User
+    open Account
     open Foodstuff
     
     type RecipeId = RecipeId of Guid
