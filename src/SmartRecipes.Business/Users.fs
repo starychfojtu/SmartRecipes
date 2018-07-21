@@ -1,5 +1,4 @@
 module Business.Users
-    open DevOne.Security.Cryptography.BCrypt
     open FSharpPlus.Data
     open Infrastructure
     open Models.Account

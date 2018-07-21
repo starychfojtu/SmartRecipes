@@ -5,13 +5,17 @@ module Tests
     open Models.Password
     open System
     open Xunit
+    open FSharpPlus.Data
     
     let AssertFail () = Assert.True(false)
     
     let id = Guid.NewGuid()
     let mailAddress = new MailAddress("test@gmail.com")
     let passwordValue = "VeryLongPassword1"
-    let password = Password passwordValue
+    let password = 
+        match mkPassword passwordValue with 
+        | Success s -> s 
+        | Failure _ -> raise (InvalidOperationException ("Test is invalidly configured.")) 
     let account = {
         id = AccountId id
         credentials = 

@@ -1,12 +1,9 @@
 module Infrastructure.Hashing
-    open DevOne.Security.Cryptography.BCrypt
-    
-    let private salt = BCryptHelper.GenerateSalt ()
 
-    let hash s =
-        BCryptHelper.HashPassword(s, salt)
+    let hash plain =
+        BCrypt.Net.BCrypt.HashPassword(plain)
         
     let verify hashed plain = 
-        BCryptHelper.CheckPassword(plain, hashed)
+        BCrypt.Net.BCrypt.Verify(plain, hashed)
         
     
