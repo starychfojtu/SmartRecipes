@@ -41,5 +41,6 @@ module UseCases.Users
         |> Reader.id
         |> Reader.bindResult getAccount
         |> Reader.map (fun r -> Result.bind (authenticate password) r)
+        // TODO: Add token to db
         |> Reader.execute (createDbContext ())
         

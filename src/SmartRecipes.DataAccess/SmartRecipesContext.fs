@@ -1,4 +1,4 @@
-﻿module Database.Context
+﻿module DataAccess.Context
     open Microsoft.EntityFrameworkCore
     open FSharp.Core
     open Database.Model

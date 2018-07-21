@@ -13,8 +13,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Model.fs" />
-    <Compile Include="SmartRecipesContext.fs" />
-  </ItemGroup>
 </Project>

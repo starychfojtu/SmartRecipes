@@ -5,11 +5,12 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Model.fs" />
     <Compile Include="Users.fs" />
     <Compile Include="Recipes.fs" />
+    <Compile Include="SmartRecipesContext.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartRecipes.Database\SmartRecipes.Database.fsproj" />
     <ProjectReference Include="..\SmartRecipes.Models\SmartRecipes.Models.fsproj" />
   </ItemGroup>
   <ItemGroup>
@@ -18,5 +19,7 @@
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.1.1" />
   </ItemGroup>
 </Project>

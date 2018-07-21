@@ -1,4 +1,4 @@
-module Database.Model
+module DataAccess.Model
     open System
 
     [<CLIMutable>]
