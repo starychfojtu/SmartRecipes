@@ -1,13 +1,16 @@
 module Models.Recipe
     open System
     open Account
+    open FSharpPlus.Data
+    open FSharpPlus
     open Foodstuff
+    open Models.NonEmptyString
     
     type RecipeId = RecipeId of Guid
     
     type Recipe = {
         id: RecipeId;
-        name: string;
+        name: NonEmptyString;
         creatorId: AccountId;
     }
     

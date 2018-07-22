@@ -1,6 +1,7 @@
 module Models.Foodstuff
+    open Models.NonEmptyString
     open System
-    open System
+    open NonNegativeFloat
     
     type MetricUnit = 
         | Liter
@@ -9,14 +10,14 @@ module Models.Foodstuff
     
     type Amount = {
         unit: MetricUnit;
-        amount: float
+        value: NonNegativeFloat
     }
     
     type FoodstuffId = FoodstuffId of Guid
     
     type Foodstuff = {
         id: FoodstuffId
-        name: string;
+        name: NonEmptyString;
         baseAmount: Amount
         amountStep: Amount
     }

@@ -12,7 +12,7 @@ module UseCases.Recipes
     open Infrastructure.Option
     open Users
                 
-    type RecipesByAccountError =
+    type GetByAccountError =
         | Unauthorized
         | UserNotFound
         
@@ -22,3 +22,13 @@ module UseCases.Recipes
         |> Reader.map (Result.bind (toResult UserNotFound))
         |> Reader.bindResult (fun a -> Recipes.getByAccount a.id |> Reader.map Ok)
         |> Reader.execute (createDbContext ())
+        
+    type CreateError =
+        | Unauthorized
+        | InvalidParameters
+        
+    let create =
+        // get foodstuffs (ensure all their ids exist in Db)
+        // Create
+        // Add
+        ()
