@@ -18,7 +18,7 @@ module UseCases.Recipes
         
     let getAllbyAccount accessTokenValue id =
         authorize Unauthorized accessTokenValue
-        |> Reader.bind (fun _ -> Users.getById (AccountId id))
-        |> Reader.map (toResult UserNotFound) // TODO FIX -> always overrides unauthorized error
+        |> Reader.bindResult (fun _ -> Users.getById (AccountId id) |> Reader.map Ok)
+        |> Reader.map (Result.bind (toResult UserNotFound))
         |> Reader.bindResult (fun a -> Recipes.getByAccount a.id |> Reader.map Ok)
         |> Reader.execute (createDbContext ())
