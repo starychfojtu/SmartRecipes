@@ -9,6 +9,7 @@ module Business.Recipes
     open FSharpPlus.Data
     open Infrastructure
     open Infrastructure.Validation
+    open Infrastructure.NonEmptyList
     open Models.Account
     open Models.Recipe
     open NaturalNumber
@@ -31,7 +32,8 @@ module Business.Recipes
         | NameCannotBeEmpty
         | PersonCountMustBePositive
         | InvalidImageUrl of string
-        | AmountOfIngredientMustBePositive
+        | AmountOfFoodstuffMustBePositive
+        | MustContaintAtLeastOneIngredient
         
     let private createIngredient recipeId parameter =
         mkIngredient recipeId parameter.foodstuff.id 
@@ -39,21 +41,28 @@ module Business.Recipes
         
     let private createIngredients parameters (recipeInfo: RecipeInfo) =
         parameters
-        |> Seq.map (createIngredient recipeInfo.id)
-        |> Seq.map (mapFailure (fun _ -> AmountOfIngredientMustBePositive))
-        |> Seq.map (map (fun i -> [i]))
-        |> Seq.traverse (fun s i -> (Validation.map (fun x -> Seq.concat x) s) <*> i)       
+        |> Seq.traverse (fun i -> 
+            createIngredient recipeInfo.id i
+            |> mapFailure (fun _ -> [AmountOfFoodstuffMustBePositive]) 
+            |> Validation.toResult)
+        |> Validation.ofResult
     
     let create (accountId: AccountId) parameters =
         let recipeInfo = 
             mkRecipeInfo
             <!> (mkNonEmptyString parameters.name |> mapFailure (fun _ -> [NameCannotBeEmpty]))
-            <*> (Success accountId)
+            <*> Success accountId
             <*> (mkNaturalNumber parameters.personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]))
             <*> (mkUri parameters.imageUrl |> mapFailure (fun m -> [InvalidImageUrl(m)]))
-            <*> (Success parameters.description)
-        let ingredients = Validation.bind (createIngredients parameters.ingredients) recipeInfo
-        ()
+            <*> Success parameters.description
+            
+        let ingredients = 
+            Validation.bind (createIngredients parameters.ingredients) recipeInfo
+            |> Validation.bind (fun s -> mkNonEmptyList s |> mapFailure (fun _ -> [MustContaintAtLeastOneIngredient]))
+        
+        mkRecipe 
+        <!> recipeInfo 
+        <*> ingredients
         
         
     
