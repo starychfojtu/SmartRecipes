@@ -2,6 +2,7 @@ module Models.Foodstuff
     open Models.NonEmptyString
     open System
     open NonNegativeFloat
+    open FSharpPlus
     
     type MetricUnit = 
         | Liter
@@ -12,6 +13,15 @@ module Models.Foodstuff
         unit: MetricUnit;
         value: NonNegativeFloat
     }
+    
+    let private createAmount unit value = {
+        unit = unit
+        value = value
+    }
+    
+    let mkAmount value unit = 
+        createAmount unit
+        <!> mkNonNegativeFloat value
     
     type FoodstuffId = FoodstuffId of Guid
     

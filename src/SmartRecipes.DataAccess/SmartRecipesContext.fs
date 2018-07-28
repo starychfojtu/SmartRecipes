@@ -23,10 +23,10 @@
             and set v = c.accessTokens <- v
     
         [<DefaultValue>]
-        val mutable foodstuff:DbSet<DbFoodstuff>
-        member c.Foodstuff 
-            with get() = c.foodstuff 
-            and set v = c.foodstuff <- v
+        val mutable foodstuffs:DbSet<DbFoodstuff>
+        member c.Foodstuffs
+            with get() = c.foodstuffs
+            and set v = c.foodstuffs <- v
     
         [<DefaultValue>]
         val mutable ingredients:DbSet<DbIngredient>

@@ -3,7 +3,7 @@ module Models.NonNegativeFloat
     open FSharpPlus.Data
     open System
 
-    type NonNegativeFloat = private NonNegativeFloat of float
+    type NonNegativeFloat = NonNegativeFloat of float
         
     let private nonNegativeFloat f = NonNegativeFloat f
     
@@ -14,6 +14,6 @@ module Models.NonNegativeFloat
         | true -> Failure FloatIsNegative
         | false -> Success f
     
-    let mkNonEmptyString f =
+    let mkNonNegativeFloat f =
         nonNegativeFloat
         <!> nonNegative f

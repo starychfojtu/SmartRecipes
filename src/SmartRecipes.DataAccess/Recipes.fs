@@ -1,7 +1,4 @@
-namespace SmartRecipes.DataAccess
-
-[<RequireQualifiedAccess>]
-module Recipes =
+module DataAccess.Recipes
     open DataAccess.Context
     open FSharpPlus.Data
     open System.Net.Http
@@ -10,12 +7,6 @@ module Recipes =
     open Models.Account
     open DataAccess.Model
     open Models.Foodstuff
-    
-    let private toDb unit =
-        match unit with
-        | DbMetricUnit.Liter -> MetricUnit.Liter
-        | DbMetricUnit.Gram -> MetricUnit.Gram
-        | DbMetricUnit.Piece -> MetricUnit.Piece
     
     let private toModel (recipe: DbRecipe): Recipe = {
         id = RecipeId recipe.id;

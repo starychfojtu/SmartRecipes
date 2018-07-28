@@ -3,7 +3,7 @@ module Models.NonEmptyString
     open FSharpPlus.Data
     open System
 
-    type NonEmptyString = private NonEmptyString of string
+    type NonEmptyString = NonEmptyString of string
         
     let private nonEmptyString s = NonEmptyString s
     

@@ -23,7 +23,7 @@ module DataAccess.Model
     [<CLIMutable>]
     type DbAmount = {
         unit: DbMetricUnit;
-        amount: float
+        value: float
     }
     
     [<CLIMutable>]

@@ -9,6 +9,7 @@
     <Compile Include="SmartRecipesContext.fs" />
     <Compile Include="Users.fs" />
     <Compile Include="Tokens.fs" />
+    <Compile Include="Foodstuffs.fs" />
     <Compile Include="Recipes.fs" />
   </ItemGroup>
   <ItemGroup>

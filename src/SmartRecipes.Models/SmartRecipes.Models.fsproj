@@ -5,8 +5,10 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="NaturalNumber.fs" />
     <Compile Include="NonEmptyString.fs" />
     <Compile Include="NonNegativeFloat.fs" />
+    <Compile Include="Uri.fs" />
     <Compile Include="Email.fs" />
     <Compile Include="Password.fs" />
     <Compile Include="Credentials.fs" />
