@@ -23,7 +23,8 @@ module Models.Foodstuff
         createAmount unit
         <!> mkNonNegativeFloat value
     
-    type FoodstuffId = FoodstuffId of Guid
+    type FoodstuffId = | FoodstuffId of Guid
+        with member i.value = match i with FoodstuffId v -> v
     
     type Foodstuff = {
         id: FoodstuffId

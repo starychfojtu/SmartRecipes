@@ -1,5 +1,7 @@
 module UseCases.Recipes
     open Business
+    open Business
+    open Business
     open System.Text.RegularExpressions
     open DataAccess
     open DataAccess.Context
@@ -9,6 +11,7 @@ module UseCases.Recipes
     open Infrastructure
     open Models.Account
     open DataAccess
+    open FSharpPlus
     open System
     open Infrastructure.Option
     open Models.Foodstuff
@@ -28,20 +31,38 @@ module UseCases.Recipes
         
     type CreateError =
         | Unauthorized
-        | InvalidRecipeParameters
+        | InvalidParameters of Recipes.CreateError
         | FoodstuffNotFound
         
-    let getFoodstuffs foodstuffIds = 
-        Foodstuffs.getByIds foodstuffIds
-        |> Reader.map (fun fs -> 
-            if Seq.length fs = Seq.length foodstuffIds 
-                then Ok fs 
-                else Error FoodstuffNotFound)
+    type IngredientParameter = {
+        foodstuffId: Guid
+        amount: float
+    }
+    
+    let mkParameter foodstuff amount : Recipes.IngredientParameter = {
+        foodstuff = foodstuff
+        amount = amount
+    }
         
-    let create accessTokenValue parameters ingredients =
-        let foodstuffIds = Seq.map (fun i -> i.foodstuffId) ingredients
-        authorize Unauthorized accessTokenValue
-        |> Reader.bindResult (fun _ -> ensurefoodstuffsExist foodstuffIds)
-        |> Reader.bindResult (fun _ -> Recipes.create parameters ingredients)
-        |> Reader.bindResult (fun r -> Recipes.add r |> Reader.map Ok)
+    let getIngredientParametersWithFoodstuff parameters = 
+        monad {
+            let foodstuffIds = Seq.map (fun i -> i.foodstuffId) parameters
+            let! fooddtuffs = Foodstuffs.getByIds foodstuffIds
+            let tupledFoodstuff = Seq.map (fun f -> (f.id.value, f)) fooddtuffs
+            let foodstuffMap = Map.ofSeq tupledFoodstuff
+            return 
+                if Seq.length parameters = Seq.length fooddtuffs
+                    then Seq.map (fun p -> mkParameter (Map.find p.foodstuffId foodstuffMap) p.amount) parameters |> Ok
+                    else Error [FoodstuffNotFound]
+        }
+        
+    // TODO: refactor this whole thing
+    let create accessTokenValue infoParameters ingredientParameters =
+        authorize [Unauthorized] accessTokenValue
+        |> Reader.bindResult (fun t -> 
+            getIngredientParametersWithFoodstuff ingredientParameters
+            |> Reader.map (Result.bind (fun is -> 
+                (Recipes.create t.accountId infoParameters is 
+                    |> Result.mapError (List.map InvalidParameters)))))
+            // |> Reader.bindResult (fun r -> Recipes.add r |> Reader.map Ok))
         |> Reader.execute (createDbContext ())

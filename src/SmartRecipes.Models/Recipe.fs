@@ -52,8 +52,8 @@ module Models.Recipe
         NonEmptyList.toSeq ingredients
         |> Seq.forall (fun i -> i.recipeId = recipeId)
     
-    let mkRecipe (info: RecipeInfo) ingredients = 
-        match ingredientsBelongToRecipe info.id ingredients with 
-        | false -> Error ()
-        | true -> Ok { info = info; ingredients = ingredients }
+    let mkRecipe info ingredients = { 
+        info = info
+        ingredients = ingredients
+    }
         

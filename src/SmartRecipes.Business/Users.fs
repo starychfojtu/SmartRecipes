@@ -11,7 +11,8 @@ module Business.Users
     type SignUpError = 
         | InvalidParameters of CredentialsError list
         | AccountAlreadyExits of Account
-            
+     
+     // TODO: Refactor to use statement per line       
     let signUp email password getUserByEmail =
         match mkAccount email password with 
         | Success a ->
@@ -26,11 +27,9 @@ module Business.Users
     let signIn account password =
         let (Password accountPassword) = account.credentials.password
         let verified = Hashing.verify accountPassword password
-        match verified with
-        | true -> mkAccessToken account.id |> Ok
-        | false -> Error InvalidCredentials
+        if verified
+            then mkAccessToken account.id |> Ok
+            else Error InvalidCredentials
         
-    let verifyAccessToken error accessToken = 
-        match Option.filter (fun t -> isFresh t DateTime.UtcNow) accessToken with
-        | Some _ -> Ok ()
-        | None -> Error error
+    let verifyAccessToken accessToken = 
+        isFresh accessToken DateTime.UtcNow

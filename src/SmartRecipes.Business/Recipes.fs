@@ -7,6 +7,8 @@ module Business.Recipes
     open NonEmptyString
     open FSharpPlus
     open FSharpPlus.Data
+    open FSharpPlus.Data
+    open FSharpPlus.Data
     open Infrastructure
     open Infrastructure.Validation
     open Infrastructure.NonEmptyList
@@ -20,12 +22,11 @@ module Business.Recipes
         amount: float
     }
         
-    type CreateParameters = {
+    type RecipeInfoParameters = {
         name: string
         personCount: int
         description: string
         imageUrl: string
-        ingredients: seq<IngredientParameter>
     }
     
     type CreateError =
@@ -39,30 +40,34 @@ module Business.Recipes
         mkIngredient recipeId parameter.foodstuff.id 
         <!> mkAmount parameter.amount parameter.foodstuff.baseAmount.unit
         
-    let private createIngredients parameters (recipeInfo: RecipeInfo) =
+    let private createIngredients parameters recipeInfo =
         parameters
         |> Seq.traverse (fun i -> 
             createIngredient recipeInfo.id i
             |> mapFailure (fun _ -> [AmountOfFoodstuffMustBePositive]) 
             |> Validation.toResult)
         |> Validation.ofResult
+        
+    let private createRecipeInfo accountId parameters =
+        mkRecipeInfo
+        <!> (mkNonEmptyString parameters.name |> mapFailure (fun _ -> [NameCannotBeEmpty]))
+        <*> Success accountId
+        <*> (mkNaturalNumber parameters.personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]))
+        <*> (mkUri parameters.imageUrl |> mapFailure (fun m -> [InvalidImageUrl(m)]))
+        <*> Success parameters.description
     
-    let create (accountId: AccountId) parameters =
+    let create accountId infoParameters ingredientParameters =
         let recipeInfo = 
-            mkRecipeInfo
-            <!> (mkNonEmptyString parameters.name |> mapFailure (fun _ -> [NameCannotBeEmpty]))
-            <*> Success accountId
-            <*> (mkNaturalNumber parameters.personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]))
-            <*> (mkUri parameters.imageUrl |> mapFailure (fun m -> [InvalidImageUrl(m)]))
-            <*> Success parameters.description
-            
+            createRecipeInfo accountId infoParameters
+        
         let ingredients = 
-            Validation.bind (createIngredients parameters.ingredients) recipeInfo
+            Validation.bind (createIngredients ingredientParameters) recipeInfo
             |> Validation.bind (fun s -> mkNonEmptyList s |> mapFailure (fun _ -> [MustContaintAtLeastOneIngredient]))
         
         mkRecipe 
         <!> recipeInfo 
         <*> ingredients
+        |> Validation.toResult
         
         
     
