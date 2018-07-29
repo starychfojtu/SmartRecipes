@@ -29,18 +29,16 @@ module DataAccess.Users
             account
         )
         
-    let getAccountByEmail = 
-        Reader(fun (ctx: Context) -> (fun (email: MailAddress) ->
+    let getAccountByEmail (email: MailAddress) = 
+        Reader(fun (ctx: Context) -> 
             ctx.Accounts 
             |> Seq.filter (fun a -> a.email = email.Address)
             |> Seq.tryHead
-            |> Option.map (fun a -> toModel a)
-        ))
+            |> Option.map (fun a -> toModel a))
         
     let getById (AccountId id)= 
         Reader(fun (ctx: Context) ->
             ctx.Accounts 
             |> Seq.filter (fun a -> a.id = id)
             |> Seq.tryHead
-            |> Option.map (fun a -> toModel a)
-        )
+            |> Option.map (fun a -> toModel a))

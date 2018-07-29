@@ -3,7 +3,8 @@ module Models.Password
     open Hashing
     open FSharpPlus.Data
 
-    type Password = Password of string
+    type Password = | Password of string
+        with member p.value = match p with Password v -> v
 
     let private password s =
         hash s |> Password

@@ -16,4 +16,4 @@ module Infrastructure.Reader
         Reader.run reader a
         
     let id a = 
-        Reader(fun (b) -> a)
+        Reader(fun b -> a)
