@@ -1,4 +1,5 @@
 module DataAccess.Recipes
+    open DataAccess
     open DataAccess.Context
     open FSharpPlus.Data
     open System.Net.Http
@@ -6,12 +7,17 @@ module DataAccess.Recipes
     open Models.Recipe
     open Models.Account
     open DataAccess.Model
+    open Models
+    open Models
     open Models.Foodstuff
     
-    let private toModel (recipe: DbRecipe): Recipe = {
-        id = RecipeId recipe.id;
-        name = recipe.name;
+    let private toModel (recipe: DbRecipeInfo): RecipeInfo = {
+        id = RecipeId recipe.id
+        name = Utils.toNonEmptyStringModel recipe.name
         creatorId = AccountId recipe.creatorId
+        personCount = Utils.toNaturalNumberModel recipe.personCount
+        imageUrl = Uri(recipe.imageUrl)
+        description = recipe.description
     }
     
     let getByAccount (AccountId accountId) = Reader (fun (ctx: Context) ->

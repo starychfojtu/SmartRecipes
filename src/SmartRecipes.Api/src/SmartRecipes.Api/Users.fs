@@ -1,18 +1,7 @@
 module Api.Users
-    open System
-    open System.Text
-    open System.Net.Mail
-    open FSharp.Control.Tasks
-    open FSharpPlus.Data
     open Giraffe
     open Microsoft.AspNetCore.Http
-    open Microsoft.Extensions.Configuration
-    open Models
-    open Models.Email
-    open Models.Token
     open UseCases
-    open UseCases.Users
-    open Business.Users
     
     type SignUpParameters = {
         email: string
@@ -34,7 +23,7 @@ module Api.Users
     let signInHandler (next : HttpFunc) (ctx : HttpContext) =
         task {
             let! parameters = ctx.BindModelAsync<SignInParameters>()
-            let result = Users.signIn parameters.email parameters.password
+            let result = Users.signIn parameters.email parameters.password |> Reader.execute createContext()
             return!
                 match result with 
                 | Error e -> json InvalidCredentials next ctx

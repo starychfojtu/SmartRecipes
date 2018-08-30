@@ -3,9 +3,9 @@ module DataAccess.Model
 
     [<CLIMutable>]
     type DbAccount = {
-        id: Guid;
-        email: string;
-        password: string;
+        id: Guid
+        email: string
+        password: string
     }
     
     [<CLIMutable>]
@@ -22,29 +22,32 @@ module DataAccess.Model
     
     [<CLIMutable>]
     type DbAmount = {
-        unit: DbMetricUnit;
+        unit: DbMetricUnit
         value: float
     }
     
     [<CLIMutable>]
     type DbFoodstuff = {
         id: Guid
-        name: string;
+        name: string
         baseAmount: DbAmount
         amountStep: DbAmount
     }
     
     [<CLIMutable>]
-    type DbRecipe = {
-        id: Guid;
-        name: string;
-        creatorId: Guid;
+    type DbRecipeInfo = {
+        id: Guid
+        name: string
+        creatorId: Guid
+        personCount: int
+        imageUrl: string
+        description: string
     }
     
     [<CLIMutable>]
     type DbIngredient = {
-        id: Guid;
-        recipeId: Guid;
-        foodstuffId: Guid;
-        amount: DbAmount;
+        id: Guid
+        recipeId: Guid
+        foodstuffId: Guid
+        amount: DbAmount
     }
