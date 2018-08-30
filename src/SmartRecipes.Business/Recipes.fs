@@ -40,6 +40,7 @@ module Business.Recipes
         mkIngredient recipeId parameter.foodstuff.id 
         <!> mkAmount parameter.amount parameter.foodstuff.baseAmount.unit
         
+    // TODO: Implement traverse on Validation
     let private createIngredients parameters recipeInfo =
         parameters
         |> Seq.traverse (fun i -> 

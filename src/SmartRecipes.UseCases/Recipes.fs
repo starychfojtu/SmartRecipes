@@ -18,6 +18,7 @@ module UseCases.Recipes
     open Infrastructure.Option
     open Models.Foodstuff
     open UseCases
+    open UseCases
     open Users
                 
     // Get all by account
@@ -26,14 +27,14 @@ module UseCases.Recipes
         | Unauthorized
         | UserNotFound
         
-    let getAccount id token =
+    let private getAccount id token =
         Users.getById (AccountId id) 
         |> Reader.map (toResult UserNotFound)
         
-    let gerRecipes (account: Account) = 
+    let private gerRecipes (account: Account) = 
         Recipes.getByAccount account.id |> Reader.map Ok
         
-    let getAllbyAccount1 accessTokenValue id =
+    let private getAllbyAccount accessTokenValue id =
         authorize Unauthorized accessTokenValue
         >>=! getAccount id
         >>=! gerRecipes
@@ -50,13 +51,13 @@ module UseCases.Recipes
         amount: float
     }
     
-    let mkParameter foodstuff amount : Recipes.IngredientParameter = {
+    let private mkParameter foodstuff amount : Recipes.IngredientParameter = {
         foodstuff = foodstuff
         amount = amount
     }
       
-    // TODO: refactor this whole thing  
-    let getIngredientParametersWithFoodstuff parameters = 
+    // TODO: Implement Join, refactor this
+    let private mapParameters parameters token = 
         monad {
             let foodstuffIds = Seq.map (fun i -> i.foodstuffId) parameters
             let! fooddtuffs = Foodstuffs.getByIds foodstuffIds
@@ -64,16 +65,27 @@ module UseCases.Recipes
             let foodstuffMap = Map.ofSeq tupledFoodstuff
             return 
                 if Seq.length parameters = Seq.length fooddtuffs
-                    then Seq.map (fun p -> mkParameter (Map.find p.foodstuffId foodstuffMap) p.amount) parameters |> Ok
+                    then (token, Seq.map (fun p -> mkParameter (Map.find p.foodstuffId foodstuffMap) p.amount) parameters) |> Ok
                     else Error [FoodstuffNotFound]
         }
         
+    let private mapParametersTObeRefactoredTo parameters token = 
+        monad {
+            let foodstuffIds = Seq.map (fun i -> i.foodstuffId) parameters
+            let! fooddtuffs = Foodstuffs.getByIds foodstuffIds
+            // foodsutffs JOIN parameters ON FoodstuffId ... and remove Monad computation expression
+        }
+        
+    let private createRecipe infoParameters ingredientParameters token = 
+        Recipes.create token.accountId infoParameters ingredientParameters 
+        |> Result.mapError (List.map InvalidParameters)
+        |> Reader.id
+        
+    let private addRecipe recipe =
+        // TODO: implement
+        
     let create accessTokenValue infoParameters ingredientParameters =
         authorize [Unauthorized] accessTokenValue
-        |> Reader.bindResult (fun t -> 
-            getIngredientParametersWithFoodstuff ingredientParameters
-            |> Reader.map (Result.bind (fun is -> 
-                (Recipes.create t.accountId infoParameters is 
-                    |> Result.mapError (List.map InvalidParameters)))))
-            // |> Reader.bindResult (fun r -> Recipes.add r |> Reader.map Ok))
-        |> Reader.execute (createDbContext ())
+        >>=! mapParameters ingredientParameters
+        >>=! (fun (t, ingredientParameters) -> createRecipe infoParameters ingredientParameters t)
+        >>=! addRecipe

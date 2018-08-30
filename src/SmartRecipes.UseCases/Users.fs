@@ -45,7 +45,7 @@ module UseCases.Users
         |> Reader.map (Option.toResult InvalidCredentials)
         
     let private authenticate password account =
-        Users.signIn account password |> Reader.id
+        Users.authenticate account password |> Reader.id
         
     let private addTokenToDb t = 
         Tokens.add t |> Reader.map Ok

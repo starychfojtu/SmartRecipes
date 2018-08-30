@@ -25,7 +25,7 @@ module Business.Users
     type SignInError = 
         | InvalidCredentials
             
-    let signIn account password =
+    let authenticate account password =
         if Hashing.verify account.credentials.password.value password
             then mkAccessToken account.id |> Ok
             else Error InvalidCredentials
