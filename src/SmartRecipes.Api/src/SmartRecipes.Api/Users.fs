@@ -1,7 +1,11 @@
 module Api.Users
+    open DataAccess
     open Giraffe
     open Microsoft.AspNetCore.Http
     open UseCases
+    open Infrastructure
+    open Context
+    open Models.Token
     
     type SignUpParameters = {
         email: string
@@ -23,10 +27,10 @@ module Api.Users
     let signInHandler (next : HttpFunc) (ctx : HttpContext) =
         task {
             let! parameters = ctx.BindModelAsync<SignInParameters>()
-            let result = Users.signIn parameters.email parameters.password |> Reader.execute createContext()
+            let result = Users.signIn parameters.email parameters.password |> Reader.execute (createDbContext())
             return!
                 match result with 
-                | Error e -> json InvalidCredentials next ctx
-                | Ok t -> text (value t.value) next ctx
+                | Error e -> json e next ctx
+                | Ok t -> text t.value.value next ctx
         }
         

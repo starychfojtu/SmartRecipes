@@ -1,4 +1,4 @@
-module Tests
+module Tests.Users
     open System.Net.Mail
     open Business.Users
     open Models.Account

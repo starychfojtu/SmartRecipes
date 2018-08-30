@@ -8,8 +8,7 @@ module Models.Token
     open System
     
     type Token = Token of string
-            
-    let value (Token v) = v
+        with member t.value = match t with (Token v) -> v
         
     type AccessToken = {
         accountId: AccountId
