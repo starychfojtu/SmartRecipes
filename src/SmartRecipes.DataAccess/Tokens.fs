@@ -7,7 +7,7 @@ module DataAccess.Tokens
 
     let private toDb accessToken: DbAccessToken = {
         accountId = match accessToken.accountId with AccountId id -> id
-        value = value accessToken.value
+        value = accessToken.value.value
         expiration = accessToken.expiration
     }
         

@@ -9,7 +9,7 @@ module Infrastructure.Reader
             |> Result.bind (fun d ->  Reader.run (binder d) a)
         )
         
-    let private revertBindResult reader binder = bindResult binder reader
+    let revertBindResult reader binder = bindResult binder reader
     let ( >>=! ) = revertBindResult
     
     let execute a reader =

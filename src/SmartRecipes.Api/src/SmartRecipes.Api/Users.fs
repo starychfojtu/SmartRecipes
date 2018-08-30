@@ -15,7 +15,7 @@ module Api.Users
     let signUpHandler (next : HttpFunc) (ctx : HttpContext) =
         task {
             let! parameters = ctx.BindModelAsync<SignUpParameters>()
-            let result = Users.signUp parameters.email parameters.password
+            let result = Users.signUp parameters.email parameters.password |> Reader.execute (createDbContext())
             return! json result next ctx
         }
         

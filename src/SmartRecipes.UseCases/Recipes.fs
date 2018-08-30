@@ -12,23 +12,34 @@ module UseCases.Recipes
     open Models.Account
     open DataAccess
     open FSharpPlus
+    open Infrastructure
+    open Infrastructure.Reader
     open System
     open Infrastructure.Option
     open Models.Foodstuff
     open UseCases
     open Users
                 
+    // Get all by account
+    
     type GetByAccountError =
         | Unauthorized
         | UserNotFound
         
-    let getAllbyAccount accessTokenValue id =
-        authorize Unauthorized accessTokenValue
-        |> Reader.bindResult (fun _ -> Users.getById (AccountId id) |> Reader.map Ok)
-        |> Reader.map (Result.bind (toResult UserNotFound))
-        |> Reader.bindResult (fun a -> Recipes.getByAccount a.id |> Reader.map Ok)
-        |> Reader.execute (createDbContext ())
+    let getAccount id token =
+        Users.getById (AccountId id) 
+        |> Reader.map (toResult UserNotFound)
         
+    let gerRecipes (account: Account) = 
+        Recipes.getByAccount account.id |> Reader.map Ok
+        
+    let getAllbyAccount1 accessTokenValue id =
+        authorize Unauthorized accessTokenValue
+        >>=! getAccount id
+        >>=! gerRecipes
+        
+    // Create
+    
     type CreateError =
         | Unauthorized
         | InvalidParameters of Recipes.CreateError
@@ -43,7 +54,8 @@ module UseCases.Recipes
         foodstuff = foodstuff
         amount = amount
     }
-        
+      
+    // TODO: refactor this whole thing  
     let getIngredientParametersWithFoodstuff parameters = 
         monad {
             let foodstuffIds = Seq.map (fun i -> i.foodstuffId) parameters
@@ -56,7 +68,6 @@ module UseCases.Recipes
                     else Error [FoodstuffNotFound]
         }
         
-    // TODO: refactor this whole thing
     let create accessTokenValue infoParameters ingredientParameters =
         authorize [Unauthorized] accessTokenValue
         |> Reader.bindResult (fun t -> 

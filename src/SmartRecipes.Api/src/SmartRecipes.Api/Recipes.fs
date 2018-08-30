@@ -1,9 +1,12 @@
 module Api.Recipes
+    open DataAccess
     open Models.Account
     open System
     open Giraffe
+    open Infrastructure
     open Microsoft.AspNetCore.Http
     open UseCases
+    open Context
     
     [<CLIMutable>]
     type IndexParameters = {
@@ -14,6 +17,6 @@ module Api.Recipes
         task {
             let parameters = ctx.BindQueryString<IndexParameters>()
             let accessToken = match ctx.GetRequestHeader("authorization") with Ok t -> t | Error _ -> ""
-            let recipes = Recipes.getAllbyAccount accessToken parameters.accountId
+            let recipes = Recipes.getAllbyAccount accessToken parameters.accountId |> Reader.execute (createDbContext())
             return! json recipes next ctx
         }
