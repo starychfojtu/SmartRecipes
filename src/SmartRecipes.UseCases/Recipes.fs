@@ -1,25 +1,18 @@
 module UseCases.Recipes
     open Business
-    open Business
-    open Business
-    open System.Text.RegularExpressions
     open DataAccess
-    open DataAccess.Context
     open FSharpPlus.Data
-    open Models
-    open Models.Token
     open Infrastructure
     open Models.Account
-    open DataAccess
     open FSharpPlus
-    open Infrastructure
     open Infrastructure.Reader
     open System
     open Infrastructure.Option
-    open Models.Foodstuff
-    open UseCases
     open UseCases
     open Users
+    open DataAccess.Model
+    open Models.Token
+    open Models.Foodstuff
                 
     // Get all by account
     
@@ -34,7 +27,7 @@ module UseCases.Recipes
     let private gerRecipes (account: Account) = 
         Recipes.getByAccount account.id |> Reader.map Ok
         
-    let private getAllbyAccount accessTokenValue id =
+    let getAllbyAccount accessTokenValue id =
         authorize Unauthorized accessTokenValue
         >>=! getAccount id
         >>=! gerRecipes
@@ -68,24 +61,13 @@ module UseCases.Recipes
                     then (token, Seq.map (fun p -> mkParameter (Map.find p.foodstuffId foodstuffMap) p.amount) parameters) |> Ok
                     else Error [FoodstuffNotFound]
         }
-        
-    let private mapParametersTObeRefactoredTo parameters token = 
-        monad {
-            let foodstuffIds = Seq.map (fun i -> i.foodstuffId) parameters
-            let! fooddtuffs = Foodstuffs.getByIds foodstuffIds
-            // foodsutffs JOIN parameters ON FoodstuffId ... and remove Monad computation expression
-        }
-        
+
     let private createRecipe infoParameters ingredientParameters token = 
         Recipes.create token.accountId infoParameters ingredientParameters 
         |> Result.mapError (List.map InvalidParameters)
         |> Reader.id
-        
-    let private addRecipe recipe =
-        // TODO: implement
-        
+
     let create accessTokenValue infoParameters ingredientParameters =
         authorize [Unauthorized] accessTokenValue
         >>=! mapParameters ingredientParameters
         >>=! (fun (t, ingredientParameters) -> createRecipe infoParameters ingredientParameters t)
-        >>=! addRecipe

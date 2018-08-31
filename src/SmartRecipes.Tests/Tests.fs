@@ -1,6 +1,6 @@
 module Tests.Users
     open System.Net.Mail
-    open Business.Users
+    open Business
     open Models.Account
     open Models.Password
     open System
@@ -25,19 +25,19 @@ module Tests.Users
 
     [<Fact>]
     let ``Can sign up with valid parameters`` () =
-        signUp "test@gmail.com" "VeryLongPassword1" |> Tests.Assert.IsOk
+        Users.signUp "test@gmail.com" "VeryLongPassword1" |> Tests.Assert.IsOk
         
         
     [<Fact>]
     let ``Cannot sign up with invalid parameters`` () =
-        signUp "test" "fake" |> Tests.Assert.IsError
+        Users.signUp "test" "fake" |> Tests.Assert.IsError
         
         
     [<Fact>]
-    let ``Can sign in with valid password`` () =
-        signIn account passwordValue |> Tests.Assert.IsOk
+    let ``Can authenticate with valid password`` () =
+        Users.authenticate account passwordValue |> Tests.Assert.IsOk
         
         
     [<Fact>]
-    let ``Cannot sign in with invalid password`` () =
-        signIn account "fake" |> Tests.Assert.IsError
+    let ``Cannot authenticate with invalid password`` () =
+        Users.authenticate account "fake" |> Tests.Assert.IsError

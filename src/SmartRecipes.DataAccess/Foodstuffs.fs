@@ -17,6 +17,7 @@ module DataAccess.Foodstuffs
         | DbMetricUnit.Liter -> MetricUnit.Liter
         | DbMetricUnit.Gram -> MetricUnit.Gram
         | DbMetricUnit.Piece -> MetricUnit.Piece
+        | _ -> raise (InvalidOperationException("Invalid enum value"))
         
     let private amountToDb amount : DbAmount = {
         unit = unitToDb amount.unit

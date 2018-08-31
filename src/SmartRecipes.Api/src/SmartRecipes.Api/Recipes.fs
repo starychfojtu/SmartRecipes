@@ -1,6 +1,5 @@
 module Api.Recipes
     open DataAccess
-    open Models.Account
     open System
     open Giraffe
     open Infrastructure
