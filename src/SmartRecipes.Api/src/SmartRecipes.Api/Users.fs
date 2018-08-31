@@ -23,7 +23,7 @@ module Api.Users
         email: string
         password: string
     }
-        
+
     let signInHandler (next : HttpFunc) (ctx : HttpContext) =
         task {
             let! parameters = ctx.BindModelAsync<SignInParameters>()

@@ -13,6 +13,7 @@ module UseCases.Recipes
     open DataAccess.Model
     open Models.Token
     open Models.Foodstuff
+    open Infrastructure.Seq
                 
     // Get all by account
     
@@ -48,19 +49,16 @@ module UseCases.Recipes
         foodstuff = foodstuff
         amount = amount
     }
-      
-    // TODO: Implement Join, refactor this
-    let private mapParameters parameters token = 
-        monad {
-            let foodstuffIds = Seq.map (fun i -> i.foodstuffId) parameters
-            let! fooddtuffs = Foodstuffs.getByIds foodstuffIds
-            let tupledFoodstuff = Seq.map (fun f -> (f.id.value, f)) fooddtuffs
-            let foodstuffMap = Map.ofSeq tupledFoodstuff
-            return 
-                if Seq.length parameters = Seq.length fooddtuffs
-                    then (token, Seq.map (fun p -> mkParameter (Map.find p.foodstuffId foodstuffMap) p.amount) parameters) |> Ok
-                    else Error [FoodstuffNotFound]
-        }
+    
+    let private crateParameters parameters token foodstuffs =
+        Seq.exactJoin foodstuffs (fun f -> f.id.value) parameters (fun i -> i.foodstuffId) (fun (f, p) -> mkParameter f p.amount) 
+        |> Option.map (fun f -> (token, f))
+        |> toResult [FoodstuffNotFound]
+    
+    let private mapParameters parameters token =
+        Seq.map (fun i -> i.foodstuffId) parameters
+        |> Foodstuffs.getByIds
+        |> Reader.map (crateParameters parameters token)
 
     let private createRecipe infoParameters ingredientParameters token = 
         Recipes.create token.accountId infoParameters ingredientParameters 
