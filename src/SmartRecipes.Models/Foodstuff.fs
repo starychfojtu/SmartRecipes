@@ -3,6 +3,7 @@ module Models.Foodstuff
     open System
     open NonNegativeFloat
     open FSharpPlus
+    open Infrastructure
     
     type MetricUnit = 
         | Liter
@@ -14,7 +15,7 @@ module Models.Foodstuff
         value: NonNegativeFloat
     }
     
-    let private createAmount unit value = {
+    let createAmount unit value = {
         unit = unit
         value = value
     }
@@ -32,3 +33,13 @@ module Models.Foodstuff
         baseAmount: Amount
         amountStep: Amount
     }
+    
+    let private createFoodstuffId = Guid.NewGuid() |> FoodstuffId
+    
+    let createFoodstuff name baseAmount amountStep = {
+        id = createFoodstuffId
+        name = name
+        baseAmount = baseAmount
+        amountStep = amountStep
+    }
+    

@@ -5,6 +5,7 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Foodstuffs.fs" />
     <Compile Include="Users.fs" />
     <Compile Include="Recipes.fs" />
   </ItemGroup>
