@@ -3,7 +3,8 @@ module Models.NonEmptyString
     open FSharpPlus.Data
     open System
 
-    type NonEmptyString = NonEmptyString of string
+    type NonEmptyString = private NonEmptyString of string
+        with member s.value = match s with NonEmptyString v -> v
         
     let private nonEmptyString s = NonEmptyString s
     

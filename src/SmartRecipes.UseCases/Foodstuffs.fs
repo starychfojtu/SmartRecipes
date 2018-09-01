@@ -1,4 +1,6 @@
 module UseCases.Foodstuffs
+    open DataAccess
+    open FSharpPlus.Data
     open Infrastructure
     open Models
     open UseCases
@@ -9,8 +11,8 @@ module UseCases.Foodstuffs
 
     type CreateParameters = {
         name: NonEmptyString
-        baseAmount: Amount
-        amountStep: Amount
+        baseAmount: Amount option
+        amountStep: Amount option
     }
     
     type CreateError = 
@@ -22,11 +24,12 @@ module UseCases.Foodstuffs
         |> Ok
         |> Reader.id
 
-    let ensureDoesntAlreadyExists foodstuff =
-        Ok foodstuff |> Reader.id // TODO: implement
+    let ensureDoesntAlreadyExists (foodstuff: Foodstuff) =
+        Foodstuffs.search foodstuff.name 
+        |> Reader.map (fun fs -> if Seq.isEmpty fs then Ok foodstuff else Error FoodstuffAlreadyExists)
         
     let addToDatabase foodstuff = 
-        Ok foodstuff |> Reader.id // TODO: implement
+        Foodstuffs.add foodstuff |> Reader.map Ok
 
     let create accessToken parameters = 
         Users.authorize NotAuthorized accessToken

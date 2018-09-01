@@ -3,7 +3,8 @@ module Models.NonNegativeFloat
     open FSharpPlus.Data
     open System
 
-    type NonNegativeFloat = NonNegativeFloat of float
+    type NonNegativeFloat = private NonNegativeFloat of float
+        with member f.value = match f with NonNegativeFloat v -> v
         
     let private nonNegativeFloat f = NonNegativeFloat f
     

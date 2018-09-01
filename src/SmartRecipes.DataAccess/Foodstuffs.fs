@@ -7,6 +7,7 @@ module DataAccess.Foodstuffs
     open Models.Foodstuff
     open Models.NonEmptyString
     open Models.NonNegativeFloat
+    open Infrastructure.Validation
     
     let private unitToDb = function
         | MetricUnit.Liter -> DbMetricUnit.Liter
@@ -17,34 +18,49 @@ module DataAccess.Foodstuffs
         | DbMetricUnit.Liter -> MetricUnit.Liter
         | DbMetricUnit.Gram -> MetricUnit.Gram
         | DbMetricUnit.Piece -> MetricUnit.Piece
-        | _ -> raise (InvalidOperationException("Invalid enum value"))
+        | _ -> raise (InvalidOperationException("Invalid unit value"))
         
     let private amountToDb amount : DbAmount = {
         unit = unitToDb amount.unit
-        value = match amount.value with NonNegativeFloat v -> v
+        value = amount.value.value
     }
     
     let private amountToModel (dbAmount: DbAmount) = {
         unit = unitToModel dbAmount.unit
-        value = NonNegativeFloat dbAmount.value 
+        value = mkNonNegativeFloat dbAmount.value |> forceSucces
     }
                 
     let private toDb foodstuff : DbFoodstuff = {
         id = match foodstuff.id with FoodstuffId id -> id
-        name = match foodstuff.name with NonEmptyString n -> n
+        name = foodstuff.name.value
         baseAmount = amountToDb foodstuff.baseAmount
         amountStep = amountToDb foodstuff.amountStep
     }
     
     let private toModel (dbFoodstuff: DbFoodstuff) = {
         id = FoodstuffId dbFoodstuff.id 
-        name = NonEmptyString dbFoodstuff.name
+        name = mkNonEmptyString dbFoodstuff.name |> forceSucces
         baseAmount = amountToModel dbFoodstuff.baseAmount
         amountStep = amountToModel dbFoodstuff.amountStep
     }
+    
+    // public
     
     let getByIds ids = Reader(fun (ctx: Context) ->
         ctx.Foodstuffs
         |> Seq.where (fun f -> Seq.contains f.id ids)
         |> Seq.map toModel
+    )
+    
+    let search (name: NonEmptyString) = Reader(fun (ctx: Context) ->
+        ctx.Foodstuffs
+        |> Seq.where (fun f -> f.name = name.value)
+        |> Seq.map toModel
+    )
+    
+    let add foodstuff = Reader(fun (ctx: Context) ->
+        let dbModel = toDb foodstuff
+        ctx.Add(dbModel) |> ignore
+        ctx.SaveChanges() |> ignore
+        foodstuff
     )

@@ -4,6 +4,7 @@ module Models.Foodstuff
     open NonNegativeFloat
     open FSharpPlus
     open Infrastructure
+    open Infrastructure.Validation
     
     type MetricUnit = 
         | Liter
@@ -36,10 +37,20 @@ module Models.Foodstuff
     
     let private createFoodstuffId = Guid.NewGuid() |> FoodstuffId
     
+    let private defaultBaseAmount = {
+        unit = Gram
+        value = mkNonNegativeFloat 100.0 |> forceSucces
+    }
+    
+    let private defaultAmountStep = {
+            unit = Gram
+            value = mkNonNegativeFloat 10.0 |> forceSucces
+        }
+    
     let createFoodstuff name baseAmount amountStep = {
         id = createFoodstuffId
         name = name
-        baseAmount = baseAmount
-        amountStep = amountStep
+        baseAmount = Option.defaultValue defaultBaseAmount baseAmount
+        amountStep = Option.defaultValue defaultAmountStep amountStep
     }
     
