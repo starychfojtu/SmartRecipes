@@ -31,7 +31,7 @@ module Models.Foodstuff
         amountStep: Amount
     }
     
-    let private createFoodstuffId = Guid.NewGuid() |> FoodstuffId
+    let private createFoodstuffId () = Guid.NewGuid() |> FoodstuffId
     
     let private defaultBaseAmount = {
         unit = Gram
@@ -44,7 +44,7 @@ module Models.Foodstuff
         }
     
     let createFoodstuff name baseAmount amountStep = {
-        id = createFoodstuffId
+        id = createFoodstuffId ()
         name = name
         baseAmount = Option.defaultValue defaultBaseAmount baseAmount
         amountStep = Option.defaultValue defaultAmountStep amountStep

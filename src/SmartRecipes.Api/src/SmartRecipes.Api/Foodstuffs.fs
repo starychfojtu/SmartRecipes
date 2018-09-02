@@ -15,6 +15,7 @@ module Api.Foodstuffs
     open Infrastructure.Reader
     open Models
     open Models.Foodstuff
+    open System
     open UseCases
 
     [<CLIMutable>]
@@ -55,19 +56,16 @@ module Api.Foodstuffs
         <*> parseValue parameters.value
         |> map Some
         
-    let private safeMkAmount parameters = 
-        if isNull parameters then Success None else mkAmount parameters
-        
     let private parseParameters (parameters: CreateParameters) =
         createParameters
         <!> safeMkNonEmptyString parameters.name |> Validation.mapFailure (fun _ -> [NameCannotBeEmpty])
-        <*> safeMkAmount parameters.baseAmount
-        <*> safeMkAmount parameters.amountStep
+        <*> mkAmount parameters.baseAmount
+        <*> mkAmount parameters.amountStep
 
     let private createFoodstuff token parameters = 
         Foodstuffs.create token parameters |> Reader.map (Result.mapError (fun e -> [BusinessError(e)]))
 
-    let createHandler (next: HttpFunc) (ctx: HttpContext) = 
+    let createHandler (next: HttpFunc) (ctx: HttpContext) =
         authorizedPostHandler next ctx (fun parameters token ->
             parseParameters parameters |> toResult |> Reader.id 
             >>=! createFoodstuff token )
