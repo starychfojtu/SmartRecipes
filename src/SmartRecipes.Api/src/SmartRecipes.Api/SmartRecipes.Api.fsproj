@@ -25,7 +25,9 @@
     <PackageReference Include="Giraffe" Version="1.1.*" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generic.fs" />
     <Compile Include="Users.fs" />
+    <Compile Include="Foodstuffs.fs" />
     <Compile Include="Recipes.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

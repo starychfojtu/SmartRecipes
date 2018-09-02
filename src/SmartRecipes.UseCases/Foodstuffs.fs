@@ -3,7 +3,6 @@ module UseCases.Foodstuffs
     open FSharpPlus.Data
     open Infrastructure
     open Models
-    open UseCases
     open Models.Foodstuff
     open Models.NonEmptyString
     open Infrastructure.Validation
@@ -19,16 +18,16 @@ module UseCases.Foodstuffs
         | NotAuthorized
         | FoodstuffAlreadyExists
         
-    let createFoodstuff parameters =
+    let private createFoodstuff parameters =
         createFoodstuff parameters.name parameters.baseAmount parameters.amountStep
         |> Ok
         |> Reader.id
 
-    let ensureDoesntAlreadyExists (foodstuff: Foodstuff) =
+    let private ensureDoesntAlreadyExists (foodstuff: Foodstuff) =
         Foodstuffs.search foodstuff.name 
         |> Reader.map (fun fs -> if Seq.isEmpty fs then Ok foodstuff else Error FoodstuffAlreadyExists)
         
-    let addToDatabase foodstuff = 
+    let private  addToDatabase foodstuff = 
         Foodstuffs.add foodstuff |> Reader.map Ok
 
     let create accessToken parameters = 
