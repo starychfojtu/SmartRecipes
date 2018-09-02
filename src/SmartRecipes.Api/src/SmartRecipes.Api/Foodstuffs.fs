@@ -8,8 +8,14 @@ module Api.Foodstuffs
     open UseCases
     open UseCases.Foodstuffs
     open Models.NonEmptyString
+    open FSharpPlus
+    open FSharpPlus.Data
     open FSharpPlus.Data.Validation
+    open Infrastructure
+    open Infrastructure.Reader
+    open Models
     open Models.Foodstuff
+    open UseCases
 
     [<CLIMutable>]
     type AmountParameters = {
@@ -25,34 +31,43 @@ module Api.Foodstuffs
     }
     
     type CreateError = 
+        | BusinessError of UseCases.Foodstuffs.CreateError
+        | NameCannotBeEmpty
+        | UnknownAmountUnit
+        | AmountCannotBeNegative
     
-    let createParameters name baseAmount amountStep: UseCases.Foodstuffs.CreateParameters = {
+    let private createParameters name baseAmount amountStep: UseCases.Foodstuffs.CreateParameters = {
         name = name
         baseAmount = baseAmount
         amountStep = amountStep
     }
     
-    let parseUnit = function
-        | "gram" -> Success MetricUnit.Gram
-        | "piece" -> Success MetricUnit.Piece
-        | "liter" -> Success MetricUnit.Liter
-        | _ -> Failure 
+    let private parseUnit = function
+        | "gram" -> FSharpPlus.Data.Validation.Success MetricUnit.Gram
+        | "piece" -> FSharpPlus.Data.Validation.Success MetricUnit.Piece
+        | "liter" -> FSharpPlus.Data.Validation.Success MetricUnit.Liter
+        | _ -> FSharpPlus.Data.Validation.Failure [UnknownAmountUnit]
     
-    let mkAmount value unit = 
-        createAmount unit
-        <!> mkNonNegativeFloat value
-    
-    let createAmount amount = 
-        match amount = null with 
-        | true -> Success None
-        | false -> mk 
-    
-    let parseParameters (parameters: CreateParameters): UseCases.Foodstuffs.CreateParameters = 
-        createParameters
-        <!> mkNonEmptyString parameters.name
-        <*>
+    let private mkAmount parameters =
+        let parseValue value = value |> NonNegativeFloat.mkNonNegativeFloat |> Validation.mapFailure (fun _ -> [AmountCannotBeNegative])
+        createAmount
+        <!> parseUnit parameters.unit
+        <*> parseValue parameters.value
+        |> map Some
         
+    let private safeMkAmount parameters = 
+        if isNull parameters then Success None else mkAmount parameters
+        
+    let private parseParameters (parameters: CreateParameters) =
+        createParameters
+        <!> safeMkNonEmptyString parameters.name |> Validation.mapFailure (fun _ -> [NameCannotBeEmpty])
+        <*> safeMkAmount parameters.baseAmount
+        <*> safeMkAmount parameters.amountStep
 
-    let createHandle (next: HttpFunc) (ctx: HttpContext) = 
-        authorizedPostHandler<CreateParameters> next ctx (fun token parameters ->
-            Foodstuffs.create )
+    let private createFoodstuff token parameters = 
+        Foodstuffs.create token parameters |> Reader.map (Result.mapError (fun e -> [BusinessError(e)]))
+
+    let createHandler (next: HttpFunc) (ctx: HttpContext) = 
+        authorizedPostHandler next ctx (fun parameters token ->
+            parseParameters parameters |> toResult |> Reader.id 
+            >>=! createFoodstuff token )

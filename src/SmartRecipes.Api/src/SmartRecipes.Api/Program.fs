@@ -22,7 +22,7 @@ module SmartRecipes.Api.App
                 choose [
                     route "/signUp" >=> Users.signUpHandler
                     route "/signIn" >=> Users.signInHandler
-                    route "/recipes" >=> Recipes.createHandler
+                    route "/foodstuffs" >=> Foodstuffs.createHandler
                 ]
             setStatusCode 404 >=> text "Not Found" 
         ]

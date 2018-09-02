@@ -18,3 +18,6 @@ module Models.NonEmptyString
     let mkNonEmptyString s =
         nonEmptyString
         <!> nonEmpty s
+        
+    let safeMkNonEmptyString s = 
+        if isNull s then Failure NonEpmtyStringError.StringIsEmpty else mkNonEmptyString s
