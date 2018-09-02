@@ -7,6 +7,12 @@ module DataAccess.Users
     open FSharpPlus.Data
     open Models.Token
     
+    type UsersDao = {
+        getById: AccountId -> Reader<Context, Account option>
+        getByEmail: MailAddress -> Reader<Context, Account option>
+        add: Account -> Reader<Context, Account>
+    }
+    
     let private toDb account = {
         id = match account.id with AccountId id -> id
         email = account.credentials.email.Address
@@ -22,23 +28,29 @@ module DataAccess.Users
         }
     }
         
-    let add account =
+    let private add account =
         Reader(fun (ctx: Context) ->
             toDb account |> ctx.Add |> ignore
             ctx.SaveChanges () |> ignore
             account
         )
         
-    let getAccountByEmail (email: MailAddress) = 
+    let private getByEmail (email: MailAddress) = 
         Reader(fun (ctx: Context) -> 
             ctx.Accounts 
             |> Seq.filter (fun a -> a.email = email.Address)
             |> Seq.tryHead
             |> Option.map (fun a -> toModel a))
         
-    let getById (AccountId id)= 
+    let private getById (AccountId id)= 
         Reader(fun (ctx: Context) ->
             ctx.Accounts 
             |> Seq.filter (fun a -> a.id = id)
             |> Seq.tryHead
             |> Option.map (fun a -> toModel a))
+            
+    let getDao () = {
+        getById = getById
+        getByEmail = getByEmail
+        add = add
+    }

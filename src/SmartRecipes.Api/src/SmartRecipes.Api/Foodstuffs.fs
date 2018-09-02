@@ -63,7 +63,8 @@ module Api.Foodstuffs
         <*> mkAmount parameters.amountStep
 
     let private createFoodstuff token parameters = 
-        Foodstuffs.create token parameters |> Reader.map (Result.mapError (fun e -> [BusinessError(e)]))
+        let dao = (DataAccess.Foodstuffs.getDao ())
+        Foodstuffs.create dao token parameters |> Reader.map (Result.mapError (fun e -> [BusinessError(e)]))
 
     let createHandler (next: HttpFunc) (ctx: HttpContext) =
         authorizedPostHandler next ctx (fun parameters token ->

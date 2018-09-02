@@ -14,6 +14,7 @@ module UseCases.Recipes
     open Models.Token
     open Models.Foodstuff
     open Infrastructure.Seq
+    open DataAccess.Recipes
                 
     // Get all by account
     
@@ -21,17 +22,17 @@ module UseCases.Recipes
         | Unauthorized
         | UserNotFound
         
-    let private getAccount id token =
-        Users.getById (AccountId id) 
+    let private getAccount usersDao id token =
+        usersDao.getById (AccountId id) 
         |> Reader.map (toResult UserNotFound)
         
-    let private gerRecipes (account: Account) = 
-        Recipes.getByAccount account.id |> Reader.map Ok
+    let private gerRecipes recipesDao (account: Account) = 
+        recipesDao.getByAccount account.id |> Reader.map Ok
         
-    let getAllbyAccount accessTokenValue id =
-        authorize Unauthorized accessTokenValue
-        >>=! getAccount id
-        >>=! gerRecipes
+    let getAllbyAccount tokensDao usersDao recipesDao accessTokenValue id =
+        authorize tokensDao Unauthorized accessTokenValue
+        >>=! getAccount usersDao id
+        >>=! gerRecipes recipesDao
         
     // Create
     

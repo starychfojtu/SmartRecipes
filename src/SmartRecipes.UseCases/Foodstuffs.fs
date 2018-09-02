@@ -7,6 +7,7 @@ module UseCases.Foodstuffs
     open Models.NonEmptyString
     open Infrastructure.Validation
     open Infrastructure.Reader
+    open DataAccess.Foodstuffs
 
     type CreateParameters = {
         name: NonEmptyString
@@ -23,15 +24,15 @@ module UseCases.Foodstuffs
         |> Ok
         |> Reader.id
 
-    let private ensureDoesntAlreadyExists (foodstuff: Foodstuff) =
-        Foodstuffs.search foodstuff.name 
+    let private ensureDoesntAlreadyExists foodstuffDao (foodstuff: Foodstuff) =
+        foodstuffDao.search foodstuff.name 
         |> Reader.map (fun fs -> if Seq.isEmpty fs then Ok foodstuff else Error FoodstuffAlreadyExists)
         
-    let private  addToDatabase foodstuff = 
-        Foodstuffs.add foodstuff |> Reader.map Ok
+    let private addToDatabase foodstuffDao = 
+        foodstuffDao.add >> Reader.map Ok
 
-    let create accessToken parameters = 
-        Users.authorize NotAuthorized accessToken
+    let create foodstuffDao tokensDao accessToken parameters = 
+        Users.authorize tokensDao NotAuthorized accessToken
         >>=! (fun _ -> createFoodstuff parameters)
-        >>=! ensureDoesntAlreadyExists
-        >>=! addToDatabase
+        >>=! ensureDoesntAlreadyExists foodstuffDao
+        >>=! addToDatabase foodstuffDao

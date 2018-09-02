@@ -9,6 +9,12 @@ module DataAccess.Foodstuffs
     open Models.NonNegativeFloat
     open Infrastructure.Validation
     
+    type FoodstuffDao = {
+        getByIds: seq<Guid> -> Reader<Context, seq<Foodstuff>>
+        search: NonEmptyString -> Reader<Context, seq<Foodstuff>>
+        add: Foodstuff -> Reader<Context, Foodstuff>
+    }
+    
     let private unitToDb = function
         | MetricUnit.Liter -> DbMetricUnit.Liter
         | MetricUnit.Gram -> DbMetricUnit.Gram
@@ -44,23 +50,29 @@ module DataAccess.Foodstuffs
         amountStep = amountToModel dbFoodstuff.amountStep
     }
     
-    // public
-    
-    let getByIds ids = Reader(fun (ctx: Context) ->
+    let private getByIds ids = Reader(fun (ctx: Context) ->
         ctx.Foodstuffs
         |> Seq.where (fun f -> Seq.contains f.id ids)
         |> Seq.map toModel
     )
     
-    let search (name: NonEmptyString) = Reader(fun (ctx: Context) ->
+    let private search (name: NonEmptyString) = Reader(fun (ctx: Context) ->
         ctx.Foodstuffs
         |> Seq.where (fun f -> f.name = name.value)
         |> Seq.map toModel
     )
     
-    let add foodstuff = Reader(fun (ctx: Context) ->
+    let private add foodstuff = Reader(fun (ctx: Context) ->
         let dbModel = toDb foodstuff
         ctx.Add(dbModel) |> ignore
         ctx.SaveChanges() |> ignore
         foodstuff
     )
+    
+    let getDao () = {
+        getByIds = getByIds
+        search = search
+        add = add
+    }
+    
+    

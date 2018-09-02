@@ -3,7 +3,8 @@ module UseCases.Users
     open Business
     open Business.Users
     open DataAccess
-    open DataAccess
+    open DataAccess.Tokens
+    open DataAccess.Users
     open DataAccess.Context
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
@@ -17,20 +18,20 @@ module UseCases.Users
     
     // Sign up
     
-    let private verifyAccountNotExists account = 
-        Users.getAccountByEmail account.credentials.email
+    let private verifyAccountNotExists usersDao account = 
+        usersDao.getByEmail account.credentials.email
         |> Reader.map (fun a -> match a with | Some _ -> Error AccountAlreadyExits | None -> Ok account)
             
     let private signUpAccount email password = 
         Users.signUp email password |> Reader.id
     
-    let private addAccountToDb a = 
-        Users.add a |> Reader.map Ok
+    let private addAccountToDb usersDao = 
+        usersDao.add >> Reader.map Ok
     
-    let signUp email password = 
+    let signUp usersDao email password = 
         signUpAccount email password
-        >>=! verifyAccountNotExists
-        >>=! addAccountToDb
+        >>=! verifyAccountNotExists usersDao
+        >>=! addAccountToDb usersDao
       
     // Sign in
         
@@ -40,21 +41,21 @@ module UseCases.Users
         |> toResult
         |> Reader.id
         
-    let private getAccount email =
-        Users.getAccountByEmail email
+    let private getAccount usersDao email =
+        usersDao.getByEmail email
         |> Reader.map (Option.toResult InvalidCredentials)
         
     let private authenticate password account =
         Users.authenticate account password |> Reader.id
         
-    let private addTokenToDb t = 
-        Tokens.add t |> Reader.map Ok
+    let private addTokenToDb (tokensDao: TokensDao) = 
+        tokensDao.add >> Reader.map Ok
        
-    let signIn email password =
+    let signIn usersDao tokensDao email password =
         validateEmail email
-        >>=! getAccount
+        >>=! getAccount usersDao
         >>=! authenticate password
-        >>=! addTokenToDb
+        >>=! addTokenToDb tokensDao
         
     // Authorize
         
@@ -64,8 +65,8 @@ module UseCases.Users
     let private toError error t = 
         (Option.toResult error) t |> Reader.id
     
-    let authorize error (accessTokenValue: string) =
-        Tokens.get accessTokenValue
+    let authorize tokensDao error (accessTokenValue: string) =
+        tokensDao.get accessTokenValue
         >>= verifyAccess
         >>= toError error
         
