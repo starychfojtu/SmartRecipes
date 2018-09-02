@@ -6,8 +6,8 @@ module DataAccess.Tokens
     open Models.Token
 
     type TokensDao = {
-        get: string -> Reader<Context, AccessToken option>
-        add: AccessToken -> Reader<Context, AccessToken>
+        get: string -> AccessToken option
+        add: AccessToken -> AccessToken
     }
 
     let private toDb accessToken: DbAccessToken = {
@@ -23,20 +23,17 @@ module DataAccess.Tokens
     }
     
     let private add accessToken =
-        Reader(fun (ctx: Context) ->
-            toDb accessToken |> ctx.Add |> ignore
-            ctx.SaveChanges () |> ignore
-            accessToken
-        )
+        let ctx = createDbContext ()
+        toDb accessToken |> ctx.Add |> ignore
+        ctx.SaveChanges () |> ignore
+        accessToken
         
     let private get value =
-        Reader(fun (ctx: Context) -> 
-            ctx.AccessTokens 
-            |> Seq.filter (fun t -> t.value = value)
-            |> Seq.sortByDescending (fun t -> t.expiration)
-            |> Seq.tryHead
-            |> Option.map (fun t -> toModel t)
-        )
+        createDbContext().AccessTokens 
+        |> Seq.filter (fun t -> t.value = value)
+        |> Seq.sortByDescending (fun t -> t.expiration)
+        |> Seq.tryHead
+        |> Option.map toModel
         
     let getDao () = {
         get = get

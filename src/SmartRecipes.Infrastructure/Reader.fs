@@ -17,3 +17,10 @@ module Infrastructure.Reader
         
     let id a = 
         Reader(fun b -> a)
+        
+    let mapEnviroment map revert reader = 
+        
+    let a = Reader(fun (a: int) -> a)
+    let b = Reader(fun (a: string) -> a)
+    
+    let c = Reader.local (fun t -> (t, t)) a

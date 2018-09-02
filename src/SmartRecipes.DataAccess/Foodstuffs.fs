@@ -10,9 +10,9 @@ module DataAccess.Foodstuffs
     open Infrastructure.Validation
     
     type FoodstuffDao = {
-        getByIds: seq<Guid> -> Reader<Context, seq<Foodstuff>>
-        search: NonEmptyString -> Reader<Context, seq<Foodstuff>>
-        add: Foodstuff -> Reader<Context, Foodstuff>
+        getByIds: seq<Guid> -> seq<Foodstuff>
+        search: NonEmptyString -> seq<Foodstuff>
+        add: Foodstuff -> Foodstuff
     }
     
     let private unitToDb = function
@@ -50,24 +50,22 @@ module DataAccess.Foodstuffs
         amountStep = amountToModel dbFoodstuff.amountStep
     }
     
-    let private getByIds ids = Reader(fun (ctx: Context) ->
-        ctx.Foodstuffs
+    let private getByIds ids =
+        createDbContext().Foodstuffs
         |> Seq.where (fun f -> Seq.contains f.id ids)
         |> Seq.map toModel
-    )
     
-    let private search (name: NonEmptyString) = Reader(fun (ctx: Context) ->
-        ctx.Foodstuffs
+    let private search (name: NonEmptyString) =
+        createDbContext().Foodstuffs
         |> Seq.where (fun f -> f.name = name.value)
         |> Seq.map toModel
-    )
     
-    let private add foodstuff = Reader(fun (ctx: Context) ->
+    let private add foodstuff =
         let dbModel = toDb foodstuff
+        let ctx = createDbContext()
         ctx.Add(dbModel) |> ignore
         ctx.SaveChanges() |> ignore
         foodstuff
-    )
     
     let getDao () = {
         getByIds = getByIds

@@ -8,9 +8,9 @@ module DataAccess.Users
     open Models.Token
     
     type UsersDao = {
-        getById: AccountId -> Reader<Context, Account option>
-        getByEmail: MailAddress -> Reader<Context, Account option>
-        add: Account -> Reader<Context, Account>
+        getById: AccountId -> Account option
+        getByEmail: MailAddress -> Account option
+        add: Account -> Account
     }
     
     let private toDb account = {
@@ -29,25 +29,22 @@ module DataAccess.Users
     }
         
     let private add account =
-        Reader(fun (ctx: Context) ->
-            toDb account |> ctx.Add |> ignore
-            ctx.SaveChanges () |> ignore
-            account
-        )
+        let ctx = createDbContext ()
+        toDb account |> ctx.Add |> ignore
+        ctx.SaveChanges () |> ignore
+        account
         
-    let private getByEmail (email: MailAddress) = 
-        Reader(fun (ctx: Context) -> 
-            ctx.Accounts 
-            |> Seq.filter (fun a -> a.email = email.Address)
-            |> Seq.tryHead
-            |> Option.map (fun a -> toModel a))
+    let private getByEmail (email: MailAddress) =
+        createDbContext().Accounts 
+        |> Seq.filter (fun a -> a.email = email.Address)
+        |> Seq.tryHead
+        |> Option.map toModel
         
-    let private getById (AccountId id)= 
-        Reader(fun (ctx: Context) ->
-            ctx.Accounts 
-            |> Seq.filter (fun a -> a.id = id)
-            |> Seq.tryHead
-            |> Option.map (fun a -> toModel a))
+    let private getById (AccountId id) =
+        createDbContext().Accounts 
+        |> Seq.filter (fun a -> a.id = id)
+        |> Seq.tryHead
+        |> Option.map toModel
             
     let getDao () = {
         getById = getById
