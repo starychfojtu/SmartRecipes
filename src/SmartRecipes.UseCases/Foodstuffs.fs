@@ -26,6 +26,9 @@ module UseCases.Foodstuffs
         | NotAuthorized
         | FoodstuffAlreadyExists
         
+    let private authorize accessToken =
+        Users.authorize NotAuthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
+        
     let private createFoodstuff parameters =
         createFoodstuff parameters.name parameters.baseAmount parameters.amountStep |> Ok |> Reader.id
 
@@ -40,7 +43,7 @@ module UseCases.Foodstuffs
         Reader(fun (dao: CreateFoodstuffDao) -> dao.foodstuffs.add foodstuff |> Ok)
 
     let create accessToken parameters = 
-        Users.authorize NotAuthorized accessToken
-        >>=! (fun _ -> createFoodstuff parameters)
+        authorize accessToken
+        >>=! fun _ -> createFoodstuff parameters
         >>=! ensureDoesntAlreadyExists
         >>=! addToDatabase

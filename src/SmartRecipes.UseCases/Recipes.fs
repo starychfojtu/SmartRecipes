@@ -15,26 +15,30 @@ module UseCases.Recipes
     open Models.Foodstuff
     open Infrastructure.Seq
     open DataAccess.Recipes
+    open DataAccess.Tokens
                 
     // Get all by account
+    
+    type GetByAccountDao = {
+        tokens: TokensDao
+        recipes: RecipesDao
+    }
     
     type GetByAccountError =
         | Unauthorized
         | UserNotFound
+    
+    let private authorize accessToken = 
+        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
         
-    let private getAccount usersDao id token =
-        usersDao.getById (AccountId id) 
-        |> Reader.map (toResult UserNotFound)
+    let private getRecipes accountId = Reader(fun dao ->
+        dao.recipes.getByAccount accountId |> Ok)
         
-    let private gerRecipes recipesDao (account: Account) = 
-        recipesDao.getByAccount account.id |> Reader.map Ok
+    let getAllbyAccount accessToken accountId =
+        authorize accessToken
+        >>=! fun _ -> getRecipes accountId
         
-    let getAllbyAccount tokensDao usersDao recipesDao accessTokenValue id =
-        authorize tokensDao Unauthorized accessTokenValue
-        >>=! getAccount usersDao id
-        >>=! gerRecipes recipesDao
-        
-    // Create
+    // Creates
     
 //    type CreateError =
 //        | Unauthorized

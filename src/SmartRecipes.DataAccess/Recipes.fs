@@ -12,7 +12,7 @@ module DataAccess.Recipes
     open Models.Foodstuff
     
     type RecipesDao = {
-        getByAccount: AccountId -> seq<RecipeInfo>
+        getByAccount: Guid -> seq<RecipeInfo>
     }
     
     let private toModel (recipe: DbRecipeInfo): RecipeInfo = {
@@ -24,7 +24,7 @@ module DataAccess.Recipes
         description = recipe.description
     }
     
-    let private getByAccount (AccountId accountId) =
+    let private getByAccount accountId =
         createDbContext().Recipes
         |> Seq.filter (fun r -> r.creatorId = accountId)
         |> Seq.map toModel

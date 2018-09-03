@@ -17,6 +17,7 @@ module Api.Foodstuffs
     open Models.Foodstuff
     open System
     open UseCases
+    open DataAccess
 
     [<CLIMutable>]
     type AmountParameters = {
@@ -43,6 +44,11 @@ module Api.Foodstuffs
         amountStep = amountStep
     }
     
+    let private getDao () = {
+        tokens = (Tokens.getDao ())
+        foodstuffs = (Foodstuffs.getDao ())
+    }
+    
     let private parseUnit = function
         | "gram" -> FSharpPlus.Data.Validation.Success MetricUnit.Gram
         | "piece" -> FSharpPlus.Data.Validation.Success MetricUnit.Piece
@@ -62,11 +68,10 @@ module Api.Foodstuffs
         <*> mkAmount parameters.baseAmount
         <*> mkAmount parameters.amountStep
 
-    let private createFoodstuff token parameters = 
-        let dao = (DataAccess.Foodstuffs.getDao ())
-        Foodstuffs.create dao token parameters |> Reader.map (Result.mapError (fun e -> [BusinessError(e)]))
+    let private createFoodstuff token parameters =
+        Foodstuffs.create token parameters |> Reader.map (Result.mapError (fun e -> [BusinessError(e)]))
 
     let createHandler (next: HttpFunc) (ctx: HttpContext) =
-        authorizedPostHandler next ctx (fun parameters token ->
+        authorizedPostHandler (getDao ()) next ctx (fun token parameters ->
             parseParameters parameters |> toResult |> Reader.id 
-            >>=! createFoodstuff token )
+            >>=! createFoodstuff token)

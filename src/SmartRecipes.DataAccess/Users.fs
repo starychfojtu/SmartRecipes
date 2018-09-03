@@ -29,7 +29,7 @@ module DataAccess.Users
     }
         
     let private add account =
-        let ctx = createDbContext ()
+        let ctx = createDbContext()
         toDb account |> ctx.Add |> ignore
         ctx.SaveChanges () |> ignore
         account

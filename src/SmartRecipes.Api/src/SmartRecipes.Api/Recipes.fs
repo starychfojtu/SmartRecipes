@@ -18,9 +18,14 @@ module Api.Recipes
         accountId: Guid
     }
     
+    let private getGetAllByAccountDao () = {
+        tokens = (Tokens.getDao ())
+        recipes = (Recipes.getDao ())
+    }
+    
     let indexHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedGetHandler next ctx (fun parameters accessToken ->
-            Recipes.getAllbyAccount accessToken parameters.accountId)
+        authorizedGetHandler (getGetAllByAccountDao ()) next ctx (fun token p ->
+            Recipes.getAllbyAccount token p.accountId)
         
 //    [<CLIMutable>]
 //    type CreateParameters = {

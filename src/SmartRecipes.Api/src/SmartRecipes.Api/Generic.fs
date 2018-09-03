@@ -5,19 +5,30 @@ module Api.Generic
     open Microsoft.AspNetCore.Http
     open DataAccess.Context
     open FSharpPlus.Data
+    open Models.Token
 
-    let authorizedGetHandler<'parameters, 'result, 'error> (next : HttpFunc) (ctx : HttpContext) (handler: 'parameters -> string -> Reader<Context, Result<'result, 'error>>) = 
+    let getHandler dao (next : HttpFunc) (ctx : HttpContext) (handler: 'parameters -> Reader<'dao, Result<'result, 'error>>) = 
         task {
             let parameters = ctx.BindQueryString<'parameters>()
-            let accessToken = match ctx.GetRequestHeader("authorization") with Ok t -> t | Error _ -> ""
-            let result = handler parameters accessToken |> Reader.execute (createDbContext())
+            let result = handler parameters |> Reader.execute dao
             return! json result next ctx
         }
     
-    let authorizedPostHandler<'parameters, 'result, 'error> (next : HttpFunc) (ctx : HttpContext) (handler: 'parameters -> string -> Reader<Context, Result<'result, 'error>>) = 
+    let postHandler dao (next : HttpFunc) (ctx : HttpContext) (handler: 'parameters -> Reader<'dao, Result<'result, 'error>>) = 
         task {
             let! parameters = ctx.BindModelAsync<'parameters>()
-            let accessToken = match ctx.GetRequestHeader("authorization") with Ok t -> t | Error _ -> ""
-            let result = handler parameters accessToken |> Reader.execute (createDbContext())
+            let result = handler parameters |> Reader.execute dao
             return! json result next ctx
+        }
+            
+    let authorizedGetHandler dao (next : HttpFunc) (ctx : HttpContext) (handler: string -> 'parameters -> Reader<'dao, Result<'result, 'error>>) = 
+        task {
+            let accessToken = match ctx.GetRequestHeader("authorization") with Ok t -> t | Error _ -> ""
+            return! getHandler dao next ctx (handler accessToken)
+        }
+    
+    let authorizedPostHandler dao (next : HttpFunc) (ctx : HttpContext) (handler: string -> 'parameters -> Reader<'dao, Result<'result, 'error>>) = 
+        task {
+            let accessToken = match ctx.GetRequestHeader("authorization") with Ok t -> t | Error _ -> ""
+            return! postHandler dao next ctx (handler accessToken)
         }

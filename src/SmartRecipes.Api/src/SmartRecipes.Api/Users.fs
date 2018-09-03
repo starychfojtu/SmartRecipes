@@ -1,4 +1,5 @@
 module Api.Users
+    open Api
     open DataAccess
     open Giraffe
     open Microsoft.AspNetCore.Http
@@ -6,6 +7,9 @@ module Api.Users
     open Infrastructure
     open Context
     open Models.Token
+    open Generic
+    
+    // Sign up
     
     type SignUpParameters = {
         email: string
@@ -13,24 +17,20 @@ module Api.Users
     }
 
     let signUpHandler (next : HttpFunc) (ctx : HttpContext) =
-        task {
-            let! parameters = ctx.BindModelAsync<SignUpParameters>()
-            let result = Users.signUp parameters.email parameters.password |> Reader.execute (createDbContext())
-            return! json result next ctx
-        }
+        postHandler (Users.getDao ()) next ctx (fun p -> Users.signUp p.email p.password)
+        
+    // Sign in
         
     type SignInParameters = {
         email: string
         password: string
     }
+    
+    let private getSignInDao (): Users.SignInDao = {
+        tokens = (Tokens.getDao ())
+        users = (Users.getDao ())
+    }
 
     let signInHandler (next : HttpFunc) (ctx : HttpContext) =
-        task {
-            let! parameters = ctx.BindModelAsync<SignInParameters>()
-            let result = Users.signIn parameters.email parameters.password |> Reader.execute (createDbContext())
-            return!
-                match result with 
-                | Error e -> json e next ctx
-                | Ok t -> text t.value.value next ctx
-        }
+        postHandler (getSignInDao ()) next ctx (fun p -> Users.signIn p.email p.password)
         
