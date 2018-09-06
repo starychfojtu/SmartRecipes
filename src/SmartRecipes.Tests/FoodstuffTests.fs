@@ -42,7 +42,7 @@ module Tests.Foodstuffs
     
     let getFakeFoodstuffsDao withFoodstuff : FoodstuffDao = {
         getByIds = if withFoodstuff then fun ids -> seq { yield foodstuff } else fun ids -> Seq.empty
-        search = fun name -> Seq.empty
+        search = if withFoodstuff then fun name -> seq { yield foodstuff } else fun name -> Seq.empty
         add = fun f -> f
     }
     
