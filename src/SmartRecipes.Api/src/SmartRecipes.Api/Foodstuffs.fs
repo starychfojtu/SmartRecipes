@@ -4,17 +4,17 @@ module Api.Foodstuffs
     open System
     open Giraffe
     open Generic
-    open Models
+    open Domain
     open UseCases
     open UseCases.Foodstuffs
-    open Models.NonEmptyString
+    open Domain.NonEmptyString
     open FSharpPlus
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
     open Infrastructure
     open Infrastructure.Reader
-    open Models
-    open Models.Foodstuff
+    open Domain
+    open Domain.Foodstuff
     open System
     open UseCases
     open DataAccess

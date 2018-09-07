@@ -3,9 +3,9 @@ module UseCases.Foodstuffs
     open DataAccess
     open FSharpPlus.Data
     open Infrastructure
-    open Models
-    open Models.Foodstuff
-    open Models.NonEmptyString
+    open Domain
+    open Domain.Foodstuff
+    open Domain.NonEmptyString
     open Infrastructure.Validation
     open Infrastructure.Reader
     open DataAccess.Foodstuffs

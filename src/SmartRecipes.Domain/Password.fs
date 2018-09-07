@@ -1,4 +1,4 @@
-module Models.Password
+module Domain.Password
     open Infrastructure
     open Hashing
     open FSharpPlus.Data

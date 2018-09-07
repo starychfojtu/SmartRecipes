@@ -3,6 +3,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <AssemblyName>SmartRecipes.Domain</AssemblyName>
+    <RootNamespace>SmartRecipes.Domain</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="NaturalNumber.fs" />

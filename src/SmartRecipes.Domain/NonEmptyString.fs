@@ -1,4 +1,4 @@
-module Models.NonEmptyString
+module Domain.NonEmptyString
     open FSharpPlus
     open FSharpPlus.Data
     open System

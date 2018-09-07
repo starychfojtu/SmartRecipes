@@ -1,5 +1,5 @@
-module Models.Foodstuff
-    open Models.NonEmptyString
+module Domain.Foodstuff
+    open Domain.NonEmptyString
     open System
     open NonNegativeFloat
     open FSharpPlus

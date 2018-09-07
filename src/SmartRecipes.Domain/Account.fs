@@ -1,4 +1,4 @@
-﻿module Models.Account
+﻿module Domain.Account
     open Credentials
     open System
     open FSharpPlus

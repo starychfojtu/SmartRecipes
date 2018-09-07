@@ -8,10 +8,10 @@ module UseCases.Users
     open DataAccess.Context
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
-    open Models
-    open Models.Token
-    open Models.Email
-    open Models.Account
+    open Domain
+    open Domain.Token
+    open Domain.Email
+    open Domain.Account
     open Infrastructure.Validation
     open Infrastructure.Reader
     open Infrastructure

@@ -2,10 +2,10 @@ module Business.Users
     open FSharpPlus.Data
     open FSharpPlus.Data
     open Infrastructure
-    open Models.Account
-    open Models.Credentials
-    open Models.Password
-    open Models.Token
+    open Domain.Account
+    open Domain.Credentials
+    open Domain.Password
+    open Domain.Token
     open System
     open System.Net.Mail
     

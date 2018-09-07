@@ -5,7 +5,7 @@ module Api.Generic
     open Microsoft.AspNetCore.Http
     open DataAccess.Context
     open FSharpPlus.Data
-    open Models.Token
+    open Domain.Token
 
     let getHandler dao (next : HttpFunc) (ctx : HttpContext) (handler: 'parameters -> Reader<'dao, Result<'result, 'error>>) = 
         task {

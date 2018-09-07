@@ -1,4 +1,4 @@
-module Models.Email
+module Domain.Email
     open System.Net.Mail
     open FSharpPlus.Data
 

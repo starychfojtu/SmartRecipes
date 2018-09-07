@@ -1,4 +1,4 @@
-module Models.NonNegativeFloat
+module Domain.NonNegativeFloat
     open FSharpPlus
     open FSharpPlus.Data
     open System

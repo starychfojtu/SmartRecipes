@@ -6,7 +6,7 @@ module Api.Users
     open UseCases
     open Infrastructure
     open Context
-    open Models.Token
+    open Domain.Token
     open Generic
     
     // Sign up

@@ -6,7 +6,6 @@
   <ItemGroup>
     <Compile Include="Assert.fs" />
     <Compile Include="UserTests.fs" />
-    <Compile Include="FoodstuffTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
@@ -21,5 +20,8 @@
   <ItemGroup>
     <ProjectReference Include="..\SmartRecipes.Business\SmartRecipes.Business.fsproj" />
     <ProjectReference Include="..\SmartRecipes.UseCases\SmartRecipes.UseCases.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FoodstuffTests.fs" />
   </ItemGroup>
 </Project>

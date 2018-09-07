@@ -13,7 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SmartRecipes.Infrastructure\SmartRecipes.Infrastructure.fsproj" />
-    <ProjectReference Include="..\SmartRecipes.Models\SmartRecipes.Models.fsproj" />
+    <ProjectReference Include="..\SmartRecipes.Domain\SmartRecipes.Domain.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />

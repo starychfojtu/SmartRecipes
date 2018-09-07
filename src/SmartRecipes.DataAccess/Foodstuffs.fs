@@ -3,10 +3,10 @@ module DataAccess.Foodstuffs
     open DataAccess.Context
     open DataAccess.Model
     open FSharpPlus.Data
-    open Models.Foodstuff
-    open Models.Foodstuff
-    open Models.NonEmptyString
-    open Models.NonNegativeFloat
+    open Domain.Foodstuff
+    open Domain.Foodstuff
+    open Domain.NonEmptyString
+    open Domain.NonNegativeFloat
     open Infrastructure.Validation
     
     type FoodstuffDao = {

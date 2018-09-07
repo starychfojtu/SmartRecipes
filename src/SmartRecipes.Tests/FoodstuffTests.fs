@@ -3,10 +3,10 @@ module Tests.Foodstuffs
     open DataAccess.Foodstuffs
     open DataAccess.Tokens
     open Infrastructure
-    open Models
-    open Models.Account
-    open Models.Token
-    open Models.Foodstuff
+    open Domain
+    open Domain.Account
+    open Domain.Token
+    open Domain.Foodstuff
     open UseCases
     open UseCases.Foodstuffs
     open Utils

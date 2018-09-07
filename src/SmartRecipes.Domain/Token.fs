@@ -1,4 +1,4 @@
-module Models.Token
+module Domain.Token
     open System.Globalization
     open System.Security.Cryptography
     open Account

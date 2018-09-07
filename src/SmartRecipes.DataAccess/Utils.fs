@@ -1,7 +1,7 @@
 module DataAccess.Utils
     open FSharpPlus.Data
-    open Models
-    open Models
+    open Domain
+    open Domain
     open System
     open Validation
     

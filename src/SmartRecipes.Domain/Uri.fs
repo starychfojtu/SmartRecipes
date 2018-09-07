@@ -1,6 +1,6 @@
-module Models.Uri
+module Domain.Uri
     open FSharpPlus.Data
-    open Models
+    open Domain
     open System
 
     let mkUri uri =

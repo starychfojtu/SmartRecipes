@@ -1,4 +1,4 @@
-module Models.NaturalNumber
+module Domain.NaturalNumber
     open FSharpPlus.Data
     open System
     

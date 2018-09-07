@@ -3,19 +3,22 @@ module UseCases.Recipes
     open DataAccess
     open FSharpPlus.Data
     open Infrastructure
-    open Models.Account
+    open Domain.Account
     open FSharpPlus
     open Infrastructure.Reader
-    open System
     open Infrastructure.Option
+    open System
     open UseCases
     open Users
     open DataAccess.Model
-    open Models.Token
-    open Models.Foodstuff
+    open Domain.Token
+    open Domain.Foodstuff
     open Infrastructure.Seq
     open DataAccess.Recipes
     open DataAccess.Tokens
+    open Domain
+    open Domain.NonEmptyString
+    open Domain.NaturalNumber
                 
     // Get all by account
     
@@ -40,37 +43,28 @@ module UseCases.Recipes
         
     // Creates
     
-//    type CreateError =
-//        | Unauthorized
-//        | InvalidParameters of Recipes.CreateError
-//        | FoodstuffNotFound
-//        
-//    type IngredientParameter = {
-//        foodstuffId: Guid
-//        amount: float
-//    }
-//    
-//    let private mkParameter foodstuff amount : Recipes.IngredientParameter = {
-//        foodstuff = foodstuff
-//        amount = amount
-//    }
-//    
-//    let private crateParameters parameters token foodstuffs =
-//        Seq.exactJoin foodstuffs (fun f -> f.id.value) parameters (fun i -> i.foodstuffId) (fun (f, p) -> mkParameter f p.amount) 
-//        |> Option.map (fun f -> (token, f))
-//        |> toResult [FoodstuffNotFound]
-//    
-//    let private mapParameters parameters token =
-//        Seq.map (fun i -> i.foodstuffId) parameters
-//        |> Foodstuffs.getByIds
-//        |> Reader.map (crateParameters parameters token)
-//
-//    let private createRecipe infoParameters ingredientParameters token = 
-//        Recipes.create token.accountId infoParameters ingredientParameters 
-//        |> Result.mapError (List.map InvalidParameters)
-//        |> Reader.id
-//
-//    let create accessTokenValue infoParameters ingredientParameters =
-//        authorize [Unauthorized] accessTokenValue
-//        >>=! mapParameters ingredientParameters
-//        >>=! (fun (t, ingredientParameters) -> createRecipe infoParameters ingredientParameters t)
+    type CreateError =
+        | Unauthorized
+        
+    type IngredientParameter = {
+        foodstuff: Foodstuff
+        amount: float
+    }
+    
+    type CreateParameters = {
+        name: NonEmptyString
+        creatorId: AccountId
+        personCount: NaturalNumber
+        imageUrl: Uri
+        description: string
+    }
+
+    let private createRecipe infoParameters ingredientParameters token = 
+        Recipes.create token.accountId infoParameters ingredientParameters 
+        |> Result.mapError (List.map InvalidParameters)
+        |> Reader.id
+
+    let create accessToken parameters =
+        authorize [Unauthorized] accessTokenValue
+        >>=! mapParameters ingredientParameters
+        >>=! (fun (t, ingredientParameters) -> createRecipe infoParameters ingredientParameters t)

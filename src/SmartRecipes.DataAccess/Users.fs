@@ -2,10 +2,10 @@ module DataAccess.Users
     open System.Net.Mail
     open Context
     open DataAccess.Model
-    open Models.Account
-    open Models.Password
+    open Domain.Account
+    open Domain.Password
     open FSharpPlus.Data
-    open Models.Token
+    open Domain.Token
     
     type UsersDao = {
         getById: AccountId -> Account option

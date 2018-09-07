@@ -4,12 +4,12 @@ module DataAccess.Recipes
     open FSharpPlus.Data
     open System.Net.Http
     open System
-    open Models.Recipe
-    open Models.Account
+    open Domain.Recipe
+    open Domain.Account
     open DataAccess.Model
-    open Models
-    open Models
-    open Models.Foodstuff
+    open Domain
+    open Domain
+    open Domain.Foodstuff
     
     type RecipesDao = {
         getByAccount: Guid -> seq<RecipeInfo>

@@ -1,24 +1,23 @@
 module Tests.Users
+    open DataAccess
     open DataAccess.Tokens
     open System.Data.SqlTypes
     open DataAccess.Users
     open System.Net.Mail
-    open Models.Account
-    open Models.Password
+    open Domain.Account
+    open Domain.Password
     open System
     open Xunit
     open FSharpPlus.Data
     open Infrastructure
     open UseCases
     open UseCases.Users
+    open Utils
     
     let id = Guid.NewGuid()
     let mailAddress = new MailAddress("test@gmail.com")
     let passwordValue = "VeryLongPassword1"
-    let password = 
-        match mkPassword passwordValue with 
-        | Success s -> s 
-        | Failure _ -> raise (InvalidOperationException ("Test is invalidly configured.")) 
+    let password = mkPassword passwordValue |> forceSucces
     let account = {
         id = AccountId id
         credentials = 

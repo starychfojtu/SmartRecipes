@@ -2,8 +2,8 @@ module DataAccess.Tokens
     open DataAccess.Context
     open DataAccess.Model
     open FSharpPlus.Data
-    open Models.Account
-    open Models.Token
+    open Domain.Account
+    open Domain.Token
 
     type TokensDao = {
         get: string -> AccessToken option

@@ -1,4 +1,4 @@
-module Models.Credentials
+module Domain.Credentials
     open System.Net.Mail
     open Email
     open Password
