@@ -2,6 +2,9 @@
     open Credentials
     open System
     open FSharpPlus
+    open Infrastructure
+    open FSharpPlus.Data
+    open Token
     
     type AccountId = AccountId of Guid 
     
@@ -18,3 +21,14 @@
     let mkAccount email password =
         createAccount 
         <!> mkCredentials email password
+        
+    // Sign up
+        
+    type SignUpError = 
+        | InvalidParameters of CredentialsError list
+        | AccountAlreadyExits
+          
+    let signUp email password =
+        mkAccount email password
+        |> Validation.mapFailure InvalidParameters
+        |> Validation.toResult

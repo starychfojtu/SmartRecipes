@@ -3,6 +3,7 @@ module Domain.Token
     open System.Security.Cryptography
     open Account
     open FSharpPlus
+    open Infrastructure
     open System
     open System
     open System
@@ -40,4 +41,21 @@ module Domain.Token
         
     let isFresh accessToken nowUtc = 
         nowUtc < accessToken.expiration
+        
+    // Sign in
+    
+    // Sign in
+        
+    type SignInError = 
+        | InvalidCredentials
+            
+    let authenticate account password =
+        if Hashing.verify account.credentials.password.value password
+            then mkAccessToken account.id |> Ok
+            else Error InvalidCredentials
+            
+    // Verify access token
+        
+    let verifyAccessToken accessToken = 
+        isFresh accessToken DateTime.UtcNow
         

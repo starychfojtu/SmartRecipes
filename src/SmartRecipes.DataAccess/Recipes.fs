@@ -8,8 +8,9 @@ module DataAccess.Recipes
     open Domain.Account
     open DataAccess.Model
     open Domain
-    open Domain
+    open Domain.NonEmptyString
     open Domain.Foodstuff
+    open Utils
     
     type RecipesDao = {
         getByAccount: Guid -> seq<RecipeInfo>
@@ -21,7 +22,7 @@ module DataAccess.Recipes
         creatorId = AccountId recipe.creatorId
         personCount = Utils.toNaturalNumberModel recipe.personCount
         imageUrl = Uri(recipe.imageUrl)
-        description = recipe.description
+        description = recipe.description |> Option.ofObj |> Option.map (mkNonEmptyString >> forceSucces)
     }
     
     let private getByAccount accountId =
