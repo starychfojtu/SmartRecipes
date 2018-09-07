@@ -50,6 +50,7 @@ module UseCases.Recipes
     
     type CreateError =
         | Unauthorized
+        | DuplicateFoodstuffIngredient
     
     type CreateParameters = {
         name: NonEmptyString

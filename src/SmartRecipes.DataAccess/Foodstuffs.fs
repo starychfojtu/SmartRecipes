@@ -26,12 +26,12 @@ module DataAccess.Foodstuffs
         | DbMetricUnit.Piece -> MetricUnit.Piece
         | _ -> raise (InvalidOperationException("Invalid unit value"))
         
-    let private amountToDb amount : DbAmount = {
+    let internal amountToDb amount : DbAmount = {
         unit = unitToDb amount.unit
         value = amount.value.value
     }
     
-    let private amountToModel (dbAmount: DbAmount) = {
+    let internal amountToModel (dbAmount: DbAmount) = {
         unit = unitToModel dbAmount.unit
         value = mkNonNegativeFloat dbAmount.value |> forceSucces
     }
