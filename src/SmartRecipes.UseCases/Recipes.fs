@@ -1,9 +1,7 @@
 module UseCases.Recipes
-    open Business
     open DataAccess
     open FSharpPlus.Data
     open Infrastructure
-    open Domain.Account
     open FSharpPlus
     open Infrastructure.Reader
     open Infrastructure.Option
@@ -11,14 +9,16 @@ module UseCases.Recipes
     open UseCases
     open Users
     open DataAccess.Model
-    open Domain.Token
-    open Domain.Foodstuff
     open Infrastructure.Seq
     open DataAccess.Recipes
     open DataAccess.Tokens
     open Domain
+    open Domain.Account
     open Domain.NonEmptyString
     open Domain.NaturalNumber
+    open Domain.Recipe
+    open Domain.Token
+    open Domain.Foodstuff
                 
     // Get all by account
     
@@ -41,30 +41,36 @@ module UseCases.Recipes
         authorize accessToken
         >>=! fun _ -> getRecipes accountId
         
-    // Creates
+    // Create
+    
+    type CreateRecipeDao = {
+        tokens: TokensDao
+        recipes: RecipesDao
+    }
     
     type CreateError =
         | Unauthorized
-        
-    type IngredientParameter = {
-        foodstuff: Foodstuff
-        amount: float
-    }
     
     type CreateParameters = {
         name: NonEmptyString
-        creatorId: AccountId
         personCount: NaturalNumber
         imageUrl: Uri
-        description: string
+        description: NonEmptyString option
+        ingresients: NonEmptyList<IngredientParameter>
     }
+    
+    let private authorizeCreation accessToken = 
+        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
 
-    let private createRecipe infoParameters ingredientParameters token = 
-        Recipes.create token.accountId infoParameters ingredientParameters 
-        |> Result.mapError (List.map InvalidParameters)
+    let private createRecipe parameters token = 
+        Recipe.createRecipe parameters.name token.accountId parameters.personCount parameters.imageUrl parameters.description parameters.ingresients
+        |> Ok 
         |> Reader.id
 
+    let private addToDatabase recipe = 
+        Reader(fun (dao: CreateRecipeDao) -> dao.recipes.add recipe |> Ok)
+
     let create accessToken parameters =
-        authorize [Unauthorized] accessTokenValue
-        >>=! mapParameters ingredientParameters
-        >>=! (fun (t, ingredientParameters) -> createRecipe infoParameters ingredientParameters t)
+        authorizeCreation accessToken
+        >>=! createRecipe parameters
+        >>=! addToDatabase

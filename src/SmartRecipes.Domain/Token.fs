@@ -43,8 +43,6 @@ module Domain.Token
         nowUtc < accessToken.expiration
         
     // Sign in
-    
-    // Sign in
         
     type SignInError = 
         | InvalidCredentials

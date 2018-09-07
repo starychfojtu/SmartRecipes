@@ -37,7 +37,7 @@ module Domain.Recipe
         amount: Amount
     }
     
-    type IngredientCreateParameters = {
+    type IngredientParameter = {
         foodstuffId: FoodstuffId
         amount: Amount
     }
@@ -56,11 +56,11 @@ module Domain.Recipe
         ingredients: NonEmptyList<Ingredient>
     }
     
-     let private createRecipeInternal info ingredients = { 
-         info = info
-         ingredients = ingredients
-     }
-
+    let private createRecipeInternal info ingredients = { 
+        info = info
+        ingredients = ingredients
+    }
+    
     let createRecipe name creatorId personCount imageUrl description ingredientParameters =
         let info = createRecipeInfo name creatorId personCount imageUrl description
         let ingredients = createingredients info.id ingredientParameters
