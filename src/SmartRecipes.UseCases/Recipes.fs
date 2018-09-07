@@ -57,14 +57,18 @@ module UseCases.Recipes
         personCount: NaturalNumber
         imageUrl: Uri
         description: NonEmptyString option
-        ingresients: NonEmptyList<IngredientParameter>
+        ingredients: NonEmptyList<IngredientParameter>
     }
     
     let private authorizeCreation accessToken = 
         Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
+        
+    let private checkIngredientsNotDuplicate ingredientParameters accessToken =
+        if NonEmptyList.isDistinct ingredientParameters then Ok accessToken else Error DuplicateFoodstuffIngredient
+        |> Reader.id
 
     let private createRecipe parameters token = 
-        Recipe.createRecipe parameters.name token.accountId parameters.personCount parameters.imageUrl parameters.description parameters.ingresients
+        Recipe.createRecipe parameters.name token.accountId parameters.personCount parameters.imageUrl parameters.description parameters.ingredients
         |> Ok 
         |> Reader.id
 
@@ -73,5 +77,6 @@ module UseCases.Recipes
 
     let create accessToken parameters =
         authorizeCreation accessToken
+        >>=! checkIngredientsNotDuplicate parameters.ingredients
         >>=! createRecipe parameters
         >>=! addToDatabase

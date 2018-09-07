@@ -9,6 +9,7 @@ module Domain.Recipe
     open Foodstuff
     open Domain.NaturalNumber
     open Domain.NonEmptyString
+    open Domain.NonNegativeFloat
     open System
     
     type RecipeId = RecipeId of Guid
@@ -34,12 +35,12 @@ module Domain.Recipe
     type Ingredient = {
         recipeId: RecipeId
         foodstuffId: FoodstuffId
-        amount: Amount
+        amount: NonNegativeFloat
     }
     
     type IngredientParameter = {
         foodstuffId: FoodstuffId
-        amount: Amount
+        amount: NonNegativeFloat
     }
     
     let private createIngredient recipeId parameters = {
