@@ -1,4 +1,4 @@
-language: fsharp
+language: csharp
 solution: ./src/SmartRecipes.sln
 script:
   - ./build.sh
