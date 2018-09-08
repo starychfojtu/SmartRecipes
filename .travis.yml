@@ -1,0 +1,6 @@
+language: fsharp
+solution: ./src/SmartRecipes.sln
+script:
+  - ./build.sh
+  - dotnet test "./src/SmartRecipes.Tests/SmartRecipes.Tests.fsproj" --no-build
+  - grep "Test Results" build.log
