@@ -13,12 +13,14 @@ module UseCases.Recipes
     open DataAccess.Recipes
     open DataAccess.Tokens
     open Domain
+    open Domain
     open Domain.Account
     open Domain.NonEmptyString
     open Domain.NaturalNumber
     open Domain.Recipe
     open Domain.Token
     open Domain.Foodstuff
+    open Domain.FoodstuffAmount
                 
     // Get all by account
     
@@ -57,7 +59,7 @@ module UseCases.Recipes
         personCount: NaturalNumber
         imageUrl: Uri
         description: NonEmptyString option
-        ingredients: NonEmptyList<IngredientParameter>
+        ingredients: NonEmptyList<FoodstuffAmount>
     }
     
     let private authorizeCreation accessToken = 

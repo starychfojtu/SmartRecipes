@@ -1,8 +1,5 @@
 module DataAccess.Recipes
     open System.Collections.Generic
-    open System.Collections.Generic
-    open System.Collections
-    open DataAccess
     open DataAccess
     open DataAccess.Context
     open FSharpPlus.Data
@@ -12,60 +9,64 @@ module DataAccess.Recipes
     open Domain.Account
     open DataAccess.Model
     open Domain
-    open Domain
     open Domain.NonEmptyString
     open Domain.Foodstuff
+    open Domain.FoodstuffAmount
     open FSharpPlus.Data
     open System
-    open System
     open Utils
+    open Infrastructure.NonEmptyList
+    open Domain.NonNegativeFloat
+    open FSharpPlus.Data
+    open Microsoft.EntityFrameworkCore
     
     type RecipesDao = {
-        getByAccount: Guid -> seq<RecipeInfo>
+        getByAccount: Guid -> seq<Recipe>
         add: Recipe -> Recipe
     }
     
-    let private infoToModel (recipe: DbRecipeInfo): RecipeInfo = {
-        id = RecipeId recipe.id
-        name = Utils.toNonEmptyStringModel recipe.name
-        creatorId = AccountId recipe.creatorId
-        personCount = Utils.toNaturalNumberModel recipe.personCount
-        imageUrl = Uri(recipe.imageUrl)
-        description = recipe.description |> Option.ofObj |> Option.map (mkNonEmptyString >> forceSucces)
+    let private ingredientToModel (dbIngredient: DbIngredient) = {
+        foodstuff = Foodstuffs.toModel dbIngredient.foodstuff
+        amount = mkNonNegativeFloat dbIngredient.amount |> forceSucces
     }
     
-    let private infoToDb (info: RecipeInfo): DbRecipeInfo = {
-        id = match info.id with RecipeId id -> id
-        name = info.name.value
-        creatorId = match info.creatorId with AccountId id -> id
-        personCount = Convert.ToInt32 info.personCount
-        imageUrl = info.imageUrl.AbsolutePath
-        description = info.description |> Option.map (fun d -> d.value) |> Option.toObj
-    }
-    
-    let private ingredientToDb (ingredient: Ingredient): DbIngredient = {
-        id = Guid.NewGuid ()
-        recipeId = match ingredient.recipeId with RecipeId id -> id
-        foodstuffId = match ingredient.foodstuffId with FoodstuffId id -> id
+    let private ingredientToDb (recipeId: RecipeId) ingredient = {
+        id = recipeId.value.ToString () + ingredient.foodstuff.id.ToString ()
+        recipeId = recipeId.value
+        foodstuffId = ingredient.foodstuff.id.value
+        foodstuff = Foodstuffs.toDb ingredient.foodstuff
         amount = ingredient.amount.value
     }
     
-    let private toDb recipe =
-        let dbInfo = infoToDb recipe.info
-        let dbIngretients = recipe.ingredients |> NonEmptyList.map ingredientToDb |> NonEmptyList.toSeq
-        (dbInfo, dbIngretients)
+    let private toModel (dbRecipe: DbRecipe): Recipe = {
+        id = RecipeId dbRecipe.id
+        name = Utils.toNonEmptyStringModel dbRecipe.name
+        creatorId = AccountId dbRecipe.creatorId
+        personCount = Utils.toNaturalNumberModel dbRecipe.personCount
+        imageUrl = Uri(dbRecipe.imageUrl)
+        description = dbRecipe.description |> Option.ofObj |> Option.map (mkNonEmptyString >> forceSucces)
+        ingredients = Seq.map ingredientToModel dbRecipe.ingredients |> (mkNonEmptyList >> forceSucces)
+    }
     
+    let private toDb (recipe: Recipe): DbRecipe = {
+        id = match recipe.id with RecipeId id -> id
+        name = recipe.name.value
+        creatorId = match recipe.creatorId with AccountId id -> id
+        personCount = Convert.ToInt32 recipe.personCount
+        imageUrl = recipe.imageUrl.AbsolutePath
+        description = recipe.description |> Option.map (fun d -> d.value) |> Option.toObj
+        ingredients = NonEmptyList.map (ingredientToDb recipe.id) recipe.ingredients |> NonEmptyList.toSeq
+    }
+    
+    // TODO: Add Include
     let private getByAccount accountId =
         createDbContext().Recipes
         |> Seq.filter (fun r -> r.creatorId = accountId)
-        |> Seq.map infoToModel
+        |> Seq.map toModel
         
     let private add recipe =
         let context = createDbContext()
-        let (info, ingredients) = toDb recipe
-        let dbIngredients = Seq.map (fun i -> i :> obj) ingredients :> IEnumerable<obj>
-        context.Add info |> ignore
-        context.AddRange dbIngredients |> ignore
+        context.Add (toDb recipe) |> ignore
         context.SaveChanges () |> ignore
         recipe
     

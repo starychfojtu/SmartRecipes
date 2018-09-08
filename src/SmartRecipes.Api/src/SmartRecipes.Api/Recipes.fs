@@ -16,6 +16,7 @@ module Api.Recipes
     open DataAccess.Tokens
     open Domain
     open Domain.Foodstuff
+    open Domain.FoodstuffAmount
     open Domain.Recipe
     open FSharpPlus.Data
     open Infrastructure
@@ -94,38 +95,33 @@ module Api.Recipes
     
     let private getFoodstuff parameters = 
         Reader(fun (dao: FoodstuffDao) -> Seq.map (fun i -> i.foodstuffId) parameters |> dao.getByIds )
-        
-    let private createIngredientParameter foodstuffId amount: Recipe.IngredientParameter = {
-        foodstuffId = foodstuffId
-        amount = amount
-    }
-    
-    let mkFoodstuffId guid (foodstuffMap: Map<_, Foodstuff> ) = 
-        match Map.tryFind guid foodstuffMap with  
-        | Some f -> Success f.id
+
+    let mkFoodstuff guid (foodstuffMap: Map<_, Foodstuff> ) = 
+        match Map.tryFind guid foodstuffMap with
+        | Some f -> Success f
         | None -> Failure [FoodstuffNotFound]
         
-    let private mkIngredientParameters foodstuffMap parameters =
-        createIngredientParameter
-        <!> mkFoodstuffId parameters.foodstuffId foodstuffMap
+    let private mkIngredients foodstuffMap parameters =
+        createFoodstuffAmount
+        <!> mkFoodstuff parameters.foodstuffId foodstuffMap
         <*> (mkNonNegativeFloat parameters.amount |> mapFailure (fun _ -> [AmountOfIngredientMustBePositive]))
         
-    let private mkAllIngredientParameters parameters foodstuffMap =
-        Seq.map (mkIngredientParameters foodstuffMap) parameters
+    let private mkAllIngredients parameters foodstuffMap =
+        Seq.map (mkIngredients foodstuffMap) parameters
         
     let private mkNonEmptyParameters parameters = 
         mkNonEmptyList parameters |> mapFailure (fun _ -> [MustContaintAtLeastOneIngredient])
 
     let private parseIngredientParameters parameters =
         let toMap = Seq.map (fun (f: Foodstuff) -> (f.id.value, f)) >> Map.ofSeq
-        let parseIngredients = mkAllIngredientParameters parameters >> Validation.traverse
+        let parseIngredients = mkAllIngredients parameters >> Validation.traverse
         getFoodstuff parameters
         |> Reader.map toMap
         |> Reader.map parseIngredients
         |> Reader.map (Validation.bind mkNonEmptyParameters)
-        
+
     let private mkDescription d =
-        if isNull d 
+        if isNull d
             then Success None 
             else mkNonEmptyString d |> mapFailure (fun _ -> [DescriptionIsProvidedButEmpty]) |> Validation.map Some 
         

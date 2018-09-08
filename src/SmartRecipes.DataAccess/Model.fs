@@ -1,4 +1,5 @@
 module DataAccess.Model
+    open System.Collections.Generic
     open System
 
     [<CLIMutable>]
@@ -35,19 +36,21 @@ module DataAccess.Model
     }
     
     [<CLIMutable>]
-    type DbRecipeInfo = {
+    type DbIngredient = {
+        id: string
+        recipeId: Guid
+        foodstuffId: Guid
+        foodstuff: DbFoodstuff
+        amount: float
+    }
+    
+    [<CLIMutable>]
+    type DbRecipe = {
         id: Guid
         name: string
         creatorId: Guid
         personCount: int
         imageUrl: string
         description: string
-    }
-    
-    [<CLIMutable>]
-    type DbIngredient = {
-        id: Guid
-        recipeId: Guid
-        foodstuffId: Guid
-        amount: float
+        ingredients: IEnumerable<DbIngredient>
     }

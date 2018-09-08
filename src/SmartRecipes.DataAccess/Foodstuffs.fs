@@ -36,14 +36,14 @@ module DataAccess.Foodstuffs
         value = mkNonNegativeFloat dbAmount.value |> forceSucces
     }
                 
-    let private toDb foodstuff : DbFoodstuff = {
+    let internal toDb foodstuff : DbFoodstuff = {
         id = match foodstuff.id with FoodstuffId id -> id
         name = foodstuff.name.value
         baseAmount = amountToDb foodstuff.baseAmount
         amountStep = amountToDb foodstuff.amountStep
     }
     
-    let private toModel (dbFoodstuff: DbFoodstuff) = {
+    let internal toModel (dbFoodstuff: DbFoodstuff) = {
         id = FoodstuffId dbFoodstuff.id 
         name = mkNonEmptyString dbFoodstuff.name |> forceSucces
         baseAmount = amountToModel dbFoodstuff.baseAmount

@@ -35,7 +35,7 @@
             and set v = c.ingredients <- v
     
         [<DefaultValue>]
-        val mutable recipes:DbSet<DbRecipeInfo>
+        val mutable recipes:DbSet<DbRecipe>
         member c.Recipes 
             with get() = c.recipes 
             and set v = c.recipes <- v
@@ -50,12 +50,12 @@
             mb.Entity<DbFoodstuff>().OwnsOne(fun f -> f.amountStep) |> ignore
             mb.Entity<DbFoodstuff>().OwnsOne(fun f -> f.baseAmount) |> ignore
     
-            mb.Entity<DbRecipeInfo>().HasKey(fun r -> r.id :> obj) |> ignore
-            mb.Entity<DbRecipeInfo>().HasOne<DbAccount>().WithMany().HasForeignKey(fun r -> r.creatorId :> obj) |> ignore
+            mb.Entity<DbRecipe>().HasKey(fun r -> r.id :> obj) |> ignore
+            mb.Entity<DbRecipe>().HasOne<DbAccount>().WithMany().HasForeignKey(fun r -> r.creatorId :> obj) |> ignore
             
             mb.Entity<DbIngredient>().HasKey(fun i -> (i.foodstuffId, i.recipeId) :> obj) |> ignore
-            mb.Entity<DbIngredient>().HasOne<DbRecipeInfo>().WithMany().HasForeignKey(fun r -> r.recipeId :> obj) |> ignore
-            mb.Entity<DbIngredient>().HasOne<DbFoodstuff>().WithMany().HasForeignKey(fun r -> r.foodstuffId :> obj) |> ignore
+            mb.Entity<DbIngredient>().HasOne<DbRecipe>().WithMany(fun r -> r.ingredients).HasForeignKey(fun i -> i.recipeId :> obj) |> ignore
+            mb.Entity<DbIngredient>().HasOne(fun i -> i.foodstuff).WithMany().HasForeignKey(fun r -> r.foodstuffId :> obj) |> ignore
 
     let createDbContext () = 
         let optionsBuilder = new DbContextOptionsBuilder<Context>();

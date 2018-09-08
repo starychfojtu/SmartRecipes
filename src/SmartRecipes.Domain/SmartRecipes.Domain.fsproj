@@ -17,7 +17,9 @@
     <Compile Include="Account.fs" />
     <Compile Include="Token.fs" />
     <Compile Include="Foodstuff.fs" />
+    <Compile Include="FoodstuffAmount.fs" />
     <Compile Include="Recipe.fs" />
+    <Compile Include="ShoppingList.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.5.0" />
