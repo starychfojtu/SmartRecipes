@@ -13,5 +13,5 @@ permissions:
        - file
 hooks:
    AfterInstall:
-    - location : /car/smart-recipes/server-init.sh  
+    - location : /var/smart-recipes/server-init.sh  
       runas: root
