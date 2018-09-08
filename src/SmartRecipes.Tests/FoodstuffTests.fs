@@ -13,7 +13,6 @@ module Tests.Foodstuffs
     open NonEmptyString
     open NonNegativeFloat
     open System
-    open System
     open Xunit
     
     let token = Token("fake")

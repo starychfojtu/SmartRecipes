@@ -9,3 +9,6 @@ module Infrastructure.Validation
     let forceSucces = function 
         | Success s -> s
         | Failure f -> raise (InvalidOperationException())
+        
+    let traverse seqOfValidation =
+        Seq.traverse Validation.toResult seqOfValidation |> Validation.ofResult

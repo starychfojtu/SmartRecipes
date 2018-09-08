@@ -1,4 +1,7 @@
 module DataAccess.Recipes
+    open System.Collections.Generic
+    open System.Collections.Generic
+    open System.Collections
     open DataAccess
     open DataAccess
     open DataAccess.Context
@@ -60,9 +63,10 @@ module DataAccess.Recipes
     let private add recipe =
         let context = createDbContext()
         let (info, ingredients) = toDb recipe
-        context.Add (info) |> ignore
-        context.Add (ingredients) |> ignore
-        context.SaveChanges |> ignore
+        let dbIngredients = Seq.map (fun i -> i :> obj) ingredients :> IEnumerable<obj>
+        context.Add info |> ignore
+        context.AddRange dbIngredients |> ignore
+        context.SaveChanges () |> ignore
         recipe
     
     let getDao () = {

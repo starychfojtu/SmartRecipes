@@ -12,6 +12,8 @@ module Api.Recipes
     open UseCases
     open Context
     open DataAccess.Foodstuffs
+    open DataAccess.Recipes
+    open DataAccess.Tokens
     open Domain
     open Domain.Foodstuff
     open Domain.Recipe
@@ -23,6 +25,9 @@ module Api.Recipes
     open Uri
     open NonNegativeFloat
     open FSharpPlus
+    open Infrastructure
+    open Infrastructure.NonEmptyList
+    open Infrastructure.Reader
             
     // Get by account        
     
@@ -67,6 +72,18 @@ module Api.Recipes
         | DescriptionIsProvidedButEmpty
         | BusinessError of Recipes.CreateError
         
+    type CreateDao = {
+        foodstuffs: FoodstuffDao
+        recipes: RecipesDao
+        tokens: TokensDao
+    }
+        
+    let private getCreateDao () = {
+        foodstuffs = Foodstuffs.getDao ()
+        recipes = Recipes.getDao ()
+        tokens = Tokens.getDao ()
+    }
+        
     let private createParameters name personCount imageUrl description ingredients: Recipes.CreateParameters = {
         name = name
         personCount = personCount
@@ -95,51 +112,44 @@ module Api.Recipes
         
     let private mkAllIngredientParameters parameters foodstuffMap =
         Seq.map (mkIngredientParameters foodstuffMap) parameters
+        
+    let private mkNonEmptyParameters parameters = 
+        mkNonEmptyList parameters |> mapFailure (fun _ -> [MustContaintAtLeastOneIngredient])
 
     let private parseIngredientParameters parameters =
         let toMap = Seq.map (fun (f: Foodstuff) -> (f.id.value, f)) >> Map.ofSeq
-        // check not empty
+        let parseIngredients = mkAllIngredientParameters parameters >> Validation.traverse
         getFoodstuff parameters
         |> Reader.map toMap
-        |> Reader.map (mkAllIngredientParameters parameters)
+        |> Reader.map parseIngredients
+        |> Reader.map (Validation.bind mkNonEmptyParameters)
         
     let private mkDescription d =
-        if isNull d then Success None else mkNonEmptyString d |> mapFailure (fun _ -> [DescriptionIsProvidedButEmpty]) |> map Some 
+        if isNull d 
+            then Success None 
+            else mkNonEmptyString d |> mapFailure (fun _ -> [DescriptionIsProvidedButEmpty]) |> Validation.map Some 
         
-    let private parseParameters (parameters: CreateParameters): Recipes.CreateParameters =
+    let private mkParameters (parameters: CreateParameters) = Reader(fun (dao: FoodstuffDao) ->
         createParameters
         <!> (mkNonEmptyString parameters.name |> mapFailure (fun _ -> [NameCannotBeEmpty]))
         <*> (mkNaturalNumber parameters.personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]))
         <*> (mkUri parameters.imageUrl |> mapFailure (fun m -> [InvalidImageUrl(m)]))
         <*> mkDescription parameters.description
-        <*> parseIngredientParameters parameters.ingredients
+        <*> (parseIngredientParameters parameters.ingredients |> Reader.execute dao)
+    )
     
-//    let private createIngredient recipeId parameter =
-//        mkIngredient recipeId parameter.foodstuff.id 
-//        <!> mkAmount parameter.amount parameter.foodstuff.baseAmount.unit
-//        
-//    let private createIngredients parameters recipeInfo =
-//        parameters
-//        |> Seq.traverse (fun i -> 
-//            createIngredient recipeInfo.id i
-//            |> mapFailure (fun _ -> [AmountOfFoodstuffMustBePositive]) 
-//            |> Validation.toResult)
-//        |> Validation.ofResult
-//    
-//        let ingredients = 
-//            Validation.bind (createIngredients ingredientParameters) recipeInfo
-//            |> Validation.bind (fun s -> mkNonEmptyList s |> mapFailure (fun _ -> [MustContaintAtLeastOneIngredient]))
-//        
-//    let private crateParameters parameters token foodstuffs =
-//        Seq.exactJoin foodstuffs (fun f -> f.id.value) parameters (fun i -> i.foodstuffId) (fun (f, p) -> mkParameter f p.amount) 
-//        |> Option.map (fun f -> (token, f))
-//        |> toResult [FoodstuffNotFound]
-//    
-//    let private mapParameters parameters token =
-//        Seq.map (fun i -> i.foodstuffId) parameters
-//        |> Foodstuffs.getByIds
-//        |> Reader.map (crateParameters parameters token)
-//        
-//    let createHandler (next : HttpFunc) (ctx : HttpContext) =
-//        authorizedPostHandler next ctx (fun parameters accessToken ->
-//            Recipes.create accessToken (toInfoParemeters parameters) parameters.ingredients)
+    let private mapDao dao: CreateRecipeDao = {
+        recipes = dao.recipes
+        tokens = dao.tokens
+    }
+    
+    let parseParameters = mkParameters >> (Reader.map Validation.toResult) >> (Reader.mapEnviroment (fun dao -> dao.foodstuffs))
+    let createRecipe accessToken = 
+        Recipes.create accessToken >> 
+        (Reader.mapEnviroment mapDao) >> 
+        (Reader.map (Result.mapError (fun e -> [BusinessError e])))
+
+    let createHandler (next : HttpFunc) (ctx : HttpContext) =
+        authorizedPostHandler (getCreateDao ()) next ctx (fun accessToken parameters ->
+            parseParameters parameters >>=! createRecipe accessToken
+        )
