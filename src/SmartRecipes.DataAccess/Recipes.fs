@@ -44,7 +44,7 @@ module DataAccess.Recipes
         id = Guid.NewGuid ()
         recipeId = match ingredient.recipeId with RecipeId id -> id
         foodstuffId = match ingredient.foodstuffId with FoodstuffId id -> id
-        amount = Foodstuffs.amountToDb ingredient.amount
+        amount = ingredient.amount.value
     }
     
     let private toDb recipe =

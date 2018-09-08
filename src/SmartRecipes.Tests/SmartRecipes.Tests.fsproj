@@ -6,7 +6,6 @@
   <ItemGroup>
     <Compile Include="Assert.fs" />
     <Compile Include="UserTests.fs" />
-    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.5.0" />
@@ -18,10 +17,10 @@
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartRecipes.Business\SmartRecipes.Business.fsproj" />
     <ProjectReference Include="..\SmartRecipes.UseCases\SmartRecipes.UseCases.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FoodstuffTests.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>

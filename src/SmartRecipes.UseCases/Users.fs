@@ -1,7 +1,5 @@
 module UseCases.Users
     open System.Net.Mail
-    open Business
-    open Business.Users
     open DataAccess
     open DataAccess.Tokens
     open DataAccess.Users
@@ -25,7 +23,7 @@ module UseCases.Users
     )
             
     let private signUpAccount email password = 
-        Users.signUp email password |> Reader.id
+        Account.signUp email password |> Reader.id
     
     let private addAccountToDb account = 
         Reader(fun (dao: UsersDao) -> dao.add account |> Ok)
@@ -44,7 +42,7 @@ module UseCases.Users
         
     let private validateEmail email = 
         mkEmail email
-        |> mapFailure (fun _ -> Users.InvalidCredentials)
+        |> mapFailure (fun _ -> Token.InvalidCredentials)
         |> toResult
         |> Reader.id
         
@@ -52,7 +50,7 @@ module UseCases.Users
         Reader(fun (dao: SignInDao) -> dao.users.getByEmail email |> Option.toResult InvalidCredentials)
         
     let private authenticate password account =
-        Users.authenticate account password |> Reader.id
+        Token.authenticate account password |> Reader.id
         
     let private addTokenToDb token = 
         Reader(fun (dao: SignInDao) -> dao.tokens.add token |> Ok)

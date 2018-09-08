@@ -56,7 +56,6 @@
             mb.Entity<DbIngredient>().HasKey(fun i -> (i.foodstuffId, i.recipeId) :> obj) |> ignore
             mb.Entity<DbIngredient>().HasOne<DbRecipeInfo>().WithMany().HasForeignKey(fun r -> r.recipeId :> obj) |> ignore
             mb.Entity<DbIngredient>().HasOne<DbFoodstuff>().WithMany().HasForeignKey(fun r -> r.foodstuffId :> obj) |> ignore
-            mb.Entity<DbIngredient>().OwnsOne(fun i -> i.amount) |> ignore
 
     let createDbContext () = 
         let optionsBuilder = new DbContextOptionsBuilder<Context>();

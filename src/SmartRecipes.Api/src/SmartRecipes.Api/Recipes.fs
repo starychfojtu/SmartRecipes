@@ -47,7 +47,7 @@ module Api.Recipes
         foodstuffId: Guid
         amount: float
     }
-    
+
     [<CLIMutable>]
     type CreateParameters = {
         name: string
@@ -64,6 +64,7 @@ module Api.Recipes
         | AmountOfIngredientMustBePositive
         | MustContaintAtLeastOneIngredient
         | FoodstuffNotFound
+        | DescriptionIsProvidedButEmpty
         | BusinessError of Recipes.CreateError
         
     let private createParameters name personCount imageUrl description ingredients: Recipes.CreateParameters = {
@@ -77,7 +78,7 @@ module Api.Recipes
     let private getFoodstuff parameters = 
         Reader(fun (dao: FoodstuffDao) -> Seq.map (fun i -> i.foodstuffId) parameters |> dao.getByIds )
         
-    let private createIngredientParameters foodstuffId amount: Recipe.IngredientParameter = {
+    let private createIngredientParameter foodstuffId amount: Recipe.IngredientParameter = {
         foodstuffId = foodstuffId
         amount = amount
     }
@@ -87,26 +88,31 @@ module Api.Recipes
         | Some f -> Success f.id
         | None -> Failure [FoodstuffNotFound]
         
-    let private mkIngredientParameters parameters foodstuffMap =
-        createIngredientParameters
+    let private mkIngredientParameters foodstuffMap parameters =
+        createIngredientParameter
         <!> mkFoodstuffId parameters.foodstuffId foodstuffMap
         <*> (mkNonNegativeFloat parameters.amount |> mapFailure (fun _ -> [AmountOfIngredientMustBePositive]))
+        
+    let private mkAllIngredientParameters parameters foodstuffMap =
+        Seq.map (mkIngredientParameters foodstuffMap) parameters
 
-    let private mkIngredientParameters ingredientParameters =
+    let private parseIngredientParameters parameters =
+        let toMap = Seq.map (fun (f: Foodstuff) -> (f.id.value, f)) >> Map.ofSeq
         // check not empty
-        // get foodstuffs
-        // create map
-        // create parameters
+        getFoodstuff parameters
+        |> Reader.map toMap
+        |> Reader.map (mkAllIngredientParameters parameters)
+        
+    let private mkDescription d =
+        if isNull d then Success None else mkNonEmptyString d |> mapFailure (fun _ -> [DescriptionIsProvidedButEmpty]) |> map Some 
         
     let private parseParameters (parameters: CreateParameters): Recipes.CreateParameters =
         createParameters
         <!> (mkNonEmptyString parameters.name |> mapFailure (fun _ -> [NameCannotBeEmpty]))
         <*> (mkNaturalNumber parameters.personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]))
         <*> (mkUri parameters.imageUrl |> mapFailure (fun m -> [InvalidImageUrl(m)]))
-        <*> Success parameters.description 
-        <*> mkIngredients parameters.ignredients
-
-    // ----    
+        <*> mkDescription parameters.description
+        <*> parseIngredientParameters parameters.ingredients
     
 //    let private createIngredient recipeId parameter =
 //        mkIngredient recipeId parameter.foodstuff.id 

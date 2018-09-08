@@ -4,7 +4,6 @@
     open FSharpPlus
     open Infrastructure
     open FSharpPlus.Data
-    open Token
     
     type AccountId = AccountId of Guid 
     

@@ -49,5 +49,5 @@ module DataAccess.Model
         id: Guid
         recipeId: Guid
         foodstuffId: Guid
-        amount: DbAmount
+        amount: float
     }
