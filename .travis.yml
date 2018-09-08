@@ -4,4 +4,3 @@ dotnet: 2.1.401
 script:
   - ./build.sh
   - dotnet test "./src/SmartRecipes.Tests/SmartRecipes.Tests.fsproj" --no-build
-  - grep "Test Results" build.log
