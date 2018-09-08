@@ -2,9 +2,9 @@ version: 0.0
 os: linux
 files:
    - source: /
-     destination: /var/www/html
+     destination: /var/smart-recipes/
 permissions:
-   - object: /var/www/html
+   - object: /var/smart-recipes
      pattern: "**"
      owner: apache
      group: apache
@@ -12,11 +12,6 @@ permissions:
      type:
        - file
 hooks:
-   BeforeInstall:
-    - location: scripts/installapache.sh
-      runas: root
-    - location: scripts/startapache.sh
-      runas: root
    AfterInstall:
-    - location: scripts/restartapache.sh
+    - location : /car/smart-recipes/server-init.sh  
       runas: root

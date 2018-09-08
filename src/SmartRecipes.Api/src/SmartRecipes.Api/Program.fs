@@ -11,6 +11,7 @@ module SmartRecipes.Api.App
     open Microsoft.Extensions.DependencyInjection
     open Giraffe
     open Microsoft.AspNetCore.Http
+    open Microsoft.AspNetCore.HttpOverrides
     
     let webApp =
         choose [
@@ -48,10 +49,14 @@ module SmartRecipes.Api.App
             |> ignore
     
     let configureApp (app : IApplicationBuilder) =
+        let forwardedHeaderOptions = ForwardedHeadersOptions()
+        forwardedHeaderOptions.ForwardedHeaders = (ForwardedHeaders.XForwardedFor ||| ForwardedHeaders.XForwardedProto) |> ignore
+    
         let env = app.ApplicationServices.GetService<IHostingEnvironment>()
         (match env.IsDevelopment() with
         | true  -> app.UseDeveloperExceptionPage()
         | false -> app.UseGiraffeErrorHandler errorHandler)
+            .UseForwardedHeaders(forwardedHeaderOptions)
             .UseCors(configureCors)
             .UseStaticFiles()
             .UseGiraffe(webApp)
