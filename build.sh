@@ -1,3 +1,3 @@
-dotnet restore src/SmartRecipes
-dotnet build src/SmartRecipes
+dotnet restore ./src/SmartRecipes.sln
+dotnet build ./src/SmartRecipes.sln
 
