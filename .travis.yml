@@ -1,5 +1,6 @@
 language: csharp
 solution: ./src/SmartRecipes.sln
+dotnet: 2.1.401
 script:
   - ./build.sh
   - dotnet test "./src/SmartRecipes.Tests/SmartRecipes.Tests.fsproj" --no-build
