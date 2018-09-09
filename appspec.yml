@@ -4,7 +4,7 @@ files:
    - source: /
      destination: /var/smart-recipes/
 permissions:
-   - object: /var/smart-recipes
+   - object: /var/www/html
      pattern: "**"
      owner: apache
      group: apache
