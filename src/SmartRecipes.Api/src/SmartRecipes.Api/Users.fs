@@ -8,6 +8,7 @@ module Api.Users
     open Context
     open Domain.Token
     open Generic
+    open UseCases.Users
     
     // Sign up
     
@@ -15,9 +16,14 @@ module Api.Users
         email: string
         password: string
     }
+    
+    let getSignUpDao () = {
+        users = Users.getDao ()
+        shoppingLists = ShoppingLists.getDao ()
+    }
 
     let signUpHandler (next : HttpFunc) (ctx : HttpContext) =
-        postHandler (Users.getDao ()) next ctx (fun p -> Users.signUp p.email p.password)
+        postHandler (getSignUpDao ()) next ctx (fun p -> Users.signUp p.email p.password)
         
     // Sign in
         

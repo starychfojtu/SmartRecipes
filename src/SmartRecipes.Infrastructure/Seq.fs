@@ -9,6 +9,3 @@ module Infrastructure.Seq
         if Seq.length first = Seq.length second 
         then join first keySelector second fkSelector project |> Some
         else None
-
-    
-

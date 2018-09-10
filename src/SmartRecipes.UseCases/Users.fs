@@ -4,9 +4,11 @@ module UseCases.Users
     open DataAccess.Tokens
     open DataAccess.Users
     open DataAccess.Context
+    open DataAccess.ShoppingLists
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
     open Domain
+    open Domain.ShoppingList
     open Domain.Token
     open Domain.Email
     open Domain.Account
@@ -16,8 +18,13 @@ module UseCases.Users
     
     // Sign up
     
-    let private verifyAccountNotExists account = Reader(fun (dao: UsersDao) ->
-        match dao.getByEmail account.credentials.email with
+    type SignUpDao = {
+        users: UsersDao
+        shoppingLists: ShoppingListDao
+    }
+    
+    let private verifyAccountNotExists account = Reader(fun (dao: SignUpDao) ->
+        match dao.users.getByEmail account.credentials.email with
         | Some _ -> Error AccountAlreadyExits 
         | None -> Ok account
     )
@@ -26,12 +33,18 @@ module UseCases.Users
         Account.signUp email password |> Reader.id
     
     let private addAccountToDb account = 
-        Reader(fun (dao: UsersDao) -> dao.add account |> Ok)
+        Reader(fun (dao: SignUpDao) -> dao.users.add account |> Ok)
+        
+    let private addEmptyShoppingList account = Reader(fun (dao: SignUpDao) ->
+        createShoppingList account.id |> dao.shoppingLists.add |> ignore
+        Ok account
+    )
     
     let signUp email password =
         signUpAccount email password
         >>=! verifyAccountNotExists
         >>=! addAccountToDb
+        >>=! addEmptyShoppingList
       
     // Sign in
     

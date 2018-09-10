@@ -54,3 +54,25 @@ module DataAccess.Model
         description: string
         ingredients: IEnumerable<DbIngredient>
     }
+    
+    [<CLIMutable>]
+    type DbListItem = {
+        listId: Guid
+        foodstuffId: Guid
+        amount: float
+    }
+    
+    [<CLIMutable>]
+    type DbRecipeListItem = {
+        listId: Guid
+        recipeId: Guid
+        personCount: int
+    }
+    
+    [<CLIMutable>]
+    type DbShoppingList = {
+        id: Guid
+        accountId: Guid
+        items: seq<DbListItem>
+        recipes: seq<DbRecipeListItem>
+    }
