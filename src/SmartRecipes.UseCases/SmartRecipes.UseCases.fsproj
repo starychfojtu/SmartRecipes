@@ -5,10 +5,10 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ShoppingLists.fs" />
     <Compile Include="Users.fs" />
     <Compile Include="Foodstuffs.fs" />
     <Compile Include="Recipes.fs" />
+    <Compile Include="ShoppingLists.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.5.0" />

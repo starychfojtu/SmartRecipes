@@ -1,5 +1,4 @@
 module DataAccess.ShoppingLists
-    open DataAccess
     open Domain.Account
     open Domain.ShoppingList
     open System

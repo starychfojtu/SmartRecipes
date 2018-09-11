@@ -1,5 +1,6 @@
 module Tests.Users
     open DataAccess
+    open DataAccess.ShoppingLists
     open DataAccess.Tokens
     open System.Data.SqlTypes
     open DataAccess.Users
@@ -38,6 +39,17 @@ module Tests.Users
         add = fun t -> t
     }
     
+    let getFakeShoppingListsDao (): ShoppingsListsDao = {
+        add = fun s -> s
+        update = fun s -> s
+        get = fun a -> raise (NotImplementedException())
+    }
+    
+    let getFakeSignUpDao withUser: SignUpDao = {
+        users = getFakeDao withUser
+        shoppingLists = getFakeShoppingListsDao ()
+    }
+    
     let getFakeSignInDao (): SignInDao = {
         tokens = getFakeTokensDao ()
         users = getFakeDao true
@@ -46,20 +58,20 @@ module Tests.Users
     [<Fact>]
     let ``Can sign up with valid parameters`` () =
         Users.signUp "test@gmail.com" "VeryLongPassword1" 
-        |> Reader.execute (getFakeDao false)
+        |> Reader.execute (getFakeSignUpDao false)
         |> Tests.Assert.IsOk
         
         
     [<Fact>]
     let ``Cannot sign up with invalid parameters`` () =
         Users.signUp "test" "fake"
-        |> Reader.execute (getFakeDao false)
+        |> Reader.execute (getFakeSignUpDao false)
         |> Tests.Assert.IsError
         
     [<Fact>]
     let ``Cannot sign up if account already exists`` () =
         Users.signUp "test@gmail.com" "VeryLongPassword1" 
-        |> Reader.execute (getFakeDao true)
+        |> Reader.execute (getFakeSignUpDao true)
         |> Tests.Assert.IsError
         
     [<Fact>]
