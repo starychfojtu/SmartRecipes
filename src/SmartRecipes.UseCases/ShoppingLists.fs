@@ -9,7 +9,7 @@ module UseCases.ShoppingLists
     open Infrastructure.Reader
     
     type AddItemError =
-        | NotAuthorized
+        | Unauthorized
         | FoodstuffAlreadyAdded
         
     type AddItemDao = {
@@ -18,8 +18,8 @@ module UseCases.ShoppingLists
         shoppingLists: ShoppingsListsDao
     }
         
-    let private authorize accessToken =
-        Users.authorizeWithAccount NotAuthorized accessToken |> mapEnviroment (fun dao -> (dao.tokens, dao.users))
+    let private authorize accessToken authorizeError =
+        Users.authorizeWithAccount authorizeError accessToken |> mapEnviroment (fun dao -> (dao.tokens, dao.users))
         
     let private getShoppinglist account =
         Reader(fun dao -> dao.shoppingLists.get account |> Ok)
@@ -27,22 +27,46 @@ module UseCases.ShoppingLists
     let private updateDb list = 
         Reader(fun dao -> dao.shoppingLists.update list |> Ok)
     
-    let private shoppingListAction accessToken action =
-        authorize accessToken
+    let private shoppingListAction accessToken authorizeError action =
+        authorize accessToken authorizeError
         >>=! getShoppinglist
         >>=! action
         >>=! updateDb
         
+    // Add foodstuff
+        
     let private addFoodstuffToList foodstuff list = 
-        ShoppingList.addFoodstuff list foodstuff |> Result.mapError (fun _ -> FoodstuffAlreadyAdded) |> Reader.id
+        ShoppingList.addFoodstuff list foodstuff None |> Result.mapError (fun _ -> FoodstuffAlreadyAdded) |> Reader.id
         
     let addFoodstuff accesToken foodstuff = 
-        shoppingListAction accesToken (addFoodstuffToList foodstuff)
+        shoppingListAction accesToken Unauthorized (addFoodstuffToList foodstuff)
+        
+    // Add recipe
         
     let private addRecipeToList recipe list = 
-        ShoppingList.addRecipe list recipe |> Result.mapError (fun _ -> FoodstuffAlreadyAdded) |> Reader.id
+        ShoppingList.addRecipe list recipe None |> Result.mapError (fun _ -> FoodstuffAlreadyAdded) |> Reader.id
         
-    let addRecipe accesToken recipe = 
-        shoppingListAction accesToken (addRecipeToList recipe)
+    let addRecipe accessToken recipe = 
+        shoppingListAction accessToken Unauthorized (addRecipeToList recipe)
         
-    
+    type ChangeAmountError =
+        | Unauthorized
+        | ItemNotFound
+        
+    // Change amount
+        
+    let private changeFoodstuffAmount foodstuff newAmount list =
+        let mapError = (Result.mapError (fun _ -> ItemNotFound))
+        ShoppingList.changeAmount foodstuff newAmount list |> mapError |> Reader.id
+        
+    let changeAmount accessToken foodstuff newAmount =
+        shoppingListAction accessToken Unauthorized (changeFoodstuffAmount foodstuff newAmount)
+        
+    // Change person count
+        
+    let private changeRecipePersonCount recipe newPersonCount list =
+        let mapError = (Result.mapError (fun _ -> ItemNotFound))
+        ShoppingList.changePersonCount recipe newPersonCount list |> mapError |> Reader.id
+        
+    let changePersonCount accessToken recipe newPersonCount =
+        shoppingListAction accessToken Unauthorized (changeFoodstuffAmount recipe newPersonCount)

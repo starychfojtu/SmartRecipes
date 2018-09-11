@@ -5,7 +5,9 @@ module Domain.ShoppingList
     open Domain.NonNegativeFloat
     open Domain.Recipe
     open Domain.NaturalNumber
+    open FSharpPlus
     open Infrastructure
+    open Infrastracture.Result
     open System
     
     type ListItem = {
@@ -13,9 +15,9 @@ module Domain.ShoppingList
         amount: NonNegativeFloat
     }
     
-    let private createItem (foodstuff: Foodstuff) = {
+    let private createItem (foodstuff: Foodstuff) amount = {
         foodstuffId = foodstuff.id
-        amount = foodstuff.baseAmount.value
+        amount = Option.defaultValue foodstuff.baseAmount.value amount
     }
     
     type RecipeListItem = {
@@ -23,9 +25,9 @@ module Domain.ShoppingList
         personCount: NaturalNumber
     }
     
-    let private createRecipeItem recipe = {
+    let private createRecipeItem recipe personCount = {
         recipeId = recipe.id
-        personCount = recipe.personCount
+        personCount = Option.defaultValue recipe.personCount personCount
     }
         
     type ShoppingListId = ShoppingListId of Guid
@@ -44,32 +46,51 @@ module Domain.ShoppingList
         recipes = Map.empty
     }
     
+    let findItem (foodstuff: Foodstuff) list =
+        Map.tryFind foodstuff.id list.items
+        
+    let findRecipeItem (recipe: Recipe) list =
+        Map.tryFind recipe.id list.recipes
+    
     type AddItemError = 
         | ItemAlreadyAdded
 
-    let addFoodstuff list (foodstuff: Foodstuff) =
-        let existingItem = Map.tryFind foodstuff.id list.items
+    let addFoodstuff list foodstuff amount =
+        let existingItem = findItem foodstuff list
         match existingItem with 
         | Some i -> Error ItemAlreadyAdded
-        | None -> Ok { list with items = Map.add foodstuff.id (createItem foodstuff) list.items }
+        | None -> Ok { list with items = Map.add foodstuff.id (createItem foodstuff amount) list.items }
         
-    let addRecipe list (recipe: Recipe) =
-        let existingItem = Map.tryFind recipe.id list.recipes
+    let addRecipe list recipe personCount =
+        let existingItem = findRecipeItem recipe list
         match existingItem with 
         | Some i -> Error ItemAlreadyAdded
-        | None -> Ok { list with recipes = Map.add recipe.id (createRecipeItem recipe) list.recipes }
+        | None -> Ok { list with recipes = Map.add recipe.id (createRecipeItem recipe personCount) list.recipes }
     
     type RemoveItemError = 
         | ItemNotFound
         
-    let removeFoodstuff list (foodstuff: Foodstuff) = 
-        let existingItem = Map.tryFind foodstuff.id list.items
+    let removeFoodstuff list foodstuff = 
+        let existingItem = findItem foodstuff list
         match existingItem with 
         | Some i -> Ok { list with items = Map.remove foodstuff.id list.items }
         | None -> Error ItemNotFound
 
-    let removeRecipe list (recipe: Recipe) = 
-        let existingItem = Map.tryFind recipe.id list.recipes
+    let removeRecipe list recipe = 
+        let existingItem = findRecipeItem recipe list
         match existingItem with
         | Some i -> Ok { list with recipes = Map.remove recipe.id list.recipes }
         | None -> Error ItemNotFound
+        
+    type ChangeAmountError = 
+        | ItemNotFound
+        
+    let changeAmount foodstuff newAmount list =
+        removeFoodstuff list foodstuff
+        |> Result.mapError (fun _ -> ItemNotFound)
+        |> Result.map (fun l -> addFoodstuff l foodstuff (Some newAmount) |> forceOk)
+        
+    let changePersonCount recipe newPersonCount list =
+        removeRecipe list recipe
+        |> Result.mapError (fun _ -> ItemNotFound)
+        |> Result.map (fun l -> addRecipe l recipe (Some newPersonCount) |> forceOk)
