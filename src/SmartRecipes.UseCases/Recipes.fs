@@ -62,7 +62,7 @@ module UseCases.Recipes
         ingredients: NonEmptyList<FoodstuffAmount>
     }
     
-    let private authorizeCreation accessToken = 
+    let private authorizeCreate accessToken = 
         Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
         
     let private checkIngredientsNotDuplicate ingredientParameters accessToken =
@@ -78,7 +78,7 @@ module UseCases.Recipes
         Reader(fun (dao: CreateRecipeDao) -> dao.recipes.add recipe |> Ok)
 
     let create accessToken parameters =
-        authorizeCreation accessToken
+        authorizeCreate accessToken
         >>=! checkIngredientsNotDuplicate parameters.ingredients
         >>=! createRecipe parameters
         >>=! addToDatabase

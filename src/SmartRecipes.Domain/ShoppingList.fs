@@ -47,7 +47,7 @@ module Domain.ShoppingList
     type AddItemError = 
         | ItemAlreadyAdded
 
-    let addItem list (foodstuff: Foodstuff) =
+    let addFoodstuff list (foodstuff: Foodstuff) =
         let existingItem = Map.tryFind foodstuff.id list.items
         match existingItem with 
         | Some i -> Error ItemAlreadyAdded
@@ -62,13 +62,13 @@ module Domain.ShoppingList
     type RemoveItemError = 
         | ItemNotFound
         
-    let removeItem list (foodstuff: Foodstuff) = 
+    let removeFoodstuff list (foodstuff: Foodstuff) = 
         let existingItem = Map.tryFind foodstuff.id list.items
         match existingItem with 
         | Some i -> Ok { list with items = Map.remove foodstuff.id list.items }
         | None -> Error ItemNotFound
 
-    let removeRecipeItem list (recipe: Recipe) = 
+    let removeRecipe list (recipe: Recipe) = 
         let existingItem = Map.tryFind recipe.id list.recipes
         match existingItem with
         | Some i -> Ok { list with recipes = Map.remove recipe.id list.recipes }

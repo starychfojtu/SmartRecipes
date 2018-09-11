@@ -20,7 +20,7 @@ module UseCases.Users
     
     type SignUpDao = {
         users: UsersDao
-        shoppingLists: ShoppingListDao
+        shoppingLists: ShoppingsListsDao
     }
     
     let private verifyAccountNotExists account = Reader(fun (dao: SignUpDao) ->
@@ -79,6 +79,13 @@ module UseCases.Users
     let authorize error (accessTokenValue: string) = Reader(fun (dao: TokensDao) ->
         dao.get accessTokenValue
         |> Option.filter verifyAccessToken
+        |> Option.toResult error
+    )
+    
+    let authorizeWithAccount error (accessTokenValue: string) = Reader(fun (tokens: TokensDao, users: UsersDao) ->
+        tokens.get accessTokenValue
+        |> Option.filter verifyAccessToken
+        |> Option.bind (fun t -> users.getById t.accountId)
         |> Option.toResult error
     )
         
