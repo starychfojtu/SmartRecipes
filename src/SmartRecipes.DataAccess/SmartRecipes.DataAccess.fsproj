@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ShoppingLists.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="Model.fs" />
+    <Compile Include="SmartRecipesContext.fs" />
+    <Compile Include="Users.fs" />
+    <Compile Include="Tokens.fs" />
+    <Compile Include="Foodstuffs.fs" />
+    <Compile Include="Recipes.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SmartRecipes.Domain\SmartRecipes.Domain.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.1.1" />
+  </ItemGroup>
+</Project>
