@@ -8,7 +8,6 @@
     <Compile Include="ShoppingLists.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Model.fs" />
-    <Compile Include="SmartRecipesContext.fs" />
     <Compile Include="Users.fs" />
     <Compile Include="Tokens.fs" />
     <Compile Include="Foodstuffs.fs" />
@@ -19,11 +18,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.5.0" />
+    <PackageReference Include="MongoRepository2x" Version="2.4.2-alpha" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.1.1" />
   </ItemGroup>
 </Project>

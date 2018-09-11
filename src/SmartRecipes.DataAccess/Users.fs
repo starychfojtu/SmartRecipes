@@ -1,11 +1,11 @@
 module DataAccess.Users
     open System.Net.Mail
-    open Context
     open DataAccess.Model
     open Domain.Account
     open Domain.Password
     open FSharpPlus.Data
     open Domain.Token
+    open MongoRepository
     
     type UsersDao = {
         getById: AccountId -> Account option
@@ -13,36 +13,36 @@ module DataAccess.Users
         add: Account -> Account
     }
     
-    let private toDb account = {
-        id = match account.id with AccountId id -> id
-        email = account.credentials.email.Address
-        password = match account.credentials.password with Password p -> p
-    }
+    let private toDb account = new DbAccount(
+        match account.id with AccountId id -> id,
+        account.credentials.email.Address,
+        match account.credentials.password with Password p -> p
+    )
     
     let private toModel (dbAccount: DbAccount): Account = {
-        id = AccountId dbAccount.id
+        id = AccountId dbAccount.Id
         credentials = 
         {
-            email = new MailAddress(dbAccount.email)
-            password = Password dbAccount.password
+            email = new MailAddress(dbAccount.Email)
+            password = Password dbAccount.Password
         }
     }
+    
+    let private repository = new MongoRepository<DbAccount>()
         
     let private add account =
-        let ctx = createDbContext()
-        toDb account |> ctx.Add |> ignore
-        ctx.SaveChanges () |> ignore
+        repository.Add (toDb account) |> ignore
         account
         
     let private getByEmail (email: MailAddress) =
-        createDbContext().Accounts 
-        |> Seq.filter (fun a -> a.email = email.Address)
+        repository
+        |> Seq.filter (fun a -> a.Email = email.Address)
         |> Seq.tryHead
         |> Option.map toModel
         
     let private getById (AccountId id) =
-        createDbContext().Accounts 
-        |> Seq.filter (fun a -> a.id = id)
+        repository
+        |> Seq.filter (fun a -> a.Id = id)
         |> Seq.tryHead
         |> Option.map toModel
             
