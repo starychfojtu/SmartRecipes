@@ -9,7 +9,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SmartRecipes.DataAccess", "
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SmartRecipes.UseCases", "SmartRecipes.UseCases\SmartRecipes.UseCases.fsproj", "{B4C4882C-E715-4077-A85E-BD360B417C4F}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SmartRecipes.Api", "SmartRecipes.Api\src\SmartRecipes.Api\SmartRecipes.Api.fsproj", "{A996C772-DA04-42AE-9C66-1FA301CE5E6B}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SmartRecipes.Api", "SmartRecipes.Api\SmartRecipes.Api.fsproj", "{A996C772-DA04-42AE-9C66-1FA301CE5E6B}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SmartRecipes.Infrastructure", "SmartRecipes.Infrastructure\SmartRecipes.Infrastructure.fsproj", "{7FFE6C11-AB1C-42C6-B89F-81EF8AA7C24C}"
 EndProject
