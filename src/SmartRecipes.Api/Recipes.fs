@@ -15,7 +15,6 @@ module Api.Recipes
     open DataAccess.Tokens
     open Domain
     open Domain.Foodstuff
-    open Domain.FoodstuffAmount
     open Domain.Recipe
     open FSharpPlus.Data
     open Infrastructure
@@ -95,14 +94,14 @@ module Api.Recipes
     let private getFoodstuff parameters = 
         Reader(fun (dao: FoodstuffDao) -> Seq.map (fun i -> i.foodstuffId) parameters |> dao.getByIds )
 
-    let mkFoodstuff guid (foodstuffMap: Map<_, Foodstuff> ) = 
+    let mkFoodstuffId guid (foodstuffMap: Map<_, Foodstuff> ) = 
         match Map.tryFind guid foodstuffMap with
-        | Some f -> Success f
+        | Some f -> Success f.id
         | None -> Failure [FoodstuffNotFound]
         
     let private mkIngredients foodstuffMap parameters =
-        createFoodstuffAmount
-        <!> mkFoodstuff parameters.foodstuffId foodstuffMap
+        createIngredient
+        <!> mkFoodstuffId parameters.foodstuffId foodstuffMap
         <*> (mkNonNegativeFloat parameters.amount |> mapFailure (fun _ -> [AmountOfIngredientMustBePositive]))
         
     let private mkAllIngredients parameters foodstuffMap =

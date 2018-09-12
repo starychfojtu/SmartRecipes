@@ -10,8 +10,17 @@ module Domain.Recipe
     open Domain.NaturalNumber
     open Domain.NonEmptyString
     open Domain.NonNegativeFloat
-    open Domain.FoodstuffAmount
     open System
+    
+    type Ingredient = {
+        foodstuffId: FoodstuffId
+        amount: NonNegativeFloat
+    }
+    
+    let createIngredient foodstuffId amount = {
+        foodstuffId = foodstuffId
+        amount = amount
+    }
     
     type RecipeId = RecipeId of Guid
         with member i.value = match i with RecipeId v -> v
@@ -23,7 +32,7 @@ module Domain.Recipe
         personCount: NaturalNumber
         imageUrl: Uri
         description: NonEmptyString option
-        ingredients: NonEmptyList<FoodstuffAmount>
+        ingredients: NonEmptyList<Ingredient>
     }
     
     let createRecipe name creatorId personCount imageUrl description ingredients = {

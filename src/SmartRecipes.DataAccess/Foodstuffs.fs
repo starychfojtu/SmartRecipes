@@ -7,6 +7,7 @@ module DataAccess.Foodstuffs
     open Domain.NonEmptyString
     open Domain.NonNegativeFloat
     open Infrastructure.Validation
+    open MongoDB.Driver
     
     type FoodstuffDao = {
         getByIds: seq<Guid> -> seq<Foodstuff>
@@ -14,57 +15,43 @@ module DataAccess.Foodstuffs
         add: Foodstuff -> Foodstuff
     }
     
-//    let private unitToDb = function
-//        | MetricUnit.Liter -> DbMetricUnit.Liter
-//        | MetricUnit.Gram -> DbMetricUnit.Gram
-//        | MetricUnit.Piece -> DbMetricUnit.Piece
-//        
-//    let private unitToModel = function 
-//        | DbMetricUnit.Liter -> MetricUnit.Liter
-//        | DbMetricUnit.Gram -> MetricUnit.Gram
-//        | DbMetricUnit.Piece -> MetricUnit.Piece
-//        | _ -> raise (InvalidOperationException("Invalid unit value"))
-//        
-//    let internal amountToDb amount : DbAmount = {
-//        unit = unitToDb amount.unit
-//        value = amount.value.value
-//    }
-//    
-//    let internal amountToModel (dbAmount: DbAmount) = {
-//        unit = unitToModel dbAmount.unit
-//        value = mkNonNegativeFloat dbAmount.value |> forceSucces
-//    }
-//                
-//    let internal toDb foodstuff : DbFoodstuff = {
-//        id = match foodstuff.id with FoodstuffId id -> id
-//        name = foodstuff.name.value
-//        baseAmount = amountToDb foodstuff.baseAmount
-//        amountStep = amountToDb foodstuff.amountStep
-//    }
-//    
-//    let internal toModel (dbFoodstuff: DbFoodstuff) = {
-//        id = FoodstuffId dbFoodstuff.id 
-//        name = mkNonEmptyString dbFoodstuff.name |> forceSucces
-//        baseAmount = amountToModel dbFoodstuff.baseAmount
-//        amountStep = amountToModel dbFoodstuff.amountStep
-//    }
-//    
-//    let private getByIds ids =
-//        createDbContext().Foodstuffs
-//        |> Seq.where (fun f -> Seq.contains f.id ids)
-//        |> Seq.map toModel
-//    
-//    let private search (name: NonEmptyString) =
-//        createDbContext().Foodstuffs
-//        |> Seq.where (fun f -> f.name = name.value)
-//        |> Seq.map toModel
-//    
-//    let private add foodstuff =
-//        let dbModel = toDb foodstuff
-//        let ctx = createDbContext()
-//        ctx.Add(dbModel) |> ignore
-//        ctx.SaveChanges() |> ignore
-//        foodstuff
+    let private collection () = Database.getCollection<DbFoodstuff> ()
+    
+    let internal amountToDb amount : DbAmount = {
+        unit = amount.unit
+        value = amount.value.value
+    }
+    
+    let internal amountToModel (dbAmount: DbAmount) = {
+        unit = dbAmount.unit
+        value = mkNonNegativeFloat dbAmount.value |> forceSucces
+    }
+                
+    let internal toDb foodstuff : DbFoodstuff = {
+        id = match foodstuff.id with FoodstuffId id -> id
+        name = foodstuff.name.value
+        baseAmount = amountToDb foodstuff.baseAmount
+        amountStep = amountToDb foodstuff.amountStep
+    }
+    
+    let internal toModel (dbFoodstuff: DbFoodstuff) = {
+        id = FoodstuffId dbFoodstuff.id 
+        name = mkNonEmptyString dbFoodstuff.name |> forceSucces
+        baseAmount = amountToModel dbFoodstuff.baseAmount
+        amountStep = amountToModel dbFoodstuff.amountStep
+    }
+    
+    let private getByIds ids =
+        collection().Find(fun f -> Seq.contains f.id ids).ToEnumerable()
+        |> Seq.map toModel
+    
+    let private search (name: NonEmptyString) =
+        collection().Find(fun f -> f.name = name.value).ToEnumerable()
+        |> Seq.map toModel
+    
+    let private add foodstuff =
+        toDb foodstuff |> collection().InsertOne |> ignore
+        foodstuff
     
     let getDao () = {
         getByIds = fun s -> Seq.empty
