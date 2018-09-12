@@ -11,3 +11,7 @@ module Tests.Assert
     let IsError = function 
         | Ok _ -> fail "Result is Ok, expected Error"
         | Error _ -> ()
+        
+    let IsErrorAnd otherAssert = function 
+        | Ok _ -> fail "Result is Ok, expected Error"
+        | Error e -> otherAssert e

@@ -71,7 +71,9 @@ module Api.Foodstuffs
     let private createFoodstuff token parameters =
         Foodstuffs.create token parameters |> Reader.map (Result.mapError (fun e -> [BusinessError(e)]))
 
+    let create token parameters =
+        parseParameters parameters |> toResult |> Reader.id 
+         >>=! createFoodstuff token
+
     let createHandler (next: HttpFunc) (ctx: HttpContext) =
-        authorizedPostHandler (getDao ()) next ctx (fun token parameters ->
-            parseParameters parameters |> toResult |> Reader.id 
-            >>=! createFoodstuff token)
+        authorizedPostHandler (getDao ()) next ctx create
