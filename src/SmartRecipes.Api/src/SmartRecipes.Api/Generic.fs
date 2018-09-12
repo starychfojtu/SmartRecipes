@@ -3,7 +3,6 @@ module Api.Generic
     open Giraffe
     open Infrastructure
     open Microsoft.AspNetCore.Http
-    open DataAccess.Context
     open FSharpPlus.Data
     open Domain.Token
 

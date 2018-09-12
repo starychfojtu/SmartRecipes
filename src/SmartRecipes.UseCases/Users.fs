@@ -3,7 +3,6 @@ module UseCases.Users
     open DataAccess
     open DataAccess.Tokens
     open DataAccess.Users
-    open DataAccess.Context
     open DataAccess.ShoppingLists
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation

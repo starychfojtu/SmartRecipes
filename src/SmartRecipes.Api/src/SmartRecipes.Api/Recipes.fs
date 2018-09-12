@@ -10,7 +10,6 @@ module Api.Recipes
     open Infrastructure
     open Microsoft.AspNetCore.Http
     open UseCases
-    open Context
     open DataAccess.Foodstuffs
     open DataAccess.Recipes
     open DataAccess.Tokens

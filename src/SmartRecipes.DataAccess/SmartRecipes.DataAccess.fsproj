@@ -5,13 +5,13 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ShoppingLists.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Model.fs" />
     <Compile Include="Users.fs" />
     <Compile Include="Tokens.fs" />
     <Compile Include="Foodstuffs.fs" />
     <Compile Include="Recipes.fs" />
+    <Compile Include="ShoppingLists.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SmartRecipes.Domain\SmartRecipes.Domain.fsproj" />
@@ -23,5 +23,8 @@
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App.config.xml" />
   </ItemGroup>
 </Project>

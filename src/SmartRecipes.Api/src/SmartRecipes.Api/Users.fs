@@ -5,7 +5,6 @@ module Api.Users
     open Microsoft.AspNetCore.Http
     open UseCases
     open Infrastructure
-    open Context
     open Domain.Token
     open Generic
     open UseCases.Users
