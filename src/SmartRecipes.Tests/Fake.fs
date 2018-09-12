@@ -1,5 +1,6 @@
 module Tests.Fake
     open DataAccess.Foodstuffs
+    open DataAccess.Recipes
     open Domain
     open Infrastructure
     open System
@@ -9,10 +10,13 @@ module Tests.Fake
     open DataAccess.Tokens
     open DataAccess.ShoppingLists
     open Domain
+    open Domain.NaturalNumber
     open Domain.NonEmptyString
     open Domain.NonNegativeFloat
     open Domain.Foodstuff
+    open Domain.Recipe
     open Domain.Token
+    open FSharpPlus.Data
     open Infrastructure
     open UseCases.Users
     
@@ -32,12 +36,12 @@ module Tests.Fake
     }
     let token = Token("fake")
     let accessToken: AccessToken = {
-        accountId = AccountId(Guid.Empty)
+        accountId = AccountId(Guid.NewGuid())
         value = token
         expiration = DateTime.UtcNow.AddDays(1.0)
     }
-    let foodstuff: Foodstuff = {
-        id = FoodstuffId(Guid.Empty)
+    let foodstuff = {
+        id = FoodstuffId(Guid.NewGuid())
         name = mkNonEmptyString "Test" |> Validation.forceSucces
         baseAmount = {
             unit = Gram
@@ -47,6 +51,21 @@ module Tests.Fake
             unit = Gram
             value = mkNonNegativeFloat 10.0 |> Validation.forceSucces
         }
+    }
+    
+    let ingredient = {
+        foodstuffId = foodstuff.id
+        amount = foodstuff.baseAmount.value
+    }
+    
+    let recipe = {
+        id = RecipeId(Guid.NewGuid())
+        name = mkNonEmptyString "Test" |> Validation.forceSucces
+        creatorId = account.id
+        imageUrl = Uri("https://google.com")
+        personCount = mkNaturalNumber 4 |> Validation.forceSucces
+        description = Some (mkNonEmptyString "Test" |> Validation.forceSucces)
+        ingredients = NonEmptyList.create ingredient []
     }
         
     // Dao
@@ -72,4 +91,9 @@ module Tests.Fake
         getByIds = if withFoodstuff then fun ids -> seq { yield foodstuff } else fun ids -> Seq.empty
         search = if withFoodstuff then fun name -> seq { yield foodstuff } else fun name -> Seq.empty
         add = fun f -> f
+    }
+    
+    let recipesDao (): RecipesDao = {
+        getByAccount = fun a -> Seq.empty
+        add = fun r -> r
     }

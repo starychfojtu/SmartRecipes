@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FoodstuffTests.fs" />
+    <Compile Include="RecipeTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>

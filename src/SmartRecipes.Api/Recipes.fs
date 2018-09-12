@@ -143,7 +143,7 @@ module Api.Recipes
         (Reader.mapEnviroment mapDao) >> 
         (Reader.map (Result.mapError (fun e -> [BusinessError e])))
 
+    let create accessToken parameters = parseParameters parameters >>=! createRecipe accessToken
+
     let createHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedPostHandler (getCreateDao ()) next ctx (fun accessToken parameters ->
-            parseParameters parameters >>=! createRecipe accessToken
-        )
+        authorizedPostHandler (getCreateDao ()) next ctx create
