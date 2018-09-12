@@ -1,4 +1,6 @@
 module DataAccess.Model
+    open Domain.Foodstuff
+    open MongoDB.Bson
     open System.Collections.Generic
     open System
     
@@ -9,18 +11,14 @@ module DataAccess.Model
     }
 
     type DbAccessToken = {
+        id: Guid
         accountId: Guid
         value: string
         expiration: DateTime
     }
-    
-    type DbMetricUnit = 
-        | Liter = 0
-        | Gram = 1
-        | Piece = 2
         
     type DbAmount = {
-        unit: DbMetricUnit
+        unit: MetricUnit
         value: float
     }
 
