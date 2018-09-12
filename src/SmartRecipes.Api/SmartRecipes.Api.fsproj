@@ -38,6 +38,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SmartRecipes.UseCases\SmartRecipes.UseCases.fsproj" />
+    <ProjectReference Include="..\SmartRecipes.UseCases\SmartRecipes.UseCases.fsproj" />
   </ItemGroup>
 </Project>

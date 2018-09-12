@@ -18,7 +18,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.5.0" />
-    <PackageReference Include="MongoRepository2x" Version="2.4.2-alpha" />
+    <PackageReference Include="mongocsharpdriver" Version="2.7.0" />
+    <PackageReference Include="MongoDB.FSharp" Version="0.1.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />
