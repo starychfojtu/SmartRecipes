@@ -5,12 +5,12 @@ module DataAccess.Database
     let mutable private database: IMongoDatabase = null
     
     let private initialize () =
-        Serializers.Register()
+        // Serializers.Register()
         let connectionString = "mongodb://localhost"
         let client = new MongoClient(connectionString)
-        database = client.GetDatabase("SmartRecipes")
+        client.GetDatabase("SmartRecipes")
         
     let getCollection<'a> () =
-        if isNull database then initialize () |> ignore
+        let database = initialize ()
         database.GetCollection<'a> typeof<'a>.Name
         

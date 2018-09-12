@@ -47,7 +47,7 @@ module DataAccess.Users
         |> Option.map toModel
             
     let getDao () = {
-        getById = fun id -> None
-        getByEmail = fun email -> None
+        getById = getById
+        getByEmail = getByEmail
         add = add
     }
