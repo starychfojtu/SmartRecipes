@@ -15,46 +15,16 @@ module Tests.Users
     open UseCases.Users
     open Utils
     
-    let id = Guid.NewGuid()
-    let mailAddress = new MailAddress("test@gmail.com")
-    let passwordValue = "VeryLongPassword1"
-    let password = mkPassword passwordValue |> forceSucces
-    let account = {
-        id = AccountId id
-        credentials = 
-        {
-            email = mailAddress
-            password = password
-        }
-    }
-    
-    let getFakeDao withUser = {
-        getByEmail = if withUser then fun m -> Some account else fun m -> None
-        getById = if withUser then fun id -> Some account else fun id -> None
-        add = fun a -> a
-    }
-    
-    let getFakeTokensDao (): TokensDao = {
-        get = fun v -> None
-        add = fun t -> t
-    }
-    
-    let getFakeShoppingListsDao (): ShoppingsListsDao = {
-        add = fun s -> s
-        update = fun s -> s
-        get = fun a -> raise (NotImplementedException())
-    }
-    
     let getFakeSignUpDao withUser: SignUpDao = {
-        users = getFakeDao withUser
-        shoppingLists = getFakeShoppingListsDao ()
+        users = Fake.usersDao withUser
+        shoppingLists = Fake.shoppingListsDao ()
     }
     
     let getFakeSignInDao (): SignInDao = {
-        tokens = getFakeTokensDao ()
-        users = getFakeDao true
+        tokens = Fake.tokensDao false
+        users = Fake.usersDao true
     }
-
+        
     [<Fact>]
     let ``Can sign up with valid parameters`` () =
         Users.signUp "test@gmail.com" "VeryLongPassword1" 
@@ -76,7 +46,7 @@ module Tests.Users
         
     [<Fact>]
     let ``Can sign in with valid password`` () =
-        Users.signIn mailAddress.Address passwordValue
+        Users.signIn Fake.mailAddress.Address Fake.passwordValue
         |> Reader.execute (getFakeSignInDao ())
         |> Tests.Assert.IsOk
         

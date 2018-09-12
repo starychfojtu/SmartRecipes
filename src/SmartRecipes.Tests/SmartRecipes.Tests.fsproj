@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assert.fs" />
+    <Compile Include="Fake.fs" />
     <Compile Include="UserTests.fs" />
   </ItemGroup>
   <ItemGroup>
