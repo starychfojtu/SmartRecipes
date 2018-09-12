@@ -9,6 +9,7 @@ module Domain.ShoppingList
     open Infrastructure
     open Infrastracture.Result
     open System
+    open FSharpPlus.Data
     
     type ListItem = {
         foodstuffId: FoodstuffId
@@ -61,11 +62,21 @@ module Domain.ShoppingList
         | Some i -> Error ItemAlreadyAdded
         | None -> Ok { list with items = Map.add foodstuff.id (createItem foodstuff amount) list.items }
         
+    let addFoodstuffs list foodstuffs = 
+        let initState = Ok list
+        let append state foodstuff = Result.bind (fun s -> addFoodstuff s foodstuff None) state
+        Seq.fold append initState foodstuffs 
+        
     let addRecipe list recipe personCount =
         let existingItem = findRecipeItem recipe list
         match existingItem with 
         | Some i -> Error ItemAlreadyAdded
         | None -> Ok { list with recipes = Map.add recipe.id (createRecipeItem recipe personCount) list.recipes }
+        
+    let addRecipes list recipes = 
+        let initState = Ok list
+        let append state recipe = Result.bind (fun s -> addRecipe s recipe None) state
+        Seq.fold append initState recipes 
     
     type RemoveItemError = 
         | ItemNotFound

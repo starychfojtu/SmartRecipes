@@ -29,6 +29,7 @@
     <Compile Include="Users.fs" />
     <Compile Include="Foodstuffs.fs" />
     <Compile Include="Recipes.fs" />
+    <Compile Include="ShoppingLists.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

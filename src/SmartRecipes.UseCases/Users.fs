@@ -78,6 +78,7 @@ module UseCases.Users
     let authorize error (accessTokenValue: string) = Reader(fun (dao: TokensDao) ->
         dao.get accessTokenValue
         |> Option.filter verifyAccessToken
+        |> Option.map (fun t -> t.accountId)
         |> Option.toResult error
     )
     

@@ -5,7 +5,7 @@ module DataAccess.ShoppingLists
     
     type ShoppingsListsDao = {
         add: ShoppingList -> ShoppingList
-        get: Account -> ShoppingList
+        get: AccountId -> ShoppingList
         update: ShoppingList -> ShoppingList
     }
     
