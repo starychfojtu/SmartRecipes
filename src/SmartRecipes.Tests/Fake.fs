@@ -110,6 +110,7 @@ module Tests.Fake
     
     let recipesDao (): RecipesDao = {
         getByAccount = fun a -> Seq.empty
+        getByIds = fun a -> Seq.empty
         add = fun r -> r
     }
     

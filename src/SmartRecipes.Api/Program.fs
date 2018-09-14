@@ -2,6 +2,7 @@ module SmartRecipes.Api.App
     open System.Text
     open Api
     open Api
+    open Api
     open System
     open System.IO
     open Microsoft.AspNetCore.Builder
@@ -25,6 +26,8 @@ module SmartRecipes.Api.App
                     route "/signIn" >=> Users.signInHandler
                     route "/foodstuffs" >=> Foodstuffs.createHandler
                     route "/recipes" >=> Recipes.createHandler
+                    route "/shoppingList/addFoodstuffs" >=> ShoppingLists.addFoodstuffsHandler
+                    route "/shoppingList/addRecipes" >=> ShoppingLists.addRecipesHandler
                 ]
             setStatusCode 404 >=> text "Not Found" 
         ]

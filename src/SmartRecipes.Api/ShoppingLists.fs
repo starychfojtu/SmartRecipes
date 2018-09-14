@@ -1,8 +1,10 @@
 module Api.ShoppingLists
     open Api
+    open Api
     open DataAccess
     open DataAccess
     open DataAccess.Foodstuffs
+    open DataAccess.Recipes
     open DataAccess.ShoppingLists
     open DataAccess.Tokens
     open FSharpPlus.Data
@@ -12,43 +14,54 @@ module Api.ShoppingLists
     open UseCases
     open UseCases.ShoppingLists
     open Generic
-
-    type AddFoodstuffsParameters = {
-        foodstuffIds: seq<Guid>
+    
+    type AddItemsParameters = {
+        itemIds: seq<Guid>
     }
     
-    type AddFoodstuffsError =
-        | FoodstuffNotFound
+    type AddItemsError =
+        | InvalidIds
         | BusinessError of AddItemError
         
-    type AddFoodstuffsDao = {
-        tokens: TokensDao
-        shoppingLists: ShoppingsListsDao
-        foodstuffs: FoodstuffDao
-    }
-    
-    let getAddFoodstuffDao () = {
-        tokens = Tokens.getDao ()
-        shoppingLists = ShoppingLists.getDao ()
-        foodstuffs = Foodstuffs.getDao ()
-    }
-        
-    let getFoodstuffs parameters = 
-        Reader(fun dao -> 
-            let foodstuffs = dao.foodstuffs.getByIds parameters.foodstuffIds
-            let foundAllFoodstuffs = Seq.length foodstuffs = Seq.length parameters.foodstuffIds
-            if foundAllFoodstuffs
-                then Ok foodstuffs
-                else Error FoodstuffNotFound
+    let getItems parameters = 
+        Reader(fun (dao, getByIds) -> 
+            let itemIds = parameters.itemIds
+            let items = getByIds itemIds
+            let foundAll = Seq.length items = Seq.length itemIds
+            if foundAll
+                then Ok items
+                else Error InvalidIds
         )
         
-    let private addToShoppingList accesstToken foodstuffs = 
-        ShoppingLists.addFoodstuffs accesstToken foodstuffs
+    let private addItemsToShoppingList accesstToken action items = 
+        action accesstToken items
         |> Reader.map (Result.mapError (fun e -> BusinessError e))
-        |> Reader.mapEnviroment (fun dao -> { tokens = dao.tokens; shoppingLists = dao.shoppingLists })
+        |> Reader.mapEnviroment (fun (dao, getByIds) -> dao)
 
-    let addFoodstuffs accessToken parameters = 
-        getFoodstuffs parameters >>=! addToShoppingList accessToken
+    let addItems action accessToken parameters = 
+        getItems parameters >>=! addItemsToShoppingList accessToken action
+        
+    let getAddItemsDao () = {
+        tokens = Tokens.getDao ()
+        shoppingLists = ShoppingLists.getDao ()
+    }
+
+    // Add foodstuffs
+    
+    let getAddFoodstuffDao () = (getAddItemsDao (), Foodstuffs.getDao().getByIds)
+    
+    let addFoodstuffs accessToken parameters =
+        addItems ShoppingLists.addFoodstuffs accessToken parameters
         
     let addFoodstuffsHandler ctx next =
         authorizedPostHandler (getAddFoodstuffDao ()) ctx next addFoodstuffs
+        
+    // Add recipes
+    
+    let getAddRecipesDao () = (getAddItemsDao (), Recipes.getDao().getByIds)
+    
+    let addRecipes accessToken parameters =
+        addItems ShoppingLists.addRecipes accessToken parameters
+        
+    let addRecipesHandler ctx next =
+        authorizedPostHandler (getAddRecipesDao ()) ctx next addRecipes
