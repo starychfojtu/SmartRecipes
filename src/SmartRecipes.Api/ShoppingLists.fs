@@ -15,6 +15,8 @@ module Api.ShoppingLists
     open UseCases.ShoppingLists
     open Generic
     
+    // Add
+    
     type AddItemsParameters = {
         itemIds: seq<Guid>
     }
@@ -41,14 +43,14 @@ module Api.ShoppingLists
     let addItems action accessToken parameters = 
         getItems parameters >>=! addItemsToShoppingList accessToken action
         
-    let getAddItemsDao () = {
+    let getShoppingListAction () = {
         tokens = Tokens.getDao ()
         shoppingLists = ShoppingLists.getDao ()
     }
 
     // Add foodstuffs
     
-    let getAddFoodstuffDao () = (getAddItemsDao (), Foodstuffs.getDao().getByIds)
+    let getAddFoodstuffDao () = (getShoppingListAction (), Foodstuffs.getDao().getByIds)
     
     let addFoodstuffs accessToken parameters =
         addItems ShoppingLists.addFoodstuffs accessToken parameters
@@ -58,10 +60,33 @@ module Api.ShoppingLists
         
     // Add recipes
     
-    let getAddRecipesDao () = (getAddItemsDao (), Recipes.getDao().getByIds)
+    let getAddRecipesDao () = (getShoppingListAction (), Recipes.getDao().getByIds)
     
     let addRecipes accessToken parameters =
         addItems ShoppingLists.addRecipes accessToken parameters
         
     let addRecipesHandler ctx next =
         authorizedPostHandler (getAddRecipesDao ()) ctx next addRecipes
+        
+    // Change foodstuff amount
+    
+    type ChangeFoodstuffAmount = {
+        foodstuffId: Guid
+        amount: float
+    }
+    
+    type ChangeFoodstuffError = 
+        | FoodstuffNotFound
+        | AmountMustBePositive
+        | BusinessError of ChangeAmountError
+        
+    let mkFoodstuff id = 
+        Reader(fun dao -> dao.foodstuffs.getById id |> toResult FoodstuffNotFound)
+        
+    let change accessToken parameters =
+        changeAmount accessToken
+        <!> mkFoodstuff parameters.foodstuffId
+        <*> mkAmount parameters.amount
+        
+    
+    // Change person count

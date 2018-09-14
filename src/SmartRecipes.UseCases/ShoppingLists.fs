@@ -12,7 +12,7 @@ module UseCases.ShoppingLists
         | Unauthorized
         | FoodstuffAlreadyAdded
         
-    type AddItemDao = {
+    type ShoppingListActionDao = {
         tokens: TokensDao
         shoppingLists: ShoppingsListsDao
     }
@@ -52,10 +52,10 @@ module UseCases.ShoppingLists
     
     type ChangeAmountError =
         | Unauthorized
-        | ItemNotFound
+        | ItemNotInShoppingList
     
     let private changeFoodstuffAmount foodstuff newAmount list =
-        let mapError = (Result.mapError (fun _ -> ItemNotFound))
+        let mapError = (Result.mapError (fun _ -> ItemNotInShoppingList))
         ShoppingList.changeAmount foodstuff newAmount list |> mapError |> Reader.id
         
     let changeAmount accessToken foodstuff newAmount =
@@ -64,7 +64,7 @@ module UseCases.ShoppingLists
     // Change person count
         
     let private changeRecipePersonCount recipe newPersonCount list =
-        let mapError = (Result.mapError (fun _ -> ItemNotFound))
+        let mapError = (Result.mapError (fun _ -> ItemNotInShoppingList))
         ShoppingList.changePersonCount recipe newPersonCount list |> mapError |> Reader.id
         
     let changePersonCount accessToken recipe newPersonCount =
