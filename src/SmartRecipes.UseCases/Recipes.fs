@@ -68,8 +68,8 @@ module UseCases.Recipes
         if NonEmptyList.isDistinct ingredientParameters then Ok accessToken else Error DuplicateFoodstuffIngredient
         |> Reader.id
 
-    let private createRecipe parameters token = 
-        Recipe.createRecipe parameters.name token.accountId parameters.personCount parameters.imageUrl parameters.description parameters.ingredients
+    let private createRecipe parameters accountId = 
+        Recipe.createRecipe parameters.name accountId parameters.personCount parameters.imageUrl parameters.description parameters.ingredients
         |> Ok 
         |> Reader.id
 

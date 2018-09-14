@@ -19,8 +19,6 @@ module Tests.Recipes
         recipes = Fake.recipesDao ()
     }
     
-    // API tests
-    
     let apiIngredientParameter: Api.Recipes.IngredientParameter = {
         foodstuffId = Fake.foodstuff.id.value
         amount = 10.0
@@ -34,17 +32,11 @@ module Tests.Recipes
         ingredients = seq { yield apiIngredientParameter }
     }
     
-    [<Fact>]
-    let ``Can create recipe`` () =
-        Api.Recipes.create Fake.token.value apiParameters
-        |> Reader.execute (getCreateDao ())
-        |> Tests.Assert.IsOk
-        
     let apiIncorrectIngredientParameter: Api.Recipes.IngredientParameter = {
         foodstuffId = Guid.NewGuid()
         amount = -10.0
     }
-    
+        
     let apiIncorrectParameters: Api.Recipes.CreateParameters = {
         name = ""
         personCount = -1
@@ -52,6 +44,12 @@ module Tests.Recipes
         description = ""
         ingredients = seq { yield apiIncorrectIngredientParameter }
     }
+    
+    [<Fact>]
+    let ``Can create recipe`` () =
+        Api.Recipes.create Fake.token.value apiParameters
+        |> Reader.execute (getCreateDao ())
+        |> Tests.Assert.IsOk
         
     [<Fact>]
     let ``Cannot add foodstuff with incorrect parameters`` () =

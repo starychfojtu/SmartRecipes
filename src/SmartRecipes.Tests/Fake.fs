@@ -15,6 +15,7 @@ module Tests.Fake
     open Domain.NonNegativeFloat
     open Domain.Foodstuff
     open Domain.Recipe
+    open Domain.ShoppingList
     open Domain.Token
     open FSharpPlus.Data
     open Infrastructure
@@ -34,12 +35,14 @@ module Tests.Fake
             password = password
         }
     }
+    
     let token = Token("fake")
     let accessToken: AccessToken = {
         accountId = AccountId(Guid.NewGuid())
         value = token
         expiration = DateTime.UtcNow.AddDays(1.0)
     }
+    
     let foodstuff = {
         id = FoodstuffId(Guid.NewGuid())
         name = mkNonEmptyString "Test" |> Validation.forceSucces
@@ -53,7 +56,7 @@ module Tests.Fake
         }
     }
     
-    let ingredient = {
+    let ingredient: Ingredient = {
         foodstuffId = foodstuff.id
         amount = foodstuff.baseAmount.value
     }
@@ -66,6 +69,18 @@ module Tests.Fake
         personCount = mkNaturalNumber 4 |> Validation.forceSucces
         description = Some (mkNonEmptyString "Test" |> Validation.forceSucces)
         ingredients = NonEmptyList.create ingredient []
+    }
+    
+    let listItem: ListItem = {
+        foodstuffId = foodstuff.id
+        amount = foodstuff.baseAmount.value
+    }
+    
+    let shoppingList = {
+        id = ShoppingListId(Guid.NewGuid())
+        accountId = account.id
+        items = Map.empty
+        recipes = Map.empty
     }
         
     // Dao
@@ -96,4 +111,10 @@ module Tests.Fake
     let recipesDao (): RecipesDao = {
         getByAccount = fun a -> Seq.empty
         add = fun r -> r
+    }
+    
+    let shoppingListDao items: ShoppingsListsDao = {
+        add = fun s -> s
+        get = fun a -> { shoppingList with items = items }
+        update = fun s -> s
     }
