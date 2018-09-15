@@ -104,6 +104,7 @@ module Tests.Fake
     
     let foodstuffsDao withFoodstuff = {
         getByIds = if withFoodstuff then fun ids -> seq { yield foodstuff } else fun ids -> Seq.empty
+        getById = if withFoodstuff then fun id -> Some foodstuff else fun id -> None
         search = if withFoodstuff then fun name -> seq { yield foodstuff } else fun name -> Seq.empty
         add = fun f -> f
     }

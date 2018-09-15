@@ -68,25 +68,6 @@ module Api.ShoppingLists
     let addRecipesHandler ctx next =
         authorizedPostHandler (getAddRecipesDao ()) ctx next addRecipes
         
-    // Change foodstuff amount
-    
-    type ChangeFoodstuffAmount = {
-        foodstuffId: Guid
-        amount: float
-    }
-    
-    type ChangeFoodstuffError = 
-        | FoodstuffNotFound
-        | AmountMustBePositive
-        | BusinessError of ChangeAmountError
-        
-    let mkFoodstuff id = 
-        Reader(fun dao -> dao.foodstuffs.getById id |> toResult FoodstuffNotFound)
-        
-    let change accessToken parameters =
-        changeAmount accessToken
-        <!> mkFoodstuff parameters.foodstuffId
-        <*> mkAmount parameters.amount
-        
+    // Change foodstuff amount 
     
     // Change person count

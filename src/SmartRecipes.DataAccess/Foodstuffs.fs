@@ -11,6 +11,7 @@ module DataAccess.Foodstuffs
     
     type FoodstuffDao = {
         getByIds: seq<Guid> -> seq<Foodstuff>
+        getById: Guid -> Foodstuff option
         search: NonEmptyString -> seq<Foodstuff>
         add: Foodstuff -> Foodstuff
     }
@@ -44,6 +45,11 @@ module DataAccess.Foodstuffs
     let private getByIds ids =
         collection().Find(fun f -> Seq.contains f.id ids).ToEnumerable()
         |> Seq.map toModel
+        
+    let private getById id =
+        collection().Find(fun f -> f.id = id).ToEnumerable()
+        |> Seq.map toModel
+        |> Seq.tryHead
     
     let private search (name: NonEmptyString) =
         collection().Find(fun f -> f.name = name.value).ToEnumerable()
@@ -54,9 +60,10 @@ module DataAccess.Foodstuffs
         foodstuff
     
     let getDao () = {
-        getByIds = fun s -> Seq.empty
-        search = fun s -> Seq.empty
-        add = fun f -> f
+        getByIds = getByIds
+        getById = getById
+        search = search
+        add = add
     }
     
     

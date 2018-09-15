@@ -10,12 +10,12 @@ module Tests.ShoppingLists
         itemIds = seq { yield Fake.foodstuff.id.value }
     }
     
-    let getFakeAddItemsDao items: AddItemDao = {
+    let getFakeShippingListActionDao items: ShoppingListActionDao = {
         tokens = Fake.tokensDao true
         shoppingLists = Fake.shoppingListDao items
     }
     
-    let getAddFoodstuffsDao withFoodstuff items = (getFakeAddItemsDao items, (Fake.foodstuffsDao withFoodstuff).getByIds)
+    let getAddFoodstuffsDao withFoodstuff items = (getFakeShippingListActionDao items, (Fake.foodstuffsDao withFoodstuff).getByIds)
     
     let fakeItems = Map.add Fake.listItem.foodstuffId Fake.listItem Map.empty
     
