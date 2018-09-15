@@ -68,4 +68,4 @@ module UseCases.ShoppingLists
         ShoppingList.changePersonCount recipe newPersonCount list |> mapError |> Reader.id
         
     let changePersonCount accessToken recipe newPersonCount =
-        shoppingListAction accessToken Unauthorized (changeFoodstuffAmount recipe newPersonCount)
+        shoppingListAction accessToken Unauthorized (changeRecipePersonCount recipe newPersonCount)
