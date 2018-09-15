@@ -4,6 +4,7 @@ module Api.ShoppingLists
     open DataAccess.Foodstuffs
     open DataAccess.Recipes
     open DataAccess.ShoppingLists
+    open DataAccess.ShoppingLists
     open DataAccess.Tokens
     open Domain
     open Domain.NaturalNumber
@@ -19,6 +20,31 @@ module Api.ShoppingLists
     open UseCases.ShoppingLists
     open Generic
     open FSharpPlus.Data.Validation
+    open UseCases
+    open UseCases.ShoppingLists
+    
+    let getShoppingListActionDao () = {
+        tokens = Tokens.getDao ()
+        shoppingLists = ShoppingLists.getDao ()
+    }
+        
+    // Get 
+    
+    type GetShoppingListError =
+        | Unauthorized
+        
+    let private authorize accessToken = 
+        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
+        
+    let private getShoppingList accountId =
+        Reader(fun dao -> dao.shoppingLists.get accountId |> Ok)
+    
+    let get accessToken () =
+        authorize accessToken
+        >>=! getShoppingList
+        
+    let getHandler ctx next = 
+        authorizedGetHandler (getShoppingListActionDao ()) ctx next get
     
     // Add
     
@@ -48,10 +74,7 @@ module Api.ShoppingLists
     let addItems action accessToken parameters = 
         getItems parameters >>=! addItemsToShoppingList accessToken action
         
-    let getShoppingListActionDao () = {
-        tokens = Tokens.getDao ()
-        shoppingLists = ShoppingLists.getDao ()
-    }
+    
 
     // Add foodstuffs
     

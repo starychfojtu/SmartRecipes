@@ -19,6 +19,7 @@ module SmartRecipes.Api.App
             GET >=> 
                 choose [
                     route "/recipes" >=> Recipes.indexHandler
+                    route "/shoppingList" >=> ShoppingLists.getHandler
                 ]  
             POST >=>
                 choose [
@@ -27,7 +28,9 @@ module SmartRecipes.Api.App
                     route "/foodstuffs" >=> Foodstuffs.createHandler
                     route "/recipes" >=> Recipes.createHandler
                     route "/shoppingList/addFoodstuffs" >=> ShoppingLists.addFoodstuffsHandler
+                    route "/shoppingList/changeAmount" >=> ShoppingLists.changeAmountHandler
                     route "/shoppingList/addRecipes" >=> ShoppingLists.addRecipesHandler
+                    route "/shoppingList/changePersonCount" >=> ShoppingLists.changePersonCountHandler
                 ]
             setStatusCode 404 >=> text "Not Found" 
         ]
