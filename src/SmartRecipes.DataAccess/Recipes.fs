@@ -1,6 +1,7 @@
 module DataAccess.Recipes
     open System.Collections.Generic
     open DataAccess
+    open DataAccess
     open FSharpPlus.Data
     open System.Net.Http
     open System
@@ -20,6 +21,7 @@ module DataAccess.Recipes
     
     type RecipesDao = {
         getByIds: seq<Guid> -> seq<Recipe>
+        getById: Guid -> Recipe option
         getByAccount: Guid -> seq<Recipe>
         add: Recipe -> Recipe
     }
@@ -59,6 +61,9 @@ module DataAccess.Recipes
     let private getByIds ids =
         collection().Find(fun r -> Seq.contains r.id ids).ToEnumerable()
         |> Seq.map toModel
+        
+    let private getById id =
+        getByIds (seq { yield id }) |> Seq.tryHead
     
     let private getByAccount accountId =
         collection().Find(fun r -> r.creatorId = accountId).ToEnumerable()
@@ -69,7 +74,8 @@ module DataAccess.Recipes
         recipe
     
     let getDao () = {
-        getByAccount = getByAccount
         getByIds = getByIds
+        getById = getById
+        getByAccount = getByAccount
         add = add
     }

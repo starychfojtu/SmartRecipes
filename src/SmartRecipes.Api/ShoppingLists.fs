@@ -101,7 +101,7 @@ module Api.ShoppingLists
     let private mkAmount amount foodstuff = 
         mkNonNegativeFloat amount |> mapFailure (fun _ -> [AmountMustBePositive]) |> map (fun a -> (a, foodstuff)) |> toResult |> Reader.id
         
-    let private change accessToken foodstuff amount =
+    let private changeFoodtuffAmount accessToken foodstuff amount =
         changeAmount accessToken foodstuff amount
         |> Reader.mapEnviroment (fun dao -> dao.shoppingListAction)
         |> (Reader.map (Result.mapError (fun e -> [BusinessError(e)])))
@@ -109,9 +109,48 @@ module Api.ShoppingLists
     let changeAmount accessToken parameters =
         mkFoodstuff parameters.foodstuffId
         >>=! mkAmount parameters.amount
-        >>=! (fun (newAmount, foodstuff) -> change accessToken foodstuff newAmount)
+        >>=! (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff newAmount)
         
     let changeAmountHandler ctx next =
         authorizedPostHandler (getChangeAmountDao ()) ctx next changeAmount
         
     // Chnage person count
+    
+    type ChangePersonCountParameters = {
+        recipeId: Guid
+        personCount: int
+    }
+    
+    type ChangePersonCountError = 
+        | RecipeNotFound
+        | PersonCountMustBePositive
+        | BusinessError of UseCases.ShoppingLists.ChangeAmountError
+        
+    type ChangePersonCountDao = {
+        shoppingListAction: ShoppingListActionDao
+        recipes: RecipesDao
+    }
+    
+    let private getChangePersonCountDao () = {
+        shoppingListAction = getShoppingListActionDao ()
+        recipes = Recipes.getDao ()
+    }
+        
+    let private mkRecipe id =
+        Reader(fun dao -> dao.recipes.getById id |> Option.toResult [RecipeNotFound])
+        
+    let private mkPersonCount personCount recipe = 
+        mkNaturalNumber personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]) |> map (fun c -> (c, recipe)) |> toResult |> Reader.id
+        
+    let private changeRecipePersonCount accessToken recipe amount =
+        changePersonCount accessToken recipe amount
+        |> Reader.mapEnviroment (fun dao -> dao.shoppingListAction)
+        |> (Reader.map (Result.mapError (fun e -> [BusinessError(e)])))
+        
+    let changePersonCount accessToken parameters =
+        mkRecipe parameters.recipeId
+        >>=! mkPersonCount parameters.personCount
+        >>=! (fun (newPersonCount, recipe) -> changeRecipePersonCount accessToken recipe newPersonCount)
+        
+    let changePersonCountHandler ctx next =
+        authorizedPostHandler (getChangePersonCountDao ()) ctx next changePersonCount
