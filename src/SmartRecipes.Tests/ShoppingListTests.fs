@@ -70,3 +70,7 @@ module Tests.ShoppingLists
         Api.ShoppingLists.changeAmount Fake.accessToken.value.value changeAmountIncorrectParameters
         |> Reader.execute (getChangeAmountDao false Map.empty)
         |> Assert.IsError
+        
+    // Cook recipe
+    
+    // TODO: Tests for cooking of recipe

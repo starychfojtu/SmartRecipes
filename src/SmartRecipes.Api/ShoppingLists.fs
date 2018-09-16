@@ -49,6 +49,7 @@ module Api.ShoppingLists
     
     // Add
     
+    [<CLIMutable>]
     type AddItemsParameters = {
         itemIds: seq<Guid>
     }
@@ -99,6 +100,7 @@ module Api.ShoppingLists
         
     // Change foodstuff amount
     
+    [<CLIMutable>]
     type ChangeAmountParameters = {
         foodstuffId: Guid
         amount: float
@@ -140,6 +142,7 @@ module Api.ShoppingLists
         
     // Chnage person count
     
+    [<CLIMutable>]
     type ChangePersonCountParameters = {
         recipeId: Guid
         personCount: int
@@ -181,6 +184,7 @@ module Api.ShoppingLists
         
     // Cook recipe
     
+    [<CLIMutable>]
     type CookRecipeParameters = {
         recipeId: Guid
     }

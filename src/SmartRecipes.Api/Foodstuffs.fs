@@ -18,6 +18,45 @@ module Api.Foodstuffs
     open System
     open UseCases
     open DataAccess
+    open DataAccess.Foodstuffs
+    open DataAccess.Foodstuffs
+    open DataAccess.Tokens
+    
+    // Get by Ids
+    
+    type GetByIdsParameters = {
+        ids: seq<Guid>
+    }
+    
+    type GetByIdsError = 
+        | Unauthorized
+        
+    type GetByIdsDao = {
+        tokens: TokensDao
+        foodstuffs: FoodstuffDao
+    }
+    
+    let private getByIdsDao () = {
+        tokens = Tokens.getDao ()
+        foodstuffs = Foodstuffs.getDao ()
+    }
+    
+    let private authorize accessToken =
+        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
+    
+    let private getFoodstuffsByIds ids = 
+        Reader(fun dao -> dao.foodstuffs.getByIds ids |> Ok)
+        
+    let getByIds accessToken parameters = 
+        authorize accessToken
+        >>=! (fun _ -> getFoodstuffsByIds parameters.ids)
+        
+    let getByIdshandler ctx next = 
+        authorizedGetHandler (getByIdsDao ()) ctx next getByIds
+        
+    // Search
+
+    // Create
 
     [<CLIMutable>]
     type AmountParameters = {
