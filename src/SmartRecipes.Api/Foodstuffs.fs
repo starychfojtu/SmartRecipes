@@ -55,6 +55,41 @@ module Api.Foodstuffs
         authorizedGetHandler (getByIdsDao ()) ctx next getByIds
         
     // Search
+    
+    type SearchParameters = {
+        query: string
+    }
+    
+    type SearchError = 
+        | Unauthorized
+        | QueryIsEmpty
+        
+    type SearchDao = {
+        tokens: TokensDao
+        foodstuffs: FoodstuffDao
+    }
+    
+    let private getSearchDao (): SearchDao = {
+        tokens = Tokens.getDao ()
+        foodstuffs = Foodstuffs.getDao ()
+    }
+    
+    let private authorizeSearch accessToken =
+        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
+        
+    let private mkQuery parameters =
+        mkNonEmptyString parameters.query |> toResult |> Result.mapError (fun _ -> QueryIsEmpty) |> Reader.id
+    
+    let private searchFoodstuffs query = 
+        Reader(fun dao -> dao.foodstuffs.search query |> Ok)
+        
+    let search accessToken parameters = 
+        authorizeSearch accessToken
+        >>=! (fun _ -> mkQuery parameters)
+        >>=! searchFoodstuffs
+        
+    let searchHandler ctx next = 
+        authorizedGetHandler (getSearchDao ()) ctx next search
 
     // Create
 
