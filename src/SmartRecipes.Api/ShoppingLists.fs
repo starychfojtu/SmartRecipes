@@ -132,7 +132,7 @@ module Api.ShoppingLists
     let changeAmount accessToken parameters =
         mkFoodstuff parameters.foodstuffId
         >>=! mkAmount parameters.amount
-        >>=! (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff newAmount)
+        >>=! (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff.id newAmount)
         
     let changeAmountHandler ctx next =
         authorizedPostHandler (getChangeAmountDao ()) ctx next changeAmount

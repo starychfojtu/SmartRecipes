@@ -10,15 +10,16 @@ module Domain.ShoppingList
     open Infrastracture.Result
     open System
     open FSharpPlus.Data
+    open FSharpPlus.Data
     
     type ListItem = {
         foodstuffId: FoodstuffId
         amount: NonNegativeFloat
     }
     
-    let private createItem (foodstuff: Foodstuff) amount = {
-        foodstuffId = foodstuff.id
-        amount = Option.defaultValue foodstuff.baseAmount.value amount
+    let private createItem foodstuffId amount = {
+        foodstuffId = foodstuffId
+        amount = amount
     }
     
     type RecipeListItem = {
@@ -47,8 +48,8 @@ module Domain.ShoppingList
         recipes = Map.empty
     }
     
-    let findItem (foodstuff: Foodstuff) list =
-        Map.tryFind foodstuff.id list.items
+    let findItem foodstuffId list =
+        Map.tryFind foodstuffId list.items
         
     let findRecipeItem (recipe: Recipe) list =
         Map.tryFind recipe.id list.recipes
@@ -56,15 +57,15 @@ module Domain.ShoppingList
     type AddItemError = 
         | ItemAlreadyAdded
 
-    let addFoodstuff list foodstuff amount =
-        let existingItem = findItem foodstuff list
+    let addFoodstuff list foodstuffId amount =
+        let existingItem = findItem foodstuffId list
         match existingItem with 
         | Some i -> Error ItemAlreadyAdded
-        | None -> Ok { list with items = Map.add foodstuff.id (createItem foodstuff amount) list.items }
+        | None -> Ok { list with items = Map.add foodstuffId (createItem foodstuffId amount) list.items }
         
     let addFoodstuffs list foodstuffs = 
         let initState = Ok list
-        let append state foodstuff = Result.bind (fun s -> addFoodstuff s foodstuff None) state
+        let append state (foodstuff: Foodstuff) = Result.bind (fun s -> addFoodstuff s foodstuff.id foodstuff.baseAmount.value) state
         Seq.fold append initState foodstuffs 
         
     let addRecipe list recipe personCount =
@@ -79,29 +80,55 @@ module Domain.ShoppingList
         Seq.fold append initState recipes 
     
     type RemoveItemError = 
-        | ItemNotFound
+        | ItemNotInList
         
-    let removeFoodstuff list foodstuff = 
-        let existingItem = findItem foodstuff list
+    let removeFoodstuff list foodstuffId = 
+        let existingItem = findItem foodstuffId list
         match existingItem with 
-        | Some i -> Ok { list with items = Map.remove foodstuff.id list.items }
-        | None -> Error ItemNotFound
+        | Some i -> Ok { list with items = Map.remove foodstuffId list.items }
+        | None -> Error ItemNotInList
 
     let removeRecipe list recipe = 
         let existingItem = findRecipeItem recipe list
         match existingItem with
         | Some i -> Ok { list with recipes = Map.remove recipe.id list.recipes }
-        | None -> Error ItemNotFound
+        | None -> Error ItemNotInList
         
     type ChangeAmountError = 
-        | ItemNotFound
+        | ItemNotInList
         
-    let changeAmount foodstuff newAmount list =
-        removeFoodstuff list foodstuff
-        |> Result.mapError (fun _ -> ItemNotFound)
-        |> Result.map (fun l -> addFoodstuff l foodstuff (Some newAmount) |> forceOk)
+    let changeAmount foodstuffId newAmount list =
+        removeFoodstuff list foodstuffId
+        |> Result.mapError (fun _ -> ItemNotInList)
+        |> Result.map (fun l -> addFoodstuff l foodstuffId newAmount |> forceOk)
         
     let changePersonCount recipe newPersonCount list =
         removeRecipe list recipe
-        |> Result.mapError (fun _ -> ItemNotFound)
+        |> Result.mapError (fun _ -> ItemNotInList)
         |> Result.map (fun l -> addRecipe l recipe (Some newPersonCount) |> forceOk)
+        
+    type DecreaseAmountError = 
+        | ItemNotInList
+        | NotEnoughAmountInList
+        
+    let private findCurrentItemAmount foodstuffId list =
+        findItem foodstuffId list |> Option.map (fun i -> i.amount) |> Option.toResult ItemNotInList
+        
+    let private getDifference delta amount =
+        amount - delta |> Result.mapError (fun _ -> NotEnoughAmountInList)
+        
+    let private decrease foodstuffId list newAmount = changeAmount foodstuffId newAmount list |> Result.mapError (fun _ -> ItemNotInList)
+        
+    let decreaseAmount foodstuffId amount list =
+        findCurrentItemAmount foodstuffId list
+        >>= getDifference amount
+        >>= decrease foodstuffId list
+        
+    type CookRecipeError = 
+        | RecipeNotInList
+        | NotAllIngredientsInList
+        
+    let cook recipe list =
+        let ingredients = NonEmptyList.toSeq recipe.ingredients
+        let initState = (Ok list)
+        Seq.fold (fun list (i: Ingredient) -> Result.bind (fun l -> decreaseAmount i.foodstuffId i.amount l) list) initState ingredients 
