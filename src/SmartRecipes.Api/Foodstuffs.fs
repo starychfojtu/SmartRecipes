@@ -83,7 +83,7 @@ module Api.Foodstuffs
         amountStep = amountStep
     }
     
-    let private getDao () = {
+    let private getDao (): CreateFoodstuffDao = {
         tokens = (Tokens.getDao ())
         foodstuffs = (Foodstuffs.getDao ())
     }
