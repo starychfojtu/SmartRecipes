@@ -31,8 +31,9 @@ module SmartRecipes.Api.App
                     route "/shoppingList/changeAmount" >=> ShoppingLists.changeAmountHandler
                     route "/shoppingList/addRecipes" >=> ShoppingLists.addRecipesHandler
                     route "/shoppingList/changePersonCount" >=> ShoppingLists.changePersonCountHandler
+                    route "/shoppingList/cook" >=> ShoppingLists.cookHandler
                 ]
-            setStatusCode 404 >=> text "Not Found" 
+            setStatusCode 404 >=> text "Not Found"
         ]
     
     // ---------------------------------

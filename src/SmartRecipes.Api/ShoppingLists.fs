@@ -7,6 +7,7 @@ module Api.ShoppingLists
     open DataAccess.ShoppingLists
     open DataAccess.Tokens
     open Domain
+    open Domain
     open Domain.NaturalNumber
     open Domain.NonNegativeFloat
     open FSharpPlus
@@ -177,3 +178,37 @@ module Api.ShoppingLists
         
     let changePersonCountHandler ctx next =
         authorizedPostHandler (getChangePersonCountDao ()) ctx next changePersonCount
+        
+    // Cook recipe
+    
+    type CookRecipeParameters = {
+        recipeId: Guid
+    }
+    
+    type CookRecipeError =
+        | RecipeNotFound
+        | BusinessError of ShoppingLists.CookRecipeError
+        
+    type CookRecipeDao = {
+        shoppingListAction: ShoppingListActionDao
+        recipes: RecipesDao
+    }
+        
+    let getCookRecipeDao () = {
+        shoppingListAction = getShoppingListActionDao ()
+        recipes = Recipes.getDao ()
+    }
+    
+    let private getRecipe id = 
+        Reader(fun dao -> dao.recipes.getById id |> Option.toResult RecipeNotFound)
+        
+    let private cookRecipe accessToken recipe =
+        ShoppingLists.cook accessToken recipe 
+        |> Reader.mapEnviroment (fun dao -> dao.shoppingListAction)
+        |> Reader.map (Result.mapError (fun e -> BusinessError(e)))
+        
+    let cook accessToken parameters = 
+        getRecipe parameters.recipeId >>=! cookRecipe accessToken
+        
+    let cookHandler ctx next =
+        authorizedPostHandler (getCookRecipeDao ()) ctx next cook
