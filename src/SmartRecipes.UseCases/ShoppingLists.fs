@@ -1,9 +1,12 @@
 module UseCases.ShoppingLists
+    open DataAccess.Recipes
     open DataAccess.ShoppingLists
     open DataAccess.Tokens
     open DataAccess.Users
     open Domain
     open Domain
+    open Domain.ShoppingList
+    open Domain.ShoppingList
     open FSharpPlus.Data
     open Infrastructure
     open Infrastructure.Reader
@@ -69,3 +72,26 @@ module UseCases.ShoppingLists
         
     let changePersonCount accessToken recipe newPersonCount =
         shoppingListAction accessToken Unauthorized (changeRecipePersonCount recipe newPersonCount)
+        
+    // Cook recipe
+    
+    type CookRecipeError =
+        | Unauthorized
+        | RecipeNotInList
+        | NotEnoughIngredientsInList
+        
+    let private authorizeCook accessToken =
+        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
+        
+    let private toUseCaseError = function 
+        | ShoppingList.CookRecipeError.RecipeNotInList -> RecipeNotInList
+        | ShoppingList.CookRecipeError.NotEnoughIngredientsInList -> NotEnoughIngredientsInList
+        
+    let private cookRecipe recipe list =
+        ShoppingList.cook recipe list |> Result.mapError toUseCaseError |> Reader.id
+    
+    let cook accessToken recipe = 
+        authorizeCook accessToken
+        >>=! getShoppinglist
+        >>=! cookRecipe recipe
+        

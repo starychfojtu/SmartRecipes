@@ -126,9 +126,21 @@ module Domain.ShoppingList
         
     type CookRecipeError = 
         | RecipeNotInList
-        | NotAllIngredientsInList
+        | NotEnoughIngredientsInList
         
-    let cook recipe list =
+    let private isRecipeInList recipe list =
+        match findRecipeItem recipe list with | Some _ -> true | None -> false
+        
+    let private decreaseIngredient (ingredient: Ingredient) list = 
+        decreaseAmount ingredient.foodstuffId ingredient.amount list |> Result.mapError (fun _ -> NotEnoughIngredientsInList)
+        
+    let private decreaseIngredientAmounts recipe list =
         let ingredients = NonEmptyList.toSeq recipe.ingredients
         let initState = (Ok list)
-        Seq.fold (fun list (i: Ingredient) -> Result.bind (fun l -> decreaseAmount i.foodstuffId i.amount l) list) initState ingredients 
+        Seq.fold (fun list (i: Ingredient) -> Result.bind (fun l -> decreaseIngredient i l) list) initState ingredients 
+        
+    let cook recipe list =
+        if isRecipeInList recipe list
+            then decreaseIngredientAmounts recipe list
+            else Error RecipeNotInList
+        
