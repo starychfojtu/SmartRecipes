@@ -32,11 +32,11 @@ module Api.Users
         | AccountAlreadyExits -> ["Account already exists."]
         | InvalidParameters errors -> Seq.collect serializeCredentialsError errors |> Seq.toList
         
-    let private serialize = 
+    let private serializeSignUp = 
        Result.map serializeAccount >> Result.mapError serializeSignUpError
 
     let signUpHandler (next : HttpFunc) (ctx : HttpContext) =
-        postHandler (getSignUpDao ()) next ctx (fun p -> Users.signUp p.email p.password) serialize
+        postHandler (getSignUpDao ()) next ctx (fun p -> Users.signUp p.email p.password) serializeSignUp
         
     // Sign in
         
@@ -49,7 +49,13 @@ module Api.Users
         tokens = (Tokens.getDao ())
         users = (Users.getDao ())
     }
+    
+    let private serializeSignInError = function
+        | InvalidCredentials -> ["Invalid credentials."]
+    
+    let private serializeSignIn = 
+        Result.map serializeAccessToken >> Result.mapError serializeSignInError
         
     let signInHandler (next : HttpFunc) (ctx : HttpContext) =
-        postHandler (getSignInDao ()) next ctx (fun p -> Users.signIn p.email p.password) (fun a -> a)
+        postHandler (getSignInDao ()) next ctx (fun p -> Users.signIn p.email p.password) serializeSignIn
         

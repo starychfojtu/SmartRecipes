@@ -12,5 +12,12 @@ module Api.Dto
         email = account.credentials.email.Address
     }
     
-    let serializeAccessToken (accessToken: AccessToken) = 
-        accessToken.value
+    type AccessTokenDto = {
+        value: string
+        accountId: string
+    }
+    
+    let serializeAccessToken (accessToken: AccessToken) = {
+        value = accessToken.value.value
+        accountId = accessToken.accountId.value.ToString ()
+    }
