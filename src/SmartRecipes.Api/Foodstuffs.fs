@@ -1,5 +1,7 @@
 module Api.Foodstuffs
     open Api
+    open Api
+    open Dto
     open Microsoft.AspNetCore.Http
     open System
     open Giraffe
@@ -47,12 +49,15 @@ module Api.Foodstuffs
     let private getFoodstuffsByIds ids = 
         Reader(fun dao -> dao.foodstuffs.getByIds ids |> Ok)
         
+    let private serializeGetByIds<'a, 'b> = 
+        Result.map (Seq.map Dto.serializeFoodstuff) >> Result.mapError (fun e -> "Unauthorized.")
+        
     let getByIds accessToken parameters = 
         authorize accessToken
         >>=! (fun _ -> getFoodstuffsByIds parameters.ids)
         
     let getByIdshandler ctx next = 
-        authorizedGetHandler (getByIdsDao ()) ctx next getByIds (fun a -> a)
+        authorizedGetHandler (getByIdsDao ()) ctx next getByIds serializeGetByIds
         
     // Search
     
