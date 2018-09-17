@@ -89,16 +89,16 @@ module UseCases.ShoppingLists
         | Unauthorized
         | DomainError of ShoppingList.RemoveItemError
     
-    let private removeFoodstuffItem foodstuff list =
-        removeFoodstuff list foodstuff |> Result.mapError DomainError |> Reader.id
+    let private removeFoodstuffItem foodstuffId list =
+        removeFoodstuff list foodstuffId |> Result.mapError DomainError |> Reader.id
     
-    let removeFoodstuff accessToken foodstuff = 
-        shoppingListAction accessToken Unauthorized (removeFoodstuffItem foodstuff)
+    let removeFoodstuff accessToken foodstuffId = 
+        shoppingListAction accessToken Unauthorized (removeFoodstuffItem foodstuffId)
         
     // Remove recipe
     
-    let private removeRecipeItem foodstuff list =
-        removeRecipe list foodstuff |> Result.mapError DomainError |> Reader.id
+    let private removeRecipeItem recipe list =
+        removeRecipe list recipe |> Result.mapError DomainError |> Reader.id
     
     let removeRecipe accessToken foodstuff = 
         shoppingListAction accessToken Unauthorized (removeRecipeItem foodstuff)

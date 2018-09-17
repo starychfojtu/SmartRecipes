@@ -22,6 +22,8 @@ module Api.ShoppingLists
     open Generic
     open FSharpPlus.Data.Validation
     open UseCases
+    open UseCases
+    open UseCases
     open UseCases.ShoppingLists
     
     let getShoppingListActionDao () = {
@@ -216,3 +218,71 @@ module Api.ShoppingLists
         
     let cookHandler ctx next =
         authorizedPostHandler (getCookRecipeDao ()) ctx next cook
+        
+    // Remove foodstuff
+    
+    type RemoveFoodstuffParameters = {
+        foodstuffId: Guid
+    }
+    
+    type RemoveFoodstuffError = 
+        | FoodstuffNotFound
+        | BusinessError of ShoppingLists.RemoveItemError
+    
+    type RemoveFoodstuffDao = {
+        shoppingListAction: ShoppingListActionDao
+        foodstuffs: FoodstuffDao
+    }
+    
+    let private getRemoveFoodstuffDao () = {
+        shoppingListAction = getShoppingListActionDao ()
+        foodstuffs = Foodstuffs.getDao ()
+    }
+    
+    let private getFoodstuffId parameters = 
+        Reader(fun dao -> dao.foodstuffs.getById parameters.foodstuffId |> Option.map (fun f -> f.id) |> Option.toResult FoodstuffNotFound )
+    
+    let private removeFoodstuffFromList accessToken foodstuffId = 
+        ShoppingLists.removeFoodstuff accessToken foodstuffId
+        |> mapEnviroment (fun dao -> dao.shoppingListAction)
+        |> Reader.map (Result.mapError BusinessError)
+    
+    let removeFoodstuff accessToken parameters = 
+        getFoodstuffId parameters >>=! removeFoodstuffFromList accessToken
+        
+    let removeFoodstuffHandler ctx next = 
+        authorizedPostHandler (getRemoveFoodstuffDao ()) ctx next removeFoodstuff
+        
+    // Remove recipe
+    
+    type RemoveRecipeParameters = {
+        recipeId: Guid
+    }
+    
+    type RemoveRecipeError = 
+        | RecipeNotFound
+        | BusinessError of ShoppingLists.RemoveItemError
+    
+    type RemoveRecipeDao = {
+        shoppingListAction: ShoppingListActionDao
+        recipes: RecipesDao
+    }
+    
+    let private getRemoveRecipeDao () = {
+        shoppingListAction = getShoppingListActionDao ()
+        recipes = Recipes.getDao ()
+    }
+    
+    let private getRecipeToRemove parameters = 
+        Reader(fun dao -> dao.recipes.getById parameters.recipeId |> Option.toResult RecipeNotFound )
+    
+    let private removeRecipeFromList accessToken recipe = 
+        ShoppingLists.removeRecipe accessToken recipe
+        |> mapEnviroment (fun dao -> dao.shoppingListAction)
+        |> Reader.map (Result.mapError BusinessError)
+    
+    let removeRecipe accessToken parameters = 
+        getRecipeToRemove parameters >>=! removeRecipeFromList accessToken
+        
+    let removeRecipeHandler ctx next = 
+        authorizedPostHandler (getRemoveRecipeDao ()) ctx next removeRecipe

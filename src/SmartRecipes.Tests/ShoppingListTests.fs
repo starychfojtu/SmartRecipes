@@ -52,7 +52,7 @@ module Tests.ShoppingLists
         amount = -1.0
     }
     
-    let getChangeAmountDao withFoodstuff items = {
+    let getChangeAmountDao withFoodstuff items: ChangeAmountDao = {
         shoppingListAction = getFakeShoppingListActionDao items
         foodstuffs = Fake.foodstuffsDao withFoodstuff
     }
