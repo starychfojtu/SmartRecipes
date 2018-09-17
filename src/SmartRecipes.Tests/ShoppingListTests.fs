@@ -38,9 +38,7 @@ module Tests.ShoppingLists
     let ``Cannot add already added foodstuff`` () =
         Api.ShoppingLists.addFoodstuffs Fake.accessToken.value.value addFoodstuffsParameters
         |> Reader.execute (getAddFoodstuffsDao true fakeItems)
-        |> Assert.IsErrorAnd (fun e ->
-            Assert.Equal(e,  Api.ShoppingLists.AddItemsError.BusinessError(UseCases.ShoppingLists.AddItemError.FoodstuffAlreadyAdded))
-        )
+        |> Assert.IsError
         
     // Change foodstuff amount
         
