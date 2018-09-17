@@ -47,7 +47,7 @@ module Api.ShoppingLists
         >>=! getShoppingList
         
     let getHandler ctx next = 
-        authorizedGetHandler (getShoppingListActionDao ()) ctx next get
+        authorizedGetHandler (getShoppingListActionDao ()) ctx next get (fun a -> a)
     
     // Add
     
@@ -88,7 +88,7 @@ module Api.ShoppingLists
         addItems ShoppingLists.addFoodstuffs accessToken parameters
         
     let addFoodstuffsHandler ctx next =
-        authorizedPostHandler (getAddFoodstuffDao ()) ctx next addFoodstuffs
+        authorizedPostHandler (getAddFoodstuffDao ()) ctx next addFoodstuffs (fun a -> a)
         
     // Add recipes
     
@@ -98,7 +98,7 @@ module Api.ShoppingLists
         addItems ShoppingLists.addRecipes accessToken parameters
         
     let addRecipesHandler ctx next =
-        authorizedPostHandler (getAddRecipesDao ()) ctx next addRecipes
+        authorizedPostHandler (getAddRecipesDao ()) ctx next addRecipes (fun a -> a)
         
     // Change foodstuff amount
     
@@ -140,7 +140,7 @@ module Api.ShoppingLists
         >>=! (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff.id newAmount)
         
     let changeAmountHandler ctx next =
-        authorizedPostHandler (getChangeAmountDao ()) ctx next changeAmount
+        authorizedPostHandler (getChangeAmountDao ()) ctx next changeAmount (fun a -> a)
         
     // Chnage person count
     
@@ -182,7 +182,7 @@ module Api.ShoppingLists
         >>=! (fun (newPersonCount, recipe) -> changeRecipePersonCount accessToken recipe newPersonCount)
         
     let changePersonCountHandler ctx next =
-        authorizedPostHandler (getChangePersonCountDao ()) ctx next changePersonCount
+        authorizedPostHandler (getChangePersonCountDao ()) ctx next changePersonCount (fun a -> a)
         
     // Cook recipe
     
@@ -217,7 +217,7 @@ module Api.ShoppingLists
         getRecipe parameters.recipeId >>=! cookRecipe accessToken
         
     let cookHandler ctx next =
-        authorizedPostHandler (getCookRecipeDao ()) ctx next cook
+        authorizedPostHandler (getCookRecipeDao ()) ctx next cook (fun a -> a)
         
     // Remove foodstuff
     
@@ -251,7 +251,7 @@ module Api.ShoppingLists
         getFoodstuffId parameters >>=! removeFoodstuffFromList accessToken
         
     let removeFoodstuffHandler ctx next = 
-        authorizedPostHandler (getRemoveFoodstuffDao ()) ctx next removeFoodstuff
+        authorizedPostHandler (getRemoveFoodstuffDao ()) ctx next removeFoodstuff (fun a -> a)
         
     // Remove recipe
     
@@ -285,4 +285,4 @@ module Api.ShoppingLists
         getRecipeToRemove parameters >>=! removeRecipeFromList accessToken
         
     let removeRecipeHandler ctx next = 
-        authorizedPostHandler (getRemoveRecipeDao ()) ctx next removeRecipe
+        authorizedPostHandler (getRemoveRecipeDao ()) ctx next removeRecipe (fun a -> a)

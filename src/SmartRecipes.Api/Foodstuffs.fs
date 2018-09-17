@@ -52,7 +52,7 @@ module Api.Foodstuffs
         >>=! (fun _ -> getFoodstuffsByIds parameters.ids)
         
     let getByIdshandler ctx next = 
-        authorizedGetHandler (getByIdsDao ()) ctx next getByIds
+        authorizedGetHandler (getByIdsDao ()) ctx next getByIds (fun a -> a)
         
     // Search
     
@@ -89,7 +89,7 @@ module Api.Foodstuffs
         >>=! searchFoodstuffs
         
     let searchHandler ctx next = 
-        authorizedGetHandler (getSearchDao ()) ctx next search
+        authorizedGetHandler (getSearchDao ()) ctx next search (fun a -> a)
 
     // Create
 
@@ -150,4 +150,4 @@ module Api.Foodstuffs
          >>=! createFoodstuff token
 
     let createHandler (next: HttpFunc) (ctx: HttpContext) =
-        authorizedPostHandler (getDao ()) next ctx create
+        authorizedPostHandler (getDao ()) next ctx create (fun a -> a)

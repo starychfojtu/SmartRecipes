@@ -41,8 +41,7 @@ module Api.Recipes
     }
     
     let indexHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedGetHandler (getGetByAccountDao ()) next ctx (fun token p ->
-            Recipes.getAllbyAccount token p.accountId)
+        authorizedGetHandler (getGetByAccountDao ()) next ctx (fun token p -> Recipes.getAllbyAccount token p.accountId) (fun a -> a)
             
     // Create
     
@@ -146,4 +145,4 @@ module Api.Recipes
     let create accessToken parameters = parseParameters parameters >>=! createRecipe accessToken
 
     let createHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedPostHandler (getCreateDao ()) next ctx create
+        authorizedPostHandler (getCreateDao ()) next ctx create (fun a -> a)
