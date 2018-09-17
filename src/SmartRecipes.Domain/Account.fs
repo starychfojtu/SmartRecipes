@@ -6,6 +6,7 @@
     open FSharpPlus.Data
     
     type AccountId = AccountId of Guid 
+        with member i.value = match i with AccountId v -> v
     
     type Account = {
         id: AccountId
