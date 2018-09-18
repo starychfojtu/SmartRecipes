@@ -26,8 +26,9 @@ module Api.Foodstuffs
     
     // Get by Ids
     
+    [<CLIMutable>]
     type GetByIdsParameters = {
-        ids: seq<Guid>
+        ids: Guid list
     }
     
     type GetByIdsError = 
@@ -50,7 +51,7 @@ module Api.Foodstuffs
         Reader(fun dao -> dao.foodstuffs.getByIds ids |> Ok)
         
     let private serializeGetByIds<'a, 'b> = 
-        Result.map (Seq.map Dto.serializeFoodstuff) >> Result.mapError (fun e -> "Unauthorized.")
+        Result.map (Seq.map Dto.serializeFoodstuff) >> Result.mapError (function Unauthorized -> "Unauthorized.")
         
     let getByIds accessToken parameters = 
         authorize accessToken
@@ -61,6 +62,7 @@ module Api.Foodstuffs
         
     // Search
     
+    [<CLIMutable>]
     type SearchParameters = {
         query: string
     }

@@ -8,6 +8,7 @@ module DataAccess.Foodstuffs
     open Domain.NonNegativeFloat
     open Infrastructure.Validation
     open MongoDB.Driver
+    open MongoDB.Driver.Builders
     
     type FoodstuffDao = {
         getByIds: seq<Guid> -> seq<Foodstuff>
@@ -43,16 +44,19 @@ module DataAccess.Foodstuffs
     }
     
     let private getByIds ids =
-        collection().Find(fun f -> Seq.contains f.id ids).ToEnumerable()
+        collection().AsQueryable()
+        |> Seq.filter (fun f -> Seq.contains f.id ids)
         |> Seq.map toModel
         
     let private getById id =
-        collection().Find(fun f -> f.id = id).ToEnumerable()
+        collection().AsQueryable()
+        |> Seq.filter (fun f -> f.id = id)
         |> Seq.map toModel
         |> Seq.tryHead
     
     let private search (name: NonEmptyString) =
-        collection().Find(fun f -> f.name = name.value).ToEnumerable()
+        collection().AsQueryable()
+        |> Seq.filter (fun f -> f.name = name.value)
         |> Seq.map toModel
     
     let private add foodstuff =
