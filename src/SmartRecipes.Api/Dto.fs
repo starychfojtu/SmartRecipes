@@ -1,6 +1,7 @@
 module Api.Dto
     open Domain.Account
     open Domain.Foodstuff
+    open Domain.Recipe
     open Domain.Token
     
     type AccountDto = {
@@ -47,4 +48,34 @@ module Api.Dto
         id = foodstuff.id.value.ToString ()
         name = foodstuff.name.value
         amountStep = serializeAmount foodstuff.amountStep
+    }
+    
+    type IngredientDto = {
+        foodstuffId: string
+        amount: float
+    }
+    
+    let serializeIngredient (ingredient: Ingredient) = {
+        foodstuffId = ingredient.foodstuffId.value.ToString ()
+        amount = ingredient.amount.value
+    }
+    
+    type RecipeDto = {
+        id: string
+        name: string
+        creatorId: string
+        personCount: int
+        imageUrl: string
+        description: string
+        ingredients: seq<IngredientDto>
+    }
+    
+    let serializeRecipe (recipe: Recipe) = {
+        id = recipe.id.value.ToString ()
+        name = recipe.name.value
+        creatorId = recipe.creatorId.value.ToString ()
+        personCount = int(recipe.personCount)
+        imageUrl = recipe.imageUrl.AbsoluteUri
+        description = recipe.description |> Option.map (fun d -> d.value) |> Option.defaultValue null
+        ingredients = Seq.map serializeIngredient recipe.ingredients
     }

@@ -59,14 +59,16 @@ module DataAccess.Recipes
     }
     
     let private getByIds ids =
-        collection().Find(fun r -> Seq.contains r.id ids).ToEnumerable()
+        collection().AsQueryable()
+        |> Seq.filter (fun r -> Seq.contains r.id ids)
         |> Seq.map toModel
         
     let private getById id =
-        getByIds (seq { yield id }) |> Seq.tryHead
+        getByIds [id] |> Seq.tryHead
     
     let private getByAccount accountId =
-        collection().Find(fun r -> r.creatorId = accountId).ToEnumerable()
+        collection().AsQueryable()
+        |> Seq.filter (fun r -> r.creatorId = accountId)
         |> Seq.map toModel
         
     let private add recipe =
