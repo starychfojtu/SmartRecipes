@@ -21,6 +21,7 @@ module SmartRecipes.Api.App
                     route "/recipes" >=> Recipes.indexHandler
                     route "/shoppingList" >=> ShoppingLists.getHandler
                     route "/foodstuffs" >=> Foodstuffs.getByIdshandler
+                    route "/foodstuffs/search" >=> Foodstuffs.searchHandler
                 ]  
             POST >=>
                 choose [

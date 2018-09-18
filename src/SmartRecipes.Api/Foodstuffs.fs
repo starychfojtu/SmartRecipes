@@ -90,13 +90,20 @@ module Api.Foodstuffs
     let private searchFoodstuffs query = 
         Reader(fun dao -> dao.foodstuffs.search query |> Ok)
         
+    let private serializeSearchError = function 
+        | Unauthorized -> "Unauthorized."
+        | QueryIsEmpty -> "Query is empty."
+        
+    let private serializeSearch<'a, 'b> = 
+        Result.map (Seq.map Dto.serializeFoodstuff) >> Result.mapError serializeSearchError
+        
     let search accessToken parameters = 
         authorizeSearch accessToken
         >>=! (fun _ -> mkQuery parameters)
         >>=! searchFoodstuffs
         
     let searchHandler ctx next = 
-        authorizedGetHandler (getSearchDao ()) ctx next search (fun a -> a)
+        authorizedGetHandler (getSearchDao ()) ctx next search serializeSearch
 
     // Create
 
