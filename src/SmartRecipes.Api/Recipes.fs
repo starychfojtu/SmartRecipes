@@ -1,5 +1,6 @@
 module Api.Recipes
     open Api
+    open Dto
     open Domain
     open Generic
     open System.Net.Http
@@ -28,20 +29,22 @@ module Api.Recipes
     open Infrastructure.NonEmptyList
     open Infrastructure.Reader
             
-    // Get by account        
+    // Get my recipes
     
-    [<CLIMutable>]
-    type IndexParameters = {
-        accountId: Guid
-    }
-    
-    let private getGetByAccountDao (): GetByAccountDao = {
+    let private getMyRecipesDao (): GetMyRecipesDao = {
         tokens = (Tokens.getDao ())
         recipes = (Recipes.getDao ())
     }
     
-    let indexHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedGetHandler (getGetByAccountDao ()) next ctx (fun token p -> Recipes.getAllbyAccount token p.accountId) (fun a -> a)
+    let private serializeGetMyRecipes = 
+        Result.map (Seq.map serializeRecipe) >> Result.mapError (function Recipes.GetMyRecipesError.Unauthorized -> "Unauthorized.")
+        
+    
+    let getMyRecipes accessToken parameters = 
+        Recipes.getMyRecipes accessToken
+    
+    let getMyRecipesHandler (next : HttpFunc) (ctx : HttpContext) =
+        authorizedGetHandler (getMyRecipesDao ()) next ctx getMyRecipes serializeGetMyRecipes
             
     // Create
     

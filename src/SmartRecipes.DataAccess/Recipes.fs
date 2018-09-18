@@ -22,7 +22,7 @@ module DataAccess.Recipes
     type RecipesDao = {
         getByIds: seq<Guid> -> seq<Recipe>
         getById: Guid -> Recipe option
-        getByAccount: Guid -> seq<Recipe>
+        getByAccount: AccountId -> seq<Recipe>
         add: Recipe -> Recipe
     }
     
@@ -53,7 +53,7 @@ module DataAccess.Recipes
         name = recipe.name.value
         creatorId = match recipe.creatorId with AccountId id -> id
         personCount = Convert.ToInt32 recipe.personCount
-        imageUrl = recipe.imageUrl.AbsolutePath
+        imageUrl = recipe.imageUrl.AbsoluteUri
         description = recipe.description |> Option.map (fun d -> d.value) |> Option.toObj
         ingredients = NonEmptyList.map ingredientToDb recipe.ingredients |> NonEmptyList.toSeq
     }
@@ -66,7 +66,7 @@ module DataAccess.Recipes
     let private getById id =
         getByIds [id] |> Seq.tryHead
     
-    let private getByAccount accountId =
+    let private getByAccount (AccountId accountId) =
         collection().AsQueryable()
         |> Seq.filter (fun r -> r.creatorId = accountId)
         |> Seq.map toModel

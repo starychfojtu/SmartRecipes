@@ -22,24 +22,23 @@ module UseCases.Recipes
                 
     // Get all by account
     
-    type GetByAccountDao = {
+    type GetMyRecipesDao = {
         tokens: TokensDao
         recipes: RecipesDao
     }
     
-    type GetByAccountError =
+    type GetMyRecipesError =
         | Unauthorized
-        | UserNotFound
     
     let private authorize accessToken = 
         Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
         
-    let private getRecipes accountId = Reader(fun dao ->
-        dao.recipes.getByAccount accountId |> Ok)
+    let private getRecipes accountId = 
+        Reader(fun dao -> dao.recipes.getByAccount accountId |> Ok)
         
-    let getAllbyAccount accessToken accountId =
+    let getMyRecipes accessToken =
         authorize accessToken
-        >>=! fun _ -> getRecipes accountId
+        >>=! getRecipes
         
     // Create
     

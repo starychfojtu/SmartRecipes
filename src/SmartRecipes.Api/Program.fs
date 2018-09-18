@@ -18,7 +18,7 @@ module SmartRecipes.Api.App
         choose [
             GET >=> 
                 choose [
-                    route "/recipes" >=> Recipes.indexHandler
+                    route "/recipes" >=> Recipes.getMyRecipesHandler
                     route "/shoppingList" >=> ShoppingLists.getHandler
                     route "/foodstuffs" >=> Foodstuffs.getByIdshandler
                     route "/foodstuffs/search" >=> Foodstuffs.searchHandler
