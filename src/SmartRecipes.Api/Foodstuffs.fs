@@ -158,10 +158,22 @@ module Api.Foodstuffs
 
     let private createFoodstuff token parameters =
         Foodstuffs.create token parameters |> Reader.map (Result.mapError (fun e -> [BusinessError(e)]))
+        
+    let private serializeCreateError = function
+        | NameCannotBeEmpty -> "Name cannot be empty."
+        | UnknownAmountUnit -> "Unknown amount unit."
+        | AmountCannotBeNegative -> "Amount cannot be negative."
+        | BusinessError e ->
+            match e with
+            | NotAuthorized -> "Unauthorized."
+            | FoodstuffAlreadyExists -> "Foodstuff already exists."
+        
+    let private serializeCreate =
+        Result.map serializeFoodstuff >> Result.mapError (Seq.map serializeCreateError)
 
     let create token parameters =
         parseParameters parameters |> toResult |> Reader.id 
          >>=! createFoodstuff token
 
     let createHandler (next: HttpFunc) (ctx: HttpContext) =
-        authorizedPostHandler (getDao ()) next ctx create (fun a -> a)
+        authorizedPostHandler (getDao ()) next ctx create serializeCreate
