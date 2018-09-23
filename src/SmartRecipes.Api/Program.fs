@@ -85,12 +85,11 @@ module SmartRecipes.Api.App
     [<EntryPoint>]
     let main _ =
         let contentRoot = Directory.GetCurrentDirectory()
-        let webRoot = Path.Combine(contentRoot, "WebRoot")
         WebHostBuilder()
             .UseKestrel()
+            .UseUrls("http://localhost:8000/")
             .UseContentRoot(contentRoot)
             .UseIISIntegration()
-            .UseWebRoot(webRoot)
             .Configure(Action<IApplicationBuilder> configureApp)
             .ConfigureServices(configureServices)
             .ConfigureLogging(configureLogging)
