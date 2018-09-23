@@ -5,9 +5,11 @@ module DataAccess.Database
     let mutable private database: IMongoDatabase = null
     
     let private initialize () =
-        let connectionString = "mongodb://localhost"
-        let client = new MongoClient(connectionString)
-        client.GetDatabase("SmartRecipes")
+        let prodConnectionString = "mongodb://prod:smartrecipes45@ds213053.mlab.com:13053/heroku_st1qt292"
+        // let localConnectionString = "mongodb://localhost"
+        let client = new MongoClient(prodConnectionString)
+        // client.GetDatabase("SmartRecipes")
+        client.GetDatabase("heroku_st1qt292")
         
     let getCollection<'a> () =
         let database = initialize ()
