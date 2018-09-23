@@ -142,6 +142,6 @@ module Domain.ShoppingList
         
     let cook recipe list =
         if isRecipeInList recipe list
-            then decreaseIngredientAmounts recipe list
+            then decreaseIngredientAmounts recipe list |> Result.map (fun l -> removeRecipe l recipe |> forceOk)
             else Error RecipeNotInList
         
