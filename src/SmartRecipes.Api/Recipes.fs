@@ -14,7 +14,6 @@ module Api.Recipes
     open DataAccess.Foodstuffs
     open DataAccess.Recipes
     open DataAccess.Tokens
-    open Domain
     open Domain.Foodstuff
     open Domain.Recipe
     open FSharpPlus.Data
@@ -23,7 +22,6 @@ module Api.Recipes
     open Infrastructure.Validation
     open NaturalNumber
     open Uri
-    open NonNegativeFloat
     open FSharpPlus
     open Infrastructure
     open Infrastructure.NonEmptyList
@@ -103,7 +101,7 @@ module Api.Recipes
     let private mkIngredients foodstuffMap parameters =
         createIngredient
         <!> mkFoodstuffId parameters.foodstuffId foodstuffMap
-        <*> (mkNonNegativeFloat parameters.amount |> mapFailure (fun _ -> [AmountOfIngredientMustBePositive]))
+        <*> (NonNegativeFloat.create parameters.amount |> mapFailure (fun _ -> [AmountOfIngredientMustBePositive]))
         
     let private mkAllIngredients parameters foodstuffMap =
         Seq.map (mkIngredients foodstuffMap) parameters
@@ -127,7 +125,7 @@ module Api.Recipes
     let private mkParameters (parameters: CreateParameters) = Reader(fun (dao: FoodstuffDao) ->
         createParameters
         <!> (mkNonEmptyString parameters.name |> mapFailure (fun _ -> [NameCannotBeEmpty]))
-        <*> (mkNaturalNumber parameters.personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]))
+        <*> (NaturalNumber.create parameters.personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]))
         <*> (mkUri parameters.imageUrl |> mapFailure (fun m -> [InvalidImageUrl(m)]))
         <*> mkDescription parameters.description
         <*> (parseIngredientParameters parameters.ingredients |> Reader.execute dao)

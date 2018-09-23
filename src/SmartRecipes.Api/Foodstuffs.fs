@@ -144,7 +144,7 @@ module Api.Foodstuffs
         | _ -> FSharpPlus.Data.Validation.Failure [UnknownAmountUnit]
     
     let private mkAmount parameters =
-        let parseValue value = value |> NonNegativeFloat.mkNonNegativeFloat |> Validation.mapFailure (fun _ -> [AmountCannotBeNegative])
+        let parseValue value = value |> NonNegativeFloat.create |> Validation.mapFailure (fun _ -> [AmountCannotBeNegative])
         createAmount
         <!> parseUnit parameters.unit
         <*> parseValue parameters.value

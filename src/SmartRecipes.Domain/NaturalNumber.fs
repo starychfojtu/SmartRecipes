@@ -7,7 +7,7 @@ module Domain.NaturalNumber
     type NaturalNumberError =
         | NumberIsNotNatural
     
-    let mkNaturalNumber n = 
+    let create n = 
         if n > 0
             then Success (Convert.ToUInt16 n)
             else Failure NumberIsNotNatural

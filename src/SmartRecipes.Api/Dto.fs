@@ -1,4 +1,5 @@
 module Api.Dto
+    open Domain
     open Domain.Account
     open Domain.Foodstuff
     open Domain.Recipe
@@ -32,7 +33,7 @@ module Api.Dto
     }
     
     let serializeAmount (amount: Amount) = {
-        value = amount.value.value
+        value = NonNegativeFloat.value amount.value
         unit = 
             match amount.unit with 
             | Liter -> "liter"
@@ -59,7 +60,7 @@ module Api.Dto
     
     let serializeIngredient (ingredient: Ingredient) = {
         foodstuffId = ingredient.foodstuffId.value.ToString ()
-        amount = ingredient.amount.value
+        amount = NonNegativeFloat.value ingredient.amount
     }
     
     type RecipeDto = {
@@ -89,7 +90,7 @@ module Api.Dto
      
     let serializeListItem (i: ListItem) = {
         foodstuffId = i.foodstuffId.value.ToString ()
-        amount = i.amount.value
+        amount = NonNegativeFloat.value i.amount
     }
     
     type RecipeListItemDto  = {

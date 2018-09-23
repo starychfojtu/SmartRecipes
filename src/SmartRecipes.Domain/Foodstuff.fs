@@ -35,13 +35,13 @@ module Domain.Foodstuff
     
     let private defaultBaseAmount = {
         unit = Gram
-        value = mkNonNegativeFloat 100.0 |> forceSucces
+        value = NonNegativeFloat.create 100.0 |> forceSucces
     }
     
     let private defaultAmountStep = {
-            unit = Gram
-            value = mkNonNegativeFloat 10.0 |> forceSucces
-        }
+        unit = Gram
+        value = NonNegativeFloat.create 10.0 |> forceSucces
+    }
     
     let createFoodstuff name baseAmount amountStep = {
         id = createFoodstuffId ()

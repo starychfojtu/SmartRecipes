@@ -14,4 +14,4 @@ module DataAccess.Utils
         NonEmptyString.mkNonEmptyString s |> forceSucces
         
     let toNaturalNumberModel n =
-        NaturalNumber.mkNaturalNumber n |> forceSucces
+        NaturalNumber.create n |> forceSucces 

@@ -2,13 +2,11 @@ module DataAccess.Foodstuffs
     open System
     open DataAccess.Model
     open FSharpPlus.Data
-    open Domain.Foodstuff
+    open Domain
     open Domain.Foodstuff
     open Domain.NonEmptyString
-    open Domain.NonNegativeFloat
     open Infrastructure.Validation
     open MongoDB.Driver
-    open MongoDB.Driver.Builders
     
     type FoodstuffDao = {
         getByIds: seq<Guid> -> seq<Foodstuff>
@@ -21,12 +19,12 @@ module DataAccess.Foodstuffs
     
     let internal amountToDb amount : DbAmount = {
         unit = amount.unit
-        value = amount.value.value
+        value = NonNegativeFloat.value amount.value 
     }
     
     let internal amountToModel (dbAmount: DbAmount) = {
         unit = dbAmount.unit
-        value = mkNonNegativeFloat dbAmount.value |> forceSucces
+        value = NonNegativeFloat.create dbAmount.value |> forceSucces
     }
                 
     let internal toDb foodstuff : DbFoodstuff = {

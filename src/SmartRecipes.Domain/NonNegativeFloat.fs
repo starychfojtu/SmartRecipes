@@ -5,21 +5,18 @@ module Domain.NonNegativeFloat
     open System
 
     type NonNegativeFloat = private NonNegativeFloat of float
-        with member f.value = match f with NonNegativeFloat v -> v
-            
-        
+    
     let private nonNegativeFloat f = NonNegativeFloat f
     
-    type NonNegativeFloatError = | FloatIsNegative
+    type NonNegativeFloatError = 
+        | FloatIsNegative
     
-    let private nonNegative f =
+    let create f =
         match f < 0.0 with 
         | true -> Failure FloatIsNegative
-        | false -> Success f
-    
-    let mkNonNegativeFloat f =
-        nonNegativeFloat
-        <!> nonNegative f
+        | false -> Success(NonNegativeFloat(f))
         
-    let inline (-) (a : NonNegativeFloat) (b : NonNegativeFloat) =
-        mkNonNegativeFloat (a.value - b.value) |> Validation.toResult
+    let value (NonNegativeFloat f) = f
+        
+    let inline (-) a b =
+        create (value a - value b) |> Validation.toResult

@@ -2,6 +2,7 @@ module Tests.ShoppingLists
     open FSharpPlus.Data
     open Infrastructure
     open Api.ShoppingLists
+    open Domain
     open System
     open Tests
     open UseCases.ShoppingLists
@@ -44,7 +45,7 @@ module Tests.ShoppingLists
         
     let changeAmountParameters = {
         foodstuffId = Fake.listItem.foodstuffId.value
-        amount = Fake.listItem.amount.value
+        amount = NonNegativeFloat.value Fake.listItem.amount
     }
     
     let changeAmountIncorrectParameters = {

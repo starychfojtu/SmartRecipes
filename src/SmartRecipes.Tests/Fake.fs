@@ -48,11 +48,11 @@ module Tests.Fake
         name = mkNonEmptyString "Test" |> Validation.forceSucces
         baseAmount = {
             unit = Gram
-            value = mkNonNegativeFloat 100.0 |> Validation.forceSucces
+            value = NonNegativeFloat.create 100.0 |> Validation.forceSucces
         }
         amountStep = {
             unit = Gram
-            value = mkNonNegativeFloat 10.0 |> Validation.forceSucces
+            value = NonNegativeFloat.create 10.0 |> Validation.forceSucces
         }
     }
     
@@ -66,7 +66,7 @@ module Tests.Fake
         name = mkNonEmptyString "Test" |> Validation.forceSucces
         creatorId = account.id
         imageUrl = Uri("https://google.com")
-        personCount = mkNaturalNumber 4 |> Validation.forceSucces
+        personCount = NaturalNumber.create 4 |> Validation.forceSucces
         description = Some (mkNonEmptyString "Test" |> Validation.forceSucces)
         ingredients = NonEmptyList.create ingredient []
     }

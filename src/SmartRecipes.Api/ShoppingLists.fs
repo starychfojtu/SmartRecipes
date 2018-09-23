@@ -127,7 +127,7 @@ module Api.ShoppingLists
         Reader(fun dao -> dao.foodstuffs.getById id |> Option.toResult [FoodstuffNotFound])
         
     let private mkAmount amount foodstuff = 
-        mkNonNegativeFloat amount |> mapFailure (fun _ -> [AmountMustBePositive]) |> map (fun a -> (a, foodstuff)) |> toResult |> Reader.id
+        NonNegativeFloat.create amount |> mapFailure (fun _ -> [AmountMustBePositive]) |> map (fun a -> (a, foodstuff)) |> toResult |> Reader.id
         
     let private changeFoodtuffAmount accessToken foodstuff amount =
         changeAmount accessToken foodstuff amount
@@ -169,7 +169,7 @@ module Api.ShoppingLists
         Reader(fun dao -> dao.recipes.getById id |> Option.toResult [RecipeNotFound])
         
     let private mkPersonCount personCount recipe = 
-        mkNaturalNumber personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]) |> map (fun c -> (c, recipe)) |> toResult |> Reader.id
+        NaturalNumber.create personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]) |> map (fun c -> (c, recipe)) |> toResult |> Reader.id
         
     let private changeRecipePersonCount accessToken recipe amount =
         changePersonCount accessToken recipe amount

@@ -30,12 +30,12 @@ module DataAccess.Recipes
     
     let private ingredientToModel (dbIngredient: DbIngredient): Ingredient = {
         foodstuffId = FoodstuffId(dbIngredient.foodstuffId)
-        amount = mkNonNegativeFloat dbIngredient.amount |> forceSucces
+        amount = NonNegativeFloat.create dbIngredient.amount |> forceSucces
     }
     
     let private ingredientToDb (ingredient: Ingredient): DbIngredient = {
         foodstuffId = ingredient.foodstuffId.value
-        amount = ingredient.amount.value
+        amount = NonNegativeFloat.value ingredient.amount
     }
     
     let private toModel (dbRecipe: DbRecipe): Recipe = {
