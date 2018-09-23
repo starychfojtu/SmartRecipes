@@ -38,7 +38,6 @@ module Api.Recipes
     
     let private serializeGetMyRecipes = 
         Result.map (Seq.map serializeRecipe) >> Result.mapError (function Recipes.GetMyRecipesError.Unauthorized -> "Unauthorized.")
-        
     
     let getMyRecipes accessToken parameters = 
         Recipes.getMyRecipes accessToken
@@ -139,13 +138,30 @@ module Api.Recipes
         tokens = dao.tokens
     }
     
-    let parseParameters = mkParameters >> (Reader.map Validation.toResult) >> (Reader.mapEnviroment (fun dao -> dao.foodstuffs))
-    let createRecipe accessToken = 
+    let private parseParameters = mkParameters >> (Reader.map Validation.toResult) >> (Reader.mapEnviroment (fun dao -> dao.foodstuffs))
+    let private createRecipe accessToken = 
         Recipes.create accessToken >> 
         (Reader.mapEnviroment mapDao) >> 
         (Reader.map (Result.mapError (fun e -> [BusinessError e])))
+        
+    let private serializeCreateError = function 
+        | NameCannotBeEmpty -> "Name cannot be empty."
+        | PersonCountMustBePositive -> "Person count must be positive."
+        | InvalidImageUrl s -> s
+        | AmountOfIngredientMustBePositive -> "Amount of ingredient must be positive."
+        | MustContaintAtLeastOneIngredient -> "Must containt at least one ingredient."
+        | FoodstuffNotFound -> "Foodstuff not found."
+        | DescriptionIsProvidedButEmpty -> "Description is provided but empty."
+        | BusinessError e -> 
+            match e with
+            | Unauthorized -> "Unauthorized."
+            | DuplicateFoodstuffIngredient -> "Multiple ingredients with common foodstuff found."
+        
+        
+    let private serializeCreate =
+        Result.map serializeRecipe >> Result.mapError (Seq.map serializeCreateError)
 
     let create accessToken parameters = parseParameters parameters >>=! createRecipe accessToken
 
     let createHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedPostHandler (getCreateDao ()) next ctx create (fun a -> a)
+        authorizedPostHandler (getCreateDao ()) next ctx create serializeCreate
