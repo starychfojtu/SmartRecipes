@@ -149,13 +149,26 @@ module Api.ShoppingLists
         |> Reader.mapEnviroment (fun dao -> dao.shoppingListAction)
         |> (Reader.map (Result.mapError (fun e -> [BusinessError(e)])))
         
+    let private serializeChangeAmountError = function
+        | FoodstuffNotFound -> "Foodstuff not found."
+        | AmountMustBePositive -> "Amount must be positive."
+        | BusinessError e ->
+            match e with
+            | UseCases.ShoppingLists.ChangeAmountError.Unauthorized -> "Unauthorized."
+            | UseCases.ShoppingLists.ChangeAmountError.DomainError de ->
+                match de with 
+                | ItemNotInList -> "Foodstuff not in list."
+                
+    let private serializeChangeAmount = 
+        Result.map serializeShoppingList >> Result.mapError (Seq.map serializeChangeAmountError)
+        
     let changeAmount accessToken parameters =
         mkFoodstuff parameters.foodstuffId
         >>=! mkAmount parameters.amount
         >>=! (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff.id newAmount)
         
     let changeAmountHandler ctx next =
-        authorizedPostHandler (getChangeAmountDao ()) ctx next changeAmount (fun a -> a)
+        authorizedPostHandler (getChangeAmountDao ()) ctx next changeAmount serializeChangeAmount
         
     // Chnage person count
     
@@ -191,13 +204,26 @@ module Api.ShoppingLists
         |> Reader.mapEnviroment (fun dao -> dao.shoppingListAction)
         |> (Reader.map (Result.mapError (fun e -> [BusinessError(e)])))
         
+    let private serializeChangePersonCountError = function
+        | RecipeNotFound -> "Recipe not found."
+        | PersonCountMustBePositive -> "Person count must be positive."
+        | BusinessError e ->
+            match e with
+            | UseCases.ShoppingLists.ChangeAmountError.Unauthorized -> "Unauthorized."
+            | UseCases.ShoppingLists.ChangeAmountError.DomainError de ->
+                match de with 
+                | ItemNotInList -> "Recipe not in list."
+                
+    let private serializeChangePersonCount = 
+        Result.map serializeShoppingList >> Result.mapError (Seq.map serializeChangePersonCountError)
+        
     let changePersonCount accessToken parameters =
         mkRecipe parameters.recipeId
         >>=! mkPersonCount parameters.personCount
         >>=! (fun (newPersonCount, recipe) -> changeRecipePersonCount accessToken recipe newPersonCount)
         
     let changePersonCountHandler ctx next =
-        authorizedPostHandler (getChangePersonCountDao ()) ctx next changePersonCount (fun a -> a)
+        authorizedPostHandler (getChangePersonCountDao ()) ctx next changePersonCount serializeChangePersonCount
         
     // Cook recipe
     
@@ -228,11 +254,24 @@ module Api.ShoppingLists
         |> Reader.mapEnviroment (fun dao -> dao.shoppingListAction)
         |> Reader.map (Result.mapError (fun e -> BusinessError(e)))
         
+    let private serializeCookRecipeError = function 
+        | RecipeNotFound -> "Recipe not found."
+        | BusinessError e -> 
+            match e with 
+            | ShoppingLists.CookRecipeError.Unauthorized -> "Unauthorized."
+            | ShoppingLists.CookRecipeError.DomainError de ->
+                match de with 
+                | RecipeNotInList -> "Recipe not in list."
+                | NotEnoughIngredientsInList -> "Not enough ingredients."
+        
+    let private serializeCookRecipe =
+        Result.map serializeShoppingList >> Result.mapError serializeCookRecipeError
+        
     let cook accessToken parameters = 
         getRecipe parameters.recipeId >>=! cookRecipe accessToken
         
     let cookHandler ctx next =
-        authorizedPostHandler (getCookRecipeDao ()) ctx next cook (fun a -> a)
+        authorizedPostHandler (getCookRecipeDao ()) ctx next cook serializeCookRecipe
         
     // Remove foodstuff
     
@@ -261,12 +300,24 @@ module Api.ShoppingLists
         ShoppingLists.removeFoodstuff accessToken foodstuffId
         |> mapEnviroment (fun dao -> dao.shoppingListAction)
         |> Reader.map (Result.mapError BusinessError)
+        
+    let private serializeRemoveFoodstuffError = function 
+        | FoodstuffNotFound -> "Foodstuff not found."
+        | BusinessError e -> 
+            match e with
+            | ShoppingLists.RemoveItemError.Unauthorized -> "Unauthorized."
+            | ShoppingLists.RemoveItemError.DomainError de ->
+                match de with 
+                | ItemNotInList -> "Foodstuff not in list."
+        
+    let private serializeRemoveFoodstuff = 
+        Result.map serializeShoppingList >> Result.mapError serializeRemoveFoodstuffError
     
     let removeFoodstuff accessToken parameters = 
         getFoodstuffId parameters >>=! removeFoodstuffFromList accessToken
         
     let removeFoodstuffHandler ctx next = 
-        authorizedPostHandler (getRemoveFoodstuffDao ()) ctx next removeFoodstuff (fun a -> a)
+        authorizedPostHandler (getRemoveFoodstuffDao ()) ctx next removeFoodstuff serializeRemoveFoodstuff
         
     // Remove recipe
     
@@ -295,9 +346,21 @@ module Api.ShoppingLists
         ShoppingLists.removeRecipe accessToken recipe
         |> mapEnviroment (fun dao -> dao.shoppingListAction)
         |> Reader.map (Result.mapError BusinessError)
+        
+    let private serializeRemoveRecipeError = function 
+        | RecipeNotFound -> "Recipe not found."
+        | BusinessError e -> 
+            match e with
+            | ShoppingLists.RemoveItemError.Unauthorized -> "Unauthorized."
+            | ShoppingLists.RemoveItemError.DomainError de ->
+                match de with 
+                | ItemNotInList -> "Recipe not in list."
+        
+    let private serializeRemoveRecipe = 
+        Result.map serializeShoppingList >> Result.mapError serializeRemoveRecipeError
     
     let removeRecipe accessToken parameters = 
         getRecipeToRemove parameters >>=! removeRecipeFromList accessToken
         
     let removeRecipeHandler ctx next = 
-        authorizedPostHandler (getRemoveRecipeDao ()) ctx next removeRecipe (fun a -> a)
+        authorizedPostHandler (getRemoveRecipeDao ()) ctx next removeRecipe serializeRemoveRecipe
