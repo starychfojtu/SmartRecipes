@@ -2,6 +2,8 @@ module Api.Dto
     open Domain.Account
     open Domain.Foodstuff
     open Domain.Recipe
+    open Domain.ShoppingList
+    open Domain.ShoppingList
     open Domain.Token
     
     type AccountDto = {
@@ -78,4 +80,38 @@ module Api.Dto
         imageUrl = recipe.imageUrl.AbsoluteUri
         description = recipe.description |> Option.map (fun d -> d.value) |> Option.defaultValue null
         ingredients = Seq.map serializeIngredient recipe.ingredients
+    }
+    
+    type ListItemDto  = {
+        foodstuffId: string
+        amount: float
+    }
+     
+    let serializeListItem (i: ListItem) = {
+        foodstuffId = i.foodstuffId.value.ToString ()
+        amount = i.amount.value
+    }
+    
+    type RecipeListItemDto  = {
+        recipeId: string
+        personCount: int
+    }
+     
+    let serializeRecipeListItem (i: RecipeListItem) = {
+        recipeId = i.recipeId.value.ToString ()
+        personCount = int(i.personCount)
+    }
+    
+    type ShoppingListDto = {
+        id: string
+        ownerId: string
+        items: seq<ListItemDto>
+        recipes: seq<RecipeListItemDto>
+    }
+    
+    let serializeShoppingList (s: ShoppingList): ShoppingListDto = {
+        id = s.id.value.ToString ()
+        ownerId = s.accountId.value.ToString ()
+        items = Seq.map serializeListItem (Map.toSeq s.items |> Seq.map (fun (k, i) -> i))
+        recipes = Seq.map serializeRecipeListItem (Map.toSeq s.recipes |> Seq.map (fun (k, i) -> i))
     }

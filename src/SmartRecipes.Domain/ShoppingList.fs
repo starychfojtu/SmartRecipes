@@ -33,6 +33,7 @@ module Domain.ShoppingList
     }
         
     type ShoppingListId = ShoppingListId of Guid
+        with member i.value = match i with ShoppingListId v -> v
     
     type ShoppingList = {
         id: ShoppingListId
