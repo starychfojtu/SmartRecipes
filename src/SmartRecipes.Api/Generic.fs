@@ -5,6 +5,7 @@ module Api.Generic
     open Microsoft.AspNetCore.Http
     open FSharpPlus.Data
     open Domain.Token
+    open FSharp.Control.Tasks
     
     let getHandler dao (next : HttpFunc) (ctx : HttpContext) (handler: 'parameters -> Reader<'dao, Result<'result, 'error>>) serialize = 
         task {

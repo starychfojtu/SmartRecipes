@@ -1,16 +1,15 @@
 module SmartRecipes.Api.App
     open System.Text
-    open Api
-    open Api
+    open Giraffe
     open Api
     open System
     open System.IO
+    open Microsoft.AspNetCore
     open Microsoft.AspNetCore.Builder
     open Microsoft.AspNetCore.Cors.Infrastructure
     open Microsoft.AspNetCore.Hosting
     open Microsoft.Extensions.Logging
     open Microsoft.Extensions.DependencyInjection
-    open Giraffe
     open Microsoft.AspNetCore.Http
     open Microsoft.AspNetCore.HttpOverrides
     
@@ -52,29 +51,16 @@ module SmartRecipes.Api.App
     // Config and Main
     // ---------------------------------
     
-    let configureCors (builder : CorsPolicyBuilder) =
-        builder
-            .WithOrigins("http://localhost:8080")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            |> ignore
-    
     let configureApp (app : IApplicationBuilder) =
-        let forwardedHeaderOptions = ForwardedHeadersOptions()
-        forwardedHeaderOptions.ForwardedHeaders = (ForwardedHeaders.XForwardedFor ||| ForwardedHeaders.XForwardedProto) |> ignore
-    
         let env = app.ApplicationServices.GetService<IHostingEnvironment>()
         (match env.IsDevelopment() with
         | true  -> app.UseDeveloperExceptionPage()
         | false -> app.UseGiraffeErrorHandler errorHandler)
-            .UseForwardedHeaders(forwardedHeaderOptions)
-            .UseCors(configureCors)
             .UseStaticFiles()
             .UseGiraffe(webApp)
     
     let configureServices (services : IServiceCollection) =
         services
-            .AddCors()
             .AddGiraffe() 
             |> ignore
     
@@ -85,11 +71,7 @@ module SmartRecipes.Api.App
     [<EntryPoint>]
     let main _ =
         let contentRoot = Directory.GetCurrentDirectory()
-        WebHostBuilder()
-            .UseKestrel()
-            .UseUrls("http://localhost:8000/")
-            .UseContentRoot(contentRoot)
-            .UseIISIntegration()
+        WebHost.CreateDefaultBuilder()
             .Configure(Action<IApplicationBuilder> configureApp)
             .ConfigureServices(configureServices)
             .ConfigureLogging(configureLogging)
