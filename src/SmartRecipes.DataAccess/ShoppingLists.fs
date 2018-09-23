@@ -70,5 +70,5 @@ module DataAccess.ShoppingLists
     let getDao () = {
         add = add
         get = get
-        update = fun s -> s
+        update = update
     }

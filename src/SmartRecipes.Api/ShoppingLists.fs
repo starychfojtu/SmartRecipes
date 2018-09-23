@@ -1,5 +1,6 @@
 module Api.ShoppingLists
     open Api
+    open Dto
     open DataAccess
     open DataAccess.Foodstuffs
     open DataAccess.Recipes
@@ -41,13 +42,16 @@ module Api.ShoppingLists
         
     let private getShoppingList accountId =
         Reader(fun dao -> dao.shoppingLists.get accountId |> Ok)
+        
+    let private serializeGet = 
+        Result.map serializeShoppingList >> Result.mapError (function Unauthorized -> "Unaturhorized.")
     
-    let get accessToken () =
+    let get accessToken _ =
         authorize accessToken
         >>=! getShoppingList
         
     let getHandler ctx next = 
-        authorizedGetHandler (getShoppingListActionDao ()) ctx next get (fun a -> a)
+        authorizedGetHandler (getShoppingListActionDao ()) ctx next get serializeGet
     
     // Add
     
@@ -74,21 +78,32 @@ module Api.ShoppingLists
         action accesstToken items
         |> Reader.map (Result.mapError (fun e -> BusinessError e))
         |> Reader.mapEnviroment (fun (dao, getByIds) -> dao)
+        
+    let private serializeAddItemsError = function
+        | InvalidIds -> "Invalid ids."
+        | BusinessError e ->
+            match e with
+            | ShoppingLists.AddItemError.Unauthorized -> "Unauthorized."
+            | ShoppingLists.AddItemError.DomainError de -> 
+                match de with 
+                | ItemAlreadyAdded -> "Item already added."
+                
+    let private serializeAddItems = 
+        Result.map serializeShoppingList >> Result.mapError serializeAddItemsError
 
     let addItems action accessToken parameters = 
-        getItems parameters >>=! addItemsToShoppingList accessToken action
-        
+        getItems parameters >>=! addItemsToShoppingList accessToken action  
     
 
     // Add foodstuffs
     
-    let getAddFoodstuffDao () = (getShoppingListActionDao (), Foodstuffs.getDao().getByIds)
+    let private getAddFoodstuffDao () = (getShoppingListActionDao (), Foodstuffs.getDao().getByIds)
     
     let addFoodstuffs accessToken parameters =
         addItems ShoppingLists.addFoodstuffs accessToken parameters
         
     let addFoodstuffsHandler ctx next =
-        authorizedPostHandler (getAddFoodstuffDao ()) ctx next addFoodstuffs (fun a -> a)
+        authorizedPostHandler (getAddFoodstuffDao ()) ctx next addFoodstuffs serializeAddItems
         
     // Add recipes
     
@@ -98,7 +113,7 @@ module Api.ShoppingLists
         addItems ShoppingLists.addRecipes accessToken parameters
         
     let addRecipesHandler ctx next =
-        authorizedPostHandler (getAddRecipesDao ()) ctx next addRecipes (fun a -> a)
+        authorizedPostHandler (getAddRecipesDao ()) ctx next addRecipes serializeAddItems
         
     // Change foodstuff amount
     
