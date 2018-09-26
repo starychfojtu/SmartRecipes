@@ -91,16 +91,16 @@ module Api.Recipes
         
     let private mkIngredientParameter parameter =
         createIngredientParameter parameter.foodstuffId
-        <!> (NonNegativeFloat.create parameter.amount |> mapFailure (fun _ -> [AmountOfIngredientMustBePositive]))
+        <!> (NonNegativeFloat.create parameter.amount |> mapFailure (function FloatIsNegative -> [AmountOfIngredientMustBePositive]))
         
-    let private toNotEmpty ingredients = 
+    let private toNonEmpty ingredients = 
         NonEmptyList.mkNonEmptyList ingredients 
         |> Validation.mapFailure (function SequenceIsEmpty -> [MustContaintAtLeastOneIngredient])
            
     let private mkIngredientParameters parameters =
         Seq.map mkIngredientParameter parameters 
         |> Validation.traverse
-        |> Validation.bind toNotEmpty
+        |> Validation.bind toNonEmpty
 
     let private mkDescription d =
         if isNull d

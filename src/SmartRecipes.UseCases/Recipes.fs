@@ -24,6 +24,7 @@ module UseCases.Recipes
     open Domain.Foodstuff
     open Infrastructure
     open Infrastructure
+    open UseCases.Foodstuffs
                 
     // Get all by account
     
@@ -61,17 +62,17 @@ module UseCases.Recipes
         | Unauthorized
         | InvalidIngredients of CreateIngredientError list
         
-    type CreateIngredientParameter = {
+    type IngredientParameters = {
         foodstuffId: Guid
         amount: NonNegativeFloat
     }
     
-    type CreateParameters = {
+    type RecipeParameters = {
         name: NonEmptyString
         personCount: NaturalNumber
         imageUrl: Uri
         description: NonEmptyString option
-        ingredients: NonEmptyList<CreateIngredientParameter>
+        ingredients: NonEmptyList<IngredientParameters>
     }
     
     let private authorizeCreate accessToken = 
@@ -90,22 +91,24 @@ module UseCases.Recipes
         <!> mkFoodstuffId parameters.foodstuffId foodstuffMap
         <*> (Success parameters.amount)
     
-    let private mkIngredients parameters foodstuffMap =
-        NonEmptyList.map (mkIngredient foodstuffMap) parameters |> Validation.traverseNonEmptyList
-    
     let private checkIngredientsNotDuplicate ingredients =
-        if NonEmptyList.isDistinct ingredients 
+        let foodstuffIds = NonEmptyList.map (fun (i: Ingredient) -> i.foodstuffId) ingredients
+        if NonEmptyList.isDistinct foodstuffIds 
             then Success ingredients 
             else Failure [DuplicateFoodstuffIngredient]
+            
+    let private mkIngredients parameters foodstuffMap =
+        NonEmptyList.map (mkIngredient foodstuffMap) parameters 
+        |> Validation.traverseNonEmptyList
+        |> Validation.bind checkIngredientsNotDuplicate
+        |> Validation.mapFailure InvalidIngredients
+        |> Validation.toResult
             
     let private createIngredients parameters =
         let toMap = Seq.map (fun (f: Foodstuff) -> (f.id.value, f)) >> Map.ofSeq
         getFoodstuff parameters
         |> Reader.map toMap
         |> Reader.map (mkIngredients parameters)
-        |> Reader.map (Validation.bind checkIngredientsNotDuplicate)
-        |> Reader.map (Validation.toResult)
-        |> Reader.map (Result.mapError InvalidIngredients)
 
     let private createRecipe parameters ingredients accountId = 
         Recipe.createRecipe parameters.name accountId parameters.personCount parameters.imageUrl parameters.description ingredients
@@ -114,17 +117,31 @@ module UseCases.Recipes
 
     let private addToDatabase recipe = 
         Reader(fun (dao: CreateRecipeDao) -> dao.recipes.add recipe |> Ok)
-
-    let create accessToken parameters =
+        
+    let private getNewRecipe accessToken parameters =
         authorizeCreate accessToken
         >>=! (fun a -> createIngredients parameters.ingredients |> Reader.map (Result.map (fun i -> (i, a)))) 
         >>=! (fun (ingredients, accountId) -> createRecipe parameters ingredients accountId)
+
+    let create accessToken parameters =
+        getNewRecipe accessToken parameters
         >>=! addToDatabase
         
-    // Update 
+    // Update
     
-    // TODO : Implement as Creating new one, but then just use old Id and call update instead
+    type UpdateError = 
+        | RecipeNotFound
+        | InvalidParameters of CreateError
+    
+    let update accessToken parameters =
+        // verify recipe exists
+        getNewRecipe accessToken parameters
+        // update in database
     
     // Delete
     
-    // TODO
+    let delete accessToken parameters =
+        // check if exists
+        // remove from all shopping lists
+        // delete
+        ()
