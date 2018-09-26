@@ -13,7 +13,7 @@ module Tests.Recipes
     open Xunit
     open Xunit
     
-    let getCreateDao (): Api.Recipes.CreateDao = {
+    let getCreateDao (): UseCases.Recipes.CreateRecipeDao = {
         foodstuffs = Fake.foodstuffsDao true
         tokens = Fake.tokensDao true
         recipes = Fake.recipesDao ()
@@ -58,8 +58,7 @@ module Tests.Recipes
         |> Assert.IsErrorAnd (fun e -> 
             Assert.True (Seq.contains Api.Recipes.CreateError.NameCannotBeEmpty e)
             Assert.True (Seq.contains Api.Recipes.CreateError.DescriptionIsProvidedButEmpty e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.FoodstuffNotFound e)
             Assert.True (Seq.contains Api.Recipes.CreateError.AmountOfIngredientMustBePositive e)
             Assert.True (Seq.contains Api.Recipes.CreateError.PersonCountMustBePositive e)
-            Assert.Equal ((Seq.length e), 6)
+            Assert.Equal ((Seq.length e), 5)
         )

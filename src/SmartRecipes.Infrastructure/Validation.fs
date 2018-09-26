@@ -1,6 +1,9 @@
 module Infrastructure.Validation
     open FSharpPlus.Data
+    open FSharpPlus.Data
+    open FSharpPlus.Data
     open FSharpPlus.Data.Validation
+    open Infrastructure
     open System
 
     let mapFailure mapper =
@@ -12,3 +15,8 @@ module Infrastructure.Validation
         
     let traverse seqOfValidation =
         Seq.traverse Validation.toResult seqOfValidation |> Validation.ofResult
+        
+    let traverseNonEmptyList (listOfValidation: NonEmptyList<'a> ) =
+        traverse listOfValidation |> Validation.map (NonEmptyList.mkNonEmptyList >> forceSucces)
+        
+    
