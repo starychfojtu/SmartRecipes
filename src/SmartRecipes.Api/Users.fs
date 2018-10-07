@@ -11,6 +11,7 @@ module Api.Users
     open Domain.Token
     open Generic
     open UseCases.Users
+    open Api.Errors
     
     // Sign up
     
@@ -25,12 +26,12 @@ module Api.Users
     }
     
     let private serializeCredentialsError = function
-        | InvalidEmail errors -> Seq.map (fun e -> match e with Invalid -> "Email is invalid.") errors
-        | InvalidPassword errors -> Seq.map (fun e -> match e with MustBe10CharactersLong -> "Password mus be at least 10 characters long.") errors
+        | InvalidEmail errors -> Seq.map (function Invalid -> parameterError "Email is invalid." "Email") errors
+        | InvalidPassword errors -> Seq.map (function MustBe10CharactersLong -> parameterError "Password must be at least 10 characters long." "Password") errors
     
     let private serializeSignUpError = function
-        | AccountAlreadyExits -> ["Account already exists."]
-        | InvalidParameters errors -> Seq.collect serializeCredentialsError errors |> Seq.toList
+        | AccountAlreadyExits ->  error "Account already exists."
+        | InvalidParameters errors -> Seq.collect serializeCredentialsError errors |> invalidParameters
         
     let private serializeSignUp = 
        Result.map serializeAccount >> Result.mapError serializeSignUpError
@@ -51,7 +52,7 @@ module Api.Users
     }
     
     let private serializeSignInError = function
-        | InvalidCredentials -> ["Invalid credentials."]
+        | InvalidCredentials -> error "Invalid credentials."
     
     let private serializeSignIn = 
         Result.map serializeAccessToken >> Result.mapError serializeSignInError

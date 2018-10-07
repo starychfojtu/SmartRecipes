@@ -28,6 +28,7 @@
   <ItemGroup>
     <Compile Include="Generic.fs" />
     <Compile Include="Dto.fs" />
+    <Compile Include="Errors.fs" />
     <Compile Include="Users.fs" />
     <Compile Include="Foodstuffs.fs" />
     <Compile Include="Recipes.fs" />
