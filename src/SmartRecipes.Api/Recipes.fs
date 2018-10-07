@@ -76,7 +76,7 @@ module Api.Recipes
         tokens = Tokens.getDao ()
     }
         
-    let private createParameters name personCount imageUrl description ingredients: Recipes.CreateParameters = {
+    let private createParameters name personCount imageUrl description ingredients: RecipeParameters = {
         name = name
         personCount = personCount
         imageUrl = imageUrl
@@ -84,7 +84,7 @@ module Api.Recipes
         ingredients = ingredients
     }
     
-    let private createIngredientParameter foodstuffId amount: CreateIngredientParameter = {
+    let private createIngredientParameter foodstuffId amount: Recipes.IngredientParameters = {
         foodstuffId = foodstuffId
         amount = amount
     }
