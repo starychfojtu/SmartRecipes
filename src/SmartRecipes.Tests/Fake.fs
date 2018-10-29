@@ -40,7 +40,7 @@ module Tests.Fake
     let accessToken: AccessToken = {
         accountId = AccountId(Guid.NewGuid())
         value = token
-        expiration = DateTime.UtcNow.AddDays(1.0)
+        expirationUtc = DateTime.UtcNow.AddDays(1.0)
     }
     
     let foodstuff = {

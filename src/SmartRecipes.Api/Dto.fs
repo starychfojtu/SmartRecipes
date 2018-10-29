@@ -1,4 +1,6 @@
 module Api.Dto
+    open System
+    open System.Globalization
     open Domain
     open Domain.Account
     open Domain.Foodstuff
@@ -6,6 +8,9 @@ module Api.Dto
     open Domain.ShoppingList
     open Domain.ShoppingList
     open Domain.Token
+    
+    let private serializeDateTime (d: DateTime) =
+        d.ToString("s", CultureInfo.InvariantCulture)
     
     type AccountDto = {
         id: string
@@ -20,11 +25,13 @@ module Api.Dto
     type AccessTokenDto = {
         value: string
         accountId: string
+        expirationUtc: string
     }
     
     let serializeAccessToken (accessToken: AccessToken) = {
         value = accessToken.value.value
         accountId = accessToken.accountId.value.ToString ()
+        expirationUtc = accessToken.expirationUtc |> serializeDateTime
     }
     
     type AmountDto = {

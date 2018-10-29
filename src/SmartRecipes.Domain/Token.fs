@@ -14,7 +14,7 @@ module Domain.Token
     type AccessToken = {
         accountId: AccountId
         value: Token
-        expiration: DateTime
+        expirationUtc: DateTime
     }
     
     let private expirationTime = TimeSpan.FromDays 1.0
@@ -31,16 +31,16 @@ module Domain.Token
         let token = generateRandomToken ()
         let (AccountId s) = accountId
         let value = token + s.ToString ()
-        let expiration = DateTime.UtcNow.Add expirationTime
+        let expirationUtc = DateTime.UtcNow.Add expirationTime
         let accessToken = { 
             accountId = accountId
             value = Token value
-            expiration = expiration
+            expirationUtc = expirationUtc
         }
         accessToken
         
     let isFresh accessToken nowUtc = 
-        nowUtc < accessToken.expiration
+        nowUtc < accessToken.expirationUtc
         
     // Sign in
         

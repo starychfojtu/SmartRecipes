@@ -19,13 +19,13 @@ module DataAccess.Tokens
         id = Guid.NewGuid()
         accountId = match accessToken.accountId with AccountId id -> id
         value = accessToken.value.value
-        expiration = accessToken.expiration
+        expiration = accessToken.expirationUtc
     }
         
     let private toModel (dbAccessToken: DbAccessToken): AccessToken = { 
         accountId = AccountId dbAccessToken.accountId
         value = Token dbAccessToken.value
-        expiration = dbAccessToken.expiration
+        expirationUtc = dbAccessToken.expiration
     }
     
     let private add accessToken =
