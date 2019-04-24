@@ -40,7 +40,7 @@ module Api.Foodstuffs
     }
     
     let private getByIdsDao () = {
-        tokens = Tokens.getDao ()
+        tokens = Tokens.dao
         foodstuffs = Foodstuffs.getDao ()
     }
     
@@ -77,7 +77,7 @@ module Api.Foodstuffs
     }
     
     let private getSearchDao (): SearchDao = {
-        tokens = Tokens.getDao ()
+        tokens = Tokens.dao
         foodstuffs = Foodstuffs.getDao ()
     }
     
@@ -133,8 +133,8 @@ module Api.Foodstuffs
     }
     
     let private getDao (): CreateFoodstuffDao = {
-        tokens = (Tokens.getDao ())
-        foodstuffs = (Foodstuffs.getDao ())
+        tokens = Tokens.dao
+        foodstuffs = Foodstuffs.getDao ()
     }
     
     let private parseUnit = function

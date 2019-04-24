@@ -26,8 +26,8 @@ module Api.Users
     }
     
     let getSignUpDao () = {
-        users = Users.getDao ()
-        shoppingLists = ShoppingLists.getDao ()
+        users = Users.dao
+        shoppingLists = ShoppingLists.dao
     }
     
     let private serializeCredentialsError = function
@@ -50,21 +50,28 @@ module Api.Users
     // Sign in
         
     type SignInParameters = {
-        email: string
-        password: string
+        Email: string
+        Password: string
+    }
+    
+    type SignInResponse = {
+        AccessToken: AccessTokenDto
     }
     
     let private getSignInDao (): Users.SignInDao = {
-        tokens = (Tokens.getDao ())
-        users = (Users.getDao ())
+        tokens = Tokens.dao
+        users = Users.dao
     }
     
     let private serializeSignInError = function
         | InvalidCredentials -> error "Invalid credentials."
+        
+    let private serializeSignInResponse token =
+         { AccessToken = serializeAccessToken token }
     
     let private serializeSignIn = 
-        Result.map serializeAccessToken >> Result.mapError serializeSignInError
+        Result.bimap serializeSignInResponse serializeSignInError
         
     let signInHandler (next : HttpFunc) (ctx : HttpContext) =
-        postHandler (getSignInDao ()) next ctx (fun p -> Users.signIn p.email p.password) serializeSignIn
+        postHandler (getSignInDao ()) next ctx (fun p -> Users.signIn p.Email p.Password) serializeSignIn
         

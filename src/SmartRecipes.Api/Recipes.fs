@@ -31,8 +31,8 @@ module Api.Recipes
     // Get my recipes
     
     let private getMyRecipesDao (): GetMyRecipesDao = {
-        tokens = (Tokens.getDao ())
-        recipes = (Recipes.getDao ())
+        tokens = Tokens.dao
+        recipes = Recipes.getDao ()
     }
     
     let private serializeGetMyRecipes = 
@@ -73,7 +73,7 @@ module Api.Recipes
     let private getCreateDao () = {
         foodstuffs = Foodstuffs.getDao ()
         recipes = Recipes.getDao ()
-        tokens = Tokens.getDao ()
+        tokens = Tokens.dao
     }
         
     let private createParameters name personCount imageUrl description ingredients: RecipeParameters = {

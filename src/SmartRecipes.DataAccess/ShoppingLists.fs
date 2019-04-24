@@ -6,7 +6,6 @@ module DataAccess.ShoppingLists
     open Domain.Foodstuff
     open Domain.Recipe
     open Domain.ShoppingList
-    open System
     open Utils
     open MongoDB.Driver
     
@@ -16,7 +15,7 @@ module DataAccess.ShoppingLists
         update: ShoppingList -> ShoppingList
     }
     
-    let private collection () = Database.getCollection<DbShoppingList> ()
+    let private collection = Database.getCollection<DbShoppingList> ()
         
     let private listItemToModel (dbListItem: DbListItem): ListItem = {
         foodstuffId = FoodstuffId(dbListItem.foodstuffId)
@@ -53,21 +52,21 @@ module DataAccess.ShoppingLists
     }
     
     let private add shoppingList =
-        toDb shoppingList |> collection().InsertOne |> ignore
+        toDb shoppingList |> collection.InsertOne |> ignore
         shoppingList
     
     let private get (AccountId accountId) = 
-        collection().AsQueryable()
+        collection.AsQueryable()
         |> Seq.filter (fun l -> l.accountId = accountId)
         |> Seq.head
         |> toModel
         
     let private update shoppingList =
         let dbShoppingList = toDb shoppingList
-        collection().ReplaceOne((fun i -> i.id = dbShoppingList.id), dbShoppingList) |> ignore
+        collection.ReplaceOne((fun i -> i.id = dbShoppingList.id), dbShoppingList) |> ignore
         shoppingList
     
-    let getDao () = {
+    let dao = {
         add = add
         get = get
         update = update

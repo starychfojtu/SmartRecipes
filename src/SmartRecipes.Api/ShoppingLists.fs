@@ -28,8 +28,8 @@ module Api.ShoppingLists
     open UseCases.ShoppingLists
     
     let getShoppingListActionDao () = {
-        tokens = Tokens.getDao ()
-        shoppingLists = ShoppingLists.getDao ()
+        tokens = Tokens.dao
+        shoppingLists = ShoppingLists.dao
     }
         
     // Get 

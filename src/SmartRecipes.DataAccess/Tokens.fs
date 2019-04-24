@@ -13,7 +13,7 @@ module DataAccess.Tokens
         add: AccessToken -> AccessToken
     }
     
-    let private collection () = Database.getCollection<DbAccessToken> ()
+    let private collection = Database.getCollection<DbAccessToken> ()
 
     let private toDb accessToken: DbAccessToken = {
         id = Guid.NewGuid()
@@ -29,15 +29,15 @@ module DataAccess.Tokens
     }
     
     let private add accessToken =
-        toDb accessToken |> collection().InsertOne |> ignore
+        toDb accessToken |> collection.InsertOne |> ignore
         accessToken
         
     let private get value =
-        collection().Find(fun t -> t.value = value).SortByDescending(fun t -> t.expiration :> obj).ToEnumerable()
+        collection.Find(fun t -> t.value = value).SortByDescending(fun t -> t.expiration :> obj).ToEnumerable()
         |> Seq.tryHead
         |> Option.map toModel
         
-    let getDao () = {
+    let dao = {
         get = get
         add = add
     }
