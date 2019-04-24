@@ -12,12 +12,17 @@ module Api.Users
     open Generic
     open UseCases.Users
     open Api.Errors
+    open Infrastracture
     
     // Sign up
     
     type SignUpParameters = {
-        email: string
-        password: string
+        Email: string
+        Password: string
+    }
+    
+    type SignUpResponse = {
+        Account: AccountDto
     }
     
     let getSignUpDao () = {
@@ -33,11 +38,14 @@ module Api.Users
         | AccountAlreadyExits ->  error "Account already exists."
         | InvalidParameters errors -> Seq.collect serializeCredentialsError errors |> invalidParameters
         
+    let private serializeSignUpResponse a =
+        { Account = serializeAccount a }
+        
     let private serializeSignUp = 
-       Result.map serializeAccount >> Result.mapError serializeSignUpError
+       Result.bimap serializeSignUpResponse serializeSignUpError
 
     let signUpHandler (next : HttpFunc) (ctx : HttpContext) =
-        postHandler (getSignUpDao ()) next ctx (fun p -> Users.signUp p.email p.password) serializeSignUp
+        postHandler (getSignUpDao ()) next ctx (fun p -> Users.signUp p.Email p.Password) serializeSignUp
         
     // Sign in
         
