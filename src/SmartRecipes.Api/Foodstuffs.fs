@@ -28,7 +28,11 @@ module Api.Foodstuffs
     
     [<CLIMutable>]
     type GetByIdsParameters = {
-        ids: Guid list
+        Ids: Guid list
+    }
+    
+    type GetByIdsResponse = {
+        Foodstuffs: FoodstuffDto seq
     }
     
     type GetByIdsError = 
@@ -39,11 +43,12 @@ module Api.Foodstuffs
         foodstuffs: FoodstuffDao
     }
     
-    let private getByIdsDao () = {
+    let private getByIdsDao = {
         tokens = Tokens.dao
-        foodstuffs = Foodstuffs.getDao ()
+        foodstuffs = Foodstuffs.dao
     }
     
+    // TODO: Move to UseCases
     let private authorize accessToken =
         Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
     
@@ -55,10 +60,10 @@ module Api.Foodstuffs
         
     let getByIds accessToken parameters = 
         authorize accessToken
-        >>=! (fun _ -> getFoodstuffsByIds parameters.ids)
+        >>=! (fun _ -> getFoodstuffsByIds parameters.Ids)
         
     let getByIdshandler ctx next = 
-        authorizedGetHandler (getByIdsDao ()) ctx next getByIds serializeGetByIds
+        authorizedGetHandler getByIdsDao ctx next getByIds serializeGetByIds
         
     // Search
     
@@ -76,9 +81,9 @@ module Api.Foodstuffs
         foodstuffs: FoodstuffDao
     }
     
-    let private getSearchDao (): SearchDao = {
+    let private searchDao: SearchDao = {
         tokens = Tokens.dao
-        foodstuffs = Foodstuffs.getDao ()
+        foodstuffs = Foodstuffs.dao
     }
     
     let private authorizeSearch accessToken =
@@ -103,7 +108,7 @@ module Api.Foodstuffs
         >>=! searchFoodstuffs
         
     let searchHandler ctx next = 
-        authorizedGetHandler (getSearchDao ()) ctx next search serializeSearch
+        authorizedGetHandler searchDao ctx next search serializeSearch
 
     // Create
 
@@ -132,9 +137,9 @@ module Api.Foodstuffs
         amountStep = amountStep
     }
     
-    let private getDao (): CreateFoodstuffDao = {
+    let private createFoodstuffDao: CreateFoodstuffDao = {
         tokens = Tokens.dao
-        foodstuffs = Foodstuffs.getDao ()
+        foodstuffs = Foodstuffs.dao
     }
     
     let private parseUnit = function
@@ -176,4 +181,4 @@ module Api.Foodstuffs
          >>=! createFoodstuff token
 
     let createHandler (next: HttpFunc) (ctx: HttpContext) =
-        authorizedPostHandler (getDao ()) next ctx create serializeCreate
+        authorizedPostHandler createFoodstuffDao next ctx create serializeCreate

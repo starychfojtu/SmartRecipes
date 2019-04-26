@@ -34,6 +34,7 @@ module DataAccess.Foodstuffs
         amountStep = amountToDb foodstuff.amountStep
     }
     
+    
     let internal toModel (dbFoodstuff: DbFoodstuff) = {
         id = FoodstuffId dbFoodstuff.id 
         name = mkNonEmptyString dbFoodstuff.name |> forceSucces
@@ -61,7 +62,7 @@ module DataAccess.Foodstuffs
         toDb foodstuff |> collection().InsertOne |> ignore
         foodstuff
     
-    let getDao () = {
+    let dao = {
         getByIds = getByIds
         getById = getById
         search = search

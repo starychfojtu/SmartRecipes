@@ -75,7 +75,7 @@ module DataAccess.Recipes
         toDb recipe |> collection().InsertOne |> ignore
         recipe
     
-    let getDao () = {
+    let dao = {
         getByIds = getByIds
         getById = getById
         getByAccount = getByAccount

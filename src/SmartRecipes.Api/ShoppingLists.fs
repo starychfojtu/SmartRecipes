@@ -27,7 +27,7 @@ module Api.ShoppingLists
     open UseCases
     open UseCases.ShoppingLists
     
-    let getShoppingListActionDao () = {
+    let shoppingListActionDao = {
         tokens = Tokens.dao
         shoppingLists = ShoppingLists.dao
     }
@@ -51,7 +51,7 @@ module Api.ShoppingLists
         >>=! getShoppingList
         
     let getHandler ctx next = 
-        authorizedGetHandler (getShoppingListActionDao ()) ctx next get serializeGet
+        authorizedGetHandler shoppingListActionDao ctx next get serializeGet
     
     // Add
     
@@ -97,23 +97,23 @@ module Api.ShoppingLists
 
     // Add foodstuffs
     
-    let private getAddFoodstuffDao () = (getShoppingListActionDao (), Foodstuffs.getDao().getByIds)
+    let private addFoodstuffDao = (shoppingListActionDao, Foodstuffs.dao.getByIds)
     
     let addFoodstuffs accessToken parameters =
         addItems ShoppingLists.addFoodstuffs accessToken parameters
         
     let addFoodstuffsHandler ctx next =
-        authorizedPostHandler (getAddFoodstuffDao ()) ctx next addFoodstuffs serializeAddItems
+        authorizedPostHandler addFoodstuffDao ctx next addFoodstuffs serializeAddItems
         
     // Add recipes
     
-    let getAddRecipesDao () = (getShoppingListActionDao (), Recipes.getDao().getByIds)
+    let addRecipesDao = (shoppingListActionDao, Recipes.dao.getByIds)
     
     let addRecipes accessToken parameters =
         addItems ShoppingLists.addRecipes accessToken parameters
         
     let addRecipesHandler ctx next =
-        authorizedPostHandler (getAddRecipesDao ()) ctx next addRecipes serializeAddItems
+        authorizedPostHandler addRecipesDao ctx next addRecipes serializeAddItems
         
     // Change foodstuff amount
     
@@ -133,9 +133,9 @@ module Api.ShoppingLists
         foodstuffs: FoodstuffDao
     }
     
-    let private getChangeAmountDao () = {
-        shoppingListAction = getShoppingListActionDao ()
-        foodstuffs = Foodstuffs.getDao ()
+    let private changeAmountDao = {
+        shoppingListAction = shoppingListActionDao
+        foodstuffs = Foodstuffs.dao
     }
         
     let private mkFoodstuff id =
@@ -168,7 +168,7 @@ module Api.ShoppingLists
         >>=! (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff.id newAmount)
         
     let changeAmountHandler ctx next =
-        authorizedPostHandler (getChangeAmountDao ()) ctx next changeAmount serializeChangeAmount
+        authorizedPostHandler changeAmountDao ctx next changeAmount serializeChangeAmount
         
     // Chnage person count
     
@@ -188,9 +188,9 @@ module Api.ShoppingLists
         recipes: RecipesDao
     }
     
-    let private getChangePersonCountDao () = {
-        shoppingListAction = getShoppingListActionDao ()
-        recipes = Recipes.getDao ()
+    let private changePersonCountDao = {
+        shoppingListAction = shoppingListActionDao
+        recipes = Recipes.dao
     }
         
     let private mkRecipe id =
@@ -223,7 +223,7 @@ module Api.ShoppingLists
         >>=! (fun (newPersonCount, recipe) -> changeRecipePersonCount accessToken recipe newPersonCount)
         
     let changePersonCountHandler ctx next =
-        authorizedPostHandler (getChangePersonCountDao ()) ctx next changePersonCount serializeChangePersonCount
+        authorizedPostHandler changePersonCountDao ctx next changePersonCount serializeChangePersonCount
         
     // Cook recipe
     
@@ -241,9 +241,9 @@ module Api.ShoppingLists
         recipes: RecipesDao
     }
         
-    let getCookRecipeDao () = {
-        shoppingListAction = getShoppingListActionDao ()
-        recipes = Recipes.getDao ()
+    let cookRecipeDao = {
+        shoppingListAction = shoppingListActionDao
+        recipes = Recipes.dao
     }
     
     let private getRecipe id = 
@@ -271,7 +271,7 @@ module Api.ShoppingLists
         getRecipe parameters.recipeId >>=! cookRecipe accessToken
         
     let cookHandler ctx next =
-        authorizedPostHandler (getCookRecipeDao ()) ctx next cook serializeCookRecipe
+        authorizedPostHandler cookRecipeDao ctx next cook serializeCookRecipe
         
     // Remove foodstuff
     
@@ -288,9 +288,9 @@ module Api.ShoppingLists
         foodstuffs: FoodstuffDao
     }
     
-    let private getRemoveFoodstuffDao () = {
-        shoppingListAction = getShoppingListActionDao ()
-        foodstuffs = Foodstuffs.getDao ()
+    let private removeFoodstuffDao = {
+        shoppingListAction = shoppingListActionDao
+        foodstuffs = Foodstuffs.dao
     }
     
     let private getFoodstuffId parameters = 
@@ -317,7 +317,7 @@ module Api.ShoppingLists
         getFoodstuffId parameters >>=! removeFoodstuffFromList accessToken
         
     let removeFoodstuffHandler ctx next = 
-        authorizedPostHandler (getRemoveFoodstuffDao ()) ctx next removeFoodstuff serializeRemoveFoodstuff
+        authorizedPostHandler removeFoodstuffDao ctx next removeFoodstuff serializeRemoveFoodstuff
         
     // Remove recipe
     
@@ -334,9 +334,9 @@ module Api.ShoppingLists
         recipes: RecipesDao
     }
     
-    let private getRemoveRecipeDao () = {
-        shoppingListAction = getShoppingListActionDao ()
-        recipes = Recipes.getDao ()
+    let private removeRecipeDao = {
+        shoppingListAction = shoppingListActionDao
+        recipes = Recipes.dao
     }
     
     let private getRecipeToRemove parameters = 
@@ -363,4 +363,4 @@ module Api.ShoppingLists
         getRecipeToRemove parameters >>=! removeRecipeFromList accessToken
         
     let removeRecipeHandler ctx next = 
-        authorizedPostHandler (getRemoveRecipeDao ()) ctx next removeRecipe serializeRemoveRecipe
+        authorizedPostHandler removeRecipeDao ctx next removeRecipe serializeRemoveRecipe

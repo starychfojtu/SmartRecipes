@@ -30,9 +30,9 @@ module Api.Recipes
             
     // Get my recipes
     
-    let private getMyRecipesDao (): GetMyRecipesDao = {
+    let private getMyRecipesDao: GetMyRecipesDao = {
         tokens = Tokens.dao
-        recipes = Recipes.getDao ()
+        recipes = Recipes.dao
     }
     
     let private serializeGetMyRecipes = 
@@ -42,7 +42,7 @@ module Api.Recipes
         Recipes.getMyRecipes accessToken
     
     let getMyRecipesHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedGetHandler (getMyRecipesDao ()) next ctx getMyRecipes serializeGetMyRecipes
+        authorizedGetHandler getMyRecipesDao next ctx getMyRecipes serializeGetMyRecipes
             
     // Create
     
@@ -70,9 +70,9 @@ module Api.Recipes
         | DescriptionIsProvidedButEmpty
         | BusinessError of Recipes.CreateError
         
-    let private getCreateDao () = {
-        foodstuffs = Foodstuffs.getDao ()
-        recipes = Recipes.getDao ()
+    let private createDao = {
+        foodstuffs = Foodstuffs.dao
+        recipes = Recipes.dao
         tokens = Tokens.dao
     }
         
@@ -142,4 +142,4 @@ module Api.Recipes
         >>=! createRecipe accessToken
 
     let createHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedPostHandler (getCreateDao ()) next ctx create serializeCreate
+        authorizedPostHandler createDao next ctx create serializeCreate
