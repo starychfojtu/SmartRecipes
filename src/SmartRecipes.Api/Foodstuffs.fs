@@ -1,6 +1,5 @@
 module Api.Foodstuffs
     open Api
-    open Api
     open Dto
     open Microsoft.AspNetCore.Http
     open System
@@ -15,14 +14,11 @@ module Api.Foodstuffs
     open FSharpPlus.Data.Validation
     open Infrastructure
     open Infrastructure.Reader
-    open Domain
     open Domain.Foodstuff
-    open System
-    open UseCases
     open DataAccess
     open DataAccess.Foodstuffs
-    open DataAccess.Foodstuffs
     open DataAccess.Tokens
+    open Infrastracture
     
     // Get by Ids
     
@@ -35,33 +31,17 @@ module Api.Foodstuffs
         Foodstuffs: FoodstuffDto seq
     }
     
-    type GetByIdsError = 
-        | Unauthorized
-        
-    type GetByIdsDao = {
-        tokens: TokensDao
-        foodstuffs: FoodstuffDao
-    }
-    
-    let private getByIdsDao = {
+    let private getByIdsDao: GetFoodstuffByIdsDao = {
         tokens = Tokens.dao
         foodstuffs = Foodstuffs.dao
     }
-    
-    // TODO: Move to UseCases
-    let private authorize accessToken =
-        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
-    
-    let private getFoodstuffsByIds ids = 
-        Reader(fun dao -> dao.foodstuffs.getByIds ids |> Ok)
         
-    let private serializeGetByIds<'a, 'b> = 
-        Result.map (Seq.map Dto.serializeFoodstuff) >> Result.mapError (function Unauthorized -> "Unauthorized.")
+    let private serializeGetByIds = 
+        Result.bimap (Seq.map Dto.serializeFoodstuff) (fun (e: GetByIdsError) -> match e with GetByIdsError.Unauthorized -> "Unauthorized.")
         
-    let getByIds accessToken parameters = 
-        authorize accessToken
-        >>=! (fun _ -> getFoodstuffsByIds parameters.Ids)
-        
+    let private getByIds accessToken parameters =
+        UseCases.Foodstuffs.getByIds accessToken parameters.Ids
+
     let getByIdshandler ctx next = 
         authorizedGetHandler getByIdsDao ctx next getByIds serializeGetByIds
         
@@ -73,39 +53,32 @@ module Api.Foodstuffs
     }
     
     type SearchError = 
-        | Unauthorized
+        | BusinessError of UseCases.Foodstuffs.SearchError
         | QueryIsEmpty
-        
-    type SearchDao = {
-        tokens: TokensDao
-        foodstuffs: FoodstuffDao
-    }
     
     let private searchDao: SearchDao = {
         tokens = Tokens.dao
         foodstuffs = Foodstuffs.dao
     }
     
-    let private authorizeSearch accessToken =
-        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
-        
     let private mkQuery parameters =
         mkNonEmptyString parameters.query |> toResult |> Result.mapError (fun _ -> QueryIsEmpty) |> Reader.id
-    
-    let private searchFoodstuffs query = 
-        Reader(fun dao -> dao.foodstuffs.search query |> Ok)
         
     let private serializeSearchError = function 
-        | Unauthorized -> "Unauthorized."
+        | BusinessError e ->
+            match e with
+            | SearchError.Unauthorized -> "Unauthorized."
         | QueryIsEmpty -> "Query is empty."
         
     let private serializeSearch<'a, 'b> = 
-        Result.map (Seq.map Dto.serializeFoodstuff) >> Result.mapError serializeSearchError
+        Result.bimap (Seq.map Dto.serializeFoodstuff) serializeSearchError
+        
+    let searchFoodstuffs accessToken query =
+        UseCases.Foodstuffs.search accessToken query |> Reader.map (Result.mapError BusinessError)
         
     let search accessToken parameters = 
-        authorizeSearch accessToken
-        >>=! (fun _ -> mkQuery parameters)
-        >>=! searchFoodstuffs
+        mkQuery parameters
+        >>=! searchFoodstuffs accessToken
         
     let searchHandler ctx next = 
         authorizedGetHandler searchDao ctx next search serializeSearch

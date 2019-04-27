@@ -75,6 +75,7 @@ module UseCases.Users
         
     // Authorize
 
+    // TODO: Remove error parameter, do the ToResult on call site
     let authorize error (accessTokenValue: string) = Reader(fun (dao: TokensDao) ->
         dao.get accessTokenValue
         |> Option.filter verifyAccessToken
