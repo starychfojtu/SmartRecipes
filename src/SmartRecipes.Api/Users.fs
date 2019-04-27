@@ -38,8 +38,8 @@ module Users =
     let private serializeSignUp = 
        Result.bimap serializeSignUpResponse serializeSignUpError
 
-    let signUpHandler (next : HttpFunc) (ctx : HttpContext) =
-        postHandler environment next ctx (fun p -> Users.signUp p.Email p.Password) serializeSignUp
+    let signUpHandler<'a> =
+        postHandler (fun p -> Users.signUp p.Email p.Password) serializeSignUp
         
     // Sign in
         
@@ -61,6 +61,6 @@ module Users =
     let private serializeSignIn = 
         Result.bimap serializeSignInResponse serializeSignInError
         
-    let signInHandler (next : HttpFunc) (ctx : HttpContext) =
-        postHandler environment next ctx (fun p -> Users.signIn p.Email p.Password) serializeSignIn
+    let signInHandler<'a> =
+        postHandler (fun p -> Users.signIn p.Email p.Password) serializeSignIn
         

@@ -37,8 +37,8 @@ module Foodstuffs =
     let private getByIds accessToken parameters =
         Foodstuffs.getByIds accessToken parameters.Ids
 
-    let getByIdshandler ctx next = 
-        authorizedGetHandler environment ctx next getByIds serializeGetByIds
+    let getByIdshandler<'a> = 
+        authorizedGetHandler getByIds serializeGetByIds
         
     // Search
     
@@ -70,8 +70,8 @@ module Foodstuffs =
         mkQuery parameters
         >>=! searchFoodstuffs accessToken
         
-    let searchHandler ctx next = 
-        authorizedGetHandler environment ctx next search serializeSearch
+    let searchHandler<'a> = 
+        authorizedGetHandler search serializeSearch
 
     // Create
 
@@ -138,5 +138,5 @@ module Foodstuffs =
         parseParameters parameters |> toResult |> Reader.id 
          >>=! createFoodstuff token
 
-    let createHandler (next: HttpFunc) (ctx: HttpContext) =
-        authorizedPostHandler environment next ctx create serializeCreate
+    let createHandler<'a> =
+        authorizedPostHandler create serializeCreate

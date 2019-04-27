@@ -39,25 +39,25 @@ module Generic =
             | Error e -> setStatusCode ctx 400 |> (fun _ -> json e)
         response next ctx
         
-    let getHandler env next ctx handler serialize = 
+    let getHandler handler serialize next ctx = 
         task {
-            return! bindQueryString<'parameters> ctx |> getResult env next ctx handler serialize
+            return! bindQueryString<'parameters> ctx |> getResult environment next ctx handler serialize
         }
     
-    let postHandler env next ctx handler serialize = 
+    let postHandler handler serialize next ctx = 
         task {
             let! parameters = bindModelAsync ctx 
-            return! getResult env next ctx handler serialize parameters
+            return! getResult environment next ctx handler serialize parameters
         }
             
-    let authorizedGetHandler env next ctx handler serialize = 
+    let authorizedGetHandler handler serialize next ctx = 
         task {
             let accessToken = match getHeader ctx "authorization" with Ok t -> t | Error _ -> ""
-            return! getHandler env next ctx (handler accessToken) serialize
+            return! getHandler (handler accessToken) serialize next ctx
         }
     
-    let authorizedPostHandler env next ctx handler serialize = 
+    let authorizedPostHandler handler serialize next ctx = 
         task {
             let accessToken = match getHeader ctx "authorization" with Ok t -> t | Error _ -> ""
-            return! postHandler env next ctx (handler accessToken) serialize
+            return! postHandler (handler accessToken) serialize next ctx
         }

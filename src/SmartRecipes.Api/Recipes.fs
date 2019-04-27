@@ -27,8 +27,8 @@ module Recipes =
     let getMyRecipes accessToken parameters = 
         Recipes.getMyRecipes accessToken
     
-    let getMyRecipesHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedGetHandler environment next ctx getMyRecipes serializeGetMyRecipes
+    let getMyRecipesHandler<'a> =
+        authorizedGetHandler getMyRecipes serializeGetMyRecipes
             
     // Create
     
@@ -121,5 +121,5 @@ module Recipes =
         mkParameters parameters |> Validation.toResult |> Reader.id
         >>=! createRecipe accessToken
 
-    let createHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedPostHandler environment next ctx create serializeCreate
+    let createHandler<'a> =
+        authorizedPostHandler create serializeCreate

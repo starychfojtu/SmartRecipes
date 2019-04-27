@@ -33,8 +33,8 @@ module ShoppingLists =
         Users.authorize Unauthorized accessToken
         >>=! getShoppingList
         
-    let getHandler ctx next = 
-        authorizedGetHandler environment ctx next get serializeGet
+    let getHandler<'a> = 
+        authorizedGetHandler get serializeGet
     
     // Add
     
@@ -81,16 +81,16 @@ module ShoppingLists =
     let addFoodstuffs accessToken parameters =
         addItems ShoppingLists.addFoodstuffs accessToken parameters (fun env -> env.IO.Foodstuffs.getByIds)
         
-    let addFoodstuffsHandler ctx next =
-        authorizedPostHandler environment ctx next addFoodstuffs serializeAddItems
+    let addFoodstuffsHandler<'a> =
+        authorizedPostHandler addFoodstuffs serializeAddItems
         
     // Add recipes
     
     let addRecipes accessToken parameters =
         addItems ShoppingLists.addRecipes accessToken parameters (fun env -> env.IO.Recipes.getByIds)
         
-    let addRecipesHandler ctx next =
-        authorizedPostHandler environment ctx next addRecipes serializeAddItems
+    let addRecipesHandler<'a> =
+        authorizedPostHandler addRecipes serializeAddItems
         
     // Change foodstuff amount
     
@@ -133,8 +133,8 @@ module ShoppingLists =
         >>=! mkAmount parameters.amount
         >>=! (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff.id newAmount)
         
-    let changeAmountHandler ctx next =
-        authorizedPostHandler environment ctx next changeAmount serializeChangeAmount
+    let changeAmountHandler<'a> =
+        authorizedPostHandler changeAmount serializeChangeAmount
         
     // Chnage person count
     
@@ -177,8 +177,8 @@ module ShoppingLists =
         >>=! mkPersonCount parameters.personCount
         >>=! (fun (newPersonCount, recipe) -> changeRecipePersonCount accessToken recipe newPersonCount)
         
-    let changePersonCountHandler ctx next =
-        authorizedPostHandler environment ctx next changePersonCount serializeChangePersonCount
+    let changePersonCountHandler<'a> =
+        authorizedPostHandler changePersonCount serializeChangePersonCount
         
     // Cook recipe
     
@@ -214,8 +214,8 @@ module ShoppingLists =
     let cook accessToken parameters = 
         getRecipe parameters.recipeId >>=! cookRecipe accessToken
         
-    let cookHandler ctx next =
-        authorizedPostHandler environment ctx next cook serializeCookRecipe
+    let cookHandler<'a> =
+        authorizedPostHandler cook serializeCookRecipe
         
     // Remove foodstuff
     
@@ -249,8 +249,8 @@ module ShoppingLists =
     let removeFoodstuff accessToken parameters = 
         getFoodstuffId parameters >>=! removeFoodstuffFromList accessToken
         
-    let removeFoodstuffHandler ctx next = 
-        authorizedPostHandler environment ctx next removeFoodstuff serializeRemoveFoodstuff
+    let removeFoodstuffHandler<'a> = 
+        authorizedPostHandler removeFoodstuff serializeRemoveFoodstuff
         
     // Remove recipe
     
@@ -284,5 +284,5 @@ module ShoppingLists =
     let removeRecipe accessToken parameters = 
         getRecipeToRemove parameters >>=! removeRecipeFromList accessToken
         
-    let removeRecipeHandler ctx next = 
-        authorizedPostHandler environment ctx next removeRecipe serializeRemoveRecipe
+    let removeRecipeHandler<'a> = 
+        authorizedPostHandler removeRecipe serializeRemoveRecipe
