@@ -4,30 +4,29 @@ module ShoppingLists =
     open SmartRecipes.Domain
     open SmartRecipes.Domain.ShoppingList
     open FSharpPlus.Data
-    open Infrastructure
-    open Infrastructure.Reader
     open Environment
+    open Infrastructure
     
     type AddItemError =
         | Unauthorized
         | DomainError of ShoppingList.AddItemError
         
     let private getShoppinglist accountId =
-        Reader(fun env -> env.IO.ShoppingLists.get accountId |> Ok)
+        ReaderT(fun env -> env.IO.ShoppingLists.get accountId |> Ok)
         
     let private updateShoppingList list = 
-        Reader(fun env -> env.IO.ShoppingLists.update list |> Ok)
+        ReaderT(fun env -> env.IO.ShoppingLists.update list |> Ok)
     
     let private shoppingListAction accessToken authorizeError action =
         Users.authorize authorizeError accessToken
-        >>=! getShoppinglist
-        >>=! action
-        >>=! updateShoppingList
+        >>= getShoppinglist
+        >>= action
+        >>= updateShoppingList
         
     // Add foodstuff
         
     let private addFoodstuffsToList foodstuffs list = 
-        ShoppingList.addFoodstuffs list foodstuffs |> Result.mapError DomainError |> Reader.id
+        ShoppingList.addFoodstuffs list foodstuffs |> Result.mapError DomainError |> ReaderT.id
         
     let addFoodstuffs accesToken foodstuffs = 
         shoppingListAction accesToken Unauthorized (addFoodstuffsToList foodstuffs)
@@ -35,7 +34,7 @@ module ShoppingLists =
     // Add recipe
         
     let private addRecipesToList recipes list = 
-        ShoppingList.addRecipes list recipes |> Result.mapError DomainError |> Reader.id
+        ShoppingList.addRecipes list recipes |> Result.mapError DomainError |> ReaderT.id
         
     let addRecipes accessToken recipe = 
         shoppingListAction accessToken Unauthorized (addRecipesToList recipe)
@@ -47,7 +46,7 @@ module ShoppingLists =
         | DomainError of ShoppingList.ChangeAmountError
     
     let private changeFoodstuffAmount foodstuff newAmount list =
-        ShoppingList.changeAmount foodstuff newAmount list |> Result.mapError DomainError |> Reader.id
+        ShoppingList.changeAmount foodstuff newAmount list |> Result.mapError DomainError |> ReaderT.id
         
     let changeAmount accessToken foodstuff newAmount =
         shoppingListAction accessToken Unauthorized (changeFoodstuffAmount foodstuff newAmount)
@@ -55,7 +54,7 @@ module ShoppingLists =
     // Change person count
         
     let private changeRecipePersonCount recipe newPersonCount list =
-        ShoppingList.changePersonCount recipe newPersonCount list |> Result.mapError DomainError |> Reader.id
+        ShoppingList.changePersonCount recipe newPersonCount list |> Result.mapError DomainError |> ReaderT.id
         
     let changePersonCount accessToken recipe newPersonCount =
         shoppingListAction accessToken Unauthorized (changeRecipePersonCount recipe newPersonCount)
@@ -67,7 +66,7 @@ module ShoppingLists =
         | DomainError of ShoppingList.CookRecipeError
         
     let private cookRecipe recipe list =
-        ShoppingList.cook recipe list |> Result.mapError DomainError |> Reader.id
+        ShoppingList.cook recipe list |> Result.mapError DomainError |> ReaderT.id
     
     let cook accessToken recipe = 
         shoppingListAction accessToken Unauthorized (cookRecipe recipe)
@@ -79,7 +78,7 @@ module ShoppingLists =
         | DomainError of ShoppingList.RemoveItemError
     
     let private removeFoodstuffItem foodstuffId list =
-        removeFoodstuff list foodstuffId |> Result.mapError DomainError |> Reader.id
+        removeFoodstuff list foodstuffId |> Result.mapError DomainError |> ReaderT.id
     
     let removeFoodstuff accessToken foodstuffId = 
         shoppingListAction accessToken Unauthorized (removeFoodstuffItem foodstuffId)
@@ -87,7 +86,7 @@ module ShoppingLists =
     // Remove recipe
     
     let private removeRecipeItem recipe list =
-        removeRecipe list recipe |> Result.mapError DomainError |> Reader.id
+        removeRecipe list recipe |> Result.mapError DomainError |> ReaderT.id
     
     let removeRecipe accessToken foodstuff = 
         shoppingListAction accessToken Unauthorized (removeRecipeItem foodstuff)

@@ -126,4 +126,5 @@ module Tests.Fake
             Foodstuffs = foodstuffsDao withFoodstuff
             ShoppingLists = shoppingListDao items
         }
+        NowUtc = DateTime(2019, 5, 5)
     }

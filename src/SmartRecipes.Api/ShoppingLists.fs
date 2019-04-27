@@ -9,7 +9,6 @@ module ShoppingLists =
     open FSharpPlus
     open FSharpPlus.Data
     open Infrastructure
-    open Infrastructure.Reader
     open Infrastructure.Validation
     open System
     open Generic
@@ -24,14 +23,14 @@ module ShoppingLists =
         | Unauthorized
         
     let private getShoppingList accountId =
-        Reader(fun env -> env.IO.ShoppingLists.get accountId |> Ok)
+        ReaderT(fun env -> env.IO.ShoppingLists.get accountId |> Ok)
         
     let private serializeGet = 
         Result.map serializeShoppingList >> Result.mapError (function Unauthorized -> "Unaturhorized.")
     
     let get accessToken _ =
         Users.authorize Unauthorized accessToken
-        >>=! getShoppingList
+        >>= getShoppingList
         
     let getHandler<'a> = 
         authorizedGetHandler get serializeGet
@@ -47,7 +46,7 @@ module ShoppingLists =
         | InvalidIds
         | BusinessError of AddItemError
         
-    let getItems parameters getByIds = Reader(fun env ->
+    let getItems parameters getByIds = ReaderT(fun env ->
         let itemIds = parameters.itemIds
         let items = (getByIds env) itemIds
         let foundAll = Seq.length items = Seq.length itemIds
@@ -58,7 +57,7 @@ module ShoppingLists =
         
     let private addItemsToShoppingList accesstToken action items = 
         action accesstToken items
-        |> Reader.map (Result.mapError (fun e -> BusinessError e))
+        |> ReaderT.mapError BusinessError
         
     let private serializeAddItemsError = function
         | InvalidIds -> "Invalid ids."
@@ -73,7 +72,8 @@ module ShoppingLists =
         Result.map serializeShoppingList >> Result.mapError serializeAddItemsError
 
     let addItems action accessToken parameters getByIds = 
-        getItems parameters getByIds >>=! addItemsToShoppingList accessToken action  
+        getItems parameters getByIds
+        >>= addItemsToShoppingList accessToken action  
     
 
     // Add foodstuffs
@@ -106,14 +106,18 @@ module ShoppingLists =
         | BusinessError of ShoppingLists.ChangeAmountError
         
     let private mkFoodstuff id =
-        Reader(fun env -> env.IO.Foodstuffs.getById id |> Option.toResult [FoodstuffNotFound])
+        ReaderT(fun env -> env.IO.Foodstuffs.getById id |> Option.toResult [FoodstuffNotFound])
         
     let private mkAmount amount foodstuff = 
-        NonNegativeFloat.create amount |> mapFailure (fun _ -> [AmountMustBePositive]) |> map (fun a -> (a, foodstuff)) |> toResult |> Reader.id
+        NonNegativeFloat.create amount
+        |> mapFailure (fun _ -> [AmountMustBePositive])
+        |> map (fun a -> (a, foodstuff))
+        |> toResult
+        |> ReaderT.id
         
     let private changeFoodtuffAmount accessToken foodstuff amount =
         changeAmount accessToken foodstuff amount
-        |> (Reader.map (Result.mapError (fun e -> [BusinessError(e)])))
+        |> ReaderT.mapError (fun e -> [BusinessError(e)])
         
     let private serializeChangeAmountError = function
         | FoodstuffNotFound -> "Foodstuff not found."
@@ -130,8 +134,8 @@ module ShoppingLists =
         
     let changeAmount accessToken parameters =
         mkFoodstuff parameters.foodstuffId
-        >>=! mkAmount parameters.amount
-        >>=! (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff.id newAmount)
+        >>= mkAmount parameters.amount
+        >>= (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff.id newAmount)
         
     let changeAmountHandler<'a> =
         authorizedPostHandler changeAmount serializeChangeAmount
@@ -150,14 +154,17 @@ module ShoppingLists =
         | BusinessError of ShoppingLists.ChangeAmountError
         
     let private mkRecipe id =
-        Reader(fun env -> env.IO.Recipes.getById id |> Option.toResult [RecipeNotFound])
+        ReaderT(fun env -> env.IO.Recipes.getById id |> Option.toResult [RecipeNotFound])
         
-    let private mkPersonCount personCount recipe = 
-        NaturalNumber.create personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]) |> map (fun c -> (c, recipe)) |> toResult |> Reader.id
+    let private mkPersonCount personCount = 
+        NaturalNumber.create personCount
+        |> mapFailure (fun _ -> [PersonCountMustBePositive])
+        |> toResult
+        |> ReaderT.id
         
     let private changeRecipePersonCount accessToken recipe amount =
         changePersonCount accessToken recipe amount
-        |> (Reader.map (Result.mapError (fun e -> [BusinessError(e)])))
+        |> ReaderT.mapError (fun e -> [BusinessError(e)])
         
     let private serializeChangePersonCountError = function
         | RecipeNotFound -> "Recipe not found."
@@ -172,11 +179,12 @@ module ShoppingLists =
     let private serializeChangePersonCount = 
         Result.map serializeShoppingList >> Result.mapError (Seq.map serializeChangePersonCountError)
         
-    let changePersonCount accessToken parameters =
-        mkRecipe parameters.recipeId
-        >>=! mkPersonCount parameters.personCount
-        >>=! (fun (newPersonCount, recipe) -> changeRecipePersonCount accessToken recipe newPersonCount)
-        
+    let changePersonCount accessToken parameters = monad {
+        let! recipe = mkRecipe parameters.recipeId
+        let! personCount = mkPersonCount parameters.personCount
+        return! changeRecipePersonCount accessToken recipe personCount
+    }
+    
     let changePersonCountHandler<'a> =
         authorizedPostHandler changePersonCount serializeChangePersonCount
         
@@ -192,11 +200,11 @@ module ShoppingLists =
         | BusinessError of ShoppingLists.CookRecipeError
         
     let private getRecipe id = 
-        Reader(fun env -> env.IO.Recipes.getById id |> Option.toResult RecipeNotFound)
+        ReaderT(fun env -> env.IO.Recipes.getById id |> Option.toResult RecipeNotFound)
         
     let private cookRecipe accessToken recipe =
         ShoppingLists.cook accessToken recipe
-        |> Reader.map (Result.mapError (fun e -> BusinessError(e)))
+        |> ReaderT.mapError BusinessError
         
     let private serializeCookRecipeError = function 
         | RecipeNotFound -> "Recipe not found."
@@ -212,7 +220,8 @@ module ShoppingLists =
         Result.map serializeShoppingList >> Result.mapError serializeCookRecipeError
         
     let cook accessToken parameters = 
-        getRecipe parameters.recipeId >>=! cookRecipe accessToken
+        getRecipe parameters.recipeId
+        >>= cookRecipe accessToken
         
     let cookHandler<'a> =
         authorizedPostHandler cook serializeCookRecipe
@@ -228,11 +237,11 @@ module ShoppingLists =
         | BusinessError of ShoppingLists.RemoveItemError
     
     let private getFoodstuffId parameters = 
-        Reader(fun env -> env.IO.Foodstuffs.getById parameters.foodstuffId |> Option.map (fun f -> f.id) |> Option.toResult FoodstuffNotFound )
+        ReaderT(fun env -> env.IO.Foodstuffs.getById parameters.foodstuffId |> Option.map (fun f -> f.id) |> Option.toResult FoodstuffNotFound )
     
     let private removeFoodstuffFromList accessToken foodstuffId = 
         ShoppingLists.removeFoodstuff accessToken foodstuffId
-        |> Reader.map (Result.mapError BusinessError)
+        |> ReaderT.mapError BusinessError
         
     let private serializeRemoveFoodstuffError = function 
         | FoodstuffNotFound -> "Foodstuff not found."
@@ -247,7 +256,8 @@ module ShoppingLists =
         Result.map serializeShoppingList >> Result.mapError serializeRemoveFoodstuffError
     
     let removeFoodstuff accessToken parameters = 
-        getFoodstuffId parameters >>=! removeFoodstuffFromList accessToken
+        getFoodstuffId parameters
+        >>= removeFoodstuffFromList accessToken
         
     let removeFoodstuffHandler<'a> = 
         authorizedPostHandler removeFoodstuff serializeRemoveFoodstuff
@@ -263,11 +273,11 @@ module ShoppingLists =
         | BusinessError of ShoppingLists.RemoveItemError
     
     let private getRecipeToRemove parameters = 
-        Reader(fun env -> env.IO.Recipes.getById parameters.recipeId |> Option.toResult RecipeNotFound )
+        ReaderT(fun env -> env.IO.Recipes.getById parameters.recipeId |> Option.toResult RecipeNotFound)
     
     let private removeRecipeFromList accessToken recipe = 
         ShoppingLists.removeRecipe accessToken recipe
-        |> Reader.map (Result.mapError BusinessError)
+        |> ReaderT.mapError BusinessError
         
     let private serializeRemoveRecipeError = function 
         | RecipeNotFound -> "Recipe not found."
@@ -282,7 +292,8 @@ module ShoppingLists =
         Result.map serializeShoppingList >> Result.mapError serializeRemoveRecipeError
     
     let removeRecipe accessToken parameters = 
-        getRecipeToRemove parameters >>=! removeRecipeFromList accessToken
+        getRecipeToRemove parameters
+        >>= removeRecipeFromList accessToken
         
     let removeRecipeHandler<'a> = 
         authorizedPostHandler removeRecipe serializeRemoveRecipe

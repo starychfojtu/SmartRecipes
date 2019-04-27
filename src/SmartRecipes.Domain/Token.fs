@@ -26,11 +26,11 @@ module Token =
         |> String.replace "-" ""
         |> String.toLower
     
-    let mkAccessToken accountId = 
+    let mkAccessToken (nowUtc: DateTime) accountId = 
         let token = generateRandomToken ()
         let (AccountId s) = accountId
         let value = token + s.ToString ()
-        let expirationUtc = DateTime.UtcNow.Add expirationTime
+        let expirationUtc = nowUtc.Add expirationTime
         let accessToken = { 
             accountId = accountId
             value = Token value
@@ -38,21 +38,16 @@ module Token =
         }
         accessToken
         
-    let isFresh accessToken nowUtc = 
-        nowUtc < accessToken.expirationUtc
+    let isFresh dateTimeUtc accessToken  = 
+        dateTimeUtc < accessToken.expirationUtc
         
     // Sign in
         
     type SignInError = 
         | InvalidCredentials
             
-    let authenticate account password =
+    let authenticate nowUtc account password =
         if Hashing.verify account.credentials.password.value password
-            then mkAccessToken account.id |> Ok
+            then mkAccessToken nowUtc account.id |> Ok
             else Error InvalidCredentials
-            
-    // Verify access token
-        
-    let verify accessToken = 
-        isFresh accessToken DateTime.UtcNow
         

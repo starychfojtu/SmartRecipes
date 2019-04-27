@@ -1,6 +1,7 @@
 namespace SmartRecipes.Api
 
 module Generic =
+    open System
     open Giraffe
     open Infrastructure
     open Microsoft.AspNetCore.Http
@@ -9,7 +10,7 @@ module Generic =
     open SmartRecipes.UseCases.Environment
     open SmartRecipes.DataAccess
     
-    let environment = {
+    let getEnvironment () = {
         IO = {
             Tokens = Tokens.dao
             Users = Users.dao
@@ -17,6 +18,7 @@ module Generic =
             ShoppingLists = ShoppingLists.dao
             Foodstuffs = Foodstuffs.dao
         }
+        NowUtc = DateTime.UtcNow
     }
     
     let private setStatusCode (ctx: HttpContext) code =
@@ -32,7 +34,7 @@ module Generic =
         ctx.GetRequestHeader(name)
         
     let private getResult env next ctx handler serialize parameters =
-        let result = handler parameters |> Reader.execute env |> serialize
+        let result = handler parameters |> ReaderT.execute env |> serialize
         let response =
             match result with 
             | Ok s -> setStatusCode ctx 200 |> (fun _ -> json s) 
@@ -41,13 +43,13 @@ module Generic =
         
     let getHandler handler serialize next ctx = 
         task {
-            return! bindQueryString<'parameters> ctx |> getResult environment next ctx handler serialize
+            return! bindQueryString<'parameters> ctx |> getResult (getEnvironment ()) next ctx handler serialize
         }
     
     let postHandler handler serialize next ctx = 
         task {
             let! parameters = bindModelAsync ctx 
-            return! getResult environment next ctx handler serialize parameters
+            return! getResult (getEnvironment ()) next ctx handler serialize parameters
         }
             
     let authorizedGetHandler handler serialize next ctx = 

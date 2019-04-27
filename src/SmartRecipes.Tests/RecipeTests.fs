@@ -36,13 +36,13 @@ module Tests.Recipes
     [<Fact>]
     let ``Can create recipe`` () =
         Api.Recipes.create Fake.token.value apiParameters
-        |> Reader.execute (getCreateDao ())
+        |> ReaderT.execute (getCreateDao ())
         |> Tests.Assert.IsOk
         
     [<Fact>]
     let ``Cannot add foodstuff with incorrect parameters`` () =
         Api.Recipes.create Fake.token.value apiIncorrectParameters
-        |> Reader.execute (getCreateDao ())
+        |> ReaderT.execute (getCreateDao ())
         |> Assert.IsErrorAnd (fun e -> 
             Assert.True (Seq.contains Api.Recipes.CreateError.NameCannotBeEmpty e)
             Assert.True (Seq.contains Api.Recipes.CreateError.DescriptionIsProvidedButEmpty e)

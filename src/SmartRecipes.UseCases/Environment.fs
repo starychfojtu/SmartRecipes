@@ -1,6 +1,7 @@
 namespace SmartRecipes.UseCases
 
 module Environment =
+    open System
     open SmartRecipes.DataAccess.Tokens
     open SmartRecipes.DataAccess.Users
     open SmartRecipes.DataAccess.Foodstuffs
@@ -17,5 +18,6 @@ module Environment =
     
     type Environment = {
         IO: IOEnvironment
+        NowUtc: DateTime
     }
 

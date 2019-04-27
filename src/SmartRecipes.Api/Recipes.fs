@@ -7,9 +7,7 @@ module Recipes =
     open SmartRecipes.Domain.NonEmptyString
     open SmartRecipes.DataAccess
     open System
-    open Giraffe
     open Infrastructure
-    open Microsoft.AspNetCore.Http
     open SmartRecipes.UseCases
     open FSharpPlus.Data
     open SmartRecipes.UseCases.Recipes
@@ -17,7 +15,6 @@ module Recipes =
     open Uri
     open FSharpPlus
     open Infrastructure.NonEmptyList
-    open Infrastructure.Reader
             
     // Get my recipes
     
@@ -96,7 +93,7 @@ module Recipes =
         <*> (mkIngredientParameters parameters.ingredients)
         
     let private createRecipe accessToken = 
-        Recipes.create accessToken >> (Reader.map (Result.mapError (fun e -> [BusinessError e])))
+        Recipes.create accessToken >> (ReaderT.mapError (fun e -> [BusinessError e]))
         
     let private serializeCreateIngredientError = function
         | DuplicateFoodstuffIngredient -> "Multiple ingredients with common foodstuff found."
@@ -118,8 +115,8 @@ module Recipes =
         Result.map serializeRecipe >> Result.mapError (Seq.collect serializeCreateError)
 
     let create accessToken parameters = 
-        mkParameters parameters |> Validation.toResult |> Reader.id
-        >>=! createRecipe accessToken
+        mkParameters parameters |> Validation.toResult |> ReaderT.id
+        >>= createRecipe accessToken
 
     let createHandler<'a> =
         authorizedPostHandler create serializeCreate

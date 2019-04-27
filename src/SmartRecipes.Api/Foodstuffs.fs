@@ -2,19 +2,16 @@ namespace SmartRecipes.Api
 
 module Foodstuffs =
     open Dto
-    open Microsoft.AspNetCore.Http
     open System
-    open Giraffe
     open Generic
     open SmartRecipes.Domain
     open SmartRecipes.Domain.NonEmptyString
     open FSharpPlus
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
-    open Infrastructure
-    open Infrastructure.Reader
     open SmartRecipes.Domain.Foodstuff
     open Infrastracture
+    open Infrastructure
     open SmartRecipes.DataAccess
     open SmartRecipes.UseCases
     open SmartRecipes.UseCases.Foodstuffs
@@ -52,7 +49,7 @@ module Foodstuffs =
         | QueryIsEmpty
     
     let private mkQuery parameters =
-        mkNonEmptyString parameters.query |> toResult |> Result.mapError (fun _ -> QueryIsEmpty) |> Reader.id
+        mkNonEmptyString parameters.query |> toResult |> Result.mapError (fun _ -> QueryIsEmpty) |> ReaderT.id
         
     let private serializeSearchError = function 
         | BusinessError e ->
@@ -64,11 +61,11 @@ module Foodstuffs =
         Result.bimap (Seq.map Dto.serializeFoodstuff) serializeSearchError
         
     let searchFoodstuffs accessToken query =
-        Foodstuffs.search accessToken query |> Reader.map (Result.mapError BusinessError)
+        Foodstuffs.search accessToken query |> ReaderT.mapError BusinessError
         
     let search accessToken parameters = 
         mkQuery parameters
-        >>=! searchFoodstuffs accessToken
+        >>= searchFoodstuffs accessToken
         
     let searchHandler<'a> = 
         authorizedGetHandler search serializeSearch
@@ -120,7 +117,7 @@ module Foodstuffs =
         <*> mkAmount parameters.amountStep
 
     let private createFoodstuff token parameters =
-        Foodstuffs.create token parameters |> Reader.map (Result.mapError (fun e -> [BusinessError(e)]))
+        Foodstuffs.create token parameters |> ReaderT.mapError (fun e -> [BusinessError(e)])
         
     let private serializeCreateError = function
         | NameCannotBeEmpty -> "Name cannot be empty."
@@ -131,12 +128,12 @@ module Foodstuffs =
             | NotAuthorized -> "Unauthorized."
             | FoodstuffAlreadyExists -> "Foodstuff already exists."
         
-    let private serializeCreate =
+    let private serializeCreate<'a> =
         Result.map serializeFoodstuff >> Result.mapError (Seq.map serializeCreateError)
 
     let create token parameters =
-        parseParameters parameters |> toResult |> Reader.id 
-         >>=! createFoodstuff token
+        parseParameters parameters |> toResult |> ReaderT.id 
+         >>= createFoodstuff token
 
     let createHandler<'a> =
         authorizedPostHandler create serializeCreate

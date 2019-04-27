@@ -20,13 +20,13 @@ module Tests.Foodstuffs
     [<Fact>]
     let ``Can add foodstuff with minimal parameters`` () =
         Foodstuffs.create Fake.token.value parameters
-        |> Reader.execute (getFakeCreateDao false)
+        |> ReaderT.execute (getFakeCreateDao false)
         |> Tests.Assert.IsOk
         
     [<Fact>]
     let ``Cannot add foodstuff if already exists`` () =
         Foodstuffs.create Fake.token.value parameters
-        |> Reader.execute (getFakeCreateDao true)
+        |> ReaderT.execute (getFakeCreateDao true)
         |> Tests.Assert.IsError
         
         
@@ -59,13 +59,13 @@ module Tests.Foodstuffs
     [<Fact>]
     let ``Can add foodstuff`` () =
         Api.Foodstuffs.create Fake.token.value apiParameters
-        |> Reader.execute (getFakeCreateDao false)
+        |> ReaderT.execute (getFakeCreateDao false)
         |> Tests.Assert.IsOk
         
     [<Fact>]
     let ``Cannot add foodstuff with incorrect parameters`` () =
         Api.Foodstuffs.create Fake.token.value apiIncorrectParameters
-        |> Reader.execute (getFakeCreateDao false)
+        |> ReaderT.execute (getFakeCreateDao false)
         |> Assert.IsErrorAnd (fun e -> 
             Assert.True (Seq.contains Api.Foodstuffs.CreateError.NameCannotBeEmpty e)
             Assert.True (Seq.contains Api.Foodstuffs.CreateError.UnknownAmountUnit e)

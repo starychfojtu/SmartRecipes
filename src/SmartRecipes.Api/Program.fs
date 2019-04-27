@@ -1,19 +1,16 @@
 namespace SmartRecipes.Api
 
 module App =
-    open System.Text
     open Giraffe
     open System
     open System.IO
     open Microsoft.AspNetCore
     open Microsoft.AspNetCore.Builder
-    open Microsoft.AspNetCore.Cors.Infrastructure
     open Microsoft.AspNetCore.Hosting
     open Microsoft.Extensions.Logging
     open Microsoft.Extensions.DependencyInjection
-    open Microsoft.AspNetCore.Http
-    open Microsoft.AspNetCore.HttpOverrides
     open MongoDB.Driver
+    open SmartRecipes
     open SmartRecipes.DataAccess
     
     let webApp =

@@ -6,9 +6,7 @@ module Recipes =
     open FSharpPlus.Data
     open Infrastructure
     open FSharpPlus
-    open Infrastructure.Reader
     open SmartRecipes.DataAccess.Recipes
-    open SmartRecipes.DataAccess.Tokens
     open SmartRecipes.Domain
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.NonEmptyString
@@ -16,6 +14,7 @@ module Recipes =
     open SmartRecipes.Domain.NonNegativeFloat
     open SmartRecipes.Domain.Recipe
     open Environment
+    open FSharpPlus
                 
     // Get all by account
     
@@ -23,11 +22,11 @@ module Recipes =
         | Unauthorized
         
     let private getRecipes accountId = 
-        Reader(fun env -> env.IO.Recipes.getByAccount accountId |> Ok)
+        ReaderT(fun env -> env.IO.Recipes.getByAccount accountId |> Ok)
         
     let getMyRecipes accessToken =
         Users.authorize Unauthorized accessToken
-        >>=! getRecipes
+        >>= getRecipes
         
     // Create
     
@@ -53,7 +52,7 @@ module Recipes =
     }
 
     let private getFoodstuff parameters =
-        Reader(fun env -> Seq.map (fun i -> i.foodstuffId) parameters |> env.IO.Foodstuffs.getByIds )
+        Reader(fun env -> Seq.map (fun i -> i.foodstuffId) parameters |> env.IO.Foodstuffs.getByIds)
 
     let mkFoodstuffId guid (foodstuffMap: Map<_, Foodstuff> ) = 
         match Map.tryFind guid foodstuffMap with
@@ -71,36 +70,33 @@ module Recipes =
             then Success ingredients 
             else Failure [DuplicateFoodstuffIngredient]
             
-    let private mkIngredients parameters foodstuffMap =
+    let private mkIngredients parameters foodstuffs =
+        let foodstuffMap = Seq.map (fun (f: Foodstuff) -> (f.id.value, f)) foodstuffs |> Map.ofSeq
         NonEmptyList.map (mkIngredient foodstuffMap) parameters 
         |> Validation.traverseNonEmptyList
         |> Validation.bind checkIngredientsNotDuplicate
         |> Validation.mapFailure InvalidIngredients
         |> Validation.toResult
+        |> ReaderT.id
             
     let private createIngredients parameters =
-        let toMap = Seq.map (fun (f: Foodstuff) -> (f.id.value, f)) >> Map.ofSeq
         getFoodstuff parameters
-        |> Reader.map toMap
-        |> Reader.map (mkIngredients parameters)
+        |> ReaderT.hoist
+        |> ReaderT.bind (mkIngredients parameters)
 
     let private createRecipe parameters ingredients accountId = 
         Recipe.createRecipe parameters.name accountId parameters.personCount parameters.imageUrl parameters.description ingredients
-        |> Ok 
-        |> Reader.id
 
     let private addToDatabase recipe = 
-        Reader(fun env -> env.IO.Recipes.add recipe |> Ok)
+        ReaderT(fun env -> env.IO.Recipes.add recipe |> Ok)
         
-    let private createNewRecipe accessToken parameters =
-        Users.authorize Unauthorized accessToken
-        >>=! (fun a -> createIngredients parameters.ingredients |> Reader.map (Result.map (fun i -> (i, a)))) 
-        >>=! (fun (ingredients, accountId) -> createRecipe parameters ingredients accountId)
-
-    let create accessToken parameters =
-        createNewRecipe accessToken parameters
-        >>=! addToDatabase
-        
+    let create accessToken parameters = monad {
+        let! accountId = Users.authorize Unauthorized accessToken
+        let! ingredients = createIngredients parameters.ingredients
+        let recipe = createRecipe parameters ingredients accountId
+        return! addToDatabase recipe
+    }
+    
     // Update
     
     type UpdateError = 
@@ -108,9 +104,8 @@ module Recipes =
         | InvalidParameters of CreateError
     
     let update accessToken parameters =
-        // verify recipe exists
-        createNewRecipe accessToken parameters
-        // replace in database
+        // TODO
+        ()
     
     // Delete
     
