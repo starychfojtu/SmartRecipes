@@ -1,4 +1,6 @@
-module Api.Errors
+namespace SmartRecipes.Api
+
+module Errors =
 
     type ParameterError = {
         message: string

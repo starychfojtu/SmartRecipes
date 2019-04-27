@@ -1,16 +1,13 @@
-module Domain.Recipe
-    open System.Xml.Linq
-    open System
+namespace SmartRecipes.Domain
+
+module Recipe =
     open Account
-    open FSharpPlus.Data
-    open FSharpPlus
-    open FSharpPlus.Data
+    open System
     open FSharpPlus.Data
     open Foodstuff
-    open Domain.NaturalNumber
-    open Domain.NonEmptyString
-    open Domain.NonNegativeFloat
-    open System
+    open NaturalNumber
+    open NonEmptyString
+    open NonNegativeFloat
     
     type Ingredient = {
         foodstuffId: FoodstuffId

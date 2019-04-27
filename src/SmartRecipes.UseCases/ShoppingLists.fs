@@ -1,36 +1,25 @@
-module UseCases.ShoppingLists
-    open DataAccess.Recipes
-    open DataAccess.ShoppingLists
-    open DataAccess.Tokens
-    open DataAccess.Users
-    open Domain
-    open Domain
-    open Domain.ShoppingList
-    open Domain.ShoppingList
+namespace SmartRecipes.UseCases
+
+module ShoppingLists =
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.ShoppingList
     open FSharpPlus.Data
     open Infrastructure
     open Infrastructure.Reader
+    open Environment
     
     type AddItemError =
         | Unauthorized
         | DomainError of ShoppingList.AddItemError
         
-    type ShoppingListActionDao = {
-        tokens: TokensDao
-        shoppingLists: ShoppingsListsDao
-    }
-        
-    let private authorize accessToken authorizeError =
-        Users.authorize authorizeError accessToken |> mapEnviroment (fun dao -> dao.tokens)
-        
     let private getShoppinglist accountId =
-        Reader(fun dao -> dao.shoppingLists.get accountId |> Ok)
+        Reader(fun env -> env.IO.ShoppingLists.get accountId |> Ok)
         
     let private updateShoppingList list = 
-        Reader(fun dao -> dao.shoppingLists.update list |> Ok)
+        Reader(fun env -> env.IO.ShoppingLists.update list |> Ok)
     
     let private shoppingListAction accessToken authorizeError action =
-        authorize accessToken authorizeError
+        Users.authorize authorizeError accessToken
         >>=! getShoppinglist
         >>=! action
         >>=! updateShoppingList

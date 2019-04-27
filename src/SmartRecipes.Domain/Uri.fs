@@ -1,6 +1,7 @@
-module Domain.Uri
+namespace SmartRecipes.Domain
+
+module Uri =
     open FSharpPlus.Data
-    open Domain
     open System
 
     let mkUri uri =

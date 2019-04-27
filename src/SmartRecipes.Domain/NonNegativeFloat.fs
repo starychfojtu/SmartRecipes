@@ -1,8 +1,7 @@
-module Domain.NonNegativeFloat
-    open FSharpPlus
+namespace SmartRecipes.Domain
+
+module NonNegativeFloat =
     open FSharpPlus.Data
-    open FSharpPlus.Data
-    open System
 
     type NonNegativeFloat = private NonNegativeFloat of float
     

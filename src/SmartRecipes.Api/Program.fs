@@ -1,7 +1,8 @@
-module SmartRecipes.Api.App
+namespace SmartRecipes.Api
+
+module App =
     open System.Text
     open Giraffe
-    open Api
     open System
     open System.IO
     open Microsoft.AspNetCore
@@ -13,6 +14,7 @@ module SmartRecipes.Api.App
     open Microsoft.AspNetCore.Http
     open Microsoft.AspNetCore.HttpOverrides
     open MongoDB.Driver
+    open SmartRecipes.DataAccess
     
     let webApp =
         choose [
@@ -64,7 +66,7 @@ module SmartRecipes.Api.App
                 "mongodb://localhost"
         let databaseName = if isProd then "heroku_st1qt292" else "SmartRecipes"
         let database = MongoClient(connStr).GetDatabase(databaseName)
-        DataAccess.Database.database <- database // TODO: I am ugly, refactor me
+        Database.database <- database // TODO: I am ugly, refactor me
     
     let configureApp (app : IApplicationBuilder) =
         let env = app.ApplicationServices.GetService<IHostingEnvironment>()

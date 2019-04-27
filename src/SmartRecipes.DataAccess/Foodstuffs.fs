@@ -1,13 +1,15 @@
-module DataAccess.Foodstuffs
+namespace SmartRecipes.DataAccess
+
+module Foodstuffs =
     open System
-    open DataAccess.Model
     open FSharpPlus.Data
-    open Domain
-    open Domain.Foodstuff
-    open Domain.NonEmptyString
     open Infrastructure.Validation
+    open Model
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.Foodstuff
+    open SmartRecipes.Domain.NonEmptyString
     open MongoDB.Driver
-    
+
     type FoodstuffDao = {
         getByIds: seq<Guid> -> seq<Foodstuff>
         getById: Guid -> Foodstuff option
@@ -15,7 +17,7 @@ module DataAccess.Foodstuffs
         add: Foodstuff -> Foodstuff
     }
     
-    let private collection () = Database.getCollection<DbFoodstuff> ()
+    let private collection = Database.getCollection<DbFoodstuff> ()
     
     let internal amountToDb amount : DbAmount = {
         unit = amount.unit
@@ -34,6 +36,7 @@ module DataAccess.Foodstuffs
         amountStep = amountToDb foodstuff.amountStep
     }
     
+    
     let internal toModel (dbFoodstuff: DbFoodstuff) = {
         id = FoodstuffId dbFoodstuff.id 
         name = mkNonEmptyString dbFoodstuff.name |> forceSucces
@@ -42,26 +45,26 @@ module DataAccess.Foodstuffs
     }
     
     let private getByIds ids =
-        collection().AsQueryable()
+        collection.AsQueryable()
         |> Seq.filter (fun f -> Seq.contains f.id ids)
         |> Seq.map toModel
         
     let private getById id =
-        collection().AsQueryable()
+        collection.AsQueryable()
         |> Seq.filter (fun f -> f.id = id)
         |> Seq.map toModel
         |> Seq.tryHead
     
     let private search (name: NonEmptyString) =
-        collection().AsQueryable()
+        collection.AsQueryable()
         |> Seq.filter (fun f -> f.name = name.value)
         |> Seq.map toModel
     
     let private add foodstuff =
-        toDb foodstuff |> collection().InsertOne |> ignore
+        toDb foodstuff |> collection.InsertOne |> ignore
         foodstuff
     
-    let getDao () = {
+    let dao = {
         getByIds = getByIds
         getById = getById
         search = search

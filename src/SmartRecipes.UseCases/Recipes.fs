@@ -1,58 +1,35 @@
-module UseCases.Recipes
-    open DataAccess
-    open DataAccess.Foodstuffs
+namespace SmartRecipes.UseCases
+
+module Recipes =
+    open System
+    open SmartRecipes.DataAccess.Foodstuffs
     open FSharpPlus.Data
     open Infrastructure
     open FSharpPlus
-    open FSharpPlus.Data.Validation
     open Infrastructure.Reader
-    open Infrastructure.Option
-    open System
-    open UseCases
-    open Users
-    open DataAccess.Model
-    open Infrastructure.Seq
-    open DataAccess.Recipes
-    open DataAccess.Tokens
-    open Domain
-    open Domain.NonNegativeFloat
-    open Domain.Account
-    open Domain.NonEmptyString
-    open Domain.NaturalNumber
-    open Domain.Recipe
-    open Domain.Token
-    open Domain.Foodstuff
-    open Infrastructure
-    open Infrastructure
-    open UseCases.Foodstuffs
+    open SmartRecipes.DataAccess.Recipes
+    open SmartRecipes.DataAccess.Tokens
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.Foodstuff
+    open SmartRecipes.Domain.NonEmptyString
+    open SmartRecipes.Domain.NaturalNumber
+    open SmartRecipes.Domain.NonNegativeFloat
+    open SmartRecipes.Domain.Recipe
+    open Environment
                 
     // Get all by account
     
-    type GetMyRecipesDao = {
-        tokens: TokensDao
-        recipes: RecipesDao
-    }
-    
     type GetMyRecipesError =
         | Unauthorized
-    
-    let private authorize accessToken = 
-        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
         
     let private getRecipes accountId = 
-        Reader(fun dao -> dao.recipes.getByAccount accountId |> Ok)
+        Reader(fun env -> env.IO.Recipes.getByAccount accountId |> Ok)
         
     let getMyRecipes accessToken =
-        authorize accessToken
+        Users.authorize Unauthorized accessToken
         >>=! getRecipes
         
     // Create
-    
-    type CreateRecipeDao = {
-        tokens: TokensDao
-        recipes: RecipesDao
-        foodstuffs: FoodstuffDao
-    }
     
     type CreateIngredientError = 
         | DuplicateFoodstuffIngredient
@@ -74,12 +51,9 @@ module UseCases.Recipes
         description: NonEmptyString option
         ingredients: NonEmptyList<IngredientParameters>
     }
-    
-    let private authorizeCreate accessToken = 
-        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
-        
-    let private getFoodstuff parameters = 
-        Reader(fun dao -> Seq.map (fun i -> i.foodstuffId) parameters |> dao.foodstuffs.getByIds )
+
+    let private getFoodstuff parameters =
+        Reader(fun env -> Seq.map (fun i -> i.foodstuffId) parameters |> env.IO.Foodstuffs.getByIds )
 
     let mkFoodstuffId guid (foodstuffMap: Map<_, Foodstuff> ) = 
         match Map.tryFind guid foodstuffMap with
@@ -87,7 +61,7 @@ module UseCases.Recipes
         | None -> Failure [FoodstuffNotFound]
         
     let private mkIngredient foodstuffMap parameters =
-        createIngredient
+        Recipe.createIngredient
         <!> mkFoodstuffId parameters.foodstuffId foodstuffMap
         <*> (Success parameters.amount)
     
@@ -116,15 +90,15 @@ module UseCases.Recipes
         |> Reader.id
 
     let private addToDatabase recipe = 
-        Reader(fun (dao: CreateRecipeDao) -> dao.recipes.add recipe |> Ok)
+        Reader(fun env -> env.IO.Recipes.add recipe |> Ok)
         
-    let private getNewRecipe accessToken parameters =
-        authorizeCreate accessToken
+    let private createNewRecipe accessToken parameters =
+        Users.authorize Unauthorized accessToken
         >>=! (fun a -> createIngredients parameters.ingredients |> Reader.map (Result.map (fun i -> (i, a)))) 
         >>=! (fun (ingredients, accountId) -> createRecipe parameters ingredients accountId)
 
     let create accessToken parameters =
-        getNewRecipe accessToken parameters
+        createNewRecipe accessToken parameters
         >>=! addToDatabase
         
     // Update
@@ -135,8 +109,8 @@ module UseCases.Recipes
     
     let update accessToken parameters =
         // verify recipe exists
-        getNewRecipe accessToken parameters
-        // update in database
+        createNewRecipe accessToken parameters
+        // replace in database
     
     // Delete
     

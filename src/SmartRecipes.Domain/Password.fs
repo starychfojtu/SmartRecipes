@@ -1,4 +1,6 @@
-module Domain.Password
+namespace SmartRecipes.Domain
+
+module Password =
     open Infrastructure
     open Hashing
     open FSharpPlus.Data

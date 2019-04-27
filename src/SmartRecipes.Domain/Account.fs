@@ -1,4 +1,6 @@
-﻿module Domain.Account
+﻿namespace SmartRecipes.Domain
+
+module Account =
     open Credentials
     open System
     open FSharpPlus
@@ -23,12 +25,7 @@
         <!> mkCredentials email password
         
     // Sign up
-        
-    type SignUpError = 
-        | InvalidParameters of CredentialsError list
-        | AccountAlreadyExits
           
     let signUp email password =
         mkAccount email password
-        |> Validation.mapFailure InvalidParameters
         |> Validation.toResult

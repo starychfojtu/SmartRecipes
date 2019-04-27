@@ -1,24 +1,15 @@
 module Tests.Foodstuffs
     open Infrastructure
-    open Domain
-    open Domain.Account
-    open Domain.Token
-    open Domain.Foodstuff
-    open UseCases
-    open UseCases.Foodstuffs
-    open NonEmptyString
-    open NonNegativeFloat
-    open System
+    open SmartRecipes.Domain.Foodstuff
+    open SmartRecipes
+    open SmartRecipes.UseCases
+    open SmartRecipes.UseCases.Foodstuffs
     open Tests
-    open Xunit
     open Xunit
     
     // Use case tests
     
-    let getFakeCreateDao withFoodstuff: CreateFoodstuffDao = {
-        tokens = Fake.tokensDao true
-        foodstuffs = Fake.foodstuffsDao withFoodstuff
-    }
+    let getFakeCreateDao withFoodstuff = Fake.environment true false withFoodstuff Map.empty
     
     let parameters = {
         name = Fake.foodstuff.name

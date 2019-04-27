@@ -1,6 +1,7 @@
-module DataAccess.Database
+namespace SmartRecipes.DataAccess
+
+module Database =
     open MongoDB.Driver
-    open MongoDB.FSharp
     
     let mutable database: IMongoDatabase = null
         

@@ -1,39 +1,25 @@
-module Api.Recipes
-    open Api
+namespace SmartRecipes.Api
+
+module Recipes =
     open Dto
-    open Domain
+    open SmartRecipes.Domain
     open Generic
-    open System.Net.Http
-    open NonEmptyString
-    open DataAccess
+    open SmartRecipes.Domain.NonEmptyString
+    open SmartRecipes.DataAccess
     open System
     open Giraffe
     open Infrastructure
     open Microsoft.AspNetCore.Http
-    open UseCases
-    open DataAccess.Foodstuffs
-    open DataAccess.Recipes
-    open DataAccess.Tokens
-    open Domain.Foodstuff
-    open Domain.Recipe
+    open SmartRecipes.UseCases
     open FSharpPlus.Data
-    open Infrastructure
-    open UseCases.Recipes
+    open SmartRecipes.UseCases.Recipes
     open Infrastructure.Validation
-    open NaturalNumber
     open Uri
     open FSharpPlus
-    open Infrastructure
     open Infrastructure.NonEmptyList
     open Infrastructure.Reader
-    open UseCases.Recipes
             
     // Get my recipes
-    
-    let private getMyRecipesDao (): GetMyRecipesDao = {
-        tokens = (Tokens.getDao ())
-        recipes = (Recipes.getDao ())
-    }
     
     let private serializeGetMyRecipes = 
         Result.map (Seq.map serializeRecipe) >> Result.mapError (function Recipes.GetMyRecipesError.Unauthorized -> "Unauthorized.")
@@ -42,7 +28,7 @@ module Api.Recipes
         Recipes.getMyRecipes accessToken
     
     let getMyRecipesHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedGetHandler (getMyRecipesDao ()) next ctx getMyRecipes serializeGetMyRecipes
+        authorizedGetHandler environment next ctx getMyRecipes serializeGetMyRecipes
             
     // Create
     
@@ -70,12 +56,6 @@ module Api.Recipes
         | DescriptionIsProvidedButEmpty
         | BusinessError of Recipes.CreateError
         
-    let private getCreateDao () = {
-        foodstuffs = Foodstuffs.getDao ()
-        recipes = Recipes.getDao ()
-        tokens = Tokens.getDao ()
-    }
-        
     let private createParameters name personCount imageUrl description ingredients: RecipeParameters = {
         name = name
         personCount = personCount
@@ -98,8 +78,8 @@ module Api.Recipes
         |> Validation.mapFailure (function SequenceIsEmpty -> [MustContaintAtLeastOneIngredient])
            
     let private mkIngredientParameters parameters =
-        Seq.map mkIngredientParameter parameters 
-        |> Validation.traverse
+        Seq.map mkIngredientParameter parameters
+        |> Validation.traverseSeq
         |> Validation.bind toNonEmpty
 
     let private mkDescription d =
@@ -142,4 +122,4 @@ module Api.Recipes
         >>=! createRecipe accessToken
 
     let createHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedPostHandler (getCreateDao ()) next ctx create serializeCreate
+        authorizedPostHandler environment next ctx create serializeCreate

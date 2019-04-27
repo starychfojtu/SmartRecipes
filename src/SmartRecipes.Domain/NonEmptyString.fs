@@ -1,4 +1,6 @@
-module Domain.NonEmptyString
+namespace SmartRecipes.Domain
+
+module NonEmptyString =
     open FSharpPlus
     open FSharpPlus.Data
     open System

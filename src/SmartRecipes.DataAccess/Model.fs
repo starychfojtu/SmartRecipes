@@ -1,7 +1,7 @@
-module DataAccess.Model
-    open Domain.Foodstuff
-    open MongoDB.Bson
-    open System.Collections.Generic
+namespace SmartRecipes.DataAccess
+
+module Model =
+    open SmartRecipes.Domain.Foodstuff
     open System
     
     type DbAccount = {

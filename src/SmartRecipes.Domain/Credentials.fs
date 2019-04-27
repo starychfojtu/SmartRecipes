@@ -1,4 +1,6 @@
-module Domain.Credentials
+namespace SmartRecipes.Domain
+
+module Credentials =
     open System.Net.Mail
     open Email
     open Password

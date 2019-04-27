@@ -1,4 +1,6 @@
-module Domain.Email
+namespace SmartRecipes.Domain
+
+module Email =
     open System.Net.Mail
     open FSharpPlus.Data
 

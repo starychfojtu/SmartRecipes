@@ -1,13 +1,14 @@
-module Api.Dto
+namespace SmartRecipes.Api
+
+module Dto =
     open System
     open System.Globalization
-    open Domain
-    open Domain.Account
-    open Domain.Foodstuff
-    open Domain.Recipe
-    open Domain.ShoppingList
-    open Domain.ShoppingList
-    open Domain.Token
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.Account
+    open SmartRecipes.Domain.Foodstuff
+    open SmartRecipes.Domain.Recipe
+    open SmartRecipes.Domain.ShoppingList
+    open SmartRecipes.Domain.Token
     
     let private serializeDateTime (d: DateTime) =
         d.ToString("s", CultureInfo.InvariantCulture)
