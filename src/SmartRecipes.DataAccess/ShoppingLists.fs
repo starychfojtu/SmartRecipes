@@ -1,12 +1,13 @@
-module DataAccess.ShoppingLists
-    open DataAccess
-    open DataAccess.Model
-    open Domain
-    open Domain.Account
-    open Domain.Foodstuff
-    open Domain.Recipe
-    open Domain.ShoppingList
+namespace SmartRecipes.DataAccess
+
+module ShoppingLists =
     open Utils
+    open Model
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.Account
+    open SmartRecipes.Domain.Foodstuff
+    open SmartRecipes.Domain.Recipe
+    open SmartRecipes.Domain.ShoppingList
     open MongoDB.Driver
     
     type ShoppingsListsDao = {

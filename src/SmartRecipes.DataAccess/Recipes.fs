@@ -1,23 +1,17 @@
-module DataAccess.Recipes
-    open System.Collections.Generic
-    open DataAccess
-    open DataAccess
+namespace SmartRecipes.DataAccess
+
+module Recipes =
     open FSharpPlus.Data
-    open System.Net.Http
     open System
-    open Domain.Recipe
-    open Domain.Account
-    open DataAccess.Model
-    open Domain
-    open Domain.NonEmptyString
-    open Domain.Foodstuff
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.Recipe
+    open SmartRecipes.Domain.Account
+    open Model
+    open SmartRecipes.Domain.NonEmptyString
+    open SmartRecipes.Domain.Foodstuff
     open MongoDB.Driver
-    open FSharpPlus.Data
-    open System
     open Utils
     open Infrastructure.NonEmptyList
-    open Domain.NonNegativeFloat
-    open FSharpPlus.Data
     
     type RecipesDao = {
         getByIds: seq<Guid> -> seq<Recipe>

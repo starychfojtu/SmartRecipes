@@ -1,5 +1,7 @@
-module Domain.Foodstuff
-    open Domain.NonEmptyString
+namespace SmartRecipes.Domain
+
+module Foodstuff =
+    open NonEmptyString
     open System
     open NonNegativeFloat
     open FSharpPlus

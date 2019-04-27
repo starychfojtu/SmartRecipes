@@ -1,12 +1,13 @@
-module UseCases.Foodstuffs
-    open DataAccess
+namespace SmartRecipes.UseCases
+
+module Foodstuffs =
     open FSharpPlus.Data
     open Infrastructure
-    open Domain.Foodstuff
-    open Domain.NonEmptyString
     open Infrastructure.Reader
-    open DataAccess.Foodstuffs
-    open DataAccess.Tokens
+    open SmartRecipes.DataAccess.Foodstuffs
+    open SmartRecipes.DataAccess.Tokens
+    open SmartRecipes.Domain.Foodstuff
+    open SmartRecipes.Domain.NonEmptyString
 
     // Get by ids
     

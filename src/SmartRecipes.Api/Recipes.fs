@@ -1,32 +1,23 @@
-module Api.Recipes
-    open Api
+namespace SmartRecipes.Api
+
+module Recipes =
     open Dto
-    open Domain
+    open SmartRecipes.Domain
     open Generic
-    open System.Net.Http
-    open NonEmptyString
-    open DataAccess
+    open SmartRecipes.Domain.NonEmptyString
+    open SmartRecipes.DataAccess
     open System
     open Giraffe
     open Infrastructure
     open Microsoft.AspNetCore.Http
-    open UseCases
-    open DataAccess.Foodstuffs
-    open DataAccess.Recipes
-    open DataAccess.Tokens
-    open Domain.Foodstuff
-    open Domain.Recipe
+    open SmartRecipes.UseCases
     open FSharpPlus.Data
-    open Infrastructure
-    open UseCases.Recipes
+    open SmartRecipes.UseCases.Recipes
     open Infrastructure.Validation
-    open NaturalNumber
     open Uri
     open FSharpPlus
-    open Infrastructure
     open Infrastructure.NonEmptyList
     open Infrastructure.Reader
-    open UseCases.Recipes
             
     // Get my recipes
     
@@ -98,8 +89,8 @@ module Api.Recipes
         |> Validation.mapFailure (function SequenceIsEmpty -> [MustContaintAtLeastOneIngredient])
            
     let private mkIngredientParameters parameters =
-        Seq.map mkIngredientParameter parameters 
-        |> Validation.traverse
+        Seq.map mkIngredientParameter parameters
+        |> Validation.traverseSeq
         |> Validation.bind toNonEmpty
 
     let private mkDescription d =

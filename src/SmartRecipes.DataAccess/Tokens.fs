@@ -1,13 +1,13 @@
-module DataAccess.Tokens
-    open DataAccess.Model
-    open FSharpPlus.Data
-    open Domain.Account
-    open Domain.Token
-    open System
-    open MongoDB.Bson
-    open MongoDB.Driver
-    open MongoDB.Driver.Builders
+namespace SmartRecipes.DataAccess
 
+module Tokens =
+    open System
+    open FSharpPlus.Data
+    open Model
+    open SmartRecipes.Domain.Account
+    open SmartRecipes.Domain.Token
+    open MongoDB.Driver
+    
     type TokensDao = {
         get: string -> AccessToken option
         add: AccessToken -> AccessToken

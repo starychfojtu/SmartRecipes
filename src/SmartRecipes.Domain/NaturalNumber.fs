@@ -1,4 +1,6 @@
-module Domain.NaturalNumber
+namespace SmartRecipes.Domain
+
+module NaturalNumber =
     open FSharpPlus.Data
     open System
     

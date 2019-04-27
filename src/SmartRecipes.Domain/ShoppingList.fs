@@ -1,15 +1,15 @@
-module Domain.ShoppingList
-    open Domain
-    open Domain.Account
-    open Domain.Foodstuff
-    open Domain.NonNegativeFloat
-    open Domain.Recipe
-    open Domain.NaturalNumber
+namespace SmartRecipes.Domain
+
+module ShoppingList =
+    open Account
+    open Foodstuff
+    open NonNegativeFloat
+    open Recipe
+    open NaturalNumber
     open FSharpPlus
     open Infrastructure
     open Infrastracture.Result
     open System
-    open FSharpPlus.Data
     open FSharpPlus.Data
     
     type ListItem = {
@@ -42,7 +42,7 @@ module Domain.ShoppingList
         recipes: Map<RecipeId, RecipeListItem>
     }
 
-    let createShoppingList accountId = {
+    let create accountId = {
         id = ShoppingListId(Guid.NewGuid ())
         accountId = accountId
         items = Map.empty

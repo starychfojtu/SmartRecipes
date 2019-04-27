@@ -1,11 +1,12 @@
 module Tests.ShoppingLists
     open FSharpPlus.Data
     open Infrastructure
-    open Api.ShoppingLists
-    open Domain
+    open SmartRecipes
+    open SmartRecipes.Api.ShoppingLists
+    open SmartRecipes.Domain
     open System
     open Tests
-    open UseCases.ShoppingLists
+    open SmartRecipes.UseCases.ShoppingLists
     open Xunit
 
     let getFakeShoppingListActionDao items: ShoppingListActionDao = {

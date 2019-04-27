@@ -1,24 +1,24 @@
-module Api.Foodstuffs
-    open Api
+namespace SmartRecipes.Api
+
+module Foodstuffs =
     open Dto
     open Microsoft.AspNetCore.Http
     open System
     open Giraffe
     open Generic
-    open Domain
-    open UseCases
-    open UseCases.Foodstuffs
-    open Domain.NonEmptyString
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.NonEmptyString
     open FSharpPlus
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
     open Infrastructure
     open Infrastructure.Reader
-    open Domain.Foodstuff
-    open DataAccess
-    open DataAccess.Foodstuffs
-    open DataAccess.Tokens
+    open SmartRecipes.Domain.Foodstuff
     open Infrastracture
+    open SmartRecipes.DataAccess
+    open SmartRecipes.UseCases
+    open SmartRecipes.UseCases.Foodstuffs
+    open SmartRecipes
     
     // Get by Ids
     
@@ -40,7 +40,7 @@ module Api.Foodstuffs
         Result.bimap (Seq.map Dto.serializeFoodstuff) (fun (e: GetByIdsError) -> match e with GetByIdsError.Unauthorized -> "Unauthorized.")
         
     let private getByIds accessToken parameters =
-        UseCases.Foodstuffs.getByIds accessToken parameters.Ids
+        Foodstuffs.getByIds accessToken parameters.Ids
 
     let getByIdshandler ctx next = 
         authorizedGetHandler getByIdsDao ctx next getByIds serializeGetByIds
@@ -74,7 +74,7 @@ module Api.Foodstuffs
         Result.bimap (Seq.map Dto.serializeFoodstuff) serializeSearchError
         
     let searchFoodstuffs accessToken query =
-        UseCases.Foodstuffs.search accessToken query |> Reader.map (Result.mapError BusinessError)
+        Foodstuffs.search accessToken query |> Reader.map (Result.mapError BusinessError)
         
     let search accessToken parameters = 
         mkQuery parameters
@@ -99,12 +99,12 @@ module Api.Foodstuffs
     }
     
     type CreateError = 
-        | BusinessError of UseCases.Foodstuffs.CreateError
+        | BusinessError of Foodstuffs.CreateError
         | NameCannotBeEmpty
         | UnknownAmountUnit
         | AmountCannotBeNegative
     
-    let private createParameters name baseAmount amountStep: UseCases.Foodstuffs.CreateParameters = {
+    let private createParameters name baseAmount amountStep: Foodstuffs.CreateParameters = {
         name = name
         baseAmount = baseAmount
         amountStep = amountStep

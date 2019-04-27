@@ -1,12 +1,10 @@
-module UseCases.ShoppingLists
-    open DataAccess.Recipes
-    open DataAccess.ShoppingLists
-    open DataAccess.Tokens
-    open DataAccess.Users
-    open Domain
-    open Domain
-    open Domain.ShoppingList
-    open Domain.ShoppingList
+namespace SmartRecipes.UseCases
+
+module ShoppingLists =
+    open SmartRecipes.DataAccess.ShoppingLists
+    open SmartRecipes.DataAccess.Tokens
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.ShoppingList
     open FSharpPlus.Data
     open Infrastructure
     open Infrastructure.Reader

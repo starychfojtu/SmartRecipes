@@ -1,18 +1,29 @@
-module Api.Users
-    open Api
+namespace SmartRecipes.Api
+
+module Users =
     open Dto
-    open DataAccess
-    open Domain.Account
-    open Domain.Credentials
+    open SmartRecipes.UseCases
+    open SmartRecipes.DataAccess
+    open SmartRecipes.Domain.Credentials
     open Giraffe
     open Microsoft.AspNetCore.Http
-    open UseCases
     open Infrastructure
-    open Domain.Token
+    open SmartRecipes.Domain.Token
     open Generic
-    open UseCases.Users
-    open Api.Errors
     open Infrastracture
+    open SmartRecipes.UseCases.Environment
+    open Errors
+    open SmartRecipes.UseCases.Users
+    
+    let environment = {
+        IO = {
+            Tokens = Tokens.dao
+            Users = Users.dao
+            Recipes = Recipes.dao
+            ShoppingLists = ShoppingLists.dao
+            Foodstuffs = Foodstuffs.dao
+        }
+    }
     
     // Sign up
     
@@ -25,18 +36,13 @@ module Api.Users
         Account: AccountDto
     }
     
-    let getSignUpDao () = {
-        users = Users.dao
-        shoppingLists = ShoppingLists.dao
-    }
-    
     let private serializeCredentialsError = function
         | InvalidEmail errors -> Seq.map (function Invalid -> parameterError "Email is invalid." "Email") errors
         | InvalidPassword errors -> Seq.map (function MustBe10CharactersLong -> parameterError "Password must be at least 10 characters long." "Password") errors
     
     let private serializeSignUpError = function
-        | AccountAlreadyExits ->  error "Account already exists."
-        | InvalidParameters errors -> Seq.collect serializeCredentialsError errors |> invalidParameters
+        | SignUpError.AccountAlreadyExits ->  error "Account already exists."
+        | SignUpError.InvalidParameters errors -> Seq.collect serializeCredentialsError errors |> invalidParameters
         
     let private serializeSignUpResponse a =
         { Account = serializeAccount a }
@@ -45,7 +51,7 @@ module Api.Users
        Result.bimap serializeSignUpResponse serializeSignUpError
 
     let signUpHandler (next : HttpFunc) (ctx : HttpContext) =
-        postHandler (getSignUpDao ()) next ctx (fun p -> Users.signUp p.Email p.Password) serializeSignUp
+        postHandler environment next ctx (fun p -> Users.signUp p.Email p.Password) serializeSignUp
         
     // Sign in
         
@@ -58,11 +64,6 @@ module Api.Users
         AccessToken: AccessTokenDto
     }
     
-    let private getSignInDao (): Users.SignInDao = {
-        tokens = Tokens.dao
-        users = Users.dao
-    }
-    
     let private serializeSignInError = function
         | InvalidCredentials -> error "Invalid credentials."
         
@@ -73,5 +74,5 @@ module Api.Users
         Result.bimap serializeSignInResponse serializeSignInError
         
     let signInHandler (next : HttpFunc) (ctx : HttpContext) =
-        postHandler (getSignInDao ()) next ctx (fun p -> Users.signIn p.Email p.Password) serializeSignIn
+        postHandler environment next ctx (fun p -> Users.signIn p.Email p.Password) serializeSignIn
         

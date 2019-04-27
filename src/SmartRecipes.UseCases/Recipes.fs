@@ -1,30 +1,20 @@
-module UseCases.Recipes
-    open DataAccess
-    open DataAccess.Foodstuffs
+namespace SmartRecipes.UseCases
+
+module Recipes =
+    open System
+    open SmartRecipes.DataAccess.Foodstuffs
     open FSharpPlus.Data
     open Infrastructure
     open FSharpPlus
-    open FSharpPlus.Data.Validation
     open Infrastructure.Reader
-    open Infrastructure.Option
-    open System
-    open UseCases
-    open Users
-    open DataAccess.Model
-    open Infrastructure.Seq
-    open DataAccess.Recipes
-    open DataAccess.Tokens
-    open Domain
-    open Domain.NonNegativeFloat
-    open Domain.Account
-    open Domain.NonEmptyString
-    open Domain.NaturalNumber
-    open Domain.Recipe
-    open Domain.Token
-    open Domain.Foodstuff
-    open Infrastructure
-    open Infrastructure
-    open UseCases.Foodstuffs
+    open SmartRecipes.DataAccess.Recipes
+    open SmartRecipes.DataAccess.Tokens
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.Foodstuff
+    open SmartRecipes.Domain.NonEmptyString
+    open SmartRecipes.Domain.NaturalNumber
+    open SmartRecipes.Domain.NonNegativeFloat
+    open SmartRecipes.Domain.Recipe
                 
     // Get all by account
     
@@ -78,7 +68,7 @@ module UseCases.Recipes
     let private authorizeCreate accessToken = 
         Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
         
-    let private getFoodstuff parameters = 
+    let private getFoodstuff parameters =
         Reader(fun dao -> Seq.map (fun i -> i.foodstuffId) parameters |> dao.foodstuffs.getByIds )
 
     let mkFoodstuffId guid (foodstuffMap: Map<_, Foodstuff> ) = 
@@ -87,7 +77,7 @@ module UseCases.Recipes
         | None -> Failure [FoodstuffNotFound]
         
     let private mkIngredient foodstuffMap parameters =
-        createIngredient
+        Recipe.createIngredient
         <!> mkFoodstuffId parameters.foodstuffId foodstuffMap
         <*> (Success parameters.amount)
     

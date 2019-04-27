@@ -13,10 +13,10 @@ module Infrastructure.Validation
         | Success s -> s
         | Failure f -> raise (InvalidOperationException())
         
-    let traverse seqOfValidation =
+    let traverseSeq seqOfValidation =
         Seq.traverse Validation.toResult seqOfValidation |> Validation.ofResult
         
     let traverseNonEmptyList (listOfValidation: NonEmptyList<'a> ) =
-        traverse listOfValidation |> Validation.map (NonEmptyList.mkNonEmptyList >> forceSucces)
+        traverseSeq listOfValidation |> Validation.map (NonEmptyList.mkNonEmptyList >> forceSucces)
         
     

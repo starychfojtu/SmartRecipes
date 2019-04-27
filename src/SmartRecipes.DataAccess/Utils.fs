@@ -1,9 +1,9 @@
-module DataAccess.Utils
+namespace SmartRecipes.DataAccess
+
+module Utils =
     open FSharpPlus.Data
-    open Domain
-    open Domain
+    open SmartRecipes.Domain
     open System
-    open Validation
     
     let forceSucces = function
         | Success s -> s

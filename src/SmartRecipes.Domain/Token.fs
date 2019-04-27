@@ -1,11 +1,10 @@
-module Domain.Token
-    open System.Globalization
+namespace SmartRecipes.Domain
+
+module Token =
     open System.Security.Cryptography
     open Account
     open FSharpPlus
     open Infrastructure
-    open System
-    open System
     open System
     
     type Token = Token of string
@@ -54,6 +53,6 @@ module Domain.Token
             
     // Verify access token
         
-    let verifyAccessToken accessToken = 
+    let verify accessToken = 
         isFresh accessToken DateTime.UtcNow
         

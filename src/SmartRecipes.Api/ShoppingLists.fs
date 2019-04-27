@@ -1,33 +1,23 @@
-module Api.ShoppingLists
-    open Api
+namespace SmartRecipes.Api
+
+module ShoppingLists =
     open Dto
-    open DataAccess
-    open DataAccess.Foodstuffs
-    open DataAccess.Recipes
-    open DataAccess.ShoppingLists
-    open DataAccess.ShoppingLists
-    open DataAccess.Tokens
-    open Domain
-    open Domain
-    open Domain.NaturalNumber
-    open Domain.NonNegativeFloat
-    open FSharpPlus
+    open SmartRecipes.DataAccess
+    open SmartRecipes.DataAccess.Foodstuffs
+    open SmartRecipes.DataAccess.Recipes
+    open SmartRecipes.Domain
     open FSharpPlus
     open FSharpPlus.Data
     open Infrastructure
     open Infrastructure.Reader
     open Infrastructure.Validation
     open System
-    open UseCases
-    open UseCases.ShoppingLists
     open Generic
     open FSharpPlus.Data.Validation
-    open UseCases
-    open UseCases
-    open UseCases
-    open UseCases.ShoppingLists
+    open SmartRecipes.UseCases.ShoppingLists
+    open SmartRecipes.UseCases
     
-    let shoppingListActionDao = {
+    let shoppingListActionDao: ShoppingListActionDao = {
         tokens = Tokens.dao
         shoppingLists = ShoppingLists.dao
     }
@@ -126,7 +116,7 @@ module Api.ShoppingLists
     type ChangeAmountError = 
         | FoodstuffNotFound
         | AmountMustBePositive
-        | BusinessError of UseCases.ShoppingLists.ChangeAmountError
+        | BusinessError of ShoppingLists.ChangeAmountError
         
     type ChangeAmountDao = {
         shoppingListAction: ShoppingListActionDao
@@ -154,8 +144,8 @@ module Api.ShoppingLists
         | AmountMustBePositive -> "Amount must be positive."
         | BusinessError e ->
             match e with
-            | UseCases.ShoppingLists.ChangeAmountError.Unauthorized -> "Unauthorized."
-            | UseCases.ShoppingLists.ChangeAmountError.DomainError de ->
+            | ShoppingLists.ChangeAmountError.Unauthorized -> "Unauthorized."
+            | ShoppingLists.ChangeAmountError.DomainError de ->
                 match de with 
                 | ItemNotInList -> "Foodstuff not in list."
                 
@@ -181,7 +171,7 @@ module Api.ShoppingLists
     type ChangePersonCountError = 
         | RecipeNotFound
         | PersonCountMustBePositive
-        | BusinessError of UseCases.ShoppingLists.ChangeAmountError
+        | BusinessError of ShoppingLists.ChangeAmountError
         
     type ChangePersonCountDao = {
         shoppingListAction: ShoppingListActionDao
@@ -209,8 +199,8 @@ module Api.ShoppingLists
         | PersonCountMustBePositive -> "Person count must be positive."
         | BusinessError e ->
             match e with
-            | UseCases.ShoppingLists.ChangeAmountError.Unauthorized -> "Unauthorized."
-            | UseCases.ShoppingLists.ChangeAmountError.DomainError de ->
+            | ShoppingLists.ChangeAmountError.Unauthorized -> "Unauthorized."
+            | ShoppingLists.ChangeAmountError.DomainError de ->
                 match de with 
                 | ItemNotInList -> "Recipe not in list."
                 

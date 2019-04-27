@@ -1,71 +1,64 @@
-module UseCases.Users
-    open System.Net.Mail
-    open DataAccess
-    open DataAccess.Tokens
-    open DataAccess.Users
-    open DataAccess.ShoppingLists
+namespace SmartRecipes.UseCases
+
+module Users =
+    open SmartRecipes.DataAccess.Tokens
+    open SmartRecipes.DataAccess.Users
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
-    open Domain
-    open Domain.ShoppingList
-    open Domain.Token
-    open Domain.Email
-    open Domain.Account
     open Infrastructure.Validation
     open Infrastructure.Reader
     open Infrastructure
+    open Environment
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.Account
+    open SmartRecipes.Domain.Credentials
+    open SmartRecipes.Domain.Token
     
     // Sign up
     
-    type SignUpDao = {
-        users: UsersDao
-        shoppingLists: ShoppingsListsDao
-    }
+    type SignUpError = 
+        | InvalidParameters of CredentialsError list
+        | AccountAlreadyExits
     
-    let private verifyAccountNotExists account = Reader(fun (dao: SignUpDao) ->
-        match dao.users.getByEmail account.credentials.email with
+    let private verifyAccountDoesNotExists account = Reader(fun env ->
+        match env.IO.Users.getByEmail account.credentials.email with
         | Some _ -> Error AccountAlreadyExits 
         | None -> Ok account
     )
             
     let private signUpAccount email password = 
-        Account.signUp email password |> Reader.id
+        Account.signUp email password |> Result.mapError InvalidParameters |> Reader.id
     
     let private addAccountToDb account = 
-        Reader(fun (dao: SignUpDao) -> dao.users.add account |> Ok)
+        Reader(fun env -> env.IO.Users.add account |> Ok)
         
-    let private addEmptyShoppingList account = Reader(fun (dao: SignUpDao) ->
-        createShoppingList account.id |> dao.shoppingLists.add |> ignore
+    let private addEmptyShoppingList account = Reader(fun env ->
+        ShoppingList.create account.id |> env.IO.ShoppingLists.add |> ignore
         Ok account
     )
     
     let signUp email password =
         signUpAccount email password
-        >>=! verifyAccountNotExists
+        >>=! verifyAccountDoesNotExists
         >>=! addAccountToDb
         >>=! addEmptyShoppingList
       
     // Sign in
-    
-    type SignInDao = {
-        tokens: TokensDao
-        users: UsersDao
-    }
         
     let private validateEmail email = 
-        mkEmail email
-        |> mapFailure (fun _ -> Token.InvalidCredentials)
+        Email.mkEmail email
+        |> mapFailure (fun _ -> SignInError.InvalidCredentials)
         |> toResult
         |> Reader.id
         
     let private getAccount email = 
-        Reader(fun (dao: SignInDao) -> dao.users.getByEmail email |> Option.toResult InvalidCredentials)
+        Reader(fun env -> env.IO.Users.getByEmail email |> Option.toResult SignInError.InvalidCredentials)
         
     let private authenticate password account =
         Token.authenticate account password |> Reader.id
         
     let private addTokenToDb token = 
-        Reader(fun (dao: SignInDao) -> dao.tokens.add token |> Ok)
+        Reader(fun env -> env.IO.Tokens.add token |> Ok)
        
     let signIn email password =
         validateEmail email
@@ -78,14 +71,14 @@ module UseCases.Users
     // TODO: Remove error parameter, do the ToResult on call site
     let authorize error (accessTokenValue: string) = Reader(fun (dao: TokensDao) ->
         dao.get accessTokenValue
-        |> Option.filter verifyAccessToken
+        |> Option.filter Token.verify
         |> Option.map (fun t -> t.accountId)
         |> Option.toResult error
     )
     
     let authorizeWithAccount error (accessTokenValue: string) = Reader(fun (tokens: TokensDao, users: UsersDao) ->
         tokens.get accessTokenValue
-        |> Option.filter verifyAccessToken
+        |> Option.filter Token.verify
         |> Option.bind (fun t -> users.getById t.accountId)
         |> Option.toResult error
     )

@@ -1,25 +1,21 @@
 module Tests.Fake
-    open DataAccess.Foodstuffs
-    open DataAccess.Recipes
-    open Domain
+    open SmartRecipes.DataAccess.Foodstuffs
+    open SmartRecipes.DataAccess.Recipes
+    open SmartRecipes.Domain
     open Infrastructure
     open System
     open System.Net.Mail
-    open Domain.Account
-    open DataAccess.Users
-    open DataAccess.Tokens
-    open DataAccess.ShoppingLists
-    open Domain
-    open Domain.NaturalNumber
-    open Domain.NonEmptyString
-    open Domain.NonNegativeFloat
-    open Domain.Foodstuff
-    open Domain.Recipe
-    open Domain.ShoppingList
-    open Domain.Token
+    open SmartRecipes.Domain.Account
+    open SmartRecipes.DataAccess.Users
+    open SmartRecipes.DataAccess.Tokens
+    open SmartRecipes.DataAccess.ShoppingLists
+    open SmartRecipes.Domain.NonEmptyString
+    open SmartRecipes.Domain.Foodstuff
+    open SmartRecipes.Domain.Recipe
+    open SmartRecipes.Domain.ShoppingList
+    open SmartRecipes.Domain.Token
     open FSharpPlus.Data
-    open Infrastructure
-    open UseCases.Users
+    open SmartRecipes.UseCases.Environment
     
     // Data
     
@@ -109,7 +105,7 @@ module Tests.Fake
         add = fun f -> f
     }
     
-    let recipesDao (): RecipesDao = {
+    let recipesDao: RecipesDao = {
         getByAccount = fun a -> Seq.empty
         getByIds = fun ids -> Seq.empty
         getById = fun id -> None
@@ -120,4 +116,14 @@ module Tests.Fake
         add = fun s -> s
         get = fun a -> { shoppingList with items = items }
         update = fun s -> s
+    }
+    
+    let environment withToken withUser withFoodstuff items : Environment = {
+        IO = {
+            Tokens = tokensDao withToken
+            Users = usersDao withUser
+            Recipes = recipesDao
+            Foodstuffs = foodstuffsDao withFoodstuff
+            ShoppingLists = shoppingListDao items
+        }
     }

@@ -1,22 +1,14 @@
 module Tests.Recipes
-    open Infrastructure
-    open Domain
-    open Domain.Account
-    open Domain.Token
-    open Domain.Foodstuff
-    open UseCases
-    open UseCases.Foodstuffs
-    open NonEmptyString
-    open NonNegativeFloat
     open System
+    open SmartRecipes
+    open Infrastructure
     open Tests
-    open Xunit
     open Xunit
     
     let getCreateDao (): UseCases.Recipes.CreateRecipeDao = {
         foodstuffs = Fake.foodstuffsDao true
         tokens = Fake.tokensDao true
-        recipes = Fake.recipesDao ()
+        recipes = Fake.recipesDao
     }
     
     let apiIngredientParameter: Api.Recipes.IngredientParameter = {

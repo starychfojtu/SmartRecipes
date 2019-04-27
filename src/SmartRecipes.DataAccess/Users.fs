@@ -1,12 +1,11 @@
-module DataAccess.Users
-    open DataAccess
+namespace SmartRecipes.DataAccess
+
+module Users =
     open System.Net.Mail
-    open DataAccess.Model
-    open Domain.Account
-    open Domain.Password
     open FSharpPlus.Data
-    open Domain.Token
-    open MongoDB.Bson
+    open Model
+    open SmartRecipes.Domain.Account
+    open SmartRecipes.Domain.Password
     open MongoDB.Driver
     
     type UsersDao = {
