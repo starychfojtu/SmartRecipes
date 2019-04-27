@@ -5,11 +5,7 @@ module Tests.Recipes
     open Tests
     open Xunit
     
-    let getCreateDao (): UseCases.Recipes.CreateRecipeDao = {
-        foodstuffs = Fake.foodstuffsDao true
-        tokens = Fake.tokensDao true
-        recipes = Fake.recipesDao
-    }
+    let getCreateDao () = Fake.environment true true true Map.empty
     
     let apiIngredientParameter: Api.Recipes.IngredientParameter = {
         foodstuffId = Fake.foodstuff.id.value

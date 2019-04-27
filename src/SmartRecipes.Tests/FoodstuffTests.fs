@@ -9,10 +9,7 @@ module Tests.Foodstuffs
     
     // Use case tests
     
-    let getFakeCreateDao withFoodstuff: CreateFoodstuffDao = {
-        tokens = Fake.tokensDao true
-        foodstuffs = Fake.foodstuffsDao withFoodstuff
-    }
+    let getFakeCreateDao withFoodstuff = Fake.environment true false withFoodstuff Map.empty
     
     let parameters = {
         name = Fake.foodstuff.name

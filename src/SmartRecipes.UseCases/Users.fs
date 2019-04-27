@@ -68,18 +68,17 @@ module Users =
         
     // Authorize
 
-    // TODO: Remove error parameter, do the ToResult on call site
-    let authorize error (accessTokenValue: string) = Reader(fun (dao: TokensDao) ->
-        dao.get accessTokenValue
+    let authorize error (accessTokenValue: string) = Reader(fun env ->
+        env.IO.Tokens.get accessTokenValue
         |> Option.filter Token.verify
         |> Option.map (fun t -> t.accountId)
         |> Option.toResult error
     )
     
-    let authorizeWithAccount error (accessTokenValue: string) = Reader(fun (tokens: TokensDao, users: UsersDao) ->
-        tokens.get accessTokenValue
+    let authorizeWithAccount error (accessTokenValue: string) = Reader(fun env ->
+        env.IO.Tokens.get accessTokenValue
         |> Option.filter Token.verify
-        |> Option.bind (fun t -> users.getById t.accountId)
+        |> Option.bind (fun t -> env.IO.Users.getById t.accountId)
         |> Option.toResult error
     )
         

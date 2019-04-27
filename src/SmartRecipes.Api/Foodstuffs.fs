@@ -30,11 +30,6 @@ module Foodstuffs =
     type GetByIdsResponse = {
         Foodstuffs: FoodstuffDto seq
     }
-    
-    let private getByIdsDao: GetFoodstuffByIdsDao = {
-        tokens = Tokens.dao
-        foodstuffs = Foodstuffs.dao
-    }
         
     let private serializeGetByIds = 
         Result.bimap (Seq.map Dto.serializeFoodstuff) (fun (e: GetByIdsError) -> match e with GetByIdsError.Unauthorized -> "Unauthorized.")
@@ -43,7 +38,7 @@ module Foodstuffs =
         Foodstuffs.getByIds accessToken parameters.Ids
 
     let getByIdshandler ctx next = 
-        authorizedGetHandler getByIdsDao ctx next getByIds serializeGetByIds
+        authorizedGetHandler environment ctx next getByIds serializeGetByIds
         
     // Search
     
@@ -55,11 +50,6 @@ module Foodstuffs =
     type SearchError = 
         | BusinessError of UseCases.Foodstuffs.SearchError
         | QueryIsEmpty
-    
-    let private searchDao: SearchDao = {
-        tokens = Tokens.dao
-        foodstuffs = Foodstuffs.dao
-    }
     
     let private mkQuery parameters =
         mkNonEmptyString parameters.query |> toResult |> Result.mapError (fun _ -> QueryIsEmpty) |> Reader.id
@@ -81,7 +71,7 @@ module Foodstuffs =
         >>=! searchFoodstuffs accessToken
         
     let searchHandler ctx next = 
-        authorizedGetHandler searchDao ctx next search serializeSearch
+        authorizedGetHandler environment ctx next search serializeSearch
 
     // Create
 
@@ -108,11 +98,6 @@ module Foodstuffs =
         name = name
         baseAmount = baseAmount
         amountStep = amountStep
-    }
-    
-    let private createFoodstuffDao: CreateFoodstuffDao = {
-        tokens = Tokens.dao
-        foodstuffs = Foodstuffs.dao
     }
     
     let private parseUnit = function
@@ -154,4 +139,4 @@ module Foodstuffs =
          >>=! createFoodstuff token
 
     let createHandler (next: HttpFunc) (ctx: HttpContext) =
-        authorizedPostHandler createFoodstuffDao next ctx create serializeCreate
+        authorizedPostHandler environment next ctx create serializeCreate

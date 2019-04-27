@@ -3,7 +3,6 @@ namespace SmartRecipes.Api
 module Users =
     open Dto
     open SmartRecipes.UseCases
-    open SmartRecipes.DataAccess
     open SmartRecipes.Domain.Credentials
     open Giraffe
     open Microsoft.AspNetCore.Http
@@ -11,19 +10,8 @@ module Users =
     open SmartRecipes.Domain.Token
     open Generic
     open Infrastracture
-    open SmartRecipes.UseCases.Environment
     open Errors
     open SmartRecipes.UseCases.Users
-    
-    let environment = {
-        IO = {
-            Tokens = Tokens.dao
-            Users = Users.dao
-            Recipes = Recipes.dao
-            ShoppingLists = ShoppingLists.dao
-            Foodstuffs = Foodstuffs.dao
-        }
-    }
     
     // Sign up
     

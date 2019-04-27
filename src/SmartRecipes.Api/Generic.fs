@@ -6,6 +6,18 @@ module Generic =
     open Microsoft.AspNetCore.Http
     open FSharpPlus.Data
     open FSharp.Control.Tasks
+    open SmartRecipes.UseCases.Environment
+    open SmartRecipes.DataAccess
+    
+    let environment = {
+        IO = {
+            Tokens = Tokens.dao
+            Users = Users.dao
+            Recipes = Recipes.dao
+            ShoppingLists = ShoppingLists.dao
+            Foodstuffs = Foodstuffs.dao
+        }
+    }
     
     let private setStatusCode (ctx: HttpContext) code =
         ctx.SetStatusCode code

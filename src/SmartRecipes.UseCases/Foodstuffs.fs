@@ -8,53 +8,33 @@ module Foodstuffs =
     open SmartRecipes.DataAccess.Tokens
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.NonEmptyString
+    open Environment
 
     // Get by ids
     
     type GetByIdsError = 
         | Unauthorized
-        
-    type GetFoodstuffByIdsDao = {
-        tokens: TokensDao
-        foodstuffs: FoodstuffDao
-    }
 
-    let private authorize accessToken =
-        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
-    
     let private getFoodstuffsByIds ids = 
-        Reader(fun dao -> dao.foodstuffs.getByIds ids |> Ok)
+        Reader(fun env -> env.IO.Foodstuffs.getByIds ids |> Ok)
         
     let getByIds accessToken ids = 
-        authorize accessToken
+        Users.authorize Unauthorized accessToken
         >>=! (fun _ -> getFoodstuffsByIds ids)
     
     // Search
     
     type SearchError = 
         | Unauthorized
-    
-    type SearchDao = {
-        tokens: TokensDao
-        foodstuffs: FoodstuffDao
-    }
-    
-    let private authorizeSearch accessToken =
-        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
-    
+        
     let private searchFoodstuff query = 
-        Reader(fun dao -> dao.foodstuffs.search query |> Ok)
+        Reader(fun env -> env.IO.Foodstuffs.search query |> Ok)
         
     let search accessToken query =
-        authorizeSearch accessToken
+        Users.authorize Unauthorized accessToken
         >>=! fun _ -> searchFoodstuff query
 
     // Create
-    
-    type CreateFoodstuffDao = {
-        tokens: TokensDao
-        foodstuffs: FoodstuffDao
-    }
 
     type CreateParameters = {
         name: NonEmptyString
@@ -67,23 +47,23 @@ module Foodstuffs =
         | FoodstuffAlreadyExists
         
     let private authorizeCreate accessToken =
-        Users.authorize CreateError.Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
+         accessToken
         
     let private createFoodstuff parameters =
         createFoodstuff parameters.name parameters.baseAmount parameters.amountStep |> Ok |> Reader.id
 
-    let private ensureDoesntAlreadyExists (foodstuff: Foodstuff) = Reader(fun (dao: CreateFoodstuffDao) ->
-        let foodstuffsWithSameName = dao.foodstuffs.search foodstuff.name
+    let private ensureDoesntAlreadyExists (foodstuff: Foodstuff) = Reader(fun env ->
+        let foodstuffsWithSameName = env.IO.Foodstuffs.search foodstuff.name
         if Seq.isEmpty foodstuffsWithSameName
             then Ok foodstuff
             else Error FoodstuffAlreadyExists
     )
         
     let private addToDatabase foodstuff = 
-        Reader(fun (dao: CreateFoodstuffDao) -> dao.foodstuffs.add foodstuff |> Ok)
+        Reader(fun env -> env.IO.Foodstuffs.add foodstuff |> Ok)
 
     let create accessToken parameters = 
-        authorizeCreate accessToken
+        Users.authorize CreateError.Unauthorized accessToken
         >>=! fun _ -> createFoodstuff parameters
         >>=! ensureDoesntAlreadyExists
         >>=! addToDatabase

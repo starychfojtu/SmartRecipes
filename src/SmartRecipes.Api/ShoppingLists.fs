@@ -16,32 +16,25 @@ module ShoppingLists =
     open FSharpPlus.Data.Validation
     open SmartRecipes.UseCases.ShoppingLists
     open SmartRecipes.UseCases
-    
-    let shoppingListActionDao: ShoppingListActionDao = {
-        tokens = Tokens.dao
-        shoppingLists = ShoppingLists.dao
-    }
+    open Environment
         
     // Get 
     
     type GetShoppingListError =
         | Unauthorized
         
-    let private authorize accessToken = 
-        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
-        
     let private getShoppingList accountId =
-        Reader(fun dao -> dao.shoppingLists.get accountId |> Ok)
+        Reader(fun env -> env.IO.ShoppingLists.get accountId |> Ok)
         
     let private serializeGet = 
         Result.map serializeShoppingList >> Result.mapError (function Unauthorized -> "Unaturhorized.")
     
     let get accessToken _ =
-        authorize accessToken
+        Users.authorize Unauthorized accessToken
         >>=! getShoppingList
         
     let getHandler ctx next = 
-        authorizedGetHandler shoppingListActionDao ctx next get serializeGet
+        authorizedGetHandler environment ctx next get serializeGet
     
     // Add
     
@@ -54,20 +47,18 @@ module ShoppingLists =
         | InvalidIds
         | BusinessError of AddItemError
         
-    let getItems parameters = 
-        Reader(fun (dao, getByIds) -> 
-            let itemIds = parameters.itemIds
-            let items = getByIds itemIds
-            let foundAll = Seq.length items = Seq.length itemIds
-            if foundAll
-                then Ok items
-                else Error InvalidIds
-        )
+    let getItems parameters getByIds = Reader(fun env ->
+        let itemIds = parameters.itemIds
+        let items = (getByIds env) itemIds
+        let foundAll = Seq.length items = Seq.length itemIds
+        if foundAll
+            then Ok items
+            else Error InvalidIds
+    )
         
     let private addItemsToShoppingList accesstToken action items = 
         action accesstToken items
         |> Reader.map (Result.mapError (fun e -> BusinessError e))
-        |> Reader.mapEnviroment (fun (dao, getByIds) -> dao)
         
     let private serializeAddItemsError = function
         | InvalidIds -> "Invalid ids."
@@ -81,29 +72,25 @@ module ShoppingLists =
     let private serializeAddItems = 
         Result.map serializeShoppingList >> Result.mapError serializeAddItemsError
 
-    let addItems action accessToken parameters = 
-        getItems parameters >>=! addItemsToShoppingList accessToken action  
+    let addItems action accessToken parameters getByIds = 
+        getItems parameters getByIds >>=! addItemsToShoppingList accessToken action  
     
 
     // Add foodstuffs
     
-    let private addFoodstuffDao = (shoppingListActionDao, Foodstuffs.dao.getByIds)
-    
     let addFoodstuffs accessToken parameters =
-        addItems ShoppingLists.addFoodstuffs accessToken parameters
+        addItems ShoppingLists.addFoodstuffs accessToken parameters (fun env -> env.IO.Foodstuffs.getByIds)
         
     let addFoodstuffsHandler ctx next =
-        authorizedPostHandler addFoodstuffDao ctx next addFoodstuffs serializeAddItems
+        authorizedPostHandler environment ctx next addFoodstuffs serializeAddItems
         
     // Add recipes
     
-    let addRecipesDao = (shoppingListActionDao, Recipes.dao.getByIds)
-    
     let addRecipes accessToken parameters =
-        addItems ShoppingLists.addRecipes accessToken parameters
+        addItems ShoppingLists.addRecipes accessToken parameters (fun env -> env.IO.Recipes.getByIds)
         
     let addRecipesHandler ctx next =
-        authorizedPostHandler addRecipesDao ctx next addRecipes serializeAddItems
+        authorizedPostHandler environment ctx next addRecipes serializeAddItems
         
     // Change foodstuff amount
     
@@ -118,25 +105,14 @@ module ShoppingLists =
         | AmountMustBePositive
         | BusinessError of ShoppingLists.ChangeAmountError
         
-    type ChangeAmountDao = {
-        shoppingListAction: ShoppingListActionDao
-        foodstuffs: FoodstuffDao
-    }
-    
-    let private changeAmountDao = {
-        shoppingListAction = shoppingListActionDao
-        foodstuffs = Foodstuffs.dao
-    }
-        
     let private mkFoodstuff id =
-        Reader(fun dao -> dao.foodstuffs.getById id |> Option.toResult [FoodstuffNotFound])
+        Reader(fun env -> env.IO.Foodstuffs.getById id |> Option.toResult [FoodstuffNotFound])
         
     let private mkAmount amount foodstuff = 
         NonNegativeFloat.create amount |> mapFailure (fun _ -> [AmountMustBePositive]) |> map (fun a -> (a, foodstuff)) |> toResult |> Reader.id
         
     let private changeFoodtuffAmount accessToken foodstuff amount =
         changeAmount accessToken foodstuff amount
-        |> Reader.mapEnviroment (fun dao -> dao.shoppingListAction)
         |> (Reader.map (Result.mapError (fun e -> [BusinessError(e)])))
         
     let private serializeChangeAmountError = function
@@ -158,7 +134,7 @@ module ShoppingLists =
         >>=! (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff.id newAmount)
         
     let changeAmountHandler ctx next =
-        authorizedPostHandler changeAmountDao ctx next changeAmount serializeChangeAmount
+        authorizedPostHandler environment ctx next changeAmount serializeChangeAmount
         
     // Chnage person count
     
@@ -173,25 +149,14 @@ module ShoppingLists =
         | PersonCountMustBePositive
         | BusinessError of ShoppingLists.ChangeAmountError
         
-    type ChangePersonCountDao = {
-        shoppingListAction: ShoppingListActionDao
-        recipes: RecipesDao
-    }
-    
-    let private changePersonCountDao = {
-        shoppingListAction = shoppingListActionDao
-        recipes = Recipes.dao
-    }
-        
     let private mkRecipe id =
-        Reader(fun dao -> dao.recipes.getById id |> Option.toResult [RecipeNotFound])
+        Reader(fun env -> env.IO.Recipes.getById id |> Option.toResult [RecipeNotFound])
         
     let private mkPersonCount personCount recipe = 
         NaturalNumber.create personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]) |> map (fun c -> (c, recipe)) |> toResult |> Reader.id
         
     let private changeRecipePersonCount accessToken recipe amount =
         changePersonCount accessToken recipe amount
-        |> Reader.mapEnviroment (fun dao -> dao.shoppingListAction)
         |> (Reader.map (Result.mapError (fun e -> [BusinessError(e)])))
         
     let private serializeChangePersonCountError = function
@@ -213,7 +178,7 @@ module ShoppingLists =
         >>=! (fun (newPersonCount, recipe) -> changeRecipePersonCount accessToken recipe newPersonCount)
         
     let changePersonCountHandler ctx next =
-        authorizedPostHandler changePersonCountDao ctx next changePersonCount serializeChangePersonCount
+        authorizedPostHandler environment ctx next changePersonCount serializeChangePersonCount
         
     // Cook recipe
     
@@ -226,22 +191,11 @@ module ShoppingLists =
         | RecipeNotFound
         | BusinessError of ShoppingLists.CookRecipeError
         
-    type CookRecipeDao = {
-        shoppingListAction: ShoppingListActionDao
-        recipes: RecipesDao
-    }
-        
-    let cookRecipeDao = {
-        shoppingListAction = shoppingListActionDao
-        recipes = Recipes.dao
-    }
-    
     let private getRecipe id = 
-        Reader(fun dao -> dao.recipes.getById id |> Option.toResult RecipeNotFound)
+        Reader(fun env -> env.IO.Recipes.getById id |> Option.toResult RecipeNotFound)
         
     let private cookRecipe accessToken recipe =
-        ShoppingLists.cook accessToken recipe 
-        |> Reader.mapEnviroment (fun dao -> dao.shoppingListAction)
+        ShoppingLists.cook accessToken recipe
         |> Reader.map (Result.mapError (fun e -> BusinessError(e)))
         
     let private serializeCookRecipeError = function 
@@ -261,7 +215,7 @@ module ShoppingLists =
         getRecipe parameters.recipeId >>=! cookRecipe accessToken
         
     let cookHandler ctx next =
-        authorizedPostHandler cookRecipeDao ctx next cook serializeCookRecipe
+        authorizedPostHandler environment ctx next cook serializeCookRecipe
         
     // Remove foodstuff
     
@@ -273,22 +227,11 @@ module ShoppingLists =
         | FoodstuffNotFound
         | BusinessError of ShoppingLists.RemoveItemError
     
-    type RemoveFoodstuffDao = {
-        shoppingListAction: ShoppingListActionDao
-        foodstuffs: FoodstuffDao
-    }
-    
-    let private removeFoodstuffDao = {
-        shoppingListAction = shoppingListActionDao
-        foodstuffs = Foodstuffs.dao
-    }
-    
     let private getFoodstuffId parameters = 
-        Reader(fun dao -> dao.foodstuffs.getById parameters.foodstuffId |> Option.map (fun f -> f.id) |> Option.toResult FoodstuffNotFound )
+        Reader(fun env -> env.IO.Foodstuffs.getById parameters.foodstuffId |> Option.map (fun f -> f.id) |> Option.toResult FoodstuffNotFound )
     
     let private removeFoodstuffFromList accessToken foodstuffId = 
         ShoppingLists.removeFoodstuff accessToken foodstuffId
-        |> mapEnviroment (fun dao -> dao.shoppingListAction)
         |> Reader.map (Result.mapError BusinessError)
         
     let private serializeRemoveFoodstuffError = function 
@@ -307,7 +250,7 @@ module ShoppingLists =
         getFoodstuffId parameters >>=! removeFoodstuffFromList accessToken
         
     let removeFoodstuffHandler ctx next = 
-        authorizedPostHandler removeFoodstuffDao ctx next removeFoodstuff serializeRemoveFoodstuff
+        authorizedPostHandler environment ctx next removeFoodstuff serializeRemoveFoodstuff
         
     // Remove recipe
     
@@ -319,22 +262,11 @@ module ShoppingLists =
         | RecipeNotFound
         | BusinessError of ShoppingLists.RemoveItemError
     
-    type RemoveRecipeDao = {
-        shoppingListAction: ShoppingListActionDao
-        recipes: RecipesDao
-    }
-    
-    let private removeRecipeDao = {
-        shoppingListAction = shoppingListActionDao
-        recipes = Recipes.dao
-    }
-    
     let private getRecipeToRemove parameters = 
-        Reader(fun dao -> dao.recipes.getById parameters.recipeId |> Option.toResult RecipeNotFound )
+        Reader(fun env -> env.IO.Recipes.getById parameters.recipeId |> Option.toResult RecipeNotFound )
     
     let private removeRecipeFromList accessToken recipe = 
         ShoppingLists.removeRecipe accessToken recipe
-        |> mapEnviroment (fun dao -> dao.shoppingListAction)
         |> Reader.map (Result.mapError BusinessError)
         
     let private serializeRemoveRecipeError = function 
@@ -353,4 +285,4 @@ module ShoppingLists =
         getRecipeToRemove parameters >>=! removeRecipeFromList accessToken
         
     let removeRecipeHandler ctx next = 
-        authorizedPostHandler removeRecipeDao ctx next removeRecipe serializeRemoveRecipe
+        authorizedPostHandler environment ctx next removeRecipe serializeRemoveRecipe

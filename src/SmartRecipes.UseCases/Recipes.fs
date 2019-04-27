@@ -15,34 +15,21 @@ module Recipes =
     open SmartRecipes.Domain.NaturalNumber
     open SmartRecipes.Domain.NonNegativeFloat
     open SmartRecipes.Domain.Recipe
+    open Environment
                 
     // Get all by account
     
-    type GetMyRecipesDao = {
-        tokens: TokensDao
-        recipes: RecipesDao
-    }
-    
     type GetMyRecipesError =
         | Unauthorized
-    
-    let private authorize accessToken = 
-        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
         
     let private getRecipes accountId = 
-        Reader(fun dao -> dao.recipes.getByAccount accountId |> Ok)
+        Reader(fun env -> env.IO.Recipes.getByAccount accountId |> Ok)
         
     let getMyRecipes accessToken =
-        authorize accessToken
+        Users.authorize Unauthorized accessToken
         >>=! getRecipes
         
     // Create
-    
-    type CreateRecipeDao = {
-        tokens: TokensDao
-        recipes: RecipesDao
-        foodstuffs: FoodstuffDao
-    }
     
     type CreateIngredientError = 
         | DuplicateFoodstuffIngredient
@@ -64,12 +51,9 @@ module Recipes =
         description: NonEmptyString option
         ingredients: NonEmptyList<IngredientParameters>
     }
-    
-    let private authorizeCreate accessToken = 
-        Users.authorize Unauthorized accessToken |> mapEnviroment (fun dao -> dao.tokens)
-        
+
     let private getFoodstuff parameters =
-        Reader(fun dao -> Seq.map (fun i -> i.foodstuffId) parameters |> dao.foodstuffs.getByIds )
+        Reader(fun env -> Seq.map (fun i -> i.foodstuffId) parameters |> env.IO.Foodstuffs.getByIds )
 
     let mkFoodstuffId guid (foodstuffMap: Map<_, Foodstuff> ) = 
         match Map.tryFind guid foodstuffMap with
@@ -106,15 +90,15 @@ module Recipes =
         |> Reader.id
 
     let private addToDatabase recipe = 
-        Reader(fun (dao: CreateRecipeDao) -> dao.recipes.add recipe |> Ok)
+        Reader(fun env -> env.IO.Recipes.add recipe |> Ok)
         
-    let private getNewRecipe accessToken parameters =
-        authorizeCreate accessToken
+    let private createNewRecipe accessToken parameters =
+        Users.authorize Unauthorized accessToken
         >>=! (fun a -> createIngredients parameters.ingredients |> Reader.map (Result.map (fun i -> (i, a)))) 
         >>=! (fun (ingredients, accountId) -> createRecipe parameters ingredients accountId)
 
     let create accessToken parameters =
-        getNewRecipe accessToken parameters
+        createNewRecipe accessToken parameters
         >>=! addToDatabase
         
     // Update
@@ -125,8 +109,8 @@ module Recipes =
     
     let update accessToken parameters =
         // verify recipe exists
-        getNewRecipe accessToken parameters
-        // update in database
+        createNewRecipe accessToken parameters
+        // replace in database
     
     // Delete
     

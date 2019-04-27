@@ -21,11 +21,6 @@ module Recipes =
             
     // Get my recipes
     
-    let private getMyRecipesDao: GetMyRecipesDao = {
-        tokens = Tokens.dao
-        recipes = Recipes.dao
-    }
-    
     let private serializeGetMyRecipes = 
         Result.map (Seq.map serializeRecipe) >> Result.mapError (function Recipes.GetMyRecipesError.Unauthorized -> "Unauthorized.")
     
@@ -33,7 +28,7 @@ module Recipes =
         Recipes.getMyRecipes accessToken
     
     let getMyRecipesHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedGetHandler getMyRecipesDao next ctx getMyRecipes serializeGetMyRecipes
+        authorizedGetHandler environment next ctx getMyRecipes serializeGetMyRecipes
             
     // Create
     
@@ -60,12 +55,6 @@ module Recipes =
         | MustContaintAtLeastOneIngredient
         | DescriptionIsProvidedButEmpty
         | BusinessError of Recipes.CreateError
-        
-    let private createDao = {
-        foodstuffs = Foodstuffs.dao
-        recipes = Recipes.dao
-        tokens = Tokens.dao
-    }
         
     let private createParameters name personCount imageUrl description ingredients: RecipeParameters = {
         name = name
@@ -133,4 +122,4 @@ module Recipes =
         >>=! createRecipe accessToken
 
     let createHandler (next : HttpFunc) (ctx : HttpContext) =
-        authorizedPostHandler createDao next ctx create serializeCreate
+        authorizedPostHandler environment next ctx create serializeCreate
