@@ -8,7 +8,6 @@ module ShoppingLists =
     open SmartRecipes.Domain
     open FSharpPlus
     open FSharpPlus.Data
-    open Infrastructure
     open Infrastructure.Validation
     open System
     open Generic
@@ -16,8 +15,14 @@ module ShoppingLists =
     open SmartRecipes.UseCases.ShoppingLists
     open SmartRecipes.UseCases
     open Environment
+    open Infrastracture
+    open Infrastructure
         
     // Get 
+    
+    type ShoppingListResponse = {
+        ShoppingList: ShoppingListDto
+    }
     
     type GetShoppingListError =
         | Unauthorized
@@ -25,8 +30,8 @@ module ShoppingLists =
     let private getShoppingList accountId =
         ReaderT(fun env -> env.IO.ShoppingLists.get accountId |> Ok)
         
-    let private serializeGet = 
-        Result.map serializeShoppingList >> Result.mapError (function Unauthorized -> "Unaturhorized.")
+    let private serializeGet =
+        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) (function Unauthorized -> "Unaturhorized.")
     
     let get accessToken _ =
         Users.authorize Unauthorized accessToken
@@ -69,7 +74,7 @@ module ShoppingLists =
                 | ItemAlreadyAdded -> "Item already added."
                 
     let private serializeAddItems = 
-        Result.map serializeShoppingList >> Result.mapError serializeAddItemsError
+        Result.map (fun sl -> { ShoppingList = serializeShoppingList sl }) >> Result.mapError serializeAddItemsError
 
     let addItems action accessToken parameters getByIds = 
         getItems parameters getByIds
@@ -177,7 +182,7 @@ module ShoppingLists =
                 | ItemNotInList -> "Recipe not in list."
                 
     let private serializeChangePersonCount = 
-        Result.map serializeShoppingList >> Result.mapError (Seq.map serializeChangePersonCountError)
+        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) (Seq.map serializeChangePersonCountError)
         
     let changePersonCount accessToken parameters = monad {
         let! recipe = mkRecipe parameters.recipeId
@@ -217,7 +222,7 @@ module ShoppingLists =
                 | NotEnoughIngredientsInList -> "Not enough ingredients."
         
     let private serializeCookRecipe =
-        Result.map serializeShoppingList >> Result.mapError serializeCookRecipeError
+        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeCookRecipeError
         
     let cook accessToken parameters = 
         getRecipe parameters.recipeId
@@ -253,7 +258,7 @@ module ShoppingLists =
                 | ItemNotInList -> "Foodstuff not in list."
         
     let private serializeRemoveFoodstuff = 
-        Result.map serializeShoppingList >> Result.mapError serializeRemoveFoodstuffError
+        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeRemoveFoodstuffError
     
     let removeFoodstuff accessToken parameters = 
         getFoodstuffId parameters
@@ -289,7 +294,7 @@ module ShoppingLists =
                 | ItemNotInList -> "Recipe not in list."
         
     let private serializeRemoveRecipe = 
-        Result.map serializeShoppingList >> Result.mapError serializeRemoveRecipeError
+        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeRemoveRecipeError
     
     let removeRecipe accessToken parameters = 
         getRecipeToRemove parameters

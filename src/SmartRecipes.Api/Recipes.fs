@@ -15,12 +15,17 @@ module Recipes =
     open Uri
     open FSharpPlus
     open Foodstuffs
+    open Infrastracture
     open Infrastructure.NonEmptyList
             
     // Get my recipes
     
+    type GetMyRecipesResponse = {
+        Recipes: RecipeDto seq
+    }
+    
     let private serializeGetMyRecipes = 
-        Result.map (Seq.map serializeRecipe) >> Result.mapError (function Recipes.GetMyRecipesError.Unauthorized -> "Unauthorized.")
+        Result.bimap (fun rs -> { Recipes = Seq.map serializeRecipe rs }) (function GetMyRecipesError.Unauthorized -> "Unauthorized.")
     
     let getMyRecipes accessToken parameters = 
         Recipes.getMyRecipes accessToken
@@ -43,6 +48,10 @@ module Recipes =
         imageUrl: string
         description: string
         ingredients: seq<IngredientParameter>
+    }
+    
+    type CreateResponse = {
+        Recipe: RecipeDto
     }
     
     type CreateError =
@@ -119,7 +128,7 @@ module Recipes =
             | Recipes.CreateError.InvalidIngredients es -> List.map serializeCreateIngredientError es
         
     let private serializeCreate =
-        Result.map serializeRecipe >> Result.mapError (Seq.collect serializeCreateError)
+        Result.bimap (fun r -> { Recipe = serializeRecipe r }) (Seq.collect serializeCreateError)
 
     let create accessToken parameters = 
         mkParameters parameters |> Validation.toResult |> ReaderT.id
