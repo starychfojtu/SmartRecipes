@@ -112,16 +112,17 @@ module ShoppingList =
         | ItemNotInList
         | NotEnoughAmountInList
         
-    let private findCurrentItemAmount foodstuffId list =
-        findItem foodstuffId list |> Option.map (fun i -> i.amount) |> Option.toResult ItemNotInList
+    let private findCurrentItem foodstuffId list =
+        findItem foodstuffId list |> Option.toResult ItemNotInList
         
-    let private getDifference delta amount =
-        amount - delta |> Result.mapError (fun _ -> NotEnoughAmountInList)
+    let private getDifference delta item =
+        failwith "NotImplemented" // TODO: Needs foodstuff injected and proper conversions per foodstuffs to work at all.
         
-    let private decrease foodstuffId list newAmount = changeAmount foodstuffId newAmount list |> Result.mapError (fun _ -> ItemNotInList)
+    let private decrease foodstuffId list newAmount =
+        changeAmount foodstuffId newAmount list |> Result.mapError (fun _ -> ItemNotInList)
         
     let decreaseAmount foodstuffId amount list =
-        findCurrentItemAmount foodstuffId list
+        findCurrentItem foodstuffId list
         >>= getDifference amount
         >>= decrease foodstuffId list
         

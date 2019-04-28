@@ -50,3 +50,8 @@ module Foodstuff =
         amountStep = Option.defaultValue defaultAmountStep amountStep
     }
     
+    // TODO: Implement proper solution.
+    let convertToUnit foodstuff amount unit: Amount option =
+        if unit = amount.unit
+            then Some amount
+            else None

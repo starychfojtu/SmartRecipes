@@ -2,7 +2,9 @@ namespace SmartRecipes.DataAccess
 
 module Utils =
     open FSharpPlus.Data
+    open Model
     open SmartRecipes.Domain
+    open SmartRecipes.Domain.Foodstuff
     open System
     
     let forceSucces = function
@@ -14,4 +16,15 @@ module Utils =
         NonEmptyString.mkNonEmptyString s |> forceSucces
         
     let toNaturalNumberModel n =
-        NaturalNumber.create n |> forceSucces 
+        NaturalNumber.create n |> forceSucces
+        
+        
+    let internal amountToDb (amount: Amount) : DbAmount = {
+        unit = amount.unit
+        value = NonNegativeFloat.value amount.value 
+    }
+    
+    let internal amountToModel (dbAmount: DbAmount) = {
+        unit = dbAmount.unit
+        value = NonNegativeFloat.create dbAmount.value |> forceSucces
+    }

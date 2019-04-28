@@ -14,6 +14,7 @@ module Recipes =
     open Infrastructure.Validation
     open Uri
     open FSharpPlus
+    open Foodstuffs
     open Infrastructure.NonEmptyList
             
     // Get my recipes
@@ -32,7 +33,7 @@ module Recipes =
     [<CLIMutable>]
     type IngredientParameter = {
         foodstuffId: Guid
-        amount: float
+        amount: AmountParameters
     }
 
     [<CLIMutable>]
@@ -48,7 +49,7 @@ module Recipes =
         | NameCannotBeEmpty
         | PersonCountMustBePositive
         | InvalidImageUrl of string
-        | AmountOfIngredientMustBePositive
+        | AmountError of ParseAmountError
         | MustContaintAtLeastOneIngredient
         | DescriptionIsProvidedButEmpty
         | BusinessError of Recipes.CreateError
@@ -65,10 +66,13 @@ module Recipes =
         foodstuffId = foodstuffId
         amount = amount
     }
+    
+    let private parseIngredientAmount =
+        parseAmount >> Validation.mapFailure (List.map AmountError)
         
     let private mkIngredientParameter parameter =
         createIngredientParameter parameter.foodstuffId
-        <!> (NonNegativeFloat.create parameter.amount |> mapFailure (function FloatIsNegative -> [AmountOfIngredientMustBePositive]))
+        <!> parseIngredientAmount parameter.amount
         
     let private toNonEmpty ingredients = 
         NonEmptyList.mkNonEmptyList ingredients 
@@ -103,13 +107,16 @@ module Recipes =
         | NameCannotBeEmpty -> ["Name cannot be empty."]
         | PersonCountMustBePositive -> ["Person count must be positive."]
         | InvalidImageUrl s -> [s]
-        | AmountOfIngredientMustBePositive -> ["Amount of ingredient must be positive."]
+        | AmountError e ->
+            match e with
+            | UnknownUnit -> ["Unknown unit."]
+            | ValueCannotBeNegative -> ["Amount of ingredient must be positive."]
         | MustContaintAtLeastOneIngredient -> ["Must containt at least one ingredient."]
         | DescriptionIsProvidedButEmpty -> ["Description is provided but empty."]
         | BusinessError e -> 
             match e with
-            | Unauthorized -> ["Unauthorized."]
-            | InvalidIngredients es -> List.map serializeCreateIngredientError es
+            | Recipes.CreateError.Unauthorized -> ["Unauthorized."]
+            | Recipes.CreateError.InvalidIngredients es -> List.map serializeCreateIngredientError es
         
     let private serializeCreate =
         Result.map serializeRecipe >> Result.mapError (Seq.collect serializeCreateError)

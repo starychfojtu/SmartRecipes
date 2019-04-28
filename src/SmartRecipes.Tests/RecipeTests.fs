@@ -9,7 +9,10 @@ module Tests.Recipes
     
     let apiIngredientParameter: Api.Recipes.IngredientParameter = {
         foodstuffId = Fake.foodstuff.id.value
-        amount = 10.0
+        amount = {
+            value = 10.0
+            unit = "liter"
+        }
     }
     
     let apiParameters: Api.Recipes.CreateParameters = {
@@ -22,7 +25,10 @@ module Tests.Recipes
     
     let apiIncorrectIngredientParameter: Api.Recipes.IngredientParameter = {
         foodstuffId = Guid.NewGuid()
-        amount = -10.0
+        amount = {
+            value = -10.0
+            unit = "Unknown"
+        }
     }
         
     let apiIncorrectParameters: Api.Recipes.CreateParameters = {
@@ -46,7 +52,8 @@ module Tests.Recipes
         |> Assert.IsErrorAnd (fun e -> 
             Assert.True (Seq.contains Api.Recipes.CreateError.NameCannotBeEmpty e)
             Assert.True (Seq.contains Api.Recipes.CreateError.DescriptionIsProvidedButEmpty e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.AmountOfIngredientMustBePositive e)
+            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.UnknownUnit) e)
+            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.ValueCannotBeNegative) e)
             Assert.True (Seq.contains Api.Recipes.CreateError.PersonCountMustBePositive e)
             Assert.Equal ((Seq.length e), 5)
         )

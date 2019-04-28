@@ -62,6 +62,7 @@ module Tests.Foodstuffs
         |> ReaderT.execute (getFakeCreateDao false)
         |> Assert.IsErrorAnd (fun e -> 
             Assert.True (Seq.contains Api.Foodstuffs.CreateError.NameCannotBeEmpty e)
-            Assert.True (Seq.contains Api.Foodstuffs.CreateError.UnknownAmountUnit e)
-            Assert.True (Seq.contains Api.Foodstuffs.CreateError.AmountCannotBeNegative e)
+            Assert.True (Seq.contains (Api.Foodstuffs.CreateError.BaseAmountError Api.Foodstuffs.ParseAmountError.UnknownUnit) e)
+            Assert.True (Seq.contains (Api.Foodstuffs.CreateError.BaseAmountError Api.Foodstuffs.ParseAmountError.ValueCannotBeNegative) e)
+            Assert.True (Seq.contains Api.Foodstuffs.CreateError.AmountStepCannotBeNegative e)
         )

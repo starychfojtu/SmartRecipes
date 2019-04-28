@@ -40,7 +40,7 @@ module Recipes =
         
     type IngredientParameters = {
         foodstuffId: Guid
-        amount: NonNegativeFloat
+        amount: Amount
     }
     
     type RecipeParameters = {

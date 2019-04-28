@@ -24,12 +24,12 @@ module Recipes =
     
     let private ingredientToModel (dbIngredient: DbIngredient): Ingredient = {
         foodstuffId = FoodstuffId(dbIngredient.foodstuffId)
-        amount = NonNegativeFloat.create dbIngredient.amount |> forceSucces
+        amount = amountToModel dbIngredient.amount
     }
     
     let private ingredientToDb (ingredient: Ingredient): DbIngredient = {
         foodstuffId = ingredient.foodstuffId.value
-        amount = NonNegativeFloat.value ingredient.amount
+        amount = amountToDb ingredient.amount
     }
     
     let private toModel (dbRecipe: DbRecipe): Recipe = {

@@ -6,8 +6,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Database.fs" />
-    <Compile Include="Utils.fs" />
     <Compile Include="Model.fs" />
+    <Compile Include="Utils.fs" />
     <Compile Include="Users.fs" />
     <Compile Include="Tokens.fs" />
     <Compile Include="Foodstuffs.fs" />

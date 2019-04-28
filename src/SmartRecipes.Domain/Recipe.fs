@@ -11,7 +11,7 @@ module Recipe =
     
     type Ingredient = {
         foodstuffId: FoodstuffId
-        amount: NonNegativeFloat
+        amount: Amount
     }
     
     let createIngredient foodstuffId amount = {

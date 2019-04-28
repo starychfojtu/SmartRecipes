@@ -3,12 +3,12 @@ namespace SmartRecipes.DataAccess
 module Foodstuffs =
     open System
     open FSharpPlus.Data
-    open Infrastructure.Validation
     open Model
     open SmartRecipes.Domain
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.NonEmptyString
     open MongoDB.Driver
+    open Utils
 
     type FoodstuffDao = {
         getByIds: seq<Guid> -> seq<Foodstuff>
@@ -18,16 +18,6 @@ module Foodstuffs =
     }
     
     let private collection = Database.getCollection<DbFoodstuff> ()
-    
-    let internal amountToDb amount : DbAmount = {
-        unit = amount.unit
-        value = NonNegativeFloat.value amount.value 
-    }
-    
-    let internal amountToModel (dbAmount: DbAmount) = {
-        unit = dbAmount.unit
-        value = NonNegativeFloat.create dbAmount.value |> forceSucces
-    }
                 
     let internal toDb foodstuff : DbFoodstuff = {
         id = match foodstuff.id with FoodstuffId id -> id

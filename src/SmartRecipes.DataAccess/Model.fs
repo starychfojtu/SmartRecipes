@@ -31,7 +31,7 @@ module Model =
     
     type DbIngredient = {
         foodstuffId: Guid
-        amount: float
+        amount: DbAmount
     }
     
     type DbRecipe = {

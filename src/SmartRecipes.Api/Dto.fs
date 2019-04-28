@@ -65,12 +65,12 @@ module Dto =
     
     type IngredientDto = {
         foodstuffId: string
-        amount: float
+        amount: AmountDto
     }
     
     let serializeIngredient (ingredient: Ingredient) = {
         foodstuffId = ingredient.foodstuffId.value.ToString ()
-        amount = NonNegativeFloat.value ingredient.amount
+        amount = serializeAmount ingredient.amount
     }
     
     type RecipeDto = {

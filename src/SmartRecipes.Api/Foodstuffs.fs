@@ -76,11 +76,31 @@ module Foodstuffs =
 
     // Create
 
+    
+    // TODO: move to more general place.
     [<CLIMutable>]
     type AmountParameters = {
         unit: string
         value: float
     }
+    
+    type ParseAmountError =
+        | UnknownUnit
+        | ValueCannotBeNegative
+    
+    let parseUnit = function
+        | "gram" -> Validation.Success MetricUnit.Gram
+        | "piece" -> Validation.Success MetricUnit.Piece
+        | "liter" -> Validation.Success MetricUnit.Liter
+        | _ -> Validation.Failure [UnknownUnit]
+        
+    let parseValue =
+        NonNegativeFloat.create >> Validation.mapFailure (fun _ -> [ValueCannotBeNegative])
+    
+    let parseAmount parameters =
+        createAmount
+        <!> parseUnit parameters.unit
+        <*> parseValue parameters.value
     
     type CreateResponse = {
         Foodstuff: FoodstuffDto
@@ -95,9 +115,9 @@ module Foodstuffs =
     
     type CreateError = 
         | BusinessError of Foodstuffs.CreateError
+        | BaseAmountError of ParseAmountError
+        | AmountStepCannotBeNegative
         | NameCannotBeEmpty
-        | UnknownAmountUnit
-        | AmountCannotBeNegative
     
     let private createParameters name baseAmount amountStep: Foodstuffs.CreateParameters = {
         name = name
@@ -105,25 +125,20 @@ module Foodstuffs =
         amountStep = amountStep
     }
     
-    let private parseUnit = function
-        | "gram" -> Validation.Success MetricUnit.Gram
-        | "piece" -> Validation.Success MetricUnit.Piece
-        | "liter" -> Validation.Success MetricUnit.Liter
-        | _ -> Validation.Failure [UnknownAmountUnit]
+    let private parseName name =
+        safeMkNonEmptyString name |> Validation.mapFailure (fun _ -> [NameCannotBeEmpty])
         
-    let private parseValue =
-        NonNegativeFloat.create >> Validation.mapFailure (fun _ -> [AmountCannotBeNegative])
+    let private parseBaseAmount amount =
+        parseAmount amount |> Validation.mapFailure (List.map BaseAmountError) |> map Some
+        
+    let private parseAmountStep value =
+        NonNegativeFloat.create value |> Validation.mapFailure (fun _ -> [AmountStepCannotBeNegative]) |> map Some
     
-    let private mkAmount parameters =
-        createAmount
-        <!> parseUnit parameters.unit
-        <*> parseValue parameters.value
-        
     let private parseParameters (parameters: CreateParameters) =
         createParameters
-        <!> safeMkNonEmptyString parameters.name |> Validation.mapFailure (fun _ -> [NameCannotBeEmpty])
-        <*> (mkAmount parameters.baseAmount |> map Some)
-        <*> (parseValue parameters.amountStep |> map Some)
+        <!> parseName parameters.name
+        <*> parseBaseAmount parameters.baseAmount
+        <*> parseAmountStep parameters.amountStep
 
     let private createFoodstuff token parameters =
         Foodstuffs.create token parameters |> ReaderT.mapError (fun e -> [BusinessError(e)])
