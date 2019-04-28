@@ -33,7 +33,7 @@ module Foodstuffs =
         id = match foodstuff.id with FoodstuffId id -> id
         name = foodstuff.name.value
         baseAmount = amountToDb foodstuff.baseAmount
-        amountStep = amountToDb foodstuff.amountStep
+        amountStep = NonNegativeFloat.value foodstuff.amountStep
     }
     
     
@@ -41,7 +41,7 @@ module Foodstuffs =
         id = FoodstuffId dbFoodstuff.id 
         name = mkNonEmptyString dbFoodstuff.name |> forceSucces
         baseAmount = amountToModel dbFoodstuff.baseAmount
-        amountStep = amountToModel dbFoodstuff.amountStep
+        amountStep = NonNegativeFloat.create dbFoodstuff.amountStep |> forceSucces
     }
     
     let private getByIds ids =

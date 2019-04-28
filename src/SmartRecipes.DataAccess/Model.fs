@@ -26,7 +26,7 @@ module Model =
         id: Guid
         name: string
         baseAmount: DbAmount
-        amountStep: DbAmount
+        amountStep: float
     }
     
     type DbIngredient = {

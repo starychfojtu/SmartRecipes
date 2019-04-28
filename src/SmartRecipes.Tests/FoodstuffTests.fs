@@ -38,10 +38,7 @@ module Tests.Foodstuffs
             unit = "gram"
             value = 1.0
         }
-        amountStep = {
-            unit = "gram"
-            value = 1.0
-        }
+        amountStep = 1.0
     }
     
     let apiIncorrectParameters: Api.Foodstuffs.CreateParameters = {
@@ -50,10 +47,7 @@ module Tests.Foodstuffs
             unit = "unknownUnit"
             value = -1.0
         }
-        amountStep = {
-            unit = "gram"
-            value = 1.0
-        }
+        amountStep = 1.0
     }
     
     [<Fact>]

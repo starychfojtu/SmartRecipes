@@ -46,10 +46,7 @@ module Tests.Fake
             unit = Gram
             value = NonNegativeFloat.create 100.0 |> Validation.forceSucces
         }
-        amountStep = {
-            unit = Gram
-            value = NonNegativeFloat.create 10.0 |> Validation.forceSucces
-        }
+        amountStep =  NonNegativeFloat.create 10.0 |> Validation.forceSucces
     }
     
     let ingredient: Ingredient = {

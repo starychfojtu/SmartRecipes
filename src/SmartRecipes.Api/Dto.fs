@@ -52,13 +52,15 @@ module Dto =
     type FoodstuffDto = {
         id: string
         name: string
-        amountStep: AmountDto
+        baseAmount: AmountDto
+        amountStep: float
     }
     
     let serializeFoodstuff (foodstuff: Foodstuff) = {
         id = foodstuff.id.value.ToString ()
         name = foodstuff.name.value
-        amountStep = serializeAmount foodstuff.amountStep
+        baseAmount = serializeAmount foodstuff.baseAmount
+        amountStep = NonNegativeFloat.value foodstuff.amountStep
     }
     
     type IngredientDto = {

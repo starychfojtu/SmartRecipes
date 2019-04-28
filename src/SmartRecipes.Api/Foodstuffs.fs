@@ -29,7 +29,7 @@ module Foodstuffs =
     }
         
     let private serializeGetByIds = 
-        Result.bimap (Seq.map Dto.serializeFoodstuff) (fun (e: GetByIdsError) -> match e with GetByIdsError.Unauthorized -> "Unauthorized.")
+        Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs }) (fun e -> match e with GetByIdsError.Unauthorized -> "Unauthorized.")
         
     let private getByIds accessToken parameters =
         Foodstuffs.getByIds accessToken parameters.Ids
@@ -44,12 +44,13 @@ module Foodstuffs =
         query: string
     }
     
+    type SearchResponse = {
+        Foodstuffs: FoodstuffDto seq
+    }
+    
     type SearchError = 
         | BusinessError of UseCases.Foodstuffs.SearchError
         | QueryIsEmpty
-    
-    let private mkQuery parameters =
-        mkNonEmptyString parameters.query |> toResult |> Result.mapError (fun _ -> QueryIsEmpty) |> ReaderT.id
         
     let private serializeSearchError = function 
         | BusinessError e ->
@@ -58,7 +59,10 @@ module Foodstuffs =
         | QueryIsEmpty -> "Query is empty."
         
     let private serializeSearch<'a, 'b> = 
-        Result.bimap (Seq.map Dto.serializeFoodstuff) serializeSearchError
+        Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs }) serializeSearchError
+        
+    let private mkQuery parameters =
+        mkNonEmptyString parameters.query |> toResult |> Result.mapError (fun _ -> QueryIsEmpty) |> ReaderT.id
         
     let searchFoodstuffs accessToken query =
         Foodstuffs.search accessToken query |> ReaderT.mapError BusinessError
@@ -77,12 +81,16 @@ module Foodstuffs =
         unit: string
         value: float
     }
+    
+    type CreateResponse = {
+        Foodstuff: FoodstuffDto
+    }
         
     [<CLIMutable>]
     type CreateParameters = {
         name: string
         baseAmount: AmountParameters
-        amountStep: AmountParameters
+        amountStep: float
     }
     
     type CreateError = 
@@ -98,23 +106,24 @@ module Foodstuffs =
     }
     
     let private parseUnit = function
-        | "gram" -> FSharpPlus.Data.Validation.Success MetricUnit.Gram
-        | "piece" -> FSharpPlus.Data.Validation.Success MetricUnit.Piece
-        | "liter" -> FSharpPlus.Data.Validation.Success MetricUnit.Liter
-        | _ -> FSharpPlus.Data.Validation.Failure [UnknownAmountUnit]
+        | "gram" -> Validation.Success MetricUnit.Gram
+        | "piece" -> Validation.Success MetricUnit.Piece
+        | "liter" -> Validation.Success MetricUnit.Liter
+        | _ -> Validation.Failure [UnknownAmountUnit]
+        
+    let private parseValue =
+        NonNegativeFloat.create >> Validation.mapFailure (fun _ -> [AmountCannotBeNegative])
     
     let private mkAmount parameters =
-        let parseValue value = value |> NonNegativeFloat.create |> Validation.mapFailure (fun _ -> [AmountCannotBeNegative])
         createAmount
         <!> parseUnit parameters.unit
         <*> parseValue parameters.value
-        |> map Some
         
     let private parseParameters (parameters: CreateParameters) =
         createParameters
         <!> safeMkNonEmptyString parameters.name |> Validation.mapFailure (fun _ -> [NameCannotBeEmpty])
-        <*> mkAmount parameters.baseAmount
-        <*> mkAmount parameters.amountStep
+        <*> (mkAmount parameters.baseAmount |> map Some)
+        <*> (parseValue parameters.amountStep |> map Some)
 
     let private createFoodstuff token parameters =
         Foodstuffs.create token parameters |> ReaderT.mapError (fun e -> [BusinessError(e)])
@@ -129,7 +138,7 @@ module Foodstuffs =
             | FoodstuffAlreadyExists -> "Foodstuff already exists."
         
     let private serializeCreate<'a> =
-        Result.map serializeFoodstuff >> Result.mapError (Seq.map serializeCreateError)
+        Result.bimap (fun f -> { Foodstuff = serializeFoodstuff f }) (Seq.map serializeCreateError)
 
     let create token parameters =
         parseParameters parameters |> toResult |> ReaderT.id 

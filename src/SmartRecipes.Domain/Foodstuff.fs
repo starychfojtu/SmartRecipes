@@ -28,9 +28,9 @@ module Foodstuff =
     
     type Foodstuff = {
         id: FoodstuffId
-        name: NonEmptyString;
+        name: NonEmptyString
         baseAmount: Amount
-        amountStep: Amount
+        amountStep: NonNegativeFloat
     }
     
     let private createFoodstuffId () = Guid.NewGuid() |> FoodstuffId
@@ -40,10 +40,8 @@ module Foodstuff =
         value = NonNegativeFloat.create 100.0 |> forceSucces
     }
     
-    let private defaultAmountStep = {
-        unit = Gram
-        value = NonNegativeFloat.create 10.0 |> forceSucces
-    }
+    let private defaultAmountStep =
+        NonNegativeFloat.create 10.0 |> forceSucces
     
     let createFoodstuff name baseAmount amountStep = {
         id = createFoodstuffId ()

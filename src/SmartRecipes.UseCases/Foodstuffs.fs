@@ -7,6 +7,8 @@ module Foodstuffs =
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.NonEmptyString
     open Environment
+    open SmartRecipes.Domain
+    open SmartRecipes.Domain.NonNegativeFloat
 
     // Get by ids
     
@@ -37,7 +39,7 @@ module Foodstuffs =
     type CreateParameters = {
         name: NonEmptyString
         baseAmount: Amount option
-        amountStep: Amount option
+        amountStep: NonNegativeFloat option
     }
     
     type CreateError = 
