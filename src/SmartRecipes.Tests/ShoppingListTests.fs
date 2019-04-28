@@ -6,11 +6,11 @@ module Tests.ShoppingLists
     open SmartRecipes.Domain
     open System
     open Tests
-    open SmartRecipes.UseCases.ShoppingLists
     open Xunit
+    open Fake
 
-    let getFakeShoppingListActionDao withFoodstuff items =
-        Fake.environment true true withFoodstuff items
+    let getFakeShoppingListActionDao foodstuffOptions items =
+        Fake.environment WithToken WithUser foodstuffOptions items
 
     // Add foodstuff
     
@@ -23,19 +23,19 @@ module Tests.ShoppingLists
     [<Fact>]
     let ``Can add foodstuffs`` () =
         Api.ShoppingLists.addFoodstuffs Fake.accessToken.value.value addFoodstuffsParameters
-        |> ReaderT.execute (getFakeShoppingListActionDao true Map.empty)
+        |> ReaderT.execute (getFakeShoppingListActionDao WithFoodstuff Map.empty)
         |> Assert.IsOk
         
     [<Fact>]
     let ``Cannot add not existing foodstuff`` () =
         Api.ShoppingLists.addFoodstuffs Fake.accessToken.value.value addFoodstuffsParameters
-        |> ReaderT.execute (getFakeShoppingListActionDao false Map.empty)
+        |> ReaderT.execute (getFakeShoppingListActionDao WithoutFoodstuff Map.empty)
         |> Assert.IsErrorAnd (fun e -> Assert.Equal(e, Api.ShoppingLists.AddItemsError.InvalidIds))
         
     [<Fact>]
     let ``Cannot add already added foodstuff`` () =
         Api.ShoppingLists.addFoodstuffs Fake.accessToken.value.value addFoodstuffsParameters
-        |> ReaderT.execute (getFakeShoppingListActionDao true fakeItems)
+        |> ReaderT.execute (getFakeShoppingListActionDao WithFoodstuff fakeItems)
         |> Assert.IsError
         
     // Change foodstuff amount
@@ -53,13 +53,13 @@ module Tests.ShoppingLists
     [<Fact>]
     let ``Can change amount`` () =
         Api.ShoppingLists.changeAmount Fake.accessToken.value.value changeAmountParameters
-        |> ReaderT.execute (getFakeShoppingListActionDao true fakeItems)
+        |> ReaderT.execute (getFakeShoppingListActionDao WithFoodstuff fakeItems)
         |> Assert.IsOk
         
     [<Fact>]
     let ``Cannot change foodstuff on shit shit shit`` () =
         Api.ShoppingLists.changeAmount Fake.accessToken.value.value changeAmountIncorrectParameters
-        |> ReaderT.execute (getFakeShoppingListActionDao false Map.empty)
+        |> ReaderT.execute (getFakeShoppingListActionDao WithoutFoodstuff Map.empty)
         |> Assert.IsError
         
     // Cook recipe

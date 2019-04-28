@@ -6,10 +6,12 @@ module Tests.Foodstuffs
     open SmartRecipes.UseCases.Foodstuffs
     open Tests
     open Xunit
+    open Fake
     
     // Use case tests
     
-    let getFakeCreateDao withFoodstuff = Fake.environment true false withFoodstuff Map.empty
+    let getFakeCreateDao foodstuffOptions =
+        Fake.environment WithToken WithUser foodstuffOptions Map.empty
     
     let parameters = {
         name = Fake.foodstuff.name
@@ -20,13 +22,13 @@ module Tests.Foodstuffs
     [<Fact>]
     let ``Can add foodstuff with minimal parameters`` () =
         Foodstuffs.create Fake.token.value parameters
-        |> ReaderT.execute (getFakeCreateDao false)
+        |> ReaderT.execute (getFakeCreateDao WithoutFoodstuff)
         |> Tests.Assert.IsOk
         
     [<Fact>]
     let ``Cannot add foodstuff if already exists`` () =
         Foodstuffs.create Fake.token.value parameters
-        |> ReaderT.execute (getFakeCreateDao true)
+        |> ReaderT.execute (getFakeCreateDao WithFoodstuff)
         |> Tests.Assert.IsError
         
         
@@ -47,19 +49,19 @@ module Tests.Foodstuffs
             unit = "unknownUnit"
             value = -1.0
         }
-        amountStep = 1.0
+        amountStep = -1.0
     }
     
     [<Fact>]
     let ``Can add foodstuff`` () =
         Api.Foodstuffs.create Fake.token.value apiParameters
-        |> ReaderT.execute (getFakeCreateDao false)
+        |> ReaderT.execute (getFakeCreateDao WithoutFoodstuff)
         |> Tests.Assert.IsOk
         
     [<Fact>]
     let ``Cannot add foodstuff with incorrect parameters`` () =
         Api.Foodstuffs.create Fake.token.value apiIncorrectParameters
-        |> ReaderT.execute (getFakeCreateDao false)
+        |> ReaderT.execute (getFakeCreateDao WithoutFoodstuff)
         |> Assert.IsErrorAnd (fun e -> 
             Assert.True (Seq.contains Api.Foodstuffs.CreateError.NameCannotBeEmpty e)
             Assert.True (Seq.contains (Api.Foodstuffs.CreateError.BaseAmountError Api.Foodstuffs.ParseAmountError.UnknownUnit) e)

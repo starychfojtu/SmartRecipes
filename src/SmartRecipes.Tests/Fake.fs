@@ -78,14 +78,31 @@ module Tests.Fake
         
     // Dao
     
-    let usersDao withUser = {
-        getByEmail = if withUser then fun m -> Some account else fun m -> None
-        getById = if withUser then fun id -> Some account else fun id -> None
+    type FakeUserDaoOptions =
+        | WithUser
+        | WithoutUser
+    
+    let usersDao options = {
+        getByEmail =
+            match options with
+            | WithUser -> fun v -> Some account
+            | WithoutUser -> fun v -> None
+        getById =
+            match options with
+            | WithUser -> fun v -> Some account
+            | WithoutUser -> fun v -> None
         add = fun a -> a
     }
     
+    type FakeTokenDaoOptions =
+        | WithToken
+        | WithoutToken
+    
     let tokensDao withToken = {
-        get = if withToken then fun v -> Some accessToken else fun v -> None
+        get =
+            match withToken with
+            | WithToken -> fun v -> Some accessToken
+            | WithoutToken -> fun v -> None
         add = fun t -> t
     }
     
@@ -95,12 +112,25 @@ module Tests.Fake
         get = fun a -> raise (NotImplementedException())
     }
     
-    let foodstuffsDao withFoodstuff = {
-        getByIds = if withFoodstuff then fun ids -> seq { yield foodstuff } else fun ids -> Seq.empty
-        getById = if withFoodstuff then fun id -> Some foodstuff else fun id -> None
-        search = if withFoodstuff then fun name -> seq { yield foodstuff } else fun name -> Seq.empty
-        add = fun f -> f
-    }
+    type FakeFoodstuffDaoOptions =
+        | WithFoodstuff
+        | WithoutFoodstuff
+    
+    let foodstuffsDao = function
+        | WithFoodstuff ->
+            {
+                getByIds = fun ids -> seq { yield foodstuff }
+                getById = fun id -> Some foodstuff
+                search =fun name -> seq { yield foodstuff }
+                add = fun f -> f
+            }
+        | WithoutFoodstuff ->
+            {
+                getByIds = fun ids -> Seq.empty
+                getById = fun id -> None
+                search = fun name -> Seq.empty
+                add = fun f -> f
+            }
     
     let recipesDao: RecipesDao = {
         getByAccount = fun a -> Seq.empty
@@ -114,14 +144,14 @@ module Tests.Fake
         get = fun a -> { shoppingList with items = items }
         update = fun s -> s
     }
-    
-    let environment withToken withUser withFoodstuff items : Environment = {
+
+    let environment tokenOptions userOptions foodstuffOptions shoppingListItems : Environment = {
         IO = {
-            Tokens = tokensDao withToken
-            Users = usersDao withUser
+            Tokens = tokensDao tokenOptions
+            Users = usersDao userOptions
             Recipes = recipesDao
-            Foodstuffs = foodstuffsDao withFoodstuff
-            ShoppingLists = shoppingListDao items
+            Foodstuffs = foodstuffsDao foodstuffOptions
+            ShoppingLists = shoppingListDao shoppingListItems
         }
-        NowUtc = DateTime(2019, 5, 5)
+        NowUtc = DateTime.UtcNow
     }

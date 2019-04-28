@@ -4,8 +4,10 @@ module Tests.Recipes
     open Infrastructure
     open Tests
     open Xunit
+    open Fake
     
-    let getCreateDao () = Fake.environment true true true Map.empty
+    let getCreateDao () =
+        Fake.environment WithToken WithUser WithFoodstuff Map.empty
     
     let apiIngredientParameter: Api.Recipes.IngredientParameter = {
         foodstuffId = Fake.foodstuff.id.value
@@ -55,5 +57,5 @@ module Tests.Recipes
             Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.UnknownUnit) e)
             Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.ValueCannotBeNegative) e)
             Assert.True (Seq.contains Api.Recipes.CreateError.PersonCountMustBePositive e)
-            Assert.Equal ((Seq.length e), 5)
+            Assert.Equal (6, (Seq.length e))
         )

@@ -6,7 +6,7 @@ module Tests.Assert
     
     let IsOk = function 
         | Ok _ -> ()
-        | Error _ -> fail "Result is Error, expected Ok"
+        | Error e -> fail ("Result is Error, expected Ok, got " + e.ToString ())
         
     let IsError = function 
         | Ok _ -> fail "Result is Ok, expected Error"
