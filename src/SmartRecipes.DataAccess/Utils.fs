@@ -20,11 +20,11 @@ module Utils =
         
         
     let internal amountToDb (amount: Amount) : DbAmount = {
-        unit = amount.unit
+        unit = amount.unit.Value.Value
         value = NonNegativeFloat.value amount.value 
     }
     
     let internal amountToModel (dbAmount: DbAmount) = {
-        unit = dbAmount.unit
+        unit = NonEmptyString.create dbAmount.unit |> forceSucces |> MetricUnit
         value = NonNegativeFloat.create dbAmount.value |> forceSucces
     }

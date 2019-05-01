@@ -10,6 +10,7 @@ module Foodstuff =
     
     type MetricUnit = 
         | MetricUnit of NonEmptyString
+        with member u.Value = match u with MetricUnit s -> s
         
     module MetricUnits =
         let gram = NonEmptyString.create "gram" |> forceSucces |> MetricUnit

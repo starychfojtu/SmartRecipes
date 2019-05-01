@@ -18,7 +18,7 @@ module Model =
     }
         
     type DbAmount = {
-        unit: MetricUnit
+        unit: string
         value: float
     }
 
