@@ -35,7 +35,7 @@ module Tests.Foodstuffs
     // API tests
     
     let apiParameters: Api.Foodstuffs.CreateParameters = {
-        name = Fake.foodstuff.name.value
+        name = Fake.foodstuff.name.Value
         baseAmount = {
             unit = "gram"
             value = 1.0
@@ -46,7 +46,7 @@ module Tests.Foodstuffs
     let apiIncorrectParameters: Api.Foodstuffs.CreateParameters = {
         name = ""
         baseAmount = {
-            unit = "unknownUnit"
+            unit = ""
             value = -1.0
         }
         amountStep = -1.0
@@ -64,7 +64,7 @@ module Tests.Foodstuffs
         |> ReaderT.execute (getFakeCreateDao WithoutFoodstuff)
         |> Assert.IsErrorAnd (fun e -> 
             Assert.True (Seq.contains Api.Foodstuffs.CreateError.NameCannotBeEmpty e)
-            Assert.True (Seq.contains (Api.Foodstuffs.CreateError.BaseAmountError Api.Foodstuffs.ParseAmountError.UnknownUnit) e)
+            Assert.True (Seq.contains (Api.Foodstuffs.CreateError.BaseAmountError Api.Foodstuffs.ParseAmountError.UnitCannotBeEmpty) e)
             Assert.True (Seq.contains (Api.Foodstuffs.CreateError.BaseAmountError Api.Foodstuffs.ParseAmountError.ValueCannotBeNegative) e)
             Assert.True (Seq.contains Api.Foodstuffs.CreateError.AmountStepCannotBeNegative e)
         )

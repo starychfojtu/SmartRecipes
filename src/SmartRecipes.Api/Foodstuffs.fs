@@ -62,7 +62,7 @@ module Foodstuffs =
         Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs }) serializeSearchError
         
     let private mkQuery parameters =
-        mkNonEmptyString parameters.query |> toResult |> Result.mapError (fun _ -> QueryIsEmpty) |> ReaderT.id
+        NonEmptyString.create parameters.query |> toResult |> Result.mapError (fun _ -> QueryIsEmpty) |> ReaderT.id
         
     let searchFoodstuffs accessToken query =
         Foodstuffs.search accessToken query |> ReaderT.mapError BusinessError
@@ -76,7 +76,6 @@ module Foodstuffs =
 
     // Create
 
-    
     // TODO: move to more general place.
     [<CLIMutable>]
     type AmountParameters = {
@@ -85,14 +84,11 @@ module Foodstuffs =
     }
     
     type ParseAmountError =
-        | UnknownUnit
+        | UnitCannotBeEmpty
         | ValueCannotBeNegative
     
-    let parseUnit = function
-        | "gram" -> Validation.Success MetricUnit.Gram
-        | "piece" -> Validation.Success MetricUnit.Piece
-        | "liter" -> Validation.Success MetricUnit.Liter
-        | _ -> Validation.Failure [UnknownUnit]
+    let parseUnit =
+        NonEmptyString.create >> Validation.bimap (fun _ -> [UnitCannotBeEmpty]) MetricUnit
         
     let parseValue =
         NonNegativeFloat.create >> Validation.mapFailure (fun _ -> [ValueCannotBeNegative])
@@ -125,14 +121,14 @@ module Foodstuffs =
         amountStep = amountStep
     }
     
-    let private parseName name =
-        safeMkNonEmptyString name |> Validation.mapFailure (fun _ -> [NameCannotBeEmpty])
+    let private parseName =
+        NonEmptyString.create >> Validation.mapFailure (fun _ -> [NameCannotBeEmpty])
         
-    let private parseBaseAmount amount =
-        parseAmount amount |> Validation.mapFailure (List.map BaseAmountError) |> map Some
+    let private parseBaseAmount =
+        parseAmount >> Validation.bimap (List.map BaseAmountError) Some
         
-    let private parseAmountStep value =
-        NonNegativeFloat.create value |> Validation.mapFailure (fun _ -> [AmountStepCannotBeNegative]) |> map Some
+    let private parseAmountStep =
+        NonNegativeFloat.create >> Validation.bimap (fun _ -> [AmountStepCannotBeNegative]) Some
     
     let private parseParameters (parameters: CreateParameters) =
         createParameters
@@ -145,8 +141,11 @@ module Foodstuffs =
         
     let private serializeCreateError = function
         | NameCannotBeEmpty -> "Name cannot be empty."
-        | UnknownAmountUnit -> "Unknown amount unit."
-        | AmountCannotBeNegative -> "Amount cannot be negative."
+        | AmountStepCannotBeNegative -> "Amount step cannot be negative."
+        | BaseAmountError e ->
+            match e with
+            | ParseAmountError.UnitCannotBeEmpty -> "Unit cannot be empty."
+            | ParseAmountError.ValueCannotBeNegative -> "Base amount cannot be negative."
         | BusinessError e ->
             match e with
             | NotAuthorized -> "Unauthorized."

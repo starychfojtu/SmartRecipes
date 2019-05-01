@@ -13,7 +13,7 @@ module Utils =
         
     
     let toNonEmptyStringModel s =
-        NonEmptyString.mkNonEmptyString s |> forceSucces
+        NonEmptyString.create s |> forceSucces
         
     let toNaturalNumberModel n =
         NaturalNumber.create n |> forceSucces

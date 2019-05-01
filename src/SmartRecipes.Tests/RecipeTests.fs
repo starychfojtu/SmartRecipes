@@ -18,10 +18,10 @@ module Tests.Recipes
     }
     
     let apiParameters: Api.Recipes.CreateParameters = {
-        name = Fake.recipe.name.value
+        name = Fake.recipe.name.Value
         personCount = 4
         imageUrl = Fake.recipe.imageUrl.AbsolutePath
-        description = Fake.recipe.description.Value.value
+        description = Fake.recipe.description.Value.Value
         ingredients = seq { yield apiIngredientParameter }
     }
     
@@ -29,7 +29,7 @@ module Tests.Recipes
         foodstuffId = Guid.NewGuid()
         amount = {
             value = -10.0
-            unit = "Unknown"
+            unit = ""
         }
     }
         
@@ -54,7 +54,7 @@ module Tests.Recipes
         |> Assert.IsErrorAnd (fun e -> 
             Assert.True (Seq.contains Api.Recipes.CreateError.NameCannotBeEmpty e)
             Assert.True (Seq.contains Api.Recipes.CreateError.DescriptionIsProvidedButEmpty e)
-            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.UnknownUnit) e)
+            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.UnitCannotBeEmpty) e)
             Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.ValueCannotBeNegative) e)
             Assert.True (Seq.contains Api.Recipes.CreateError.PersonCountMustBePositive e)
             Assert.Equal (6, (Seq.length e))

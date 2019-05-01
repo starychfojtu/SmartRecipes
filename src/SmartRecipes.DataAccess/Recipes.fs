@@ -38,17 +38,17 @@ module Recipes =
         creatorId = AccountId dbRecipe.creatorId
         personCount = Utils.toNaturalNumberModel dbRecipe.personCount
         imageUrl = Uri(dbRecipe.imageUrl)
-        description = dbRecipe.description |> Option.ofObj |> Option.map (mkNonEmptyString >> forceSucces)
+        description = dbRecipe.description |> Option.ofObj |> Option.map (create >> forceSucces)
         ingredients = Seq.map ingredientToModel dbRecipe.ingredients |> (mkNonEmptyList >> forceSucces)
     }
     
     let private toDb (recipe: Recipe): DbRecipe = {
         id = match recipe.id with RecipeId id -> id
-        name = recipe.name.value
+        name = recipe.name.Value
         creatorId = match recipe.creatorId with AccountId id -> id
         personCount = Convert.ToInt32 recipe.personCount
         imageUrl = recipe.imageUrl.AbsoluteUri
-        description = recipe.description |> Option.map (fun d -> d.value) |> Option.toObj
+        description = recipe.description |> Option.map (fun d -> d.Value) |> Option.toObj
         ingredients = NonEmptyList.map ingredientToDb recipe.ingredients |> NonEmptyList.toSeq
     }
     

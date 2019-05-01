@@ -95,11 +95,11 @@ module Recipes =
     let private mkDescription d =
         if isNull d
             then Success None
-            else mkNonEmptyString d |> mapFailure (fun _ -> [DescriptionIsProvidedButEmpty]) |> Validation.map Some 
+            else NonEmptyString.create d |> Validation.bimap (fun _ -> [DescriptionIsProvidedButEmpty]) Some 
         
     let private mkParameters (parameters: CreateParameters) =
         createParameters
-        <!> (mkNonEmptyString parameters.name |> mapFailure (fun _ -> [NameCannotBeEmpty]))
+        <!> (NonEmptyString.create parameters.name |> mapFailure (fun _ -> [NameCannotBeEmpty]))
         <*> (NaturalNumber.create parameters.personCount |> mapFailure (fun _ -> [PersonCountMustBePositive]))
         <*> (mkUri parameters.imageUrl |> mapFailure (fun m -> [InvalidImageUrl(m)]))
         <*> mkDescription parameters.description

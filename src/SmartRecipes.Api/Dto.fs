@@ -58,7 +58,7 @@ module Dto =
     
     let serializeFoodstuff (foodstuff: Foodstuff) = {
         id = foodstuff.id.value.ToString ()
-        name = foodstuff.name.value
+        name = foodstuff.name.Value
         baseAmount = serializeAmount foodstuff.baseAmount
         amountStep = NonNegativeFloat.value foodstuff.amountStep
     }
@@ -85,11 +85,11 @@ module Dto =
     
     let serializeRecipe (recipe: Recipe) = {
         id = recipe.id.value.ToString ()
-        name = recipe.name.value
+        name = recipe.name.Value
         creatorId = recipe.creatorId.value.ToString ()
         personCount = int(recipe.personCount)
         imageUrl = recipe.imageUrl.AbsoluteUri
-        description = recipe.description |> Option.map (fun d -> d.value) |> Option.defaultValue null
+        description = recipe.description |> Option.map (fun d -> d.Value) |> Option.defaultValue null
         ingredients = Seq.map serializeIngredient recipe.ingredients
     }
     

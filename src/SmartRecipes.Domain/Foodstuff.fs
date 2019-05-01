@@ -9,9 +9,10 @@ module Foodstuff =
     open Infrastructure.Validation
     
     type MetricUnit = 
-        | Liter
-        | Gram
-        | Piece
+        | MetricUnit of NonEmptyString
+        
+    module MetricUnits =
+        let gram = NonEmptyString.create "gram" |> forceSucces |> MetricUnit
     
     type Amount = {
         unit: MetricUnit;
@@ -36,7 +37,7 @@ module Foodstuff =
     let private createFoodstuffId () = Guid.NewGuid() |> FoodstuffId
     
     let private defaultBaseAmount = {
-        unit = Gram
+        unit = MetricUnits.gram
         value = NonNegativeFloat.create 100.0 |> forceSucces
     }
     

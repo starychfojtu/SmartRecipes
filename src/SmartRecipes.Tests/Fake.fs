@@ -41,9 +41,9 @@ module Tests.Fake
     
     let foodstuff = {
         id = FoodstuffId(Guid.NewGuid())
-        name = mkNonEmptyString "Test" |> Validation.forceSucces
+        name = NonEmptyString.create "Test" |> Validation.forceSucces
         baseAmount = {
-            unit = Gram
+            unit = MetricUnits.gram
             value = NonNegativeFloat.create 100.0 |> Validation.forceSucces
         }
         amountStep =  NonNegativeFloat.create 10.0 |> Validation.forceSucces
@@ -56,11 +56,11 @@ module Tests.Fake
     
     let recipe = {
         id = RecipeId(Guid.NewGuid())
-        name = mkNonEmptyString "Test" |> Validation.forceSucces
+        name = NonEmptyString.create "Test" |> Validation.forceSucces
         creatorId = account.id
         imageUrl = Uri("https://google.com")
         personCount = NaturalNumber.create 4 |> Validation.forceSucces
-        description = Some (mkNonEmptyString "Test" |> Validation.forceSucces)
+        description = Some (NonEmptyString.create "Test" |> Validation.forceSucces)
         ingredients = NonEmptyList.create ingredient []
     }
     

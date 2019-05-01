@@ -21,7 +21,7 @@ module Foodstuffs =
                 
     let internal toDb foodstuff : DbFoodstuff = {
         id = match foodstuff.id with FoodstuffId id -> id
-        name = foodstuff.name.value
+        name = foodstuff.name.Value
         baseAmount = amountToDb foodstuff.baseAmount
         amountStep = NonNegativeFloat.value foodstuff.amountStep
     }
@@ -29,7 +29,7 @@ module Foodstuffs =
     
     let internal toModel (dbFoodstuff: DbFoodstuff) = {
         id = FoodstuffId dbFoodstuff.id 
-        name = mkNonEmptyString dbFoodstuff.name |> forceSucces
+        name = create dbFoodstuff.name |> forceSucces
         baseAmount = amountToModel dbFoodstuff.baseAmount
         amountStep = NonNegativeFloat.create dbFoodstuff.amountStep |> forceSucces
     }
@@ -47,7 +47,7 @@ module Foodstuffs =
     
     let private search (name: NonEmptyString) =
         collection.AsQueryable()
-        |> Seq.filter (fun f -> f.name = name.value)
+        |> Seq.filter (fun f -> f.name = name.Value)
         |> Seq.map toModel
     
     let private add foodstuff =
