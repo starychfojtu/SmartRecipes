@@ -50,18 +50,18 @@ module Tests.Fake
     }
     
     let ingredient: Ingredient = {
-        foodstuffId = foodstuff.id
-        amount = foodstuff.baseAmount
+        FoodstuffId = foodstuff.id
+        Amount = foodstuff.baseAmount
     }
     
     let recipe = {
-        id = RecipeId(Guid.NewGuid())
-        name = NonEmptyString.create "Test" |> Validation.forceSucces
-        creatorId = account.id
-        imageUrl = Uri("https://google.com")
-        personCount = NaturalNumber.create 4 |> Validation.forceSucces
-        description = Some (NonEmptyString.create "Test" |> Validation.forceSucces)
-        ingredients = NonEmptyList.create ingredient []
+        Id = RecipeId(Guid.NewGuid())
+        Name = NonEmptyString.create "Test" |> Validation.forceSucces
+        CreatorId = account.id
+        ImageUrl = Uri("https://google.com")
+        PersonCount = NaturalNumber.create 4 |> Validation.forceSucces
+        Description = Some (NonEmptyString.create "Test" |> Validation.forceSucces)
+        Ingredients = NonEmptyList.create ingredient []
     }
     
     let listItem: ListItem = {

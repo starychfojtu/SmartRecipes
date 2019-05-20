@@ -28,8 +28,8 @@ module ShoppingList =
     }
     
     let private createRecipeItem recipe personCount = {
-        recipeId = recipe.id
-        personCount = Option.defaultValue recipe.personCount personCount
+        recipeId = recipe.Id
+        personCount = Option.defaultValue recipe.PersonCount personCount
     }
         
     type ShoppingListId = ShoppingListId of Guid
@@ -53,7 +53,7 @@ module ShoppingList =
         Map.tryFind foodstuffId list.items
         
     let findRecipeItem (recipe: Recipe) list =
-        Map.tryFind recipe.id list.recipes
+        Map.tryFind recipe.Id list.recipes
     
     type AddItemError = 
         | ItemAlreadyAdded
@@ -73,7 +73,7 @@ module ShoppingList =
         let existingItem = findRecipeItem recipe list
         match existingItem with 
         | Some i -> Error ItemAlreadyAdded
-        | None -> Ok { list with recipes = Map.add recipe.id (createRecipeItem recipe personCount) list.recipes }
+        | None -> Ok { list with recipes = Map.add recipe.Id (createRecipeItem recipe personCount) list.recipes }
         
     let addRecipes list recipes = 
         let initState = Ok list
@@ -92,7 +92,7 @@ module ShoppingList =
     let removeRecipe list recipe = 
         let existingItem = findRecipeItem recipe list
         match existingItem with
-        | Some i -> Ok { list with recipes = Map.remove recipe.id list.recipes }
+        | Some i -> Ok { list with recipes = Map.remove recipe.Id list.recipes }
         | None -> Error ItemNotInList
         
     type ChangeAmountError = 
@@ -134,10 +134,10 @@ module ShoppingList =
         match findRecipeItem recipe list with | Some _ -> true | None -> false
         
     let private decreaseIngredient (ingredient: Ingredient) list = 
-        decreaseAmount ingredient.foodstuffId ingredient.amount list |> Result.mapError (fun _ -> NotEnoughIngredientsInList)
+        decreaseAmount ingredient.FoodstuffId ingredient.Amount list |> Result.mapError (fun _ -> NotEnoughIngredientsInList)
         
     let private decreaseIngredientAmounts recipe list =
-        let ingredients = NonEmptyList.toSeq recipe.ingredients
+        let ingredients = NonEmptyList.toSeq recipe.Ingredients
         let initState = (Ok list)
         Seq.fold (fun list (i: Ingredient) -> Result.bind (fun l -> decreaseIngredient i l) list) initState ingredients 
         

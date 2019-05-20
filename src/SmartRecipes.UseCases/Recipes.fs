@@ -65,7 +65,7 @@ module Recipes =
         <*> (Success parameters.amount)
     
     let private checkIngredientsNotDuplicate ingredients =
-        let foodstuffIds = NonEmptyList.map (fun (i: Ingredient) -> i.foodstuffId) ingredients
+        let foodstuffIds = NonEmptyList.map (fun (i: Ingredient) -> i.FoodstuffId) ingredients
         if NonEmptyList.isDistinct foodstuffIds 
             then Success ingredients 
             else Failure [DuplicateFoodstuffIngredient]

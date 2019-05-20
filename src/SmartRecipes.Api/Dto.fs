@@ -69,8 +69,8 @@ module Dto =
     }
     
     let serializeIngredient (ingredient: Ingredient) = {
-        foodstuffId = ingredient.foodstuffId.value.ToString ()
-        amount = serializeAmount ingredient.amount
+        foodstuffId = ingredient.FoodstuffId.value.ToString ()
+        amount = serializeAmount ingredient.Amount
     }
     
     type RecipeDto = {
@@ -84,13 +84,13 @@ module Dto =
     }
     
     let serializeRecipe (recipe: Recipe) = {
-        id = recipe.id.value.ToString ()
-        name = recipe.name.Value
-        creatorId = recipe.creatorId.value.ToString ()
-        personCount = int(recipe.personCount)
-        imageUrl = recipe.imageUrl.AbsoluteUri
-        description = recipe.description |> Option.map (fun d -> d.Value) |> Option.defaultValue null
-        ingredients = Seq.map serializeIngredient recipe.ingredients
+        id = recipe.Id.value.ToString ()
+        name = recipe.Name.Value
+        creatorId = recipe.CreatorId.value.ToString ()
+        personCount = int(recipe.PersonCount)
+        imageUrl = recipe.ImageUrl.AbsoluteUri
+        description = recipe.Description |> Option.map (fun d -> d.Value) |> Option.defaultValue null
+        ingredients = Seq.map serializeIngredient recipe.Ingredients
     }
     
     type ListItemDto  = {

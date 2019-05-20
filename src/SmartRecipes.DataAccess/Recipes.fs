@@ -23,33 +23,33 @@ module Recipes =
     let private collection () = Database.getCollection<DbRecipe> ()
     
     let private ingredientToModel (dbIngredient: DbIngredient): Ingredient = {
-        foodstuffId = FoodstuffId(dbIngredient.foodstuffId)
-        amount = amountToModel dbIngredient.amount
+        FoodstuffId = FoodstuffId(dbIngredient.foodstuffId)
+        Amount = amountToModel dbIngredient.amount
     }
     
     let private ingredientToDb (ingredient: Ingredient): DbIngredient = {
-        foodstuffId = ingredient.foodstuffId.value
-        amount = amountToDb ingredient.amount
+        foodstuffId = ingredient.FoodstuffId.value
+        amount = amountToDb ingredient.Amount
     }
     
     let private toModel (dbRecipe: DbRecipe): Recipe = {
-        id = RecipeId dbRecipe.id
-        name = Utils.toNonEmptyStringModel dbRecipe.name
-        creatorId = AccountId dbRecipe.creatorId
-        personCount = Utils.toNaturalNumberModel dbRecipe.personCount
-        imageUrl = Uri(dbRecipe.imageUrl)
-        description = dbRecipe.description |> Option.ofObj |> Option.map (create >> forceSucces)
-        ingredients = Seq.map ingredientToModel dbRecipe.ingredients |> (mkNonEmptyList >> forceSucces)
+        Id = RecipeId dbRecipe.id
+        Name = Utils.toNonEmptyStringModel dbRecipe.name
+        CreatorId = AccountId dbRecipe.creatorId
+        PersonCount = Utils.toNaturalNumberModel dbRecipe.personCount
+        ImageUrl = Uri(dbRecipe.imageUrl)
+        Description = dbRecipe.description |> Option.ofObj |> Option.map (create >> forceSucces)
+        Ingredients = Seq.map ingredientToModel dbRecipe.ingredients |> (mkNonEmptyList >> forceSucces)
     }
     
     let private toDb (recipe: Recipe): DbRecipe = {
-        id = match recipe.id with RecipeId id -> id
-        name = recipe.name.Value
-        creatorId = match recipe.creatorId with AccountId id -> id
-        personCount = Convert.ToInt32 recipe.personCount
-        imageUrl = recipe.imageUrl.AbsoluteUri
-        description = recipe.description |> Option.map (fun d -> d.Value) |> Option.toObj
-        ingredients = NonEmptyList.map ingredientToDb recipe.ingredients |> NonEmptyList.toSeq
+        id = match recipe.Id with RecipeId id -> id
+        name = recipe.Name.Value
+        creatorId = match recipe.CreatorId with AccountId id -> id
+        personCount = Convert.ToInt32 recipe.PersonCount
+        imageUrl = recipe.ImageUrl.AbsoluteUri
+        description = recipe.Description |> Option.map (fun d -> d.Value) |> Option.toObj
+        ingredients = NonEmptyList.map ingredientToDb recipe.Ingredients |> NonEmptyList.toSeq
     }
     
     let private getByIds ids =

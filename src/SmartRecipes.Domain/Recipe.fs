@@ -10,36 +10,36 @@ module Recipe =
     open NonNegativeFloat
     
     type Ingredient = {
-        foodstuffId: FoodstuffId
-        amount: Amount
+        FoodstuffId: FoodstuffId
+        Amount: Amount // Sometimes it is not specified how much of it should be used, eg. 'Olive oil'.
     }
     
     let createIngredient foodstuffId amount = {
-        foodstuffId = foodstuffId
-        amount = amount
+        FoodstuffId = foodstuffId
+        Amount = amount
     }
     
     type RecipeId = RecipeId of Guid
         with member i.value = match i with RecipeId v -> v
 
     type Recipe = {
-        id: RecipeId
-        name: NonEmptyString
-        creatorId: AccountId
-        personCount: NaturalNumber
-        imageUrl: Uri
-        description: NonEmptyString option
-        ingredients: NonEmptyList<Ingredient>
+        Id: RecipeId
+        Name: NonEmptyString
+        CreatorId: AccountId
+        PersonCount: NaturalNumber
+        ImageUrl: Uri
+        Description: NonEmptyString option
+        Ingredients: NonEmptyList<Ingredient>
     }
     
     let createRecipe name creatorId personCount imageUrl description ingredients = {
-        id = RecipeId(Guid.NewGuid ())
-        name = name
-        creatorId = creatorId
-        personCount = personCount
-        imageUrl = imageUrl
-        description = description
-        ingredients = ingredients
+        Id = RecipeId(Guid.NewGuid ())
+        Name = name
+        CreatorId = creatorId
+        PersonCount = personCount
+        ImageUrl = imageUrl
+        Description = description
+        Ingredients = ingredients
     }
         
         

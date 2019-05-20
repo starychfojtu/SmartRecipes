@@ -18,10 +18,10 @@ module Tests.Recipes
     }
     
     let apiParameters: Api.Recipes.CreateParameters = {
-        name = Fake.recipe.name.Value
+        name = Fake.recipe.Name.Value
         personCount = 4
-        imageUrl = Fake.recipe.imageUrl.AbsolutePath
-        description = Fake.recipe.description.Value.Value
+        imageUrl = Fake.recipe.ImageUrl.AbsolutePath
+        description = Fake.recipe.Description.Value.Value
         ingredients = seq { yield apiIngredientParameter }
     }
     
