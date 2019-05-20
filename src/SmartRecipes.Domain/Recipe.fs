@@ -11,7 +11,7 @@ module Recipe =
     
     type Ingredient = {
         FoodstuffId: FoodstuffId
-        Amount: Amount // Sometimes it is not specified how much of it should be used, eg. 'Olive oil'.
+        Amount: Amount option // Sometimes it is not specified how much of it should be used, eg. 'Olive oil'.
     }
     
     let createIngredient foodstuffId amount = {

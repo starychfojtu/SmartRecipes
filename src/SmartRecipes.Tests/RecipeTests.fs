@@ -11,7 +11,7 @@ module Tests.Recipes
     
     let apiIngredientParameter: Api.Recipes.IngredientParameter = {
         foodstuffId = Fake.foodstuff.id.value
-        amount = {
+        amount = Some {
             value = 10.0
             unit = "liter"
         }
@@ -27,7 +27,7 @@ module Tests.Recipes
     
     let apiIncorrectIngredientParameter: Api.Recipes.IngredientParameter = {
         foodstuffId = Guid.NewGuid()
-        amount = {
+        amount = Some {
             value = -10.0
             unit = ""
         }

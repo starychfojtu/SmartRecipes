@@ -38,7 +38,7 @@ module Recipes =
     [<CLIMutable>]
     type IngredientParameter = {
         foodstuffId: Guid
-        amount: AmountParameters
+        amount: AmountParameters option
     }
 
     [<CLIMutable>]
@@ -76,8 +76,9 @@ module Recipes =
         amount = amount
     }
     
-    let private parseIngredientAmount =
-        parseAmount >> Validation.mapFailure (List.map AmountError)
+    let private parseIngredientAmount = function
+        | Some a -> parseAmount a |> Validation.map Some |> Validation.mapFailure (List.map AmountError)
+        | None -> Validation.Success None
         
     let private mkIngredientParameter parameter =
         createIngredientParameter parameter.foodstuffId

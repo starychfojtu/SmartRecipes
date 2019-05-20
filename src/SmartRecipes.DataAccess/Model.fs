@@ -1,7 +1,6 @@
 namespace SmartRecipes.DataAccess
 
 module Model =
-    open SmartRecipes.Domain.Foodstuff
     open System
     
     type DbAccount = {
@@ -31,7 +30,7 @@ module Model =
     
     type DbIngredient = {
         foodstuffId: Guid
-        amount: DbAmount
+        amount: DbAmount option
     }
     
     type DbRecipe = {

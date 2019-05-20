@@ -24,12 +24,12 @@ module Recipes =
     
     let private ingredientToModel (dbIngredient: DbIngredient): Ingredient = {
         FoodstuffId = FoodstuffId(dbIngredient.foodstuffId)
-        Amount = amountToModel dbIngredient.amount
+        Amount = Option.map amountToModel dbIngredient.amount
     }
     
     let private ingredientToDb (ingredient: Ingredient): DbIngredient = {
         foodstuffId = ingredient.FoodstuffId.value
-        amount = amountToDb ingredient.Amount
+        amount = Option.map amountToDb ingredient.Amount
     }
     
     let private toModel (dbRecipe: DbRecipe): Recipe = {
