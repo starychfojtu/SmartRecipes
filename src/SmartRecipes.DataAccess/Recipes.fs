@@ -22,14 +22,24 @@ module Recipes =
     
     let private collection () = Database.getCollection<DbRecipe> ()
     
+    let private nonEmptyStringOptionToModel =
+        Option.ofObj >> Option.map (create >> forceSucces)
+        
+    let private nonEmptyStringOptionToDb =
+        Option.map (fun (s: NonEmptyString) -> s.Value) >> Option.toObj
+    
     let private ingredientToModel (dbIngredient: DbIngredient): Ingredient = {
         FoodstuffId = FoodstuffId(dbIngredient.foodstuffId)
         Amount = Option.map amountToModel dbIngredient.amount
+        Comment = nonEmptyStringOptionToModel dbIngredient.comment
+        DisplayLine = nonEmptyStringOptionToModel dbIngredient.displayLine
     }
     
     let private ingredientToDb (ingredient: Ingredient): DbIngredient = {
         foodstuffId = ingredient.FoodstuffId.value
         amount = Option.map amountToDb ingredient.Amount
+        comment = nonEmptyStringOptionToDb ingredient.Comment
+        displayLine = nonEmptyStringOptionToDb ingredient.DisplayLine
     }
     
     let private toModel (dbRecipe: DbRecipe): Recipe = {
@@ -38,7 +48,7 @@ module Recipes =
         CreatorId = AccountId dbRecipe.creatorId
         PersonCount = Utils.toNaturalNumberModel dbRecipe.personCount
         ImageUrl = Uri(dbRecipe.imageUrl)
-        Description = dbRecipe.description |> Option.ofObj |> Option.map (create >> forceSucces)
+        Description = nonEmptyStringOptionToModel dbRecipe.description
         Ingredients = Seq.map ingredientToModel dbRecipe.ingredients |> (mkNonEmptyList >> forceSucces)
     }
     
@@ -48,7 +58,7 @@ module Recipes =
         creatorId = match recipe.CreatorId with AccountId id -> id
         personCount = Convert.ToInt32 recipe.PersonCount
         imageUrl = recipe.ImageUrl.AbsoluteUri
-        description = recipe.Description |> Option.map (fun d -> d.Value) |> Option.toObj
+        description = nonEmptyStringOptionToDb recipe.Description
         ingredients = NonEmptyList.map ingredientToDb recipe.Ingredients |> NonEmptyList.toSeq
     }
     

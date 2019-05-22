@@ -39,6 +39,8 @@ module Recipes =
     type IngredientParameter = {
         foodstuffId: Guid
         amount: AmountParameters option
+        comment: string option
+        displayLine: string option
     }
 
     [<CLIMutable>]
@@ -61,6 +63,8 @@ module Recipes =
         | AmountError of ParseAmountError
         | MustContaintAtLeastOneIngredient
         | DescriptionIsProvidedButEmpty
+        | DisplayLineOfIngredientIsProvidedButEmpty
+        | CommentOfIngredientIsProvidedButEmpty
         | BusinessError of Recipes.CreateError
         
     let private createParameters name personCount imageUrl description ingredients: RecipeParameters = {
@@ -71,18 +75,31 @@ module Recipes =
         ingredients = ingredients
     }
     
-    let private createIngredientParameter foodstuffId amount: Recipes.IngredientParameters = {
+    let private createIngredientParameter foodstuffId amount comment displayLine : Recipes.IngredientParameters = {
         foodstuffId = foodstuffId
         amount = amount
+        comment = comment
+        displayLine = displayLine
     }
     
     let private parseIngredientAmount = function
         | Some a -> parseAmount a |> Validation.map Some |> Validation.mapFailure (List.map AmountError)
         | None -> Validation.Success None
         
+    let private parseNonEmptyStringOption =
+        Option.map (NonEmptyString.create >> Validation.map Some) >> Option.defaultValue (Success None)
+        
+    let private parseComment input =
+        parseNonEmptyStringOption input |> (Validation.mapFailure (fun _ -> [CommentOfIngredientIsProvidedButEmpty]))
+        
+    let private parseDisplayLine input =
+        parseNonEmptyStringOption input |> (Validation.mapFailure (fun _ -> [DisplayLineOfIngredientIsProvidedButEmpty]))
+        
     let private mkIngredientParameter parameter =
         createIngredientParameter parameter.foodstuffId
         <!> parseIngredientAmount parameter.amount
+        <*> parseComment parameter.comment
+        <*> parseDisplayLine parameter.displayLine
         
     let private toNonEmpty ingredients = 
         NonEmptyList.mkNonEmptyList ingredients 

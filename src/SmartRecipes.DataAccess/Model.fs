@@ -31,6 +31,8 @@ module Model =
     type DbIngredient = {
         foodstuffId: Guid
         amount: DbAmount option
+        comment: string
+        displayLine: string
     }
     
     type DbRecipe = {

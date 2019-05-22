@@ -52,6 +52,8 @@ module Tests.Fake
     let ingredient: Ingredient = {
         FoodstuffId = foodstuff.id
         Amount = Some foodstuff.baseAmount
+        Comment = None
+        DisplayLine = None
     }
     
     let recipe = {

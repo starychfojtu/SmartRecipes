@@ -15,6 +15,8 @@ module Tests.Recipes
             value = 10.0
             unit = "liter"
         }
+        comment = Some "test"
+        displayLine = Some "10 tests"
     }
     
     let apiParameters: Api.Recipes.CreateParameters = {
@@ -31,6 +33,8 @@ module Tests.Recipes
             value = -10.0
             unit = ""
         }
+        comment = Some ""
+        displayLine = Some ""
     }
         
     let apiIncorrectParameters: Api.Recipes.CreateParameters = {
@@ -57,5 +61,7 @@ module Tests.Recipes
             Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.UnitCannotBeEmpty) e)
             Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.ValueCannotBeNegative) e)
             Assert.True (Seq.contains Api.Recipes.CreateError.PersonCountMustBePositive e)
-            Assert.Equal (6, (Seq.length e))
+            Assert.True (Seq.contains Api.Recipes.CreateError.DisplayLineOfIngredientIsProvidedButEmpty e)
+            Assert.True (Seq.contains Api.Recipes.CreateError.CommentOfIngredientIsProvidedButEmpty e)
+            Assert.Equal (8, (Seq.length e))
         )

@@ -41,6 +41,8 @@ module Recipes =
     type IngredientParameters = {
         foodstuffId: Guid
         amount: Amount option
+        comment: NonEmptyString option
+        displayLine: NonEmptyString option
     }
     
     type RecipeParameters = {
@@ -63,6 +65,8 @@ module Recipes =
         Recipe.createIngredient
         <!> mkFoodstuffId parameters.foodstuffId foodstuffMap
         <*> (Success parameters.amount)
+        <*> (Success parameters.comment)
+        <*> (Success parameters.displayLine)
     
     let private checkIngredientsNotDuplicate ingredients =
         let foodstuffIds = NonEmptyList.map (fun (i: Ingredient) -> i.FoodstuffId) ingredients

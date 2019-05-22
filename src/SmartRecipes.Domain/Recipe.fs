@@ -12,11 +12,15 @@ module Recipe =
     type Ingredient = {
         FoodstuffId: FoodstuffId
         Amount: Amount option // Sometimes it is not specified how much of it should be used, eg. 'Olive oil'.
+        DisplayLine: NonEmptyString option // Original unstructured input.
+        Comment: NonEmptyString option // Additional comments about the ingredient, e.g. fresh
     }
     
-    let createIngredient foodstuffId amount = {
+    let createIngredient foodstuffId amount displayLine comment = {
         FoodstuffId = foodstuffId
         Amount = amount
+        DisplayLine = displayLine
+        Comment = comment
     }
     
     type RecipeId = RecipeId of Guid
