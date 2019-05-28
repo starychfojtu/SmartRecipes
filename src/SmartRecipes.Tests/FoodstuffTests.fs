@@ -36,20 +36,20 @@ module Tests.Foodstuffs
     
     let apiParameters: Api.Foodstuffs.CreateParameters = {
         name = Fake.foodstuff.name.Value
-        baseAmount = {
+        baseAmount = Some {
             unit = "gram"
             value = 1.0
         }
-        amountStep = 1.0
+        amountStep = Some 1.0
     }
     
     let apiIncorrectParameters: Api.Foodstuffs.CreateParameters = {
         name = ""
-        baseAmount = {
+        baseAmount = Some {
             unit = ""
             value = -1.0
         }
-        amountStep = -1.0
+        amountStep = Some -1.0
     }
     
     [<Fact>]

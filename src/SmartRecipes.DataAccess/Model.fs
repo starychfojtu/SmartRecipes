@@ -1,4 +1,5 @@
 namespace SmartRecipes.DataAccess
+open SmartRecipes.Domain.Recipe
 
 module Model =
     open System
@@ -35,14 +36,43 @@ module Model =
         displayLine: string
     }
     
+    type DbDifficulty =
+        | Easy = 0
+        | Normal = 1
+        | Hard = 2
+        
+    type DbCookingTime = {
+        Text: string
+    }
+    
+    type DbNutritionInfo = {
+        Grams: int
+        Percents: int option
+    }
+    
+    type DbNutritionPerServing = {
+        Calories: int option
+        Fat: DbNutritionInfo option
+        SaturatedFat: DbNutritionInfo option
+        Sugars: DbNutritionInfo option
+        Protein: DbNutritionInfo option
+        Carbs: DbNutritionInfo option
+    }
+    
     type DbRecipe = {
-        id: Guid
-        name: string
-        creatorId: Guid
-        personCount: int
-        imageUrl: string
-        description: string
-        ingredients: seq<DbIngredient>
+        Id: Guid
+        Name: string
+        CreatorId: Guid
+        PersonCount: int
+        ImageUrl: string
+        Url: string
+        Description: string
+        Ingredients: DbIngredient seq
+        Difficulty: DbDifficulty option
+        CookingTime: DbCookingTime option
+        Tags: string seq
+        Rating: int option
+        NutritionPerServing: DbNutritionPerServing
     }
     
     type DbListItem = {
@@ -58,6 +88,6 @@ module Model =
     type DbShoppingList = {
         id: Guid
         accountId: Guid
-        items: seq<DbListItem>
-        recipes: seq<DbRecipeListItem>
+        items: DbListItem seq
+        recipes: DbRecipeListItem seq
     }

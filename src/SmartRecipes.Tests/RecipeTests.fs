@@ -19,12 +19,14 @@ module Tests.Recipes
         displayLine = Some "10 tests"
     }
     
+    // Dodelat testy, doprepsat shopping list na Parse, podivat se jestli funguje api s parsingem a doprepsat parsing jsonu na konzistentni s optionama
+    
     let apiParameters: Api.Recipes.CreateParameters = {
-        name = Fake.recipe.Name.Value
-        personCount = 4
-        imageUrl = Fake.recipe.ImageUrl.AbsolutePath
-        description = Fake.recipe.Description.Value.Value
-        ingredients = seq { yield apiIngredientParameter }
+        Name = Fake.recipe.Name.Value
+        PersonCount = 4
+        ImageUrl = Fake.recipe.ImageUrl.AbsolutePath
+        Description = Fake.recipe.Description.Value.Value
+        Ingredients = seq { yield apiIngredientParameter }
     }
     
     let apiIncorrectIngredientParameter: Api.Recipes.IngredientParameter = {

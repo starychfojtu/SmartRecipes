@@ -1,5 +1,29 @@
 namespace SmartRecipes.Api
+open Infrastructure
+open SmartRecipes.Domain
 
+module Parse =
+    let option v =
+        Option.map v >> Validation.traverseOption
+        
+    let seqOf v =
+        Seq.map v >> Validation.traverseSeq
+    
+    let nonEmptyString error =
+        NonEmptyString.create >> Validation.ofOption error
+        
+    let nonEmptyStringOption error =
+        nonEmptyString error |> option
+        
+    let uriOption error =
+        option (Uri.create >> Validation.mapFailure error)
+        
+    let naturalNumber error =
+        NaturalNumber.create >> Validation.ofOption error
+        
+    let nonNegativeFloat error =
+        NonNegativeFloat.create >> Validation.ofOption error
+            
 module Generic =
     open System
     open Giraffe

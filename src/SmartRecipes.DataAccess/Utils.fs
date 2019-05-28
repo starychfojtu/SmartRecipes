@@ -13,10 +13,10 @@ module Utils =
         
     
     let toNonEmptyStringModel s =
-        NonEmptyString.create s |> forceSucces
+        NonEmptyString.create s |> Option.get
         
     let toNaturalNumberModel n =
-        NaturalNumber.create n |> forceSucces
+        NaturalNumber.create n |> Option.get
         
         
     let internal amountToDb (amount: Amount) : DbAmount = {
@@ -25,6 +25,6 @@ module Utils =
     }
     
     let internal amountToModel (dbAmount: DbAmount) = {
-        unit = NonEmptyString.create dbAmount.unit |> forceSucces |> MetricUnit
-        value = NonNegativeFloat.create dbAmount.value |> forceSucces
+        unit = NonEmptyString.create dbAmount.unit |> Option.get |> MetricUnit
+        value = NonNegativeFloat.create dbAmount.value |> Option.get
     }

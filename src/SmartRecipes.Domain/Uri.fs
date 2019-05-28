@@ -4,7 +4,7 @@ module Uri =
     open FSharpPlus.Data
     open System
 
-    let mkUri uri =
+    let create uri =
         try
             Success (Uri(uri))
         with 

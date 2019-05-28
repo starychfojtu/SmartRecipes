@@ -9,14 +9,7 @@ module NonEmptyString =
         private NonEmptyString of string
         with member s.Value = match s with NonEmptyString v -> v
     
-    type NonEpmtyStringError =
-        | StringIsEmpty
-    
-    let private nonEmpty s =
-        match String.IsNullOrEmpty s with 
-        | true -> Failure StringIsEmpty
-        | false -> Success s
-    
     let create s =
-        NonEmptyString
-        <!> nonEmpty s
+        match String.IsNullOrEmpty s with 
+        | true -> None
+        | false -> Some <| NonEmptyString s

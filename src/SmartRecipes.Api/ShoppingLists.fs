@@ -115,7 +115,7 @@ module ShoppingLists =
         
     let private mkAmount amount foodstuff = 
         NonNegativeFloat.create amount
-        |> mapFailure (fun _ -> [AmountMustBePositive])
+        |> Validation.ofOption [AmountMustBePositive]
         |> map (fun a -> (a, foodstuff))
         |> toResult
         |> ReaderT.id
@@ -163,7 +163,7 @@ module ShoppingLists =
         
     let private mkPersonCount personCount = 
         NaturalNumber.create personCount
-        |> mapFailure (fun _ -> [PersonCountMustBePositive])
+        |> Validation.ofOption [PersonCountMustBePositive]
         |> toResult
         |> ReaderT.id
         
@@ -179,7 +179,7 @@ module ShoppingLists =
             | ShoppingLists.ChangeAmountError.Unauthorized -> "Unauthorized."
             | ShoppingLists.ChangeAmountError.DomainError de ->
                 match de with 
-                | ItemNotInList -> "Recipe not in list."
+                | ShoppingList.ChangeAmountError.ItemNotInList -> "Recipe not in list."
                 
     let private serializeChangePersonCount = 
         Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) (Seq.map serializeChangePersonCountError)

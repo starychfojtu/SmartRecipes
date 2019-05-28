@@ -39,22 +39,49 @@ module Recipes =
         | InvalidIngredients of CreateIngredientError list
         
     type IngredientParameters = {
-        foodstuffId: Guid
-        amount: Amount option
-        comment: NonEmptyString option
-        displayLine: NonEmptyString option
+        FoodstuffId: Guid
+        Amount: Amount option
+        Comment: NonEmptyString option
+        DisplayLine: NonEmptyString option
+    }
+    
+    let createIngredientParameters foodstuffId amount comment displayLine = {
+        FoodstuffId = foodstuffId
+        Amount = amount
+        Comment = comment
+        DisplayLine = displayLine
     }
     
     type RecipeParameters = {
-        name: NonEmptyString
-        personCount: NaturalNumber
-        imageUrl: Uri
-        description: NonEmptyString option
-        ingredients: NonEmptyList<IngredientParameters>
+        Name: NonEmptyString
+        PersonCount: NaturalNumber
+        ImageUrl: Uri option
+        Url: Uri option
+        Description: NonEmptyString option
+        Ingredients: NonEmptyList<IngredientParameters>
+        Difficulty: Difficulty option
+        CookingTime: CookingTime option
+        Tags: NonEmptyString seq
+        Rating: Rating option
+        NutritionPerServing: NutritionPerServing
+    }
+    
+    let createParameters name personCount imageUrl url description ingredients diffuculty cookingTime tags rating nutrition = {
+        Name = name
+        PersonCount = personCount
+        ImageUrl = imageUrl
+        Url = url
+        Description = description
+        Ingredients = ingredients
+        Difficulty = diffuculty
+        CookingTime = cookingTime
+        Tags = tags
+        Rating = rating
+        NutritionPerServing = nutrition
     }
 
     let private getFoodstuff parameters =
-        Reader(fun env -> Seq.map (fun i -> i.foodstuffId) parameters |> env.IO.Foodstuffs.getByIds)
+        Reader(fun env -> Seq.map (fun i -> i.FoodstuffId) parameters |> env.IO.Foodstuffs.getByIds)
 
     let mkFoodstuffId guid (foodstuffMap: Map<_, Foodstuff> ) = 
         match Map.tryFind guid foodstuffMap with
@@ -63,10 +90,10 @@ module Recipes =
         
     let private mkIngredient foodstuffMap parameters =
         Recipe.createIngredient
-        <!> mkFoodstuffId parameters.foodstuffId foodstuffMap
-        <*> (Success parameters.amount)
-        <*> (Success parameters.comment)
-        <*> (Success parameters.displayLine)
+        <!> mkFoodstuffId parameters.FoodstuffId foodstuffMap
+        <*> (Success parameters.Amount)
+        <*> (Success parameters.Comment)
+        <*> (Success parameters.DisplayLine)
     
     let private checkIngredientsNotDuplicate ingredients =
         let foodstuffIds = NonEmptyList.map (fun (i: Ingredient) -> i.FoodstuffId) ingredients
@@ -89,14 +116,26 @@ module Recipes =
         |> ReaderT.bind (mkIngredients parameters)
 
     let private createRecipe parameters ingredients accountId = 
-        Recipe.createRecipe parameters.name accountId parameters.personCount parameters.imageUrl parameters.description ingredients
+        Recipe.create
+            parameters.Name
+            accountId
+            parameters.PersonCount
+            ingredients
+            parameters.Description
+            parameters.CookingTime
+            parameters.NutritionPerServing
+            parameters.Difficulty
+            (Seq.map RecipeTag parameters.Tags)
+            parameters.ImageUrl
+            parameters.Url
+            parameters.Rating
 
     let private addToDatabase recipe = 
         ReaderT(fun env -> env.IO.Recipes.add recipe |> Ok)
         
     let create accessToken parameters = monad {
         let! accountId = Users.authorize Unauthorized accessToken
-        let! ingredients = createIngredients parameters.ingredients
+        let! ingredients = createIngredients parameters.Ingredients
         let recipe = createRecipe parameters ingredients accountId
         return! addToDatabase recipe
     }
@@ -114,7 +153,5 @@ module Recipes =
     // Delete
     
     let delete accessToken parameters =
-        // check if exists
-        // remove from all shopping lists
-        // delete
+        // TODO
         ()

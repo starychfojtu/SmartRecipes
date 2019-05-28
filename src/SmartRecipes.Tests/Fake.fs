@@ -41,12 +41,12 @@ module Tests.Fake
     
     let foodstuff = {
         id = FoodstuffId(Guid.NewGuid())
-        name = NonEmptyString.create "Test" |> Validation.forceSucces
+        name = NonEmptyString.create "Test" |> Option.get
         baseAmount = {
             unit = MetricUnits.gram
-            value = NonNegativeFloat.create 100.0 |> Validation.forceSucces
+            value = NonNegativeFloat.create 100.0 |> Option.get
         }
-        amountStep =  NonNegativeFloat.create 10.0 |> Validation.forceSucces
+        amountStep =  NonNegativeFloat.create 10.0 |> Option.get
     }
     
     let ingredient: Ingredient = {
@@ -58,12 +58,25 @@ module Tests.Fake
     
     let recipe = {
         Id = RecipeId(Guid.NewGuid())
-        Name = NonEmptyString.create "Test" |> Validation.forceSucces
+        Name = NonEmptyString.create "Test" |> Option.get
         CreatorId = account.id
-        ImageUrl = Uri("https://google.com")
-        PersonCount = NaturalNumber.create 4 |> Validation.forceSucces
-        Description = Some (NonEmptyString.create "Test" |> Validation.forceSucces)
+        ImageUrl = Some <| Uri("https://google.com")
+        Url = Some <| Uri("https://google.com")
+        PersonCount = NaturalNumber.create 4 |> Option.get
+        Description = Some (NonEmptyString.create "Test" |> Option.get)
         Ingredients = NonEmptyList.create ingredient []
+        Difficulty = Some Easy
+        CookingTime = None
+        Tags = []
+        Rating = None
+        NutritionPerServing = {
+            Calories = None
+            Fat = None
+            SaturatedFat = None
+            Protein = None
+            Carbs = None
+            Sugars = None
+        }
     }
     
     let listItem: ListItem = {

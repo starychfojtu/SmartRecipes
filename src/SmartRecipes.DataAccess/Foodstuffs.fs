@@ -29,9 +29,9 @@ module Foodstuffs =
     
     let internal toModel (dbFoodstuff: DbFoodstuff) = {
         id = FoodstuffId dbFoodstuff.id 
-        name = create dbFoodstuff.name |> forceSucces
+        name = create dbFoodstuff.name |> Option.get
         baseAmount = amountToModel dbFoodstuff.baseAmount
-        amountStep = NonNegativeFloat.create dbFoodstuff.amountStep |> forceSucces
+        amountStep = NonNegativeFloat.create dbFoodstuff.amountStep |> Option.get
     }
     
     let private getByIds ids =

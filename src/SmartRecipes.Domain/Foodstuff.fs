@@ -13,7 +13,7 @@ module Foodstuff =
         with member u.Value = match u with MetricUnit s -> s
         
     module MetricUnits =
-        let gram = NonEmptyString.create "gram" |> forceSucces |> MetricUnit
+        let gram = NonEmptyString.create "gram" |> Option.get |> MetricUnit
     
     type Amount = {
         unit: MetricUnit;
@@ -39,11 +39,11 @@ module Foodstuff =
     
     let private defaultBaseAmount = {
         unit = MetricUnits.gram
-        value = NonNegativeFloat.create 100.0 |> forceSucces
+        value = NonNegativeFloat.create 100.0 |> Option.get
     }
     
     let private defaultAmountStep =
-        NonNegativeFloat.create 10.0 |> forceSucces
+        NonNegativeFloat.create 10.0 |> Option.get
     
     let createFoodstuff name baseAmount amountStep = {
         id = createFoodstuffId ()

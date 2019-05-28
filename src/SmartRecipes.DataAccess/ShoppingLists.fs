@@ -20,7 +20,7 @@ module ShoppingLists =
         
     let private listItemToModel (dbListItem: DbListItem): ListItem = {
         foodstuffId = FoodstuffId(dbListItem.foodstuffId)
-        amount = NonNegativeFloat.create dbListItem.amount |> forceSucces
+        amount = NonNegativeFloat.create dbListItem.amount |> Option.get
     }
     
     let private listItemToDb (listItem: ListItem): DbListItem = {
@@ -30,12 +30,12 @@ module ShoppingLists =
     
     let private recipeListItemToModel (dbRecipeListItem: DbRecipeListItem): RecipeListItem = {
         recipeId = RecipeId(dbRecipeListItem.recipeId)
-        personCount = NaturalNumber.create dbRecipeListItem.personCount |> forceSucces
+        personCount = NaturalNumber.create dbRecipeListItem.personCount |> Option.get
     }
     
     let private recipeListItemToDb (recipeListItem: RecipeListItem): DbRecipeListItem = {
         recipeId = recipeListItem.recipeId.value
-        personCount = int(recipeListItem.personCount)
+        personCount = int recipeListItem.personCount.Value
     }
     
     let private toModel (dbShoppingList: DbShoppingList): ShoppingList = {
