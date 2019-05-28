@@ -1,4 +1,7 @@
 namespace SmartRecipes.Api
+open SmartRecipes.Domain
+open SmartRecipes.Domain
+open SmartRecipes.Domain.Email
 
 module Users =
     open Dto
@@ -25,8 +28,8 @@ module Users =
     }
     
     let private serializeCredentialsError = function
-        | InvalidEmail errors -> Seq.map (function Invalid -> parameterError "Email is invalid." "Email") errors
-        | InvalidPassword errors -> Seq.map (function MustBe10CharactersLong -> parameterError "Password must be at least 10 characters long." "Password") errors
+        | InvalidEmail errors -> Seq.map (function Email.EmailError.Invalid -> parameterError "Email is invalid." "Email") errors
+        | InvalidPassword errors -> Seq.map (function Password.PasswordError.MustBe10CharactersLong -> parameterError "Password must be at least 10 characters long." "Password") errors
     
     let private serializeSignUpError = function
         | SignUpError.AccountAlreadyExits ->  error "Account already exists."

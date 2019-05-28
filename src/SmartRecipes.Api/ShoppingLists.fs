@@ -71,7 +71,7 @@ module ShoppingLists =
             | ShoppingLists.AddItemError.Unauthorized -> "Unauthorized."
             | ShoppingLists.AddItemError.DomainError de -> 
                 match de with 
-                | ItemAlreadyAdded -> "Item already added."
+                | ShoppingList.AddItemError.ItemAlreadyAdded -> "Item already added."
                 
     let private serializeAddItems = 
         Result.map (fun sl -> { ShoppingList = serializeShoppingList sl }) >> Result.mapError serializeAddItemsError
@@ -110,14 +110,12 @@ module ShoppingLists =
         | AmountMustBePositive
         | BusinessError of ShoppingLists.ChangeAmountError
         
-    let private mkFoodstuff id =
+    let private getFoodstuff id =
         ReaderT(fun env -> env.IO.Foodstuffs.getById id |> Option.toResult [FoodstuffNotFound])
         
-    let private mkAmount amount foodstuff = 
+    let private parseAmount amount = 
         NonNegativeFloat.create amount
-        |> Validation.ofOption [AmountMustBePositive]
-        |> map (fun a -> (a, foodstuff))
-        |> toResult
+        |> Option.toResult [AmountMustBePositive]
         |> ReaderT.id
         
     let private changeFoodtuffAmount accessToken foodstuff amount =
@@ -132,16 +130,17 @@ module ShoppingLists =
             | ShoppingLists.ChangeAmountError.Unauthorized -> "Unauthorized."
             | ShoppingLists.ChangeAmountError.DomainError de ->
                 match de with 
-                | ItemNotInList -> "Foodstuff not in list."
+                | ShoppingList.ChangeAmountError.ItemNotInList -> "Foodstuff not in list."
                 
     let private serializeChangeAmount = 
         Result.map serializeShoppingList >> Result.mapError (Seq.map serializeChangeAmountError)
         
-    let changeAmount accessToken parameters =
-        mkFoodstuff parameters.foodstuffId
-        >>= mkAmount parameters.amount
-        >>= (fun (newAmount, foodstuff) -> changeFoodtuffAmount accessToken foodstuff.id newAmount)
-        
+    let changeAmount accessToken parameters = monad {
+        let! foodstuff = getFoodstuff parameters.foodstuffId
+        let! amount = parseAmount parameters.amount
+        return! changeFoodtuffAmount accessToken foodstuff.id amount
+    }
+
     let changeAmountHandler<'a> =
         authorizedPostHandler changeAmount serializeChangeAmount
         
@@ -158,13 +157,12 @@ module ShoppingLists =
         | PersonCountMustBePositive
         | BusinessError of ShoppingLists.ChangeAmountError
         
-    let private mkRecipe id =
-        ReaderT(fun env -> env.IO.Recipes.getById id |> Option.toResult [RecipeNotFound])
+    let private getRecipe id e =
+        ReaderT(fun env -> env.IO.Recipes.getById id |> Option.toResult e)
         
-    let private mkPersonCount personCount = 
+    let private parsePersonCount personCount = 
         NaturalNumber.create personCount
-        |> Validation.ofOption [PersonCountMustBePositive]
-        |> toResult
+        |> Option.toResult [PersonCountMustBePositive]
         |> ReaderT.id
         
     let private changeRecipePersonCount accessToken recipe amount =
@@ -185,8 +183,8 @@ module ShoppingLists =
         Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) (Seq.map serializeChangePersonCountError)
         
     let changePersonCount accessToken parameters = monad {
-        let! recipe = mkRecipe parameters.recipeId
-        let! personCount = mkPersonCount parameters.personCount
+        let! recipe = getRecipe parameters.recipeId [RecipeNotFound]
+        let! personCount = parsePersonCount parameters.personCount
         return! changeRecipePersonCount accessToken recipe personCount
     }
     
@@ -204,9 +202,6 @@ module ShoppingLists =
         | RecipeNotFound
         | BusinessError of ShoppingLists.CookRecipeError
         
-    let private getRecipe id = 
-        ReaderT(fun env -> env.IO.Recipes.getById id |> Option.toResult RecipeNotFound)
-        
     let private cookRecipe accessToken recipe =
         ShoppingLists.cook accessToken recipe
         |> ReaderT.mapError BusinessError
@@ -218,14 +213,14 @@ module ShoppingLists =
             | ShoppingLists.CookRecipeError.Unauthorized -> "Unauthorized."
             | ShoppingLists.CookRecipeError.DomainError de ->
                 match de with 
-                | RecipeNotInList -> "Recipe not in list."
-                | NotEnoughIngredientsInList -> "Not enough ingredients."
+                | ShoppingList.CookRecipeError.RecipeNotInList -> "Recipe not in list."
+                | ShoppingList.CookRecipeError.NotEnoughIngredientsInList -> "Not enough ingredients."
         
     let private serializeCookRecipe =
         Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeCookRecipeError
         
     let cook accessToken parameters = 
-        getRecipe parameters.recipeId
+        getRecipe parameters.recipeId CookRecipeError.RecipeNotFound
         >>= cookRecipe accessToken
         
     let cookHandler<'a> =
@@ -255,7 +250,7 @@ module ShoppingLists =
             | ShoppingLists.RemoveItemError.Unauthorized -> "Unauthorized."
             | ShoppingLists.RemoveItemError.DomainError de ->
                 match de with 
-                | ItemNotInList -> "Foodstuff not in list."
+                | ShoppingList.RemoveItemError.ItemNotInList -> "Foodstuff not in list."
         
     let private serializeRemoveFoodstuff = 
         Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeRemoveFoodstuffError
@@ -277,9 +272,6 @@ module ShoppingLists =
         | RecipeNotFound
         | BusinessError of ShoppingLists.RemoveItemError
     
-    let private getRecipeToRemove parameters = 
-        ReaderT(fun env -> env.IO.Recipes.getById parameters.recipeId |> Option.toResult RecipeNotFound)
-    
     let private removeRecipeFromList accessToken recipe = 
         ShoppingLists.removeRecipe accessToken recipe
         |> ReaderT.mapError BusinessError
@@ -291,13 +283,13 @@ module ShoppingLists =
             | ShoppingLists.RemoveItemError.Unauthorized -> "Unauthorized."
             | ShoppingLists.RemoveItemError.DomainError de ->
                 match de with 
-                | ItemNotInList -> "Recipe not in list."
+                | ShoppingList.RemoveItemError.ItemNotInList -> "Recipe not in list."
         
     let private serializeRemoveRecipe = 
         Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeRemoveRecipeError
     
     let removeRecipe accessToken parameters = 
-        getRecipeToRemove parameters
+        getRecipe parameters RecipeNotFound
         >>= removeRecipeFromList accessToken
         
     let removeRecipeHandler<'a> = 

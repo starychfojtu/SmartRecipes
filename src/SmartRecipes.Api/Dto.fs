@@ -45,11 +45,7 @@ module Dto =
     
     let serializeAmount (amount: Amount) = {
         value = NonNegativeFloat.value amount.value
-        unit = 
-            match amount.unit with 
-            | Liter -> "liter"
-            | Gram -> "gram"
-            | Piece -> "piece"
+        unit = amount.unit.Value.Value
     }
     
     type FoodstuffDto = {
