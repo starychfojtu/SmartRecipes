@@ -19,14 +19,28 @@ module Tests.Recipes
         displayLine = Some "10 tests"
     }
     
-    // Dodelat testy, doprepsat shopping list na Parse, podivat se jestli funguje api s parsingem a doprepsat parsing jsonu na konzistentni s optionama
-    
     let apiParameters: Api.Recipes.CreateParameters = {
         Name = Fake.recipe.Name.Value
         PersonCount = 4
-        ImageUrl = Fake.recipe.ImageUrl.AbsolutePath
-        Description = Fake.recipe.Description.Value.Value
+        ImageUrl = Fake.recipe.ImageUrl |> Option.map (fun u -> u.AbsolutePath)
+        Url = Fake.recipe.Url |> Option.map (fun u -> u.AbsolutePath)
+        Description = Some Fake.recipe.Description.Value.Value
         Ingredients = seq { yield apiIngredientParameter }
+        Difficulty = Some "easy"
+        CookingTime = Some { Text = "30 minutes" }
+        Tags = ["bbq"]
+        Rating = Some 8
+        Nutrition = {
+            Calories = Some 200
+            Fat = Some {
+                Grams = 100
+                Percents = Some 50
+            }
+            SaturatedFat = None
+            Sugars = None
+            Protein = None
+            Carbs = None
+        }
     }
     
     let apiIncorrectIngredientParameter: Api.Recipes.IngredientParameter = {
@@ -40,11 +54,27 @@ module Tests.Recipes
     }
         
     let apiIncorrectParameters: Api.Recipes.CreateParameters = {
-        name = ""
-        personCount = -1
-        imageUrl = "not an url"
-        description = ""
-        ingredients = seq { yield apiIncorrectIngredientParameter }
+        Name = ""
+        PersonCount = -1
+        ImageUrl = Some "not an url"
+        Url = Some "not an url"
+        Description = Some ""
+        Ingredients = seq { yield apiIncorrectIngredientParameter }
+        Difficulty = Some "unknown"
+        CookingTime = Some { Text = "" }
+        Tags = [""]
+        Rating = Some 15
+        Nutrition = {
+            Calories = Some -10
+            Fat = Some {
+                Grams = -100
+                Percents = Some -50
+            }
+            SaturatedFat = None
+            Sugars = None
+            Protein = None
+            Carbs = None
+        }
     }
     
     [<Fact>]
@@ -65,5 +95,12 @@ module Tests.Recipes
             Assert.True (Seq.contains Api.Recipes.CreateError.PersonCountMustBePositive e)
             Assert.True (Seq.contains Api.Recipes.CreateError.DisplayLineOfIngredientIsProvidedButEmpty e)
             Assert.True (Seq.contains Api.Recipes.CreateError.CommentOfIngredientIsProvidedButEmpty e)
-            Assert.Equal (8, (Seq.length e))
+            Assert.True (Seq.contains Api.Recipes.CreateError.UnknownDifficulty e)
+            Assert.True (Seq.contains Api.Recipes.CreateError.CookingTimeTextIsProvidedButEmpty e)
+            Assert.True (Seq.contains Api.Recipes.CreateError.TagIsEmpty e)
+            Assert.True (Seq.contains Api.Recipes.CreateError.InvalidRating e)
+            Assert.True (Seq.contains Api.Recipes.CreateError.CaloriesMustBePositive e)
+            Assert.True (Seq.contains Api.Recipes.CreateError.GramsMustBePositive e)
+            Assert.True (Seq.contains Api.Recipes.CreateError.PercentsMustBePositive e)
+            Assert.Equal (15, (Seq.length e))
         )
