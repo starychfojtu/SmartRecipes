@@ -1,12 +1,9 @@
 namespace SmartRecipes.Api
 open Foodstuffs
-open Foodstuffs
-open SmartRecipes.Domain.Recipe
 open SmartRecipes.Domain.Recipe
 
 module Recipes =
     open Dto
-    open SmartRecipes.Domain
     open Generic
     open SmartRecipes.DataAccess
     open System
@@ -14,7 +11,6 @@ module Recipes =
     open SmartRecipes.UseCases
     open FSharpPlus.Data
     open SmartRecipes.UseCases.Recipes
-    open Uri
     open FSharpPlus
     open Infrastracture
     open Infrastructure.NonEmptyList
@@ -28,7 +24,7 @@ module Recipes =
     let private serializeGetMyRecipes = 
         Result.bimap (fun rs -> { Recipes = Seq.map serializeRecipe rs }) (function GetMyRecipesError.Unauthorized -> "Unauthorized.")
     
-    let getMyRecipes accessToken parameters = 
+    let getMyRecipes accessToken _ = 
         Recipes.getMyRecipes accessToken
     
     let getMyRecipesHandler<'a> =

@@ -24,8 +24,8 @@ module App =
                 ]  
             POST >=>
                 choose [
-                    route "/signUp" >=> Users.signUpHandler
-                    route "/signIn" >=> Users.signInHandler
+                    route "/signUp" >=> Users.SignUp.handler
+                    route "/signIn" >=> Users.SignIn.handler
                     route "/foodstuffs" >=> Foodstuffs.createHandler
                     route "/recipes" >=> Recipes.createHandler
                     route "/shoppingList/addFoodstuffs" >=> ShoppingLists.addFoodstuffsHandler

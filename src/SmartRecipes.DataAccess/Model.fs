@@ -1,5 +1,4 @@
 namespace SmartRecipes.DataAccess
-open SmartRecipes.Domain.Recipe
 
 module Model =
     open System
