@@ -1,4 +1,6 @@
 namespace SmartRecipes.Api
+open System.Threading.Tasks
+open FSharp.Json
 open Infrastructure
 open SmartRecipes.Domain
 
@@ -45,14 +47,22 @@ module Generic =
         NowUtc = DateTime.UtcNow
     }
     
+    let private deserialize<'a> json =
+        try
+            Ok <| Json.deserialize<'a> json
+        with
+            | :? JsonDeserializationError as ex -> Error ex.Message
+    
     let private setStatusCode (ctx: HttpContext) code =
         ctx.SetStatusCode code
             
     let private bindQueryString<'a> (ctx: HttpContext) =
         ctx.BindQueryString<'a>()
         
-    let private bindModelAsync<'a> (ctx: HttpContext) =
-        ctx.BindModelAsync<'a>()
+    let private bindModelAsync<'a> (ctx: HttpContext): Task<Result<'a, string>> = task {
+        let! body = ctx.ReadBodyFromRequestAsync ()
+        return deserialize body
+    }
         
     let private getHeader (ctx: HttpContext) name =
         ctx.GetRequestHeader(name)
@@ -72,8 +82,11 @@ module Generic =
     
     let postHandler handler serialize next ctx = 
         task {
-            let! parameters = bindModelAsync ctx 
-            return! getResult (getEnvironment ()) next ctx handler serialize parameters
+            let! parameters = bindModelAsync ctx
+            return!
+                match parameters with
+                | Ok p -> getResult (getEnvironment ()) next ctx handler serialize p
+                | Error e -> getResult () next ctx (fun _ -> Error e |> ReaderT.id) (fun e -> e) ()
         }
             
     let authorizedGetHandler handler serialize next ctx = 
