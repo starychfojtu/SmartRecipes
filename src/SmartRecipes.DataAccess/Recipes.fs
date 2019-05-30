@@ -1,7 +1,6 @@
 namespace SmartRecipes.DataAccess
 open SmartRecipes.Domain.NaturalNumber
 open SmartRecipes.Domain.Recipe
-open SmartRecipes.Domain.Recipe
 
 module Recipes =
     open FSharpPlus.Data

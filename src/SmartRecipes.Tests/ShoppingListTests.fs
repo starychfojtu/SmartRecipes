@@ -57,11 +57,7 @@ module Tests.ShoppingLists
         |> Assert.IsOk
         
     [<Fact>]
-    let ``Cannot change foodstuff on shit shit shit`` () =
+    let ``Cannot change foodstuff amount with incorrect parameters`` () =
         Api.ShoppingLists.changeAmount Fake.accessToken.value.value changeAmountIncorrectParameters
         |> ReaderT.execute (getFakeShoppingListActionDao WithoutFoodstuff Map.empty)
         |> Assert.IsError
-        
-    // Cook recipe
-    
-    // TODO: Tests for cooking of recipe

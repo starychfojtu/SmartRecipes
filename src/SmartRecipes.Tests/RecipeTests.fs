@@ -84,7 +84,7 @@ module Tests.Recipes
         |> Tests.Assert.IsOk
         
     [<Fact>]
-    let ``Cannot add foodstuff with incorrect parameters`` () =
+    let ``Cannot add recipe with incorrect parameters`` () =
         Api.Recipes.create Fake.token.value apiIncorrectParameters
         |> ReaderT.execute (getCreateDao ())
         |> Assert.IsErrorAnd (fun e -> 
@@ -102,5 +102,7 @@ module Tests.Recipes
             Assert.True (Seq.contains Api.Recipes.CreateError.CaloriesMustBePositive e)
             Assert.True (Seq.contains Api.Recipes.CreateError.GramsMustBePositive e)
             Assert.True (Seq.contains Api.Recipes.CreateError.PercentsMustBePositive e)
-            Assert.Equal (15, (Seq.length e))
+            Assert.True (Seq.contains (Api.Recipes.CreateError.InvalidImageUrl "Invalid URI: The format of the URI could not be determined.") e)
+            Assert.True (Seq.contains (Api.Recipes.CreateError.InvalidUrl "Invalid URI: The format of the URI could not be determined.") e)
+            Assert.Equal (16, (Seq.length e))
         )
