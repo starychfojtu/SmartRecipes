@@ -15,7 +15,7 @@ module Tests.ShoppingLists
     // Add foodstuff
     
     let addFoodstuffsParameters = {
-        itemIds = seq { yield Fake.foodstuff.id.value }
+        itemIds = [ Fake.foodstuff.id.value ]
     }
     
     let fakeItems = Map.add Fake.listItem.foodstuffId Fake.listItem Map.empty

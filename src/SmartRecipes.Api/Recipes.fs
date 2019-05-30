@@ -68,10 +68,10 @@ module Recipes =
         ImageUrl: string option
         Url: string option
         Description: string option
-        Ingredients: seq<IngredientParameter>
+        Ingredients: IngredientParameter list
         Difficulty: string option
         CookingTime: CookingTimeParameters option
-        Tags: seq<string>
+        Tags: string list
         Rating: int option
         Nutrition: NutritionPerServingParameters
     }

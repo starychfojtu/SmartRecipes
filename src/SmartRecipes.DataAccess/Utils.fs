@@ -19,10 +19,11 @@ module Utils =
         NaturalNumber.create n |> Option.get
         
         
-    let internal amountToDb (amount: Amount) : DbAmount = {
-        unit = amount.unit.Value.Value
-        value = NonNegativeFloat.value amount.value 
-    }
+    let internal amountToDb (amount: Amount) =
+        DbAmount(
+            amount.unit.Value.Value,
+            NonNegativeFloat.value amount.value 
+        )
     
     let internal amountToModel (dbAmount: DbAmount) = {
         unit = NonEmptyString.create dbAmount.unit |> Option.get |> MetricUnit

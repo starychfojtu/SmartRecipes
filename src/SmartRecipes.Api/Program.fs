@@ -1,4 +1,5 @@
 namespace SmartRecipes.Api
+open MongoDB.FSharp
 
 module App =
     open Giraffe
@@ -85,7 +86,6 @@ module App =
     
     [<EntryPoint>]
     let main _ =
-        let contentRoot = Directory.GetCurrentDirectory()
         WebHost.CreateDefaultBuilder()
             .Configure(Action<IApplicationBuilder> configureApp)
             .ConfigureServices(configureServices)

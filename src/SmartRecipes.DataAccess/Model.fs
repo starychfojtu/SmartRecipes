@@ -15,11 +15,11 @@ module Model =
         value: string
         expiration: DateTime
     }
-        
-    type DbAmount = {
-        unit: string
-        value: float
-    }
+    
+    [<AllowNullLiteral>]
+    type DbAmount(unit: string, value: float) =
+        member val unit = unit with get, set
+        member val value = value with get, set
 
     type DbFoodstuff = {
         id: Guid
@@ -30,32 +30,33 @@ module Model =
     
     type DbIngredient = {
         foodstuffId: Guid
-        amount: DbAmount option
+        amount: DbAmount
         comment: string
         displayLine: string
     }
     
     type DbDifficulty =
-        | Easy = 0
-        | Normal = 1
-        | Hard = 2
-        
-    type DbCookingTime = {
-        Text: string
-    }
+        | Unspecified = 0
+        | Easy = 1
+        | Normal = 2
+        | Hard = 3
     
-    type DbNutritionInfo = {
-        Grams: int
-        Percents: int option
-    }
+    [<AllowNullLiteral>]
+    type DbCookingTime(text: string) =
+        member val text = text with get, set
+    
+    [<AllowNullLiteral>]
+    type DbNutritionInfo(grams: int, percents: Nullable<int>) =
+        member val grams = grams with get, set
+        member val percents = percents with get, set
     
     type DbNutritionPerServing = {
-        Calories: int option
-        Fat: DbNutritionInfo option
-        SaturatedFat: DbNutritionInfo option
-        Sugars: DbNutritionInfo option
-        Protein: DbNutritionInfo option
-        Carbs: DbNutritionInfo option
+        Calories: Nullable<int>
+        Fat: DbNutritionInfo
+        SaturatedFat: DbNutritionInfo
+        Sugars: DbNutritionInfo
+        Protein: DbNutritionInfo
+        Carbs: DbNutritionInfo
     }
     
     type DbRecipe = {
@@ -67,10 +68,10 @@ module Model =
         Url: string
         Description: string
         Ingredients: DbIngredient seq
-        Difficulty: DbDifficulty option
-        CookingTime: DbCookingTime option
+        Difficulty: DbDifficulty
+        CookingTime: DbCookingTime
         Tags: string seq
-        Rating: int option
+        Rating: Nullable<int>
         NutritionPerServing: DbNutritionPerServing
     }
     

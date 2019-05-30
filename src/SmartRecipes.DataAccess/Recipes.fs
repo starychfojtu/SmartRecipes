@@ -31,63 +31,65 @@ module Recipes =
     
     let private ingredientToModel (dbIngredient: DbIngredient): Ingredient = {
         FoodstuffId = FoodstuffId(dbIngredient.foodstuffId)
-        Amount = Option.map amountToModel dbIngredient.amount
+        Amount = Option.ofObj dbIngredient.amount |> Option.map amountToModel
         Comment = nonEmptyStringOptionToModel dbIngredient.comment
         DisplayLine = nonEmptyStringOptionToModel dbIngredient.displayLine
     }
     
     let private ingredientToDb (ingredient: Ingredient): DbIngredient = {
         foodstuffId = ingredient.FoodstuffId.value
-        amount = Option.map amountToDb ingredient.Amount
+        amount = Option.map amountToDb ingredient.Amount |> Option.toObj
         comment = nonEmptyStringOptionToDb ingredient.Comment
         displayLine = nonEmptyStringOptionToDb ingredient.DisplayLine
     }
     
     let private difficultyToModel = function
-        | DbDifficulty.Easy -> Difficulty.Easy
-        | DbDifficulty.Normal -> Difficulty.Normal
-        | DbDifficulty.Hard -> Difficulty.Hard
+        | DbDifficulty.Easy -> Some Difficulty.Easy
+        | DbDifficulty.Normal -> Some Difficulty.Normal
+        | DbDifficulty.Hard -> Some Difficulty.Hard
+        | DbDifficulty.Unspecified -> None
         | _ -> failwith "Invalid difficulty."
         
     let private difficultyToDb = function
-        | Difficulty.Easy -> DbDifficulty.Easy
-        | Difficulty.Normal -> DbDifficulty.Normal
-        | Difficulty.Hard -> DbDifficulty.Hard
+        | Some Difficulty.Easy -> DbDifficulty.Easy
+        | Some Difficulty.Normal -> DbDifficulty.Normal
+        | Some Difficulty.Hard -> DbDifficulty.Hard
+        | None -> DbDifficulty.Unspecified
         
     let private cookingTimeToModel (time: DbCookingTime): CookingTime = {
-        Text = NonEmptyString.create time.Text |> Option.get
+        Text = NonEmptyString.create time.text |> Option.get
     }
     
-    let private cookingTimeToDb (time: CookingTime): DbCookingTime = {
-        Text = time.Text.Value
-    }
+    let private cookingTimeToDb (time: CookingTime) =
+        DbCookingTime(time.Text.Value)
     
     let private nutritionInfoToModel (info: DbNutritionInfo): NutritionInfo = {
-        Grams = NaturalNumber.create info.Grams |> Option.get
-        Percents = Option.map (NaturalNumber.create >> Option.get) info.Percents
+        Grams = NaturalNumber.create info.grams |> Option.get
+        Percents = Option.ofNullable info.percents |> Option.map (NaturalNumber.create >> Option.get) 
     }
     
-    let private nutritionInfoToDb (info: NutritionInfo): DbNutritionInfo = {
-        Grams = int info.Grams.Value
-        Percents = Option.map (fun (n: NaturalNumber) -> int n.Value) info.Percents
-    }
+    let private nutritionInfoToDb (info: NutritionInfo) =
+        DbNutritionInfo(
+            int info.Grams.Value,
+            Option.map (fun (n: NaturalNumber) -> int n.Value) info.Percents |> Option.toNullable
+        )
     
     let private nutritionPerServingToModel (nutrition: DbNutritionPerServing): NutritionPerServing = {
-        Calories = Option.map (NaturalNumber.create >> Option.get) nutrition.Calories
-        Fat = Option.map nutritionInfoToModel nutrition.Fat
-        SaturatedFat = Option.map nutritionInfoToModel nutrition.SaturatedFat
-        Sugars = Option.map nutritionInfoToModel nutrition.Sugars
-        Protein = Option.map nutritionInfoToModel nutrition.Protein
-        Carbs = Option.map nutritionInfoToModel nutrition.Carbs
+        Calories = Option.ofNullable nutrition.Calories |> Option.map (NaturalNumber.create >> Option.get)
+        Fat = Option.ofObj nutrition.Fat |> Option.map nutritionInfoToModel 
+        SaturatedFat = Option.ofObj nutrition.SaturatedFat |> Option.map nutritionInfoToModel
+        Sugars = Option.ofObj nutrition.Sugars |> Option.map nutritionInfoToModel
+        Protein = Option.ofObj nutrition.Protein |> Option.map nutritionInfoToModel
+        Carbs = Option.ofObj  nutrition.Carbs |> Option.map nutritionInfoToModel
     }
     
     let private nutritionPerServingToDb (nutrition: NutritionPerServing): DbNutritionPerServing = {
-        Calories = Option.map (fun (n: NaturalNumber) -> int n.Value) nutrition.Calories
-        Fat = Option.map nutritionInfoToDb nutrition.Fat
-        SaturatedFat = Option.map nutritionInfoToDb nutrition.SaturatedFat
-        Sugars = Option.map nutritionInfoToDb nutrition.Sugars
-        Protein = Option.map nutritionInfoToDb nutrition.Protein
-        Carbs = Option.map nutritionInfoToDb nutrition.Carbs
+        Calories = Option.map (fun (n: NaturalNumber) -> int n.Value) nutrition.Calories |> Option.toNullable
+        Fat = Option.map nutritionInfoToDb nutrition.Fat |> Option.toObj
+        SaturatedFat = Option.map nutritionInfoToDb nutrition.SaturatedFat |> Option.toObj
+        Sugars = Option.map nutritionInfoToDb nutrition.Sugars |> Option.toObj
+        Protein = Option.map nutritionInfoToDb nutrition.Protein |> Option.toObj
+        Carbs = Option.map nutritionInfoToDb nutrition.Carbs |> Option.toObj
     }
     
     let private toModel (dbRecipe: DbRecipe): Recipe = {
@@ -99,10 +101,10 @@ module Recipes =
         Url = dbRecipe.Url |> Option.ofObj |> Option.map Uri
         Description = nonEmptyStringOptionToModel dbRecipe.Description
         Ingredients = Seq.map ingredientToModel dbRecipe.Ingredients |> (mkNonEmptyList >> forceSucces)
-        Difficulty = Option.map difficultyToModel dbRecipe.Difficulty
-        CookingTime = Option.map cookingTimeToModel dbRecipe.CookingTime
+        Difficulty = difficultyToModel dbRecipe.Difficulty
+        CookingTime = Option.ofObj dbRecipe.CookingTime |> Option.map cookingTimeToModel 
         Tags = Seq.map (NonEmptyString.create >> Option.get >> RecipeTag) dbRecipe.Tags
-        Rating = Option.map (Rating.create >> Option.get) dbRecipe.Rating
+        Rating = Option.ofNullable dbRecipe.Rating |> Option.map (Rating.create >> Option.get) 
         NutritionPerServing = nutritionPerServingToModel dbRecipe.NutritionPerServing
     }
     
@@ -110,15 +112,15 @@ module Recipes =
         Id = match recipe.Id with RecipeId id -> id
         Name = recipe.Name.Value
         CreatorId = match recipe.CreatorId with AccountId id -> id
-        PersonCount = Convert.ToInt32 recipe.PersonCount
+        PersonCount = int recipe.PersonCount.Value
         ImageUrl = Option.map (fun (u: Uri) -> u.AbsoluteUri) recipe.ImageUrl |> Option.toObj
         Url = Option.map (fun (u: Uri) -> u.AbsoluteUri) recipe.Url |> Option.toObj
         Description = nonEmptyStringOptionToDb recipe.Description
         Ingredients = NonEmptyList.map ingredientToDb recipe.Ingredients |> NonEmptyList.toSeq
-        Difficulty = Option.map difficultyToDb recipe.Difficulty
-        CookingTime = Option.map cookingTimeToDb recipe.CookingTime
+        Difficulty = difficultyToDb recipe.Difficulty
+        CookingTime = Option.map cookingTimeToDb recipe.CookingTime |> Option.toObj
         Tags = Seq.map (fun (t: RecipeTag) -> t.Value.Value) recipe.Tags
-        Rating = Option.map (fun (r: Rating) -> int r.Value.Value) recipe.Rating
+        Rating = Option.map (fun (r: Rating) -> int r.Value.Value) recipe.Rating |> Option.toNullable
         NutritionPerServing = nutritionPerServingToDb recipe.NutritionPerServing
     }
     

@@ -25,7 +25,7 @@ module Tests.Recipes
         ImageUrl = Fake.recipe.ImageUrl |> Option.map (fun u -> u.AbsolutePath)
         Url = Fake.recipe.Url |> Option.map (fun u -> u.AbsolutePath)
         Description = Some Fake.recipe.Description.Value.Value
-        Ingredients = seq { yield apiIngredientParameter }
+        Ingredients = [ apiIngredientParameter ]
         Difficulty = Some "easy"
         CookingTime = Some { Text = "30 minutes" }
         Tags = ["bbq"]
@@ -59,7 +59,7 @@ module Tests.Recipes
         ImageUrl = Some "not an url"
         Url = Some "not an url"
         Description = Some ""
-        Ingredients = seq { yield apiIncorrectIngredientParameter }
+        Ingredients = [ apiIncorrectIngredientParameter ]
         Difficulty = Some "unknown"
         CookingTime = Some { Text = "" }
         Tags = [""]

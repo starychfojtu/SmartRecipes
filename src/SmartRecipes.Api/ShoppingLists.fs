@@ -44,7 +44,7 @@ module ShoppingLists =
     
     [<CLIMutable>]
     type AddItemsParameters = {
-        itemIds: seq<Guid>
+        itemIds: Guid list
     }
     
     type AddItemsError =
@@ -84,7 +84,7 @@ module ShoppingLists =
     // Add foodstuffs
     
     let addFoodstuffs accessToken parameters =
-        addItems ShoppingLists.addFoodstuffs accessToken parameters (fun env -> env.IO.Foodstuffs.getByIds)
+        addItems ShoppingLists.addFoodstuffs accessToken parameters (fun env ids -> List.toSeq ids |> env.IO.Foodstuffs.getByIds)
         
     let addFoodstuffsHandler<'a> =
         authorizedPostHandler addFoodstuffs serializeAddItems
@@ -92,7 +92,7 @@ module ShoppingLists =
     // Add recipes
     
     let addRecipes accessToken parameters =
-        addItems ShoppingLists.addRecipes accessToken parameters (fun env -> env.IO.Recipes.getByIds)
+        addItems ShoppingLists.addRecipes accessToken parameters (fun env ids -> List.toSeq ids |> env.IO.Recipes.getByIds)
         
     let addRecipesHandler<'a> =
         authorizedPostHandler addRecipes serializeAddItems

@@ -1,6 +1,7 @@
 namespace SmartRecipes.Api
 open System.Threading.Tasks
 open FSharp.Json
+open FSharp.Json
 open Infrastructure
 open SmartRecipes.Domain
 
@@ -51,7 +52,7 @@ module Generic =
         try
             Ok <| Json.deserialize<'a> json
         with
-            | :? JsonDeserializationError as ex -> Error ex.Message
+            | ex -> Error ex.Message
     
     let private setStatusCode (ctx: HttpContext) code =
         ctx.SetStatusCode code
