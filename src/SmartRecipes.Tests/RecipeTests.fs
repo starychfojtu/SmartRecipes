@@ -33,13 +33,15 @@ module Tests.Recipes
         Nutrition = {
             Calories = Some 200
             Fat = Some {
-                Grams = 100
+                Grams = 100.5
                 Percents = Some 50
             }
             SaturatedFat = None
             Sugars = None
+            Salt = None
             Protein = None
             Carbs = None
+            Fibre = None
         }
     }
     
@@ -67,13 +69,15 @@ module Tests.Recipes
         Nutrition = {
             Calories = Some -10
             Fat = Some {
-                Grams = -100
+                Grams = -100.0
                 Percents = Some -50
             }
             SaturatedFat = None
             Sugars = None
+            Salt = None
             Protein = None
             Carbs = None
+            Fibre = None
         }
     }
     

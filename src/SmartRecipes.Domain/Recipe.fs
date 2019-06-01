@@ -1,4 +1,5 @@
 namespace SmartRecipes.Domain
+open NonNegativeFloat
 
 module Recipe =
     open Account
@@ -55,7 +56,7 @@ module Recipe =
             |> Option.map Rating
     
     type NutritionInfo = {
-        Grams: NaturalNumber
+        Grams: NonNegativeFloat
         Percents: NaturalNumber option
     }
     
@@ -70,18 +71,22 @@ module Recipe =
         Fat: NutritionInfo option
         SaturatedFat: NutritionInfo option
         Sugars: NutritionInfo option
+        Salt: NutritionInfo option
         Protein: NutritionInfo option
         Carbs: NutritionInfo option
+        Fibre: NutritionInfo option
     }
     
     module NutritionPerServing =
-        let create calories fat saturatedFat sugars protein carbs = {
+        let create calories fat saturatedFat sugars salt protein carbs fibre = {
             Calories = calories
             Fat = fat
             SaturatedFat = saturatedFat
             Sugars = sugars
+            Salt = salt
             Protein = protein
             Carbs = carbs
+            Fibre = fibre
         }
 
     type Recipe = {

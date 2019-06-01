@@ -1,9 +1,12 @@
 namespace SmartRecipes.Domain
 
 module NonNegativeFloat =
-    type NonNegativeFloat = private NonNegativeFloat of float
+    type NonNegativeFloat =
+        private NonNegativeFloat of float
+        with member f.Value = match f with NonNegativeFloat v -> v
     
-    let private nonNegativeFloat f = NonNegativeFloat f
+    let private nonNegativeFloat f =
+        NonNegativeFloat f
     
     let create f =
         match f < 0.0 with 

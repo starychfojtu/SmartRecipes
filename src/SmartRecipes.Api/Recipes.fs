@@ -47,7 +47,7 @@ module Recipes =
     
     [<CLIMutable>]
     type NutritionInfoParameters = {
-        Grams: int
+        Grams: float
         Percents: int option
     }
     
@@ -57,8 +57,10 @@ module Recipes =
         Fat: NutritionInfoParameters option
         SaturatedFat: NutritionInfoParameters option
         Sugars: NutritionInfoParameters option
+        Salt: NutritionInfoParameters option
         Protein: NutritionInfoParameters option
         Carbs: NutritionInfoParameters option
+        Fibre: NutritionInfoParameters option
     }
 
     [<CLIMutable>]
@@ -126,7 +128,7 @@ module Recipes =
     module NutritionInfoParameters =
         let parse parameters =
             NutritionInfo.create
-            <!> Parse.naturalNumber [GramsMustBePositive] parameters.Grams
+            <!> Parse.nonNegativeFloat [GramsMustBePositive] parameters.Grams
             <*> Parse.option (Parse.naturalNumber [PercentsMustBePositive]) parameters.Percents
             
     module NutritionPerServingParameters =
@@ -136,8 +138,10 @@ module Recipes =
             <*> Parse.option NutritionInfoParameters.parse parameters.Fat
             <*> Parse.option NutritionInfoParameters.parse parameters.SaturatedFat
             <*> Parse.option NutritionInfoParameters.parse parameters.Sugars
+            <*> Parse.option NutritionInfoParameters.parse parameters.Salt
             <*> Parse.option NutritionInfoParameters.parse parameters.Protein
             <*> Parse.option NutritionInfoParameters.parse parameters.Carbs
+            <*> Parse.option NutritionInfoParameters.parse parameters.Fibre
             
     module RecipeParameters =
         let private parseDifficulty s =

@@ -46,7 +46,7 @@ module Model =
         member val text = text with get, set
     
     [<AllowNullLiteral>]
-    type DbNutritionInfo(grams: int, percents: Nullable<int>) =
+    type DbNutritionInfo(grams: float, percents: Nullable<int>) =
         member val grams = grams with get, set
         member val percents = percents with get, set
     
@@ -55,8 +55,10 @@ module Model =
         Fat: DbNutritionInfo
         SaturatedFat: DbNutritionInfo
         Sugars: DbNutritionInfo
+        Salt: DbNutritionInfo
         Protein: DbNutritionInfo
         Carbs: DbNutritionInfo
+        Fibre: DbNutritionInfo
     }
     
     type DbRecipe = {

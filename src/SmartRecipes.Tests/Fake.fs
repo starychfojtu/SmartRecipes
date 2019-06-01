@@ -76,6 +76,8 @@ module Tests.Fake
             Protein = None
             Carbs = None
             Sugars = None
+            Salt = None
+            Fibre = None
         }
     }
     

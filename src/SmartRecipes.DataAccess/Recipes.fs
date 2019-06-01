@@ -64,13 +64,13 @@ module Recipes =
         DbCookingTime(time.Text.Value)
     
     let private nutritionInfoToModel (info: DbNutritionInfo): NutritionInfo = {
-        Grams = NaturalNumber.create info.grams |> Option.get
+        Grams = NonNegativeFloat.create info.grams |> Option.get
         Percents = Option.ofNullable info.percents |> Option.map (NaturalNumber.create >> Option.get) 
     }
     
     let private nutritionInfoToDb (info: NutritionInfo) =
         DbNutritionInfo(
-            int info.Grams.Value,
+            info.Grams.Value,
             Option.map (fun (n: NaturalNumber) -> int n.Value) info.Percents |> Option.toNullable
         )
     
@@ -79,8 +79,10 @@ module Recipes =
         Fat = Option.ofObj nutrition.Fat |> Option.map nutritionInfoToModel 
         SaturatedFat = Option.ofObj nutrition.SaturatedFat |> Option.map nutritionInfoToModel
         Sugars = Option.ofObj nutrition.Sugars |> Option.map nutritionInfoToModel
+        Salt = Option.ofObj nutrition.Salt |> Option.map nutritionInfoToModel
         Protein = Option.ofObj nutrition.Protein |> Option.map nutritionInfoToModel
         Carbs = Option.ofObj  nutrition.Carbs |> Option.map nutritionInfoToModel
+        Fibre = Option.ofObj  nutrition.Fibre |> Option.map nutritionInfoToModel
     }
     
     let private nutritionPerServingToDb (nutrition: NutritionPerServing): DbNutritionPerServing = {
@@ -88,8 +90,10 @@ module Recipes =
         Fat = Option.map nutritionInfoToDb nutrition.Fat |> Option.toObj
         SaturatedFat = Option.map nutritionInfoToDb nutrition.SaturatedFat |> Option.toObj
         Sugars = Option.map nutritionInfoToDb nutrition.Sugars |> Option.toObj
+        Salt = Option.map nutritionInfoToDb nutrition.Salt |> Option.toObj
         Protein = Option.map nutritionInfoToDb nutrition.Protein |> Option.toObj
         Carbs = Option.map nutritionInfoToDb nutrition.Carbs |> Option.toObj
+        Fibre = Option.map nutritionInfoToDb nutrition.Fibre |> Option.toObj
     }
     
     let private toModel (dbRecipe: DbRecipe): Recipe = {
