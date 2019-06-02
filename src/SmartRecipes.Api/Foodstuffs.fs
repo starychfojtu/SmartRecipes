@@ -62,7 +62,7 @@ module Foodstuffs =
         Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs }) serializeSearchError
         
     let private parseQuery parameters =
-        Parse.nonEmptyString QueryIsEmpty parameters |> Validation.toResult |> ReaderT.id
+        Parse.nonEmptyString QueryIsEmpty parameters.query |> Validation.toResult |> ReaderT.id
         
     let searchFoodstuffs accessToken query =
         Foodstuffs.search accessToken query |> ReaderT.mapError BusinessError

@@ -1,7 +1,6 @@
 namespace SmartRecipes.Api
 open System.Threading.Tasks
 open FSharp.Json
-open FSharp.Json
 open Infrastructure
 open SmartRecipes.Domain
 
@@ -58,7 +57,9 @@ module Generic =
         ctx.SetStatusCode code
             
     let private bindQueryString<'a> (ctx: HttpContext) =
-        ctx.BindQueryString<'a>()
+        try 
+            ctx.BindQueryString<'a>()
+        with ex -> failwith ex.Message
         
     let private bindModelAsync<'a> (ctx: HttpContext): Task<Result<'a, string>> = task {
         let! body = ctx.ReadBodyFromRequestAsync ()
@@ -77,9 +78,7 @@ module Generic =
         response next ctx
         
     let getHandler handler serialize next ctx = 
-        task {
-            return! bindQueryString<'parameters> ctx |> getResult (getEnvironment ()) next ctx handler serialize
-        }
+        bindQueryString<'parameters> ctx |> getResult (getEnvironment ()) next ctx handler serialize
     
     let postHandler handler serialize next ctx = 
         task {
@@ -91,13 +90,9 @@ module Generic =
         }
             
     let authorizedGetHandler handler serialize next ctx = 
-        task {
-            let accessToken = match getHeader ctx "authorization" with Ok t -> t | Error _ -> ""
-            return! getHandler (handler accessToken) serialize next ctx
-        }
+        let accessToken = match getHeader ctx "authorization" with Ok t -> t | Error _ -> ""
+        getHandler (handler accessToken) serialize next ctx
     
-    let authorizedPostHandler handler serialize next ctx = 
-        task {
-            let accessToken = match getHeader ctx "authorization" with Ok t -> t | Error _ -> ""
-            return! postHandler (handler accessToken) serialize next ctx
-        }
+    let authorizedPostHandler handler serialize next ctx =
+        let accessToken = match getHeader ctx "authorization" with Ok t -> t | Error _ -> ""
+        postHandler (handler accessToken) serialize next ctx

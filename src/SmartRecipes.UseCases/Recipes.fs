@@ -92,8 +92,8 @@ module Recipes =
         Recipe.createIngredient
         <!> mkFoodstuffId parameters.FoodstuffId foodstuffMap
         <*> (Success parameters.Amount)
-        <*> (Success parameters.Comment)
         <*> (Success parameters.DisplayLine)
+        <*> (Success parameters.Comment)
     
     let private checkIngredientsNotDuplicate ingredients =
         let foodstuffIds = NonEmptyList.map (fun (i: Ingredient) -> i.FoodstuffId) ingredients
