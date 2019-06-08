@@ -1,5 +1,4 @@
 namespace SmartRecipes.Api
-open MongoDB.FSharp
 
 module App =
     open Giraffe

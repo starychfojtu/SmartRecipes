@@ -9,8 +9,8 @@ module ReaderT =
     let execute a reader =
         ReaderT.run reader a
         
-    let private mapMonad f reader = ReaderT(fun env ->
+    let mapDirect f reader = ReaderT(fun env ->
         execute env reader |> f)
     
     let mapError<'e, 'a, 'b, 's> f (reader: ReaderT<'e, Result<'s, 'a>>): ReaderT<'e, Result<'s, 'b>> =
-        mapMonad (Result.mapError f) reader
+        mapDirect (Result.mapError f) reader

@@ -1,4 +1,5 @@
 namespace SmartRecipes.UseCases
+open FSharpPlus.Data
 
 module Environment =
     open System
@@ -20,4 +21,14 @@ module Environment =
         IO: IOEnvironment
         NowUtc: DateTime
     }
-
+    
+    module Users =
+        let getByEmail email =
+            ReaderT(fun env -> env.IO.Users.getByEmail email)
+        
+        let add account =
+            ReaderT(fun env -> env.IO.Users.add account)
+            
+    module ShoppingList =
+        let add shoppingList =
+            ReaderT(fun env -> env.IO.ShoppingLists.add shoppingList)

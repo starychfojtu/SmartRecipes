@@ -18,27 +18,25 @@ module Users =
     type SignUpError = 
         | InvalidParameters of CredentialsError list
         | AccountAlreadyExits
-    
-    let private verifyAccountDoesNotExists account = ReaderT(fun env ->
-        match env.IO.Users.getByEmail account.credentials.email with
-        | Some _ -> Error AccountAlreadyExits 
-        | None -> Ok account
-    )
+
+    let private verifyAccountNotExists account =
+        Users.getByEmail account.credentials.email
+        |> ReaderT.mapDirect (function | Some _ -> Error AccountAlreadyExits | None -> Ok account)
             
     let private signUpAccount email password =
         Account.signUp email password |> Result.mapError InvalidParameters |> ReaderT.id
     
     let private addAccountToDb account = 
-        ReaderT(fun env -> env.IO.Users.add account |> Ok)
+        Users.add account |> ReaderT.mapDirect Ok
         
-    let private addEmptyShoppingList account = ReaderT(fun env ->
-        ShoppingList.create account.id |> env.IO.ShoppingLists.add |> ignore
-        Ok account
-    )
+    let private addEmptyShoppingList account =
+        ShoppingList.create account.id
+        |> ShoppingList.add
+        |> ReaderT.mapDirect (fun _ -> Ok account)
     
     let signUp email password =
         signUpAccount email password
-        >>= verifyAccountDoesNotExists
+        >>= verifyAccountNotExists
         >>= addAccountToDb
         >>= addEmptyShoppingList
       
