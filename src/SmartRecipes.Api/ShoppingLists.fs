@@ -133,7 +133,7 @@ module ShoppingLists =
                 | ShoppingList.ChangeAmountError.ItemNotInList -> "Foodstuff not in list."
                 
     let private serializeChangeAmount = 
-        Result.map serializeShoppingList >> Result.mapError (Seq.map serializeChangeAmountError)
+        Result.map (fun sl -> { ShoppingList = serializeShoppingList sl }) >> Result.mapError (Seq.map serializeChangeAmountError)
         
     let changeAmount accessToken parameters = monad {
         let! foodstuff = getFoodstuff parameters.foodstuffId
