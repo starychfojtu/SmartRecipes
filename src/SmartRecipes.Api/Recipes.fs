@@ -18,17 +18,37 @@ module Recipes =
     // Get my recipes
     
     type GetMyRecipesResponse = {
-        Recipes: RecipeDto seq
+        Recipes: RecipeDto list
     }
     
     let private serializeGetMyRecipes = 
-        Result.bimap (fun rs -> { Recipes = Seq.map serializeRecipe rs }) (function GetMyRecipesError.Unauthorized -> "Unauthorized.")
+        Result.bimap (fun rs -> { Recipes = Seq.map serializeRecipe rs |> Seq.toList }) (function GetMyRecipesError.Unauthorized -> "Unauthorized.")
     
     let getMyRecipes accessToken _ = 
         Recipes.getMyRecipes accessToken
     
     let getMyRecipesHandler<'a> =
         authorizedGetHandler getMyRecipes serializeGetMyRecipes
+        
+    // Get by Ids
+    
+    [<CLIMutable>]
+    type GetByIdsParameters = {
+        Ids: Guid list
+    }
+    
+    type GetByIdsResponse = {
+        Recipes: RecipeDto list
+    }
+        
+    let private serializeGetByIds = 
+        Result.bimap (fun fs -> { Recipes = Seq.map serializeRecipe fs |> Seq.toList }) (fun e -> match e with GetByIdsError.Unauthorized -> "Unauthorized.")
+        
+    let private getByIds accessToken parameters =
+        Recipes.getByIds accessToken parameters.Ids
+
+    let getByIdshandler<'a> = 
+        authorizedGetHandler getByIds serializeGetByIds
             
     // Create
     

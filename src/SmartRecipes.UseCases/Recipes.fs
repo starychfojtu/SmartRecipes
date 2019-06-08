@@ -27,6 +27,18 @@ module Recipes =
     let getMyRecipes accessToken =
         Users.authorize Unauthorized accessToken
         >>= getRecipes
+    
+    // Get by ids
+    
+    type GetByIdsError = 
+        | Unauthorized
+
+    let private getRecipesByIds ids = 
+        ReaderT(fun env -> env.IO.Recipes.getByIds ids |> Ok)
+        
+    let getByIds accessToken ids = 
+        Users.authorize Unauthorized accessToken
+        >>= (fun _ -> getRecipesByIds ids)
         
     // Create
     

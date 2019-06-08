@@ -17,7 +17,8 @@ module App =
         choose [
             GET >=> 
                 choose [
-                    route "/recipes" >=> Recipes.getMyRecipesHandler
+                    route "/recipes/my" >=> Recipes.getMyRecipesHandler
+                    route "/recipes" >=> Recipes.getByIdshandler
                     route "/shoppingList" >=> ShoppingLists.getHandler
                     route "/foodstuffs" >=> Foodstuffs.getByIdshandler
                     route "/foodstuffs/search" >=> Foodstuffs.searchHandler

@@ -7,7 +7,6 @@ module Foodstuffs =
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.NonEmptyString
     open Environment
-    open SmartRecipes.Domain
     open SmartRecipes.Domain.NonNegativeFloat
 
     // Get by ids
