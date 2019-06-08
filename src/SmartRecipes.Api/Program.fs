@@ -83,13 +83,24 @@ module App =
     let configureLogging (builder : ILoggingBuilder) =
         let filter (l : LogLevel) = l.Equals LogLevel.Error
         builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
-    
-    [<EntryPoint>]
-    let main _ =
-        WebHost.CreateDefaultBuilder()
+        
+    let getWebHost () = 
+        WebHost
+            .CreateDefaultBuilder()
             .Configure(Action<IApplicationBuilder> configureApp)
             .ConfigureServices(configureServices)
             .ConfigureLogging(configureLogging)
+            
+    [<EntryPoint>]
+    let main _ =
+        let webHost = getWebHost ()
+        let vars = System.Environment.GetEnvironmentVariables ()
+        let webHostWithSentry = 
+            if vars.Contains("SENTRY")
+            then webHost.UseSentry(string vars.["SENTRY"])
+            else webHost
+        
+        webHostWithSentry
             .Build()
             .Run()
         0

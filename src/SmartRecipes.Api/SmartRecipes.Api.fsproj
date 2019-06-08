@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0-preview2-35157" />
     <PackageReference Include="mongocsharpdriver" Version="2.7.0" />
     <PackageReference Include="MongoDB.FSharp" Version="0.1.0" />
+    <PackageReference Include="Sentry.AspNetCore" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0-preview2-35157" />
