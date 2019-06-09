@@ -57,13 +57,10 @@ module App =
             if isProd
             then
                 let vars = System.Environment.GetEnvironmentVariables ();
-                let username = string(vars.["DATABASE_USERNAME"]);
-                let password = string(vars.["DATABASE_PASSWORD"]);
-                sprintf "mongodb://%s:%s@ds213053.mlab.com:13053/heroku_st1qt292" username password
+                string vars.["MONGODB_URI"]
             else 
                 "mongodb://localhost"
-        let databaseName = if isProd then "heroku_st1qt292" else "SmartRecipes"
-        let database = MongoClient(connStr).GetDatabase(databaseName)
+        let database = MongoClient(connStr).GetDatabase("SmartRecipes")
         Database.database <- database // TODO: I am ugly, refactor me
     
     let configureApp (app : IApplicationBuilder) =
