@@ -10,6 +10,7 @@
     <Compile Include="NaturalNumber.fs" />
     <Compile Include="NonEmptyString.fs" />
     <Compile Include="NonNegativeFloat.fs" />
+    <Compile Include="SearchQuery.fs" />
     <Compile Include="Uri.fs" />
     <Compile Include="Email.fs" />
     <Compile Include="Password.fs" />

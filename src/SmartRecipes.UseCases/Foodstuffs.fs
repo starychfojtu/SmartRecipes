@@ -1,4 +1,5 @@
 namespace SmartRecipes.UseCases
+open SmartRecipes.Domain
 
 module Foodstuffs =
     open FSharpPlus.Data
@@ -52,7 +53,7 @@ module Foodstuffs =
         createFoodstuff parameters.name parameters.baseAmount parameters.amountStep |> Ok |> ReaderT.id
 
     let private ensureDoesntAlreadyExists (foodstuff: Foodstuff) = ReaderT(fun env ->
-        let foodstuffsWithSameName = env.IO.Foodstuffs.search foodstuff.name
+        let foodstuffsWithSameName = env.IO.Foodstuffs.search (SearchQuery.create foodstuff.name)
         if Seq.isEmpty foodstuffsWithSameName
             then Ok foodstuff
             else Error FoodstuffAlreadyExists

@@ -1,4 +1,6 @@
 namespace SmartRecipes.DataAccess
+open FSharpPlus.Builders
+open MongoDB.Bson
 
 module Foodstuffs =
     open System
@@ -9,11 +11,12 @@ module Foodstuffs =
     open SmartRecipes.Domain.NonEmptyString
     open MongoDB.Driver
     open Utils
+    open SearchQuery
 
     type FoodstuffDao = {
         getByIds: seq<Guid> -> seq<Foodstuff>
         getById: Guid -> Foodstuff option
-        search: NonEmptyString -> seq<Foodstuff>
+        search: SearchQuery -> seq<Foodstuff>
         add: Foodstuff -> Foodstuff
     }
     
@@ -29,7 +32,7 @@ module Foodstuffs =
     
     let internal toModel (dbFoodstuff: DbFoodstuff) = {
         id = FoodstuffId dbFoodstuff.id 
-        name = create dbFoodstuff.name |> Option.get
+        name = NonEmptyString.create dbFoodstuff.name |> Option.get
         baseAmount = amountToModel dbFoodstuff.baseAmount
         amountStep = NonNegativeFloat.create dbFoodstuff.amountStep |> Option.get
     }
@@ -45,10 +48,10 @@ module Foodstuffs =
         |> Seq.map toModel
         |> Seq.tryHead
     
-    let private search (name: NonEmptyString) =
-        collection.AsQueryable()
-        |> Seq.filter (fun f -> f.name = name.Value)
-        |> Seq.map toModel
+    let private search (query: SearchQuery) =
+        let regex = BsonRegularExpression(query.Value)
+        let filter = Builders<DbFoodstuff>.Filter.Regex(FieldDefinition<DbFoodstuff>.op_Implicit("name"), regex)
+        collection.FindSync(filter).ToEnumerable() |> Seq.map toModel
     
     let private add foodstuff =
         toDb foodstuff |> collection.InsertOne |> ignore
