@@ -34,7 +34,7 @@ module Tests.Foodstuffs
         
     // API tests
     
-    let apiParameters: Api.Foodstuffs.CreateParameters = {
+    let apiParameters: Api.Foodstuffs.Create.Parameters = {
         name = Fake.foodstuff.name.Value
         baseAmount = Some {
             unit = "gram"
@@ -43,7 +43,7 @@ module Tests.Foodstuffs
         amountStep = Some 1.0
     }
     
-    let apiIncorrectParameters: Api.Foodstuffs.CreateParameters = {
+    let apiIncorrectParameters: Api.Foodstuffs.Create.Parameters = {
         name = ""
         baseAmount = Some {
             unit = ""
@@ -54,17 +54,17 @@ module Tests.Foodstuffs
     
     [<Fact>]
     let ``Can add foodstuff`` () =
-        Api.Foodstuffs.create Fake.token.value apiParameters
+        Api.Foodstuffs.Create.create Fake.token.value apiParameters
         |> ReaderT.execute (getFakeCreateDao WithoutFoodstuff)
         |> Tests.Assert.IsOk
         
     [<Fact>]
     let ``Cannot add foodstuff with incorrect parameters`` () =
-        Api.Foodstuffs.create Fake.token.value apiIncorrectParameters
+        Api.Foodstuffs.Create.create  Fake.token.value apiIncorrectParameters
         |> ReaderT.execute (getFakeCreateDao WithoutFoodstuff)
         |> Assert.IsErrorAnd (fun e -> 
-            Assert.True (Seq.contains Api.Foodstuffs.CreateError.NameCannotBeEmpty e)
-            Assert.True (Seq.contains (Api.Foodstuffs.CreateError.BaseAmountError Api.Foodstuffs.ParseAmountError.UnitCannotBeEmpty) e)
-            Assert.True (Seq.contains (Api.Foodstuffs.CreateError.BaseAmountError Api.Foodstuffs.ParseAmountError.ValueCannotBeNegative) e)
-            Assert.True (Seq.contains Api.Foodstuffs.CreateError.AmountStepCannotBeNegative e)
+            Assert.True (Seq.contains Api.Foodstuffs.Create.Error.NameCannotBeEmpty e)
+            Assert.True (Seq.contains (Api.Foodstuffs.Create.Error.BaseAmountError Api.AmountParameters.Error.UnitCannotBeEmpty) e)
+            Assert.True (Seq.contains (Api.Foodstuffs.Create.Error.BaseAmountError Api.AmountParameters.Error.ValueCannotBeNegative) e)
+            Assert.True (Seq.contains Api.Foodstuffs.Create.Error.AmountStepCannotBeNegative e)
         )

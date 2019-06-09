@@ -1,6 +1,4 @@
 namespace SmartRecipes.Api
-open Foodstuffs
-open SmartRecipes.Domain.Recipe
 
 module Recipes =
     open Dto
@@ -14,43 +12,83 @@ module Recipes =
     open FSharpPlus
     open Infrastracture
     open Infrastructure.NonEmptyList
+    open SmartRecipes.Domain.SearchQuery
+    open SmartRecipes.Domain.Recipe
+    open AmountParameters
             
-    // Get my recipes
-    
-    type GetMyRecipesResponse = {
-        Recipes: RecipeDto list
-    }
-    
-    let private serializeGetMyRecipes = 
-        Result.bimap (fun rs -> { Recipes = Seq.map serializeRecipe rs |> Seq.toList }) (function GetMyRecipesError.Unauthorized -> "Unauthorized.")
-    
-    let getMyRecipes accessToken _ = 
-        Recipes.getMyRecipes accessToken
-    
-    let getMyRecipesHandler<'a> =
-        authorizedGetHandler getMyRecipes serializeGetMyRecipes
+    module GetMyRecipes =
+        type Response = {
+            Recipes: RecipeDto list
+        }
         
-    // Get by Ids
-    
-    [<CLIMutable>]
-    type GetByIdsParameters = {
-        Ids: Guid list
-    }
-    
-    type GetByIdsResponse = {
-        Recipes: RecipeDto list
-    }
+        let private serialize = 
+            Result.bimap (fun rs -> { Recipes = Seq.map serializeRecipe rs |> Seq.toList }) (function GetMyRecipesError.Unauthorized -> "Unauthorized.")
         
-    let private serializeGetByIds = 
-        Result.bimap (fun fs -> { Recipes = Seq.map serializeRecipe fs |> Seq.toList }) (fun e -> match e with GetByIdsError.Unauthorized -> "Unauthorized.")
+        let private getMyRecipes accessToken _ = 
+            Recipes.getMyRecipes accessToken
         
-    let private getByIds accessToken parameters =
-        Recipes.getByIds accessToken parameters.Ids
+        let handler<'a> =
+            authorizedGetHandler getMyRecipes serialize
+        
+    module GetByIds =
+        [<CLIMutable>]
+        type Parameters = {
+            Ids: Guid list
+        }
+        
+        type Response = {
+            Recipes: RecipeDto list
+        }
+            
+        let private serialize = 
+            Result.bimap (fun fs -> { Recipes = Seq.map serializeRecipe fs |> Seq.toList }) (function Recipes.GetByIdsError.Unauthorized -> "Unauthorized.")
+            
+        let private getByIds accessToken parameters =
+            Recipes.getByIds accessToken parameters.Ids
 
-    let getByIdshandler<'a> = 
-        authorizedGetHandler getByIds serializeGetByIds
+        let handler<'a> = 
+            authorizedGetHandler getByIds serialize
+        
+    module Search =
+        open SmartRecipes.Domain
+        
+        [<CLIMutable>]
+        type Parameters = {
+            query: string
+        }
+        
+        type Response = {
+            Recipes: RecipeDto list
+        }
+        
+        type Error = 
+            | BusinessError of Recipes.SearchError
+            | QueryIsEmpty
             
-    // Create
+        let private serializeSearchError = function 
+            | BusinessError e ->
+                match e with
+                | Recipes.SearchError.Unauthorized -> "Unauthorized."
+            | QueryIsEmpty -> "Query is empty."
+            
+        let private serializeSearch<'a, 'b> = 
+            Result.bimap (fun rs -> { Recipes = Seq.map Dto.serializeRecipe rs |> Seq.toList }) serializeSearchError
+            
+        let private parseQuery parameters =
+            Parse.nonEmptyString QueryIsEmpty parameters.query 
+            |> Validation.map SearchQuery.create
+            |> Validation.toResult 
+            |> ReaderT.id
+            
+        let searchFoodstuffs accessToken query =
+            Recipes.search accessToken query |> ReaderT.mapError BusinessError
+            
+        let search accessToken parameters = 
+            parseQuery parameters
+            >>= searchFoodstuffs accessToken
+            
+        let handler<'a> = 
+            authorizedGetHandler search serializeSearch
     
     [<CLIMutable>]
     type IngredientParameter = {
@@ -107,7 +145,7 @@ module Recipes =
         | PersonCountMustBePositive
         | InvalidImageUrl of string
         | InvalidUrl of string
-        | AmountError of ParseAmountError
+        | AmountError of AmountParameters.Error
         | MustContaintAtLeastOneIngredient
         | DescriptionIsProvidedButEmpty
         | DisplayLineOfIngredientIsProvidedButEmpty
@@ -122,6 +160,7 @@ module Recipes =
         | BusinessError of Recipes.CreateError
     
     module IngredientParameters =
+        
         let private parseIngredientAmount =
             Parse.option AmountParameters.parse >> Validation.mapFailure (List.map AmountError)
 

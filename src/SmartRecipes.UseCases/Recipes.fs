@@ -40,6 +40,18 @@ module Recipes =
         Users.authorize Unauthorized accessToken
         >>= (fun _ -> getRecipesByIds ids)
         
+    // Search
+    
+    type SearchError = 
+        | Unauthorized
+        
+    let private searchFoodstuff query = 
+        ReaderT(fun env -> env.IO.Recipes.search query |> Ok)
+        
+    let search accessToken query =
+        Users.authorize Unauthorized accessToken
+        >>= fun _ -> searchFoodstuff query
+        
     // Create
     
     type CreateIngredientError = 

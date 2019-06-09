@@ -1,6 +1,8 @@
 namespace SmartRecipes.DataAccess
+open MongoDB.Bson
 open SmartRecipes.Domain.NaturalNumber
 open SmartRecipes.Domain.Recipe
+open SmartRecipes.Domain.SearchQuery
 
 module Recipes =
     open FSharpPlus.Data
@@ -17,11 +19,12 @@ module Recipes =
     type RecipesDao = {
         getByIds: seq<Guid> -> seq<Recipe>
         getById: Guid -> Recipe option
+        search: SearchQuery -> seq<Recipe>
         getByAccount: AccountId -> seq<Recipe>
         add: Recipe -> Recipe
     }
     
-    let private collection () = Database.getCollection<DbRecipe> ()
+    let private collection = Database.getCollection<DbRecipe> ()
         
     let private nonEmptyStringOptionToModel =
         Option.ofObj >> Option.map (create >> Option.get)
@@ -129,25 +132,31 @@ module Recipes =
     }
     
     let private getByIds ids =
-        collection().AsQueryable()
+        collection.AsQueryable()
         |> Seq.filter (fun r -> Seq.contains r.Id ids)
         |> Seq.map toModel
         
     let private getById id =
         getByIds [id] |> Seq.tryHead
+        
+    let private search (query: SearchQuery) =
+        let regex = BsonRegularExpression(query.Value)
+        let filter = Builders<DbRecipe>.Filter.Regex(FieldDefinition<DbRecipe>.op_Implicit("name"), regex)
+        collection.FindSync(filter).ToEnumerable() |> Seq.map toModel
     
     let private getByAccount (AccountId accountId) =
-        collection().AsQueryable()
+        collection.AsQueryable()
         |> Seq.filter (fun r -> r.CreatorId = accountId)
         |> Seq.map toModel
         
     let private add recipe =
-        toDb recipe |> collection().InsertOne |> ignore
+        toDb recipe |> collection.InsertOne |> ignore
         recipe
     
     let dao = {
         getByIds = getByIds
         getById = getById
+        search = search
         getByAccount = getByAccount
         add = add
     }

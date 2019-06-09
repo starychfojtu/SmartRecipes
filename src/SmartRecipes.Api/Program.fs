@@ -17,17 +17,18 @@ module App =
         choose [
             GET >=> 
                 choose [
-                    route "/recipes/my" >=> Recipes.getMyRecipesHandler
-                    route "/recipes" >=> Recipes.getByIdshandler
+                    route "/recipes/my" >=> Recipes.GetMyRecipes.handler
+                    route "/recipes" >=> Recipes.GetByIds.handler
+                    route "/recipes/search" >=> Recipes.Search.handler
                     route "/shoppingList" >=> ShoppingLists.getHandler
-                    route "/foodstuffs" >=> Foodstuffs.getByIdshandler
-                    route "/foodstuffs/search" >=> Foodstuffs.searchHandler
+                    route "/foodstuffs" >=> Foodstuffs.GetByIds.handler
+                    route "/foodstuffs/search" >=> Foodstuffs.Search.handler
                 ]  
             POST >=>
                 choose [
                     route "/signUp" >=> Users.SignUp.handler
                     route "/signIn" >=> Users.SignIn.handler
-                    route "/foodstuffs" >=> Foodstuffs.createHandler
+                    route "/foodstuffs" >=> Foodstuffs.Create.handler
                     route "/recipes" >=> Recipes.createHandler
                     route "/shoppingList/addFoodstuffs" >=> ShoppingLists.addFoodstuffsHandler
                     route "/shoppingList/changeAmount" >=> ShoppingLists.changeAmountHandler

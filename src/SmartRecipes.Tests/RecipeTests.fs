@@ -94,8 +94,8 @@ module Tests.Recipes
         |> Assert.IsErrorAnd (fun e -> 
             Assert.True (Seq.contains Api.Recipes.CreateError.NameCannotBeEmpty e)
             Assert.True (Seq.contains Api.Recipes.CreateError.DescriptionIsProvidedButEmpty e)
-            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.UnitCannotBeEmpty) e)
-            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.Foodstuffs.ParseAmountError.ValueCannotBeNegative) e)
+            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.AmountParameters.Error.UnitCannotBeEmpty) e)
+            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.AmountParameters.Error.ValueCannotBeNegative) e)
             Assert.True (Seq.contains Api.Recipes.CreateError.PersonCountMustBePositive e)
             Assert.True (Seq.contains Api.Recipes.CreateError.DisplayLineOfIngredientIsProvidedButEmpty e)
             Assert.True (Seq.contains Api.Recipes.CreateError.CommentOfIngredientIsProvidedButEmpty e)
