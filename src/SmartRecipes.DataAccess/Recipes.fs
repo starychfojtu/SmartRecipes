@@ -141,7 +141,7 @@ module Recipes =
         
     let private search (query: SearchQuery) =
         let regex = BsonRegularExpression(query.Value)
-        let filter = Builders<DbRecipe>.Filter.Regex(FieldDefinition<DbRecipe>.op_Implicit("name"), regex)
+        let filter = Builders<DbRecipe>.Filter.Regex((fun r -> r.Name :> obj), regex)
         collection.FindSync(filter).ToEnumerable() |> Seq.map toModel
     
     let private getByAccount (AccountId accountId) =

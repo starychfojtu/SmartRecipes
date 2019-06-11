@@ -12,7 +12,6 @@ module Recipes =
     open FSharpPlus
     open Infrastracture
     open Infrastructure.NonEmptyList
-    open SmartRecipes.Domain.SearchQuery
     open SmartRecipes.Domain.Recipe
     open AmountParameters
             

@@ -50,7 +50,7 @@ module Foodstuffs =
     
     let private search (query: SearchQuery) =
         let regex = BsonRegularExpression(query.Value)
-        let filter = Builders<DbFoodstuff>.Filter.Regex(FieldDefinition<DbFoodstuff>.op_Implicit("name"), regex)
+        let filter = Builders<DbFoodstuff>.Filter.Regex((fun f -> f.name :> obj), regex)
         collection.FindSync(filter).ToEnumerable() |> Seq.map toModel
     
     let private add foodstuff =
