@@ -24,7 +24,7 @@ module Users =
         |> ReaderT.mapDirect (function | Some _ -> Error AccountAlreadyExits | None -> Ok account)
             
     let private signUpAccount email password =
-        Account.signUp email password |> Result.mapError InvalidParameters |> ReaderT.id
+        Account.create email password |> Result.mapError InvalidParameters |> ReaderT.id
     
     let private addAccountToDb account = 
         Users.add account |> ReaderT.mapDirect Ok

@@ -20,12 +20,12 @@ module Account =
         credentials = credentials 
     }
     
-    let mkAccount email password =
+    let private mkAccount email password =
         createAccount 
         <!> mkCredentials email password
         
     // Sign up
           
-    let signUp email password =
+    let create email password =
         mkAccount email password
         |> Validation.toResult
