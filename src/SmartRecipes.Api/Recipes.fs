@@ -3,6 +3,7 @@ namespace SmartRecipes.Api
 module Recipes =
     open Dto
     open Generic
+    open Errors
     open SmartRecipes.DataAccess
     open System
     open Infrastructure
@@ -21,7 +22,7 @@ module Recipes =
         }
         
         let private serialize = 
-            Result.bimap (fun rs -> { Recipes = Seq.map serializeRecipe rs |> Seq.toList }) (function GetMyRecipesError.Unauthorized -> "Unauthorized.")
+            Result.bimap (fun rs -> { Recipes = Seq.map serializeRecipe rs |> Seq.toList }) (function GetMyRecipesError.Unauthorized -> error "Unauthorized.")
         
         let private getMyRecipes accessToken _ = 
             Recipes.getMyRecipes accessToken
@@ -40,7 +41,7 @@ module Recipes =
         }
             
         let private serialize = 
-            Result.bimap (fun fs -> { Recipes = Seq.map serializeRecipe fs |> Seq.toList }) (function Recipes.GetByIdsError.Unauthorized -> "Unauthorized.")
+            Result.bimap (fun fs -> { Recipes = Seq.map serializeRecipe fs |> Seq.toList }) (function Recipes.GetByIdsError.Unauthorized -> error "Unauthorized.")
             
         let private getByIds accessToken parameters =
             Recipes.getByIds accessToken parameters.Ids
@@ -67,8 +68,8 @@ module Recipes =
         let private serializeSearchError = function 
             | BusinessError e ->
                 match e with
-                | Recipes.SearchError.Unauthorized -> "Unauthorized."
-            | QueryIsEmpty -> "Query is empty."
+                | Recipes.SearchError.Unauthorized -> error "Unauthorized."
+            | QueryIsEmpty -> invalidParameters [{ message = "Cannot be empty."; parameter = "Query" }] 
             
         let private serializeSearch<'a, 'b> = 
             Result.bimap (fun rs -> { Recipes = Seq.map Dto.serializeRecipe rs |> Seq.toList }) serializeSearchError
@@ -139,7 +140,7 @@ module Recipes =
         Recipe: RecipeDto
     }
     
-    type CreateError =
+    type CreateParameterError = 
         | NameCannotBeEmpty
         | PersonCountMustBePositive
         | InvalidImageUrl of string
@@ -156,6 +157,9 @@ module Recipes =
         | GramsMustBePositive
         | PercentsMustBePositive
         | CaloriesMustBePositive
+    
+    type CreateError =
+        | ParameterErrors of CreateParameterError list
         | BusinessError of Recipes.CreateError
     
     module IngredientParameters =
@@ -213,56 +217,63 @@ module Recipes =
             Rating.create >> Validation.ofOption [InvalidRating]
             
         let parse (parameters: CreateParameters) =
-            createParameters
-            <!> Parse.nonEmptyString [NameCannotBeEmpty] parameters.Name
-            <*> Parse.naturalNumber [PersonCountMustBePositive] parameters.PersonCount
-            <*> Parse.uriOption (fun m -> [InvalidImageUrl(m)]) parameters.ImageUrl
-            <*> Parse.uriOption (fun m -> [InvalidUrl(m)]) parameters.Url
-            <*> Parse.nonEmptyStringOption [DescriptionIsProvidedButEmpty] parameters.Description
-            <*> IngredientParameters.parse parameters.Ingredients
-            <*> Parse.option parseDifficulty parameters.Difficulty
-            <*> Parse.option CookingTimeParameters.parse parameters.CookingTime
-            <*> Parse.seqOf (Parse.nonEmptyString [TagIsEmpty]) parameters.Tags
-            <*> Parse.option parseRating parameters.Rating
-            <*> NutritionPerServingParameters.parse parameters.Nutrition
+            let parsedParameters =
+                createParameters
+                <!> Parse.nonEmptyString [NameCannotBeEmpty] parameters.Name
+                <*> Parse.naturalNumber [PersonCountMustBePositive] parameters.PersonCount
+                <*> Parse.uriOption (fun m -> [InvalidImageUrl(m)]) parameters.ImageUrl
+                <*> Parse.uriOption (fun m -> [InvalidUrl(m)]) parameters.Url
+                <*> Parse.nonEmptyStringOption [DescriptionIsProvidedButEmpty] parameters.Description
+                <*> IngredientParameters.parse parameters.Ingredients
+                <*> Parse.option parseDifficulty parameters.Difficulty
+                <*> Parse.option CookingTimeParameters.parse parameters.CookingTime
+                <*> Parse.seqOf (Parse.nonEmptyString [TagIsEmpty]) parameters.Tags
+                <*> Parse.option parseRating parameters.Rating
+                <*> NutritionPerServingParameters.parse parameters.Nutrition
+
+            parsedParameters |> Validation.toResult |> Result.mapError ParameterErrors |> ReaderT.id
         
     let private createRecipe accessToken = 
-        Recipes.create accessToken >> (ReaderT.mapError (fun e -> [BusinessError e]))
+        Recipes.create accessToken >> (ReaderT.mapError BusinessError)
         
-    let private serializeCreateIngredientError = function
-        | DuplicateFoodstuffIngredient -> "Multiple ingredients with common foodstuff found."
-        | FoodstuffNotFound -> "Foodstuff not found."
-        
-    let private serializeCreateError = function 
-        | NameCannotBeEmpty -> ["Name cannot be empty."]
-        | PersonCountMustBePositive -> ["Person count must be positive."]
-        | InvalidImageUrl s -> [s]
-        | InvalidUrl s -> [s]
+    let private serializeCreateParameterError = function 
+        | NameCannotBeEmpty -> { message = "Cannot be empty."; parameter = "Name" }
+        | PersonCountMustBePositive -> { message = "Must be positive."; parameter = "PersonCount" }
+        | InvalidImageUrl s -> { message = s; parameter = "Image url" }
+        | InvalidUrl s -> { message = s; parameter = "Url" }
         | AmountError e ->
             match e with
-            | UnitCannotBeEmpty -> ["Unit cannot be empty."]
-            | ValueCannotBeNegative -> ["Amount of ingredient must be positive."]
-        | MustContaintAtLeastOneIngredient -> ["Must containt at least one ingredient."]
-        | DescriptionIsProvidedButEmpty -> ["Description is provided but empty."]
-        | DisplayLineOfIngredientIsProvidedButEmpty -> ["Description is provided but empty."]
-        | CommentOfIngredientIsProvidedButEmpty -> ["Comment of ingredient is provided but empty."]
-        | CookingTimeTextIsProvidedButEmpty -> ["Cooking time text is provided but empty."]
-        | UnknownDifficulty -> ["Unknown difficulty."]
-        | TagIsEmpty -> ["Tag is empty."]
-        | InvalidRating -> ["Invalid rating."]
-        | GramsMustBePositive -> ["Grams must be positive."]
-        | PercentsMustBePositive -> ["Percents must be positive."]
-        | CaloriesMustBePositive -> ["Calories must be positive."]
-        | BusinessError e -> 
-            match e with
-            | Recipes.CreateError.Unauthorized -> ["Unauthorized."]
-            | Recipes.CreateError.InvalidIngredients es -> List.map serializeCreateIngredientError es
+            | UnitCannotBeEmpty -> { message = "Cannot be empty."; parameter = "Amount unit" }
+            | ValueCannotBeNegative -> { message = "Cannot be negative."; parameter = "Amount value" }
+        | MustContaintAtLeastOneIngredient -> { message = "Cannot be empty."; parameter = "Ingredients" }
+        | DescriptionIsProvidedButEmpty -> { message = "Must be null or non empty."; parameter = "Description" }
+        | DisplayLineOfIngredientIsProvidedButEmpty -> { message = "Must be null or non empty."; parameter = "Ingredient display line" }
+        | CommentOfIngredientIsProvidedButEmpty ->  { message = "Must be null or non empty."; parameter = "Ingredient comment" }
+        | CookingTimeTextIsProvidedButEmpty -> { message = "Must be null or non empty."; parameter = "Cooking time" }
+        | UnknownDifficulty -> { message = "Unknown."; parameter = "Difficulty" }
+        | TagIsEmpty -> { message = "Cannot be emoty."; parameter = "Tag" }
+        | InvalidRating -> { message = "Invalid."; parameter = "Rating" }
+        | GramsMustBePositive -> { message = "Must be positive."; parameter = "Grams" }
+        | PercentsMustBePositive -> { message = "Must be positive."; parameter = "Percents" }
+        | CaloriesMustBePositive -> { message = "Must be positive."; parameter = "Calories" }
+        
+    let private serializeCreateIngredientError = function
+        | DuplicateFoodstuffIngredient -> { message = "Cannot be duplicate."; parameter = "Ingredient foodstuff." }
+        | FoodstuffNotFound -> { message = "Not found."; parameter = "Ingredient foodstuff." }
+        
+    let private serializeCreateBusinessErorr = function
+        | Recipes.CreateError.Unauthorized -> error "Unauthorized."
+        | Recipes.CreateError.InvalidIngredients es -> List.map serializeCreateIngredientError es |> invalidParameters
+        
+    let private serializeCreateError = function 
+        | ParameterErrors es -> List.map serializeCreateParameterError es |> invalidParameters 
+        | BusinessError e -> serializeCreateBusinessErorr e
         
     let private serializeCreate =
-        Result.bimap (fun r -> { Recipe = serializeRecipe r }) (Seq.collect serializeCreateError)
+        Result.bimap (fun r -> { Recipe = serializeRecipe r }) serializeCreateError
 
     let create accessToken parameters = 
-        RecipeParameters.parse parameters |> Validation.toResult |> ReaderT.id
+        RecipeParameters.parse parameters
         >>= createRecipe accessToken
 
     let createHandler<'a> =

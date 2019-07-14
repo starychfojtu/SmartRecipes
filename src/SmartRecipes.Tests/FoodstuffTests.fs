@@ -62,9 +62,11 @@ module Tests.Foodstuffs
     let ``Cannot add foodstuff with incorrect parameters`` () =
         Api.Foodstuffs.Create.create  Fake.token.value apiIncorrectParameters
         |> ReaderT.execute (getFakeCreateDao WithoutFoodstuff)
-        |> Assert.IsErrorAnd (fun e -> 
-            Assert.True (Seq.contains Api.Foodstuffs.Create.Error.NameCannotBeEmpty e)
-            Assert.True (Seq.contains (Api.Foodstuffs.Create.Error.BaseAmountError Api.AmountParameters.Error.UnitCannotBeEmpty) e)
-            Assert.True (Seq.contains (Api.Foodstuffs.Create.Error.BaseAmountError Api.AmountParameters.Error.ValueCannotBeNegative) e)
-            Assert.True (Seq.contains Api.Foodstuffs.Create.Error.AmountStepCannotBeNegative e)
+        |> Assert.IsErrorAnd (function
+            | Api.Foodstuffs.Create.ParameterErrors es -> 
+                Assert.True (Seq.contains Api.Foodstuffs.Create.ParameterError.NameCannotBeEmpty es)
+                Assert.True (Seq.contains (Api.Foodstuffs.Create.ParameterError.BaseAmountError Api.AmountParameters.Error.UnitCannotBeEmpty) es)
+                Assert.True (Seq.contains (Api.Foodstuffs.Create.ParameterError.BaseAmountError Api.AmountParameters.Error.ValueCannotBeNegative) es)
+                Assert.True (Seq.contains Api.Foodstuffs.Create.ParameterError.AmountStepCannotBeNegative es)
+            | _ -> Assert.fail("Expecter ParameterErrors, but got other.")
         )

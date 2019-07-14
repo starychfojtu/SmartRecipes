@@ -30,9 +30,9 @@
     <PackageReference Include="Giraffe" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Errors.fs" />
     <Compile Include="Generic.fs" />
     <Compile Include="Dto.fs" />
-    <Compile Include="Errors.fs" />
     <Compile Include="AmountParameters.fs" />
     <Compile Include="Users.fs" />
     <Compile Include="Foodstuffs.fs" />

@@ -2,6 +2,7 @@ namespace SmartRecipes.Api
 
 module Foodstuffs =
     open Dto
+    open Errors
     open System
     open Generic
     open SmartRecipes.Domain
@@ -26,7 +27,7 @@ module Foodstuffs =
         }
             
         let private serialize = 
-            Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs |> Seq.toList }) (function GetByIdsError.Unauthorized -> "Unauthorized.")
+            Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs |> Seq.toList }) (function GetByIdsError.Unauthorized -> error "Unauthorized.")
             
         let private getByIds accessToken parameters =
             Foodstuffs.getByIds accessToken parameters.Ids
@@ -57,7 +58,7 @@ module Foodstuffs =
             | QueryIsEmpty -> "Query is empty."
             
         let private serializeSearch<'a, 'b> = 
-            Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs |> Seq.toList }) serializeError
+            Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs |> Seq.toList }) (serializeError >> error)
             
         let private parseQuery parameters =
             Parse.nonEmptyString QueryIsEmpty parameters.query 
@@ -89,11 +90,14 @@ module Foodstuffs =
             Foodstuff: FoodstuffDto
         }
         
-        type Error = 
-            | BusinessError of Foodstuffs.CreateError
+        type ParameterError =
             | BaseAmountError of AmountParameters.Error
             | AmountStepCannotBeNegative
             | NameCannotBeEmpty
+        
+        type Error = 
+            | BusinessError of Foodstuffs.CreateError
+            | ParameterErrors of ParameterError list
             
         let private createParameters name baseAmount amountStep: Foodstuffs.CreateParameters = {
             name = name
@@ -105,31 +109,38 @@ module Foodstuffs =
             AmountParameters.parse >> Validation.mapFailure (List.map BaseAmountError)
         
         let private parse (parameters: Parameters) =
-            createParameters
-            <!> Parse.nonEmptyString [NameCannotBeEmpty] parameters.name
-            <*> Parse.option parseBaseAmount parameters.baseAmount
-            <*> Parse.option (Parse.nonNegativeFloat [AmountStepCannotBeNegative]) parameters.amountStep
+            let parsedParameters = 
+                createParameters
+                <!> Parse.nonEmptyString [NameCannotBeEmpty] parameters.name
+                <*> Parse.option parseBaseAmount parameters.baseAmount
+                <*> Parse.option (Parse.nonNegativeFloat [AmountStepCannotBeNegative]) parameters.amountStep
+                
+            parsedParameters |> toResult |> Result.mapError ParameterErrors |> ReaderT.id 
 
         let private createFoodstuff token parameters =
-            Foodstuffs.create token parameters |> ReaderT.mapError (fun e -> [BusinessError(e)])
+            Foodstuffs.create token parameters |> ReaderT.mapError BusinessError
             
-        let private serializeError = function
-            | NameCannotBeEmpty -> "Name cannot be empty."
-            | AmountStepCannotBeNegative -> "Amount step cannot be negative."
+        let private serializeParameterError = function
+            | NameCannotBeEmpty -> { message =  "Cannot be empty."; parameter = "Name" }
+            | AmountStepCannotBeNegative -> { message =  "Cannot be negative."; parameter = "Amount step" }
             | BaseAmountError e ->
                 match e with
-                | AmountParameters.Error.UnitCannotBeEmpty -> "Unit cannot be empty."
-                | AmountParameters.Error.ValueCannotBeNegative -> "Base amount cannot be negative."
-            | BusinessError e ->
-                match e with
-                | Unauthorized -> "Unauthorized."
-                | FoodstuffAlreadyExists -> "Foodstuff already exists."
+                | AmountParameters.Error.UnitCannotBeEmpty -> { message =  "Cannot be empty."; parameter = "Unit" }
+                | AmountParameters.Error.ValueCannotBeNegative -> { message =  "Cannot be negative."; parameter = "Base amount" }
+                
+        let private serializaBusinessError = function
+            | Unauthorized -> "Unauthorized."
+            | FoodstuffAlreadyExists -> "Foodstuff already exists."
             
+        let private serializeError = function
+            | ParameterErrors es -> List.map serializeParameterError es |> invalidParameters
+            | BusinessError e -> serializaBusinessError e |> error 
+                
         let private serialize<'a> =
-            Result.bimap (fun f -> { Foodstuff = serializeFoodstuff f }) (Seq.map serializeError)
+            Result.bimap (fun f -> { Foodstuff = serializeFoodstuff f }) (serializeError)
 
         let create token parameters =
-            parse parameters |> toResult |> ReaderT.id 
+            parse parameters
              >>= createFoodstuff token
 
         let handler<'a> =

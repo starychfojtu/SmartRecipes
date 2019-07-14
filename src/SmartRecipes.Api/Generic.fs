@@ -4,6 +4,7 @@ open System.Threading.Tasks
 open FSharp.Json
 open Infrastructure
 open SmartRecipes.Domain
+open Errors
 
 module Parse =
     let option v =
@@ -73,7 +74,7 @@ module Generic =
     let private getHeader (ctx: HttpContext) name =
         ctx.GetRequestHeader(name)
         
-    let private getResult env next ctx handler serialize parameters =
+    let private getResult env next ctx handler (serialize: 'c -> Result<'d, Errors.Error>) parameters =
         let result = handler parameters |> ReaderT.execute env |> serialize
         let response =
             match result with 
@@ -90,7 +91,7 @@ module Generic =
             return!
                 match parameters with
                 | Ok p -> getResult (getEnvironment ()) next ctx handler serialize p
-                | Error e -> getResult () next ctx (fun _ -> Error e |> ReaderT.id) (fun e -> e) ()
+                | Error e -> getResult () next ctx (fun _ -> error e |> Error |> ReaderT.id) id ()
         }
             
     let authorizedGetHandler handler serialize next ctx = 

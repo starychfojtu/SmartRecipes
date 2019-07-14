@@ -5,6 +5,7 @@ module Tests.Recipes
     open Tests
     open Xunit
     open Fake
+    open Tests
     
     let getCreateDao () =
         Fake.environment WithToken WithUser WithFoodstuff Map.empty
@@ -91,22 +92,24 @@ module Tests.Recipes
     let ``Cannot add recipe with incorrect parameters`` () =
         Api.Recipes.create Fake.token.value apiIncorrectParameters
         |> ReaderT.execute (getCreateDao ())
-        |> Assert.IsErrorAnd (fun e -> 
-            Assert.True (Seq.contains Api.Recipes.CreateError.NameCannotBeEmpty e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.DescriptionIsProvidedButEmpty e)
-            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.AmountParameters.Error.UnitCannotBeEmpty) e)
-            Assert.True (Seq.contains (Api.Recipes.CreateError.AmountError Api.AmountParameters.Error.ValueCannotBeNegative) e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.PersonCountMustBePositive e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.DisplayLineOfIngredientIsProvidedButEmpty e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.CommentOfIngredientIsProvidedButEmpty e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.UnknownDifficulty e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.CookingTimeTextIsProvidedButEmpty e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.TagIsEmpty e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.InvalidRating e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.CaloriesMustBePositive e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.GramsMustBePositive e)
-            Assert.True (Seq.contains Api.Recipes.CreateError.PercentsMustBePositive e)
-            Assert.True (Seq.contains (Api.Recipes.CreateError.InvalidImageUrl "Invalid URI: The format of the URI could not be determined.") e)
-            Assert.True (Seq.contains (Api.Recipes.CreateError.InvalidUrl "Invalid URI: The format of the URI could not be determined.") e)
-            Assert.Equal (16, (Seq.length e))
+        |> Assert.IsErrorAnd (function
+            |  Api.Recipes.CreateError.ParameterErrors e ->
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.NameCannotBeEmpty e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.DescriptionIsProvidedButEmpty e)
+                Assert.True (Seq.contains (Api.Recipes.CreateParameterError.AmountError Api.AmountParameters.Error.UnitCannotBeEmpty) e)
+                Assert.True (Seq.contains (Api.Recipes.CreateParameterError.AmountError Api.AmountParameters.Error.ValueCannotBeNegative) e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.PersonCountMustBePositive e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.DisplayLineOfIngredientIsProvidedButEmpty e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.CommentOfIngredientIsProvidedButEmpty e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.UnknownDifficulty e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.CookingTimeTextIsProvidedButEmpty e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.TagIsEmpty e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.InvalidRating e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.CaloriesMustBePositive e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.GramsMustBePositive e)
+                Assert.True (Seq.contains Api.Recipes.CreateParameterError.PercentsMustBePositive e)
+                Assert.True (Seq.contains (Api.Recipes.CreateParameterError.InvalidImageUrl "Invalid URI: The format of the URI could not be determined.") e)
+                Assert.True (Seq.contains (Api.Recipes.CreateParameterError.InvalidUrl "Invalid URI: The format of the URI could not be determined.") e)
+                Assert.Equal (16, (Seq.length e))
+            | _ -> Assert.fail("Expected ParameterErrors, got other.")
         )
