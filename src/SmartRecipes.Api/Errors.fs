@@ -9,12 +9,12 @@ module Errors =
 
     type Error = {
         message: string
-        parameterErrors: seq<ParameterError>
+        parameterErrors: ParameterError list
     }
     
     let error s = {
         message = s
-        parameterErrors = Seq.empty
+        parameterErrors = List.empty
     }
     
     let invalidParameters errors = {
