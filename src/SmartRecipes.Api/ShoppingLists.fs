@@ -255,7 +255,7 @@ module ShoppingLists =
         Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeRemoveRecipeError
     
     let removeRecipe accessToken parameters = 
-        getRecipe parameters RecipeNotFound
+        getRecipe parameters.recipeId RecipeNotFound
         >>= removeRecipeFromList accessToken
         
     let removeRecipeHandler<'a> = 
