@@ -22,11 +22,11 @@ module Foodstuffs =
         }
         
         type Response = {
-            Foodstuffs: FoodstuffDto seq
+            Foodstuffs: FoodstuffDto list
         }
             
         let private serialize = 
-            Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs }) (function GetByIdsError.Unauthorized -> "Unauthorized.")
+            Result.bimap (fun fs -> { Foodstuffs = Seq.map Dto.serializeFoodstuff fs |> Seq.toList }) (function GetByIdsError.Unauthorized -> "Unauthorized.")
             
         let private getByIds accessToken parameters =
             Foodstuffs.getByIds accessToken parameters.Ids
