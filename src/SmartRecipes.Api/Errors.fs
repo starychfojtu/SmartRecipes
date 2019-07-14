@@ -19,7 +19,7 @@ module Errors =
     
     let invalidParameters errors = {
         message = "Invalid parameters."
-        parameterErrors = errors
+        parameterErrors = Seq.toList errors
     }
     
     let parameterError s parameter = {
