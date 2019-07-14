@@ -53,6 +53,9 @@ module Generic =
             Ok <| Json.deserialize<'a> json
         with
             | ex -> Error ex.Message
+            
+    let private serializeJson<'a> =
+        Json.serializeEx (JsonConfig.create(jsonFieldNaming = Json.lowerCamelCase))
     
     let private setStatusCode (ctx: HttpContext) code =
         ctx.SetStatusCode code
@@ -74,8 +77,8 @@ module Generic =
         let result = handler parameters |> ReaderT.execute env |> serialize
         let response =
             match result with 
-            | Ok s -> setStatusCode ctx 200 |> (fun _ -> text <| Json.serialize s) 
-            | Error e -> setStatusCode ctx 400 |> (fun _ -> text <| Json.serialize e)
+            | Ok s -> setStatusCode ctx 200 |> (fun _ -> text <| serializeJson s) 
+            | Error e -> setStatusCode ctx 400 |> (fun _ -> text <| serializeJson e)
         response next ctx
         
     let getHandler handler serialize next ctx = 
