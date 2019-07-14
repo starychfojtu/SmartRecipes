@@ -116,10 +116,10 @@ module Dto =
         ImageUrl: string
         Url: string
         Description: string
-        Ingredients: IngredientDto seq
+        Ingredients: IngredientDto list
         Difficulty: string
         Rating: int option
-        Tags: string seq
+        Tags: string list
         CookingTime: CookingTimeDto option
         NutritionPerServing: NutritionPerServingDto
     }
@@ -137,10 +137,10 @@ module Dto =
         ImageUrl = Option.map (fun (u: Uri) -> u.AbsoluteUri) recipe.ImageUrl |> Option.toObj
         Url = Option.map (fun (u: Uri) -> u.AbsoluteUri) recipe.Url |> Option.toObj
         Description = Option.map (fun (s: NonEmptyString) -> s.Value) recipe.Description |> Option.toObj
-        Ingredients = NonEmptyList.map serializeIngredient recipe.Ingredients |> NonEmptyList.toSeq
+        Ingredients = NonEmptyList.map serializeIngredient recipe.Ingredients |> NonEmptyList.toList
         Difficulty = Option.map serializeDifficulty recipe.Difficulty |> Option.toObj
         CookingTime = Option.map serializeCookingTime recipe.CookingTime
-        Tags = Seq.map (fun (t: RecipeTag) -> t.Value.Value) recipe.Tags
+        Tags = Seq.map (fun (t: RecipeTag) -> t.Value.Value) recipe.Tags |> Seq.toList
         Rating = Option.map (fun (r: Rating) -> int r.Value.Value) recipe.Rating
         NutritionPerServing = serializeNutritionPerServing recipe.NutritionPerServing
     }
@@ -168,13 +168,13 @@ module Dto =
     type ShoppingListDto = {
         id: string
         ownerId: string
-        items: seq<ListItemDto>
-        recipes: seq<RecipeListItemDto>
+        items: ListItemDto list
+        recipes: RecipeListItemDto list
     }
     
     let serializeShoppingList (s: ShoppingList): ShoppingListDto = {
         id = s.id.value.ToString ()
         ownerId = s.accountId.value.ToString ()
-        items = Seq.map serializeListItem (Map.toSeq s.items |> Seq.map (fun (_, i) -> i))
-        recipes = Seq.map serializeRecipeListItem (Map.toSeq s.recipes |> Seq.map (fun (_, i) -> i))
+        items = Seq.map serializeListItem (Map.toSeq s.items |> Seq.map (fun (_, i) -> i)) |> Seq.toList
+        recipes = Seq.map serializeRecipeListItem (Map.toSeq s.recipes |> Seq.map (fun (_, i) -> i)) |> Seq.toList
     }
