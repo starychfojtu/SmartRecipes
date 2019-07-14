@@ -59,18 +59,6 @@ module ShoppingLists =
     let changePersonCount accessToken recipe newPersonCount =
         shoppingListAction accessToken Unauthorized (changeRecipePersonCount recipe newPersonCount)
         
-    // Cook recipe
-    
-    type CookRecipeError =
-        | Unauthorized
-        | DomainError of ShoppingList.CookRecipeError
-        
-    let private cookRecipe recipe list =
-        ShoppingList.cook recipe list |> Result.mapError DomainError |> ReaderT.id
-    
-    let cook accessToken recipe = 
-        shoppingListAction accessToken Unauthorized (cookRecipe recipe)
-        
     // Remove foodstuff 
     
     type RemoveItemError =
@@ -78,7 +66,7 @@ module ShoppingLists =
         | DomainError of ShoppingList.RemoveItemError
     
     let private removeFoodstuffItem foodstuffId list =
-        removeFoodstuff list foodstuffId |> Result.mapError DomainError |> ReaderT.id
+        removeFoodstuff foodstuffId list |> Result.mapError DomainError |> ReaderT.id
     
     let removeFoodstuff accessToken foodstuffId = 
         shoppingListAction accessToken Unauthorized (removeFoodstuffItem foodstuffId)
