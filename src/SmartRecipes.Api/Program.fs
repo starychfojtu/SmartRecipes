@@ -3,14 +3,12 @@ namespace SmartRecipes.Api
 module App =
     open Giraffe
     open System
-    open System.IO
     open Microsoft.AspNetCore
     open Microsoft.AspNetCore.Builder
     open Microsoft.AspNetCore.Hosting
     open Microsoft.Extensions.Logging
     open Microsoft.Extensions.DependencyInjection
     open MongoDB.Driver
-    open SmartRecipes
     open SmartRecipes.DataAccess
     
     let webApp =
@@ -34,8 +32,8 @@ module App =
                     route "/shoppingList/changeAmount" >=> ShoppingLists.changeAmountHandler
                     route "/shoppingList/addRecipes" >=> ShoppingLists.addRecipesHandler
                     route "/shoppingList/changePersonCount" >=> ShoppingLists.changePersonCountHandler
-                    route "/shoppingList/removeFoodstuff" >=> ShoppingLists.removeFoodstuffHandler
-                    route "/shoppingList/removeRecipe" >=> ShoppingLists.removeRecipeHandler
+                    route "/shoppingList/removeFoodstuffs" >=> ShoppingLists.removeFoodstuffsHandler
+                    route "/shoppingList/removeRecipes" >=> ShoppingLists.removeRecipesHandler
                 ]
             setStatusCode 404 >=> text "Not Found"
         ]

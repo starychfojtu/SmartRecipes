@@ -1,5 +1,9 @@
 namespace SmartRecipes.Api
 
+open FSharpPlus
+open SmartRecipes.Domain.Foodstuff
+open SmartRecipes.Domain.Recipe
+
 module ShoppingLists =
     open Dto
     open Errors
@@ -186,7 +190,7 @@ module ShoppingLists =
     let changePersonCount accessToken parameters = monad {
         let! recipe = getRecipe parameters.recipeId RecipeNotFound
         let! personCount = parsePersonCount parameters.personCount
-        return! changeRecipePersonCount accessToken recipe personCount
+        return! changeRecipePersonCount accessToken recipe.Id personCount
     }
     
     let changePersonCountHandler<'a> =
@@ -194,69 +198,102 @@ module ShoppingLists =
 
     // Remove foodstuff
     
-    type RemoveFoodstuffParameters = {
-        foodstuffId: Guid
+    type RemoveFoodstuffsParameters = {
+        Ids: Guid list
     }
     
-    type RemoveFoodstuffError = 
+    type RemoveFoodstuffsError = 
         | FoodstuffNotFound
-        | BusinessError of ShoppingLists.RemoveItemError
+        | BusinessError of ShoppingLists.RemoveItemsError
+        | GetByIdsBusinessError of Foodstuffs.GetByIdsError
+        
+    let private getFoodstuffIds accessToken parameters =
+       Foodstuffs.getByIds accessToken parameters.Ids
+       |> ReaderT.mapError GetByIdsBusinessError
+       |> ReaderT.map (Seq.map (fun (f: Foodstuff) -> f.id))
+
+    let private checkAllFoodstuffsFound parameters foodstuffIds =
+        let result =
+           if (Seq.length foodstuffIds) <> (Seq.length parameters.Ids)
+               then Error FoodstuffNotFound
+               else Ok foodstuffIds
+            
+        ReaderT.id result
     
-    let private getFoodstuffId parameters = 
-        ReaderT(fun env -> env.IO.Foodstuffs.getById parameters.foodstuffId |> Option.map (fun f -> f.id) |> Option.toResult FoodstuffNotFound )
-    
-    let private removeFoodstuffFromList accessToken foodstuffId = 
-        ShoppingLists.removeFoodstuff accessToken foodstuffId
+    let private removeFoodstuffsFromList accessToken foodstuffIds = 
+        ShoppingLists.removeFoodstuffs accessToken foodstuffIds
         |> ReaderT.mapError BusinessError
         
-    let private serializeRemoveFoodstuffError = function 
+    let private serializeRemoveFoodstuffsError = function 
         | FoodstuffNotFound -> invalidParameters [{ message = "Invalid."; parameter = "Foodstuff id" }]
         | BusinessError e -> 
             match e with
-            | ShoppingLists.RemoveItemError.Unauthorized -> error "Unauthorized."
-            | ShoppingLists.RemoveItemError.DomainError de ->
+            | ShoppingLists.RemoveItemsError.Unauthorized -> error "Unauthorized."
+            | ShoppingLists.RemoveItemsError.DomainError de ->
                 match de with 
                 | ShoppingList.RemoveItemError.ItemNotInList -> error "Foodstuff not in list."
+        | GetByIdsBusinessError e -> 
+            match e with
+            | Foodstuffs.GetByIdsError.Unauthorized -> error "Unauthorized."
         
-    let private serializeRemoveFoodstuff = 
-        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeRemoveFoodstuffError
+    let private serializeRemoveFoodstuffs = 
+        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeRemoveFoodstuffsError
     
-    let removeFoodstuff accessToken parameters = 
-        getFoodstuffId parameters
-        >>= removeFoodstuffFromList accessToken
+    let removeFoodstuffs accessToken parameters = 
+        getFoodstuffIds accessToken parameters
+        >>= checkAllFoodstuffsFound parameters
+        >>= removeFoodstuffsFromList accessToken
         
-    let removeFoodstuffHandler<'a> = 
-        authorizedPostHandler removeFoodstuff serializeRemoveFoodstuff
+    let removeFoodstuffsHandler<'a> = 
+        authorizedPostHandler removeFoodstuffs serializeRemoveFoodstuffs
         
     // Remove recipe
     
     type RemoveRecipeParameters = {
-        recipeId: Guid
+        Ids: Guid list
     }
     
     type RemoveRecipeError = 
         | RecipeNotFound
-        | BusinessError of ShoppingLists.RemoveItemError
+        | BusinessError of ShoppingLists.RemoveItemsError
+        | GetByIdsBusinessError of Recipes.GetByIdsError
+        
+    let private getRecipeIds accessToken parameters =
+       Recipes.getByIds accessToken parameters.Ids
+       |> ReaderT.mapError GetByIdsBusinessError
+       |> ReaderT.map (Seq.map (fun (f: Recipe) -> f.Id))
+
+    let private checkAllRecipesFound parameters recipeIds =
+        let result =
+           if (Seq.length recipeIds) <> (Seq.length parameters.Ids)
+               then Error RecipeNotFound
+               else Ok recipeIds
+            
+        ReaderT.id result
     
-    let private removeRecipeFromList accessToken recipe = 
-        ShoppingLists.removeRecipe accessToken recipe
+    let private removeRecipesFromList accessToken recipes = 
+        ShoppingLists.removeRecipes accessToken recipes
         |> ReaderT.mapError BusinessError
         
-    let private serializeRemoveRecipeError = function 
+    let private serializeRemoveRecipesError = function 
         | RecipeNotFound -> invalidParameters [{ message = "Invalid."; parameter = "Recipe id" }]
         | BusinessError e -> 
             match e with
-            | ShoppingLists.RemoveItemError.Unauthorized -> error "Unauthorized."
-            | ShoppingLists.RemoveItemError.DomainError de ->
+            | ShoppingLists.RemoveItemsError.Unauthorized -> error "Unauthorized."
+            | ShoppingLists.RemoveItemsError.DomainError de ->
                 match de with 
                 | ShoppingList.RemoveItemError.ItemNotInList -> error "Recipe not in list."
+        | GetByIdsBusinessError e -> 
+            match e with
+            | Recipes.GetByIdsError.Unauthorized -> error "Unauthorized."
         
-    let private serializeRemoveRecipe = 
-        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeRemoveRecipeError
+    let private serializeRemoveRecipes = 
+        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) serializeRemoveRecipesError
     
-    let removeRecipe accessToken parameters = 
-        getRecipe parameters.recipeId RecipeNotFound
-        >>= removeRecipeFromList accessToken
+    let removeRecipes accessToken parameters = 
+        getRecipeIds accessToken parameters
+        >>= checkAllRecipesFound parameters
+        >>= removeRecipesFromList accessToken
         
-    let removeRecipeHandler<'a> = 
-        authorizedPostHandler removeRecipe serializeRemoveRecipe
+    let removeRecipesHandler<'a> = 
+        authorizedPostHandler removeRecipes serializeRemoveRecipes

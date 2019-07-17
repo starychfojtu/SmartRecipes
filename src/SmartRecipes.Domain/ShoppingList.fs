@@ -64,6 +64,10 @@ module ShoppingList =
         
     let findRecipeItem (recipe: Recipe) list =
         Map.tryFind recipe.Id list.recipes
+        
+    let private foldBind f items list = 
+        let append state item = state >>= (f item)
+        Seq.fold append (Ok list) items 
     
     type AddItemError = 
         | ItemAlreadyAdded
@@ -75,9 +79,8 @@ module ShoppingList =
             
         (_item foodstuffId) tryAddItem list
         
-    let addFoodstuffs list foodstuffs = 
-        let append state (foodstuff: Foodstuff) = state >>= (addFoodstuff foodstuff.id foodstuff.baseAmount.value)
-        Seq.fold append (Ok list) foodstuffs 
+    let addFoodstuffs foodstuffs list =
+        foldBind (fun (f: Foodstuff) l -> addFoodstuff f.id f.baseAmount.value l) foodstuffs list
         
     let addRecipe recipe personCount list =
         let tryAddItem = function
@@ -86,9 +89,8 @@ module ShoppingList =
             
         (_recipe recipe.Id) tryAddItem list
         
-    let addRecipes list recipes = 
-        let append state recipe = state >>= (addRecipe recipe None)
-        Seq.fold append (Ok list) recipes 
+    let addRecipes recipes list =
+        foldBind (fun (r: Recipe) l -> addRecipe r None l) recipes list
     
     type RemoveItemError = 
         | ItemNotInList
@@ -99,9 +101,15 @@ module ShoppingList =
         
     let removeFoodstuff foodstuffId list = 
         (_item foodstuffId) tryRemoveItem list
+        
+    let removeFoodstuffs foodstuffIds list =
+        foldBind removeFoodstuff foodstuffIds list
 
-    let removeRecipe list recipe =
-        (_recipe recipe.Id) tryRemoveItem list
+    let removeRecipe recipeId list =
+        (_recipe recipeId) tryRemoveItem list
+        
+    let removeRecipes recipeIds list =
+        foldBind removeRecipe recipeIds list
         
     type ChangeAmountError = 
         | ItemNotInList
@@ -113,9 +121,9 @@ module ShoppingList =
             
         (_item foodstuffId) changeItemAmount list
         
-    let changePersonCount recipe newPersonCount list =
+    let changePersonCount recipeId newPersonCount list =
         let changeItemPersonCount = function 
             | Some i -> setl _personCount newPersonCount i |> Some |> Ok
             | None -> Error ItemNotInList
             
-        (_recipe recipe.Id) changeItemPersonCount list
+        (_recipe recipeId) changeItemPersonCount list
