@@ -199,7 +199,7 @@ module ShoppingLists =
     // Remove foodstuff
     
     type RemoveFoodstuffsParameters = {
-        Ids: Guid list
+        ids: Guid list
     }
     
     type RemoveFoodstuffsError = 
@@ -208,13 +208,13 @@ module ShoppingLists =
         | GetByIdsBusinessError of Foodstuffs.GetByIdsError
         
     let private getFoodstuffIds accessToken parameters =
-       Foodstuffs.getByIds accessToken parameters.Ids
+       Foodstuffs.getByIds accessToken parameters.ids
        |> ReaderT.mapError GetByIdsBusinessError
        |> ReaderT.map (Seq.map (fun (f: Foodstuff) -> f.id))
 
     let private checkAllFoodstuffsFound parameters foodstuffIds =
         let result =
-           if (Seq.length foodstuffIds) <> (Seq.length parameters.Ids)
+           if (Seq.length foodstuffIds) <> (Seq.length parameters.ids)
                then Error FoodstuffNotFound
                else Ok foodstuffIds
             
@@ -250,7 +250,7 @@ module ShoppingLists =
     // Remove recipe
     
     type RemoveRecipeParameters = {
-        Ids: Guid list
+        ids: Guid list
     }
     
     type RemoveRecipeError = 
@@ -259,13 +259,13 @@ module ShoppingLists =
         | GetByIdsBusinessError of Recipes.GetByIdsError
         
     let private getRecipeIds accessToken parameters =
-       Recipes.getByIds accessToken parameters.Ids
+       Recipes.getByIds accessToken parameters.ids
        |> ReaderT.mapError GetByIdsBusinessError
        |> ReaderT.map (Seq.map (fun (f: Recipe) -> f.Id))
 
     let private checkAllRecipesFound parameters recipeIds =
         let result =
-           if (Seq.length recipeIds) <> (Seq.length parameters.Ids)
+           if (Seq.length recipeIds) <> (Seq.length parameters.ids)
                then Error RecipeNotFound
                else Ok recipeIds
             
