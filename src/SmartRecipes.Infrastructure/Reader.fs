@@ -14,3 +14,7 @@ module ReaderT =
     
     let mapError<'e, 'a, 'b, 's> f (reader: ReaderT<'e, Result<'s, 'a>>): ReaderT<'e, Result<'s, 'b>> =
         mapDirect (Result.mapError f) reader
+        
+    let fromReader r = ReaderT(fun env -> Reader.run r env)
+    
+    let hoistOk r = Reader.map Ok r |> fromReader

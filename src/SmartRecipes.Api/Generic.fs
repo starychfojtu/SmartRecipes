@@ -5,6 +5,11 @@ open FSharp.Json
 open Infrastructure
 open SmartRecipes.Domain
 open Errors
+open SmartRecipes.DataAccess.Foodstuffs
+open SmartRecipes.DataAccess.Recipes
+open SmartRecipes.DataAccess.ShoppingLists
+open SmartRecipes.DataAccess.Tokens
+open SmartRecipes.DataAccess.Users
 
 module Parse =
     let option v =
@@ -27,27 +32,51 @@ module Parse =
         
     let nonNegativeFloat error =
         NonNegativeFloat.create >> Validation.ofOption error
+        
+module Environment =     
+
+    open System
+    open SmartRecipes.DataAccess
+    open SmartRecipes.UseCases.DateTimeProvider
+
+    type ProductionEnvironment() =
+    
+        interface IUserDao with 
+            member e.getById id = Users.Mongo.getById id
+            member e.getByEmail email = Users.Mongo.getByEmail email
+            member e.add user = Users.Mongo.add user
+            
+        interface ITokensDao with 
+            member e.get v = Tokens.Mongo.get v
+            member e.add user = Tokens.Mongo.add user
+            
+        interface IFoodstuffDao with 
+            member e.getByIds ids = Foodstuffs.Mongo.getByIds ids
+            member e.search q = Foodstuffs.Mongo.search q
+            member e.add f = Foodstuffs.Mongo.add f
+            
+        interface IRecipesDao with 
+            member e.getByIds ids = Recipes.Mongo.getByIds ids
+            member e.getByAccount acc = Recipes.Mongo.getByAccount acc
+            member e.search q = Recipes.Mongo.search q
+            member e.add r = Recipes.Mongo.add r
+            
+        interface IShoppingsListsDao with 
+            member e.getByAccount acc = ShoppingLists.Mongo.getByAccount acc
+            member e.update l = ShoppingLists.Mongo.update l
+            member e.add l = ShoppingLists.Mongo.add l
+            
+        interface IDateTimeProvider with
+            member p.nowUtc () = DateTime.UtcNow
+                
+    let getEnvironment () = ProductionEnvironment()
             
 module Generic =
-    open System
     open Giraffe
-    open Infrastructure
     open Microsoft.AspNetCore.Http
     open FSharpPlus.Data
     open FSharp.Control.Tasks
-    open SmartRecipes.UseCases.Environment
-    open SmartRecipes.DataAccess
-    
-    let getEnvironment () = {
-        IO = {
-            Tokens = Tokens.dao
-            Users = Users.dao
-            Recipes = Recipes.dao
-            ShoppingLists = ShoppingLists.dao
-            Foodstuffs = Foodstuffs.dao
-        }
-        NowUtc = DateTime.UtcNow
-    }
+    open Environment
     
     let private deserialize<'a> json =
         try

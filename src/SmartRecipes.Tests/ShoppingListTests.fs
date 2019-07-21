@@ -10,7 +10,7 @@ module Tests.ShoppingLists
     open Fake
 
     let getFakeShoppingListActionDao foodstuffOptions items =
-        Fake.environment WithToken WithUser foodstuffOptions items
+        FakeEnvironment(WithToken, WithUser, foodstuffOptions, items)
 
     // Add foodstuff
     

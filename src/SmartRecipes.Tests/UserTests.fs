@@ -7,7 +7,7 @@ module Tests.Users
     open Fake
         
     let getEnvironment withUser =
-        Fake.environment WithoutToken withUser WithoutFoodstuff Map.empty
+        FakeEnvironment(WithoutToken, withUser, WithoutFoodstuff, Map.empty)
         
     [<Fact>]
     let ``Can sign up with valid parameters`` () =

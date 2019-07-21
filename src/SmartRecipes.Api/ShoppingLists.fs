@@ -7,17 +7,14 @@ open SmartRecipes.Domain.Recipe
 module ShoppingLists =
     open Dto
     open Errors
+    open SmartRecipes
     open SmartRecipes.DataAccess
-    open SmartRecipes.DataAccess.Foodstuffs
-    open SmartRecipes.DataAccess.Recipes
     open SmartRecipes.Domain
-    open FSharpPlus
     open FSharpPlus.Data
     open System
     open Generic
     open SmartRecipes.UseCases.ShoppingLists
     open SmartRecipes.UseCases
-    open Environment
     open Infrastracture
     open Infrastructure
         
@@ -26,22 +23,12 @@ module ShoppingLists =
     type ShoppingListResponse = {
         ShoppingList: ShoppingListDto
     }
-    
-    type GetShoppingListError =
-        | Unauthorized
-        
-    let private getShoppingList accountId =
-        ReaderT(fun env -> env.IO.ShoppingLists.get accountId |> Ok)
         
     let private serializeGet =
-        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) (function Unauthorized -> error "Unaturhorized.")
-    
-    let get accessToken _ =
-        Users.authorize Unauthorized accessToken
-        >>= getShoppingList
+        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) (function GetShoppingListError.Unauthorized -> error "Unaturhorized.")
         
     let getHandler<'a> = 
-        authorizedGetHandler get serializeGet
+        authorizedGetHandler (fun token _ -> ShoppingLists.get token) serializeGet
     
     // Add
     
@@ -52,24 +39,25 @@ module ShoppingLists =
     
     type AddItemsError =
         | InvalidIds
-        | BusinessError of AddItemError
+        | BusinessError of ShoppingLists.AddItemsError
         
-    let getItems parameters getByIds = ReaderT(fun env ->
+    let getItems parameters getByIds =
         let itemIds = parameters.itemIds
-        let items = (getByIds env) itemIds
-        let foundAll = Seq.length items = Seq.length itemIds
-        if foundAll
-            then Ok items
-            else Error InvalidIds
-    )
+        getByIds itemIds
+        |> Reader.map (fun items -> 
+            let foundAll = Seq.length items = Seq.length itemIds
+            if foundAll
+                then Ok items
+                else Error InvalidIds)
+        |> ReaderT.fromReader
         
     let private addItemsToShoppingList accesstToken action items = 
         action accesstToken items
         |> ReaderT.mapError BusinessError
         
     let private serializeAddItemsBusinessError = function
-        | ShoppingLists.AddItemError.Unauthorized -> "Unauthorized."
-        | ShoppingLists.AddItemError.DomainError de -> 
+        | ShoppingLists.AddItemsError.Unauthorized -> "Unauthorized."
+        | ShoppingLists.AddItemsError.DomainError de -> 
             match de with 
             | ShoppingList.AddItemError.ItemAlreadyAdded -> "Item already added."
         
@@ -88,7 +76,7 @@ module ShoppingLists =
     // Add foodstuffs
     
     let addFoodstuffs accessToken parameters =
-        addItems ShoppingLists.addFoodstuffs accessToken parameters (fun env ids -> List.toSeq ids |> env.IO.Foodstuffs.getByIds)
+        addItems ShoppingLists.addFoodstuffs accessToken parameters (List.toSeq >> DataAccess.Foodstuffs.getByIds)
         
     let addFoodstuffsHandler<'a> =
         authorizedPostHandler addFoodstuffs serializeAddItems
@@ -96,7 +84,7 @@ module ShoppingLists =
     // Add recipes
     
     let addRecipes accessToken parameters =
-        addItems ShoppingLists.addRecipes accessToken parameters (fun env ids -> List.toSeq ids |> env.IO.Recipes.getByIds)
+        addItems ShoppingLists.addRecipes accessToken parameters (List.toSeq >> DataAccess.Recipes.getByIds)
         
     let addRecipesHandler<'a> =
         authorizedPostHandler addRecipes serializeAddItems
@@ -115,7 +103,9 @@ module ShoppingLists =
         | BusinessError of ShoppingLists.ChangeAmountError
         
     let private getFoodstuff id =
-        ReaderT(fun env -> env.IO.Foodstuffs.getById id |> Option.toResult FoodstuffNotFound)
+        DataAccess.Foodstuffs.getByIds [id]
+        |> Reader.map (Seq.tryHead >> Option.toResult FoodstuffNotFound)
+        |> ReaderT.fromReader
         
     let private parseAmount amount = 
         NonNegativeFloat.create amount
@@ -163,7 +153,9 @@ module ShoppingLists =
         | BusinessError of ShoppingLists.ChangeAmountError
         
     let private getRecipe id e =
-        ReaderT(fun env -> env.IO.Recipes.getById id |> Option.toResult e)
+        DataAccess.Recipes.getByIds [id]
+        |> Reader.map (Seq.tryHead >> Option.toResult e)
+        |> ReaderT.fromReader
         
     let private parsePersonCount personCount = 
         NaturalNumber.create personCount

@@ -8,36 +8,35 @@ module Tokens =
     open SmartRecipes.Domain.Token
     open MongoDB.Driver
     
-    type TokensDao = {
-        get: string -> AccessToken option
-        add: AccessToken -> AccessToken
-    }
+    type ITokensDao =
+        abstract member get: string -> AccessToken option
+        abstract member add: AccessToken -> AccessToken
+        
+    let get<'e when 'e :> ITokensDao> value = Reader(fun (tokens : 'e) -> tokens.get value)
+    let add<'e when 'e :> ITokensDao> token = Reader(fun (tokens : 'e) -> tokens.add token)
     
-    let private collection = Database.getCollection<DbAccessToken> ()
+    module Mongo = 
+   
+        let private collection = Database.getCollection<DbAccessToken> ()
 
-    let private toDb accessToken: DbAccessToken = {
-        id = Guid.NewGuid()
-        accountId = match accessToken.accountId with AccountId id -> id
-        value = accessToken.value.value
-        expiration = accessToken.expirationUtc
-    }
+        let private toDb accessToken: DbAccessToken = {
+            id = Guid.NewGuid()
+            accountId = match accessToken.accountId with AccountId id -> id
+            value = accessToken.value.value
+            expiration = accessToken.expirationUtc
+        }
+            
+        let private toModel (dbAccessToken: DbAccessToken): AccessToken = { 
+            accountId = AccountId dbAccessToken.accountId
+            value = Token dbAccessToken.value
+            expirationUtc = dbAccessToken.expiration
+        }
         
-    let private toModel (dbAccessToken: DbAccessToken): AccessToken = { 
-        accountId = AccountId dbAccessToken.accountId
-        value = Token dbAccessToken.value
-        expirationUtc = dbAccessToken.expiration
-    }
-    
-    let private add accessToken =
-        toDb accessToken |> collection.InsertOne |> ignore
-        accessToken
-        
-    let private get value =
-        collection.Find(fun t -> t.value = value).SortByDescending(fun t -> t.expiration :> obj).ToEnumerable()
-        |> Seq.tryHead
-        |> Option.map toModel
-        
-    let dao = {
-        get = get
-        add = add
-    }
+        let add accessToken =
+            toDb accessToken |> collection.InsertOne |> ignore
+            accessToken
+            
+        let get value =
+            collection.Find(fun t -> t.value = value).SortByDescending(fun t -> t.expiration :> obj).ToEnumerable()
+            |> Seq.tryHead
+            |> Option.map toModel

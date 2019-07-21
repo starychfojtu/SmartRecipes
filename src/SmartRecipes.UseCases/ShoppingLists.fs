@@ -2,28 +2,37 @@ namespace SmartRecipes.UseCases
 
 module ShoppingLists =
     open SmartRecipes.Domain
+    open SmartRecipes.DataAccess
     open SmartRecipes.Domain.ShoppingList
     open FSharpPlus.Data
-    open Environment
     open Infrastructure
     
-    type AddItemError =
-        | Unauthorized
-        | DomainError of ShoppingList.AddItemError
-        
-    let private getShoppinglist accountId =
-        ReaderT(fun env -> env.IO.ShoppingLists.get accountId |> Ok)
+    let private getShoppingList accountId =
+        ShoppingLists.getByAccount accountId |> ReaderT.hoistOk
         
     let private updateShoppingList list = 
-        ReaderT(fun env -> env.IO.ShoppingLists.update list |> Ok)
+        ShoppingLists.update list |> ReaderT.hoistOk
     
     let private shoppingListAction accessToken authorizeError action =
         Users.authorize authorizeError accessToken
-        >>= getShoppinglist
+        >>= getShoppingList
         >>= action
         >>= updateShoppingList
         
+    // Get
+        
+    type GetShoppingListError =
+        | Unauthorized
+    
+    let get accessToken =
+        Users.authorize Unauthorized accessToken
+        >>= getShoppingList
+        
     // Add foodstuff
+    
+    type AddItemsError =
+        | Unauthorized
+        | DomainError of ShoppingList.AddItemError
         
     let private addFoodstuffsToList foodstuffs list = 
         ShoppingList.addFoodstuffs foodstuffs list |> Result.mapError DomainError |> ReaderT.id

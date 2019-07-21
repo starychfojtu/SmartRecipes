@@ -1,5 +1,5 @@
 namespace SmartRecipes.DataAccess
-open FSharpPlus.Builders
+
 open MongoDB.Bson
 
 module Foodstuffs =
@@ -8,60 +8,50 @@ module Foodstuffs =
     open Model
     open SmartRecipes.Domain
     open SmartRecipes.Domain.Foodstuff
-    open SmartRecipes.Domain.NonEmptyString
     open MongoDB.Driver
     open Utils
     open SearchQuery
-
-    type FoodstuffDao = {
-        getByIds: seq<Guid> -> seq<Foodstuff>
-        getById: Guid -> Foodstuff option
-        search: SearchQuery -> seq<Foodstuff>
-        add: Foodstuff -> Foodstuff
-    }
     
-    let private collection = Database.getCollection<DbFoodstuff> ()
-                
-    let internal toDb foodstuff : DbFoodstuff = {
-        id = match foodstuff.id with FoodstuffId id -> id
-        name = foodstuff.name.Value
-        baseAmount = amountToDb foodstuff.baseAmount
-        amountStep = NonNegativeFloat.value foodstuff.amountStep
-    }
-    
-    
-    let internal toModel (dbFoodstuff: DbFoodstuff) = {
-        id = FoodstuffId dbFoodstuff.id 
-        name = NonEmptyString.create dbFoodstuff.name |> Option.get
-        baseAmount = amountToModel dbFoodstuff.baseAmount
-        amountStep = NonNegativeFloat.create dbFoodstuff.amountStep |> Option.get
-    }
-    
-    let private getByIds ids =
-        collection.AsQueryable()
-        |> Seq.filter (fun f -> Seq.contains f.id ids)
-        |> Seq.map toModel
+    type IFoodstuffDao = 
+        abstract member getByIds: seq<Guid> -> seq<Foodstuff>
+        abstract member search: SearchQuery -> seq<Foodstuff>
+        abstract member add: Foodstuff -> Foodstuff
+            
+    let getByIds<'e when 'e :> IFoodstuffDao> ids = Reader(fun (e : 'e) -> e.getByIds ids)
+    let search<'e when 'e :> IFoodstuffDao> query = Reader(fun (e : 'e) -> e.search query)
+    let add<'e when 'e :> IFoodstuffDao> foodstuff = Reader(fun (e : 'e) -> e.add foodstuff)
         
-    let private getById id =
-        collection.AsQueryable()
-        |> Seq.filter (fun f -> f.id = id)
-        |> Seq.map toModel
-        |> Seq.tryHead
+    module Mongo = 
     
-    let private search (query: SearchQuery) =
-        let regex = BsonRegularExpression(query.Value)
-        let filter = Builders<DbFoodstuff>.Filter.Regex((fun f -> f.name :> obj), regex)
-        collection.FindSync(filter).ToEnumerable() |> Seq.map toModel
+        let private collection = Database.getCollection<DbFoodstuff> ()
+                    
+        let internal toDb foodstuff : DbFoodstuff = {
+            id = match foodstuff.id with FoodstuffId id -> id
+            name = foodstuff.name.Value
+            baseAmount = amountToDb foodstuff.baseAmount
+            amountStep = NonNegativeFloat.value foodstuff.amountStep
+        }
+        
+        
+        let internal toModel (dbFoodstuff: DbFoodstuff) = {
+            id = FoodstuffId dbFoodstuff.id 
+            name = NonEmptyString.create dbFoodstuff.name |> Option.get
+            baseAmount = amountToModel dbFoodstuff.baseAmount
+            amountStep = NonNegativeFloat.create dbFoodstuff.amountStep |> Option.get
+        }
+        
+        let getByIds ids =
+            collection.AsQueryable()
+            |> Seq.filter (fun f -> Seq.contains f.id ids)
+            |> Seq.map toModel
     
-    let private add foodstuff =
-        toDb foodstuff |> collection.InsertOne |> ignore
-        foodstuff
-    
-    let dao = {
-        getByIds = getByIds
-        getById = getById
-        search = search
-        add = add
-    }
+        let search (query: SearchQuery) =
+            let regex = BsonRegularExpression(query.Value)
+            let filter = Builders<DbFoodstuff>.Filter.Regex((fun f -> f.name :> obj), regex)
+            collection.FindSync(filter).ToEnumerable() |> Seq.map toModel
+        
+        let add foodstuff =
+            toDb foodstuff |> collection.InsertOne |> ignore
+            foodstuff
     
     

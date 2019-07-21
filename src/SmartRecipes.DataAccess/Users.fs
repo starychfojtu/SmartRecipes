@@ -8,45 +8,44 @@ module Users =
     open SmartRecipes.Domain.Password
     open MongoDB.Driver
     
-    type UsersDao = {
-        getById: AccountId -> Account option
-        getByEmail: MailAddress -> Account option
-        add: Account -> Account
-    }
+    type IUserDao = 
+        abstract member getById: AccountId -> Account option
+        abstract member getByEmail: MailAddress -> Account option
+        abstract member add: Account -> Account
+        
+    let getById<'e when 'e :> IUserDao> id = Reader(fun (users : 'e) -> users.getById id)
+    let getByEmail<'e when 'e :> IUserDao> email = Reader(fun (users : 'e) -> users.getByEmail email)
+    let add<'e when 'e :> IUserDao> account = Reader(fun (users : 'e) -> users.add account)
     
-    let private collection = Database.getCollection<DbAccount> ()
+    module Mongo =
+        
+        let private collection = Database.getCollection<DbAccount> ()
     
-    let private toDb account: DbAccount = {
-        id = match account.id with AccountId id -> id
-        email = account.credentials.email.Address
-        password = match account.credentials.password with Password p -> p
-    }
-    
-    let private toModel (dbAccount: DbAccount): Account = {
-        id = AccountId dbAccount.id
-        credentials = 
-        {
-            email = new MailAddress(dbAccount.email)
-            password = Password dbAccount.password
+        let private toDb account: DbAccount = {
+            id = match account.id with AccountId id -> id
+            email = account.credentials.email.Address
+            password = match account.credentials.password with Password p -> p
         }
-    }
-
-    let private add account =
-        collection.InsertOne (toDb account) |> ignore
-        account
         
-    let private getByEmail (email: MailAddress) =
-        collection.Find(fun a -> a.email = email.Address).ToEnumerable()
-        |> Seq.tryHead
-        |> Option.map toModel
+        let private toModel (dbAccount: DbAccount): Account = {
+            id = AccountId dbAccount.id
+            credentials = 
+            {
+                email = new MailAddress(dbAccount.email)
+                password = Password dbAccount.password
+            }
+        }
         
-    let private getById (AccountId id) =
-        collection.Find(fun a -> a.id = id).ToEnumerable()
-        |> Seq.tryHead
-        |> Option.map toModel
+        let add account =
+            collection.InsertOne (toDb account) |> ignore
+            account
             
-    let dao = {
-        getById = getById
-        getByEmail = getByEmail
-        add = add
-    }
+        let getByEmail (email: MailAddress) =
+            collection.Find(fun a -> a.email = email.Address).ToEnumerable()
+            |> Seq.tryHead
+            |> Option.map toModel
+            
+        let getById (AccountId id) =
+            collection.Find(fun a -> a.id = id).ToEnumerable()
+            |> Seq.tryHead
+            |> Option.map toModel

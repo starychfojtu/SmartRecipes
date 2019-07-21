@@ -4,10 +4,9 @@ open SmartRecipes.Domain
 module Foodstuffs =
     open FSharpPlus.Data
     open Infrastructure
-    open SmartRecipes.DataAccess.Foodstuffs
+    open SmartRecipes.DataAccess
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.NonEmptyString
-    open Environment
     open SmartRecipes.Domain.NonNegativeFloat
 
     // Get by ids
@@ -15,8 +14,9 @@ module Foodstuffs =
     type GetByIdsError = 
         | Unauthorized
 
-    let private getFoodstuffsByIds ids = 
-        ReaderT(fun env -> env.IO.Foodstuffs.getByIds ids |> Ok)
+    let private getFoodstuffsByIds ids =
+        Foodstuffs.getByIds ids
+        |> ReaderT.hoistOk
         
     let getByIds accessToken ids = 
         Users.authorize Unauthorized accessToken
@@ -27,8 +27,13 @@ module Foodstuffs =
     type SearchError = 
         | Unauthorized
         
-    let private searchFoodstuff query = 
-        ReaderT(fun env -> env.IO.Foodstuffs.search query |> Ok)
+    let private searchFoodstuff query =
+        Foodstuffs.search query
+        |> ReaderT.hoistOk
+        
+    let private searchFoodstuff2 query =
+        Foodstuffs.search query
+        |> ReaderT.hoistOk
         
     let search accessToken query =
         Users.authorize Unauthorized accessToken
@@ -52,15 +57,17 @@ module Foodstuffs =
     let private createFoodstuff parameters =
         createFoodstuff parameters.name parameters.baseAmount parameters.amountStep |> Ok |> ReaderT.id
 
-    let private ensureDoesntAlreadyExists (foodstuff: Foodstuff) = ReaderT(fun env ->
-        let foodstuffsWithSameName = env.IO.Foodstuffs.search (SearchQuery.create foodstuff.name)
-        if Seq.isEmpty foodstuffsWithSameName
-            then Ok foodstuff
-            else Error FoodstuffAlreadyExists
-    )
+    let private ensureDoesntAlreadyExists (foodstuff: Foodstuff) =
+        Foodstuffs.search (SearchQuery.create foodstuff.name)
+        |> Reader.map (fun f -> 
+            if Seq.isEmpty f
+                then Ok foodstuff
+                else Error FoodstuffAlreadyExists
+        )
+        |> ReaderT.fromReader
         
     let private addToDatabase foodstuff = 
-        ReaderT(fun env -> env.IO.Foodstuffs.add foodstuff |> Ok)
+        Foodstuffs.add foodstuff |> ReaderT.hoistOk
 
     let create accessToken parameters = 
         Users.authorize CreateError.Unauthorized accessToken

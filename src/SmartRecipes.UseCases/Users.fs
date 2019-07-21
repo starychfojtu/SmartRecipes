@@ -1,38 +1,41 @@
 namespace SmartRecipes.UseCases
 
 module Users =
-    open SmartRecipes.DataAccess.Tokens
-    open SmartRecipes.DataAccess.Users
+    open SmartRecipes.DataAccess
+    open FSharpPlus
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
     open Infrastructure.Validation
     open Infrastructure
-    open Environment
     open SmartRecipes.Domain
     open SmartRecipes.Domain.Account
     open SmartRecipes.Domain.Credentials
     open SmartRecipes.Domain.Token
-    
+
     // Sign up
     
     type SignUpError = 
         | InvalidParameters of CredentialsError list
         | AccountAlreadyExits
-
+    
+    let private signUpAccount email password =
+        Account.create email password 
+        |> Result.mapError InvalidParameters 
+        |> ReaderT.id
+            
     let private verifyAccountNotExists account =
         Users.getByEmail account.credentials.email
-        |> ReaderT.mapDirect (function | Some _ -> Error AccountAlreadyExits | None -> Ok account)
+        |> Reader.map (function | Some _ -> Error AccountAlreadyExits | None -> Ok account)
+        |> ReaderT.fromReader
             
-    let private signUpAccount email password =
-        Account.create email password |> Result.mapError InvalidParameters |> ReaderT.id
-    
     let private addAccountToDb account = 
-        Users.add account |> ReaderT.mapDirect Ok
+        Users.add account |> ReaderT.hoistOk
         
     let private addEmptyShoppingList account =
-        ShoppingList.create account.id
-        |> ShoppingList.add
-        |> ReaderT.mapDirect (fun _ -> Ok account)
+        let shoppingList = ShoppingList.create account.id
+        ShoppingLists.add shoppingList
+        |> Reader.map (fun _ -> Ok account)
+        |> ReaderT.fromReader
     
     let signUp email password =
         signUpAccount email password
@@ -49,13 +52,17 @@ module Users =
         |> ReaderT.id
         
     let private getAccount email = 
-        ReaderT(fun env -> env.IO.Users.getByEmail email |> Option.toResult SignInError.InvalidCredentials)
+        Users.getByEmail email 
+        |> Reader.map (Option.toResult SignInError.InvalidCredentials) 
+        |> ReaderT.fromReader
         
-    let private authenticate password account = ReaderT(fun env ->
-        Token.authenticate env.NowUtc account password)
+    let private authenticate password account =
+        DateTimeProvider.nowUtc
+        |> Reader.map (fun nowUtc -> Token.authenticate nowUtc account password)
+        |> ReaderT.fromReader
         
     let private addTokenToDb token = 
-        ReaderT(fun env -> env.IO.Tokens.add token |> Ok)
+        Tokens.add token |> ReaderT.hoistOk
        
     let signIn email password =
         validateEmail email
@@ -65,13 +72,17 @@ module Users =
         
     // Authorize
 
-    let authorize error (accessTokenValue: string) = ReaderT(fun env ->
-        env.IO.Tokens.get accessTokenValue
-        |> Option.filter (Token.isFresh env.NowUtc)
-        |> Option.map (fun t -> t.accountId)
-        |> Option.toResult error
-    )
-    
+    let authorize error (accessTokenValue: string) = 
+        let result = Builders.monad {
+            let! token = Tokens.get accessTokenValue
+            let! nowUtc = DateTimeProvider.nowUtc
+            return token
+                |> Option.filter (Token.isFresh nowUtc)
+                |> Option.map (fun t -> t.accountId)
+                |> Option.toResult error
+        }
+        ReaderT.fromReader result 
+   
     let authorizeWithAccount error (accessTokenValue: string) =
         authorize error accessTokenValue
-        >>= fun id -> ReaderT(fun env -> env.IO.Users.getById id |> Ok)
+        >>= fun id -> Users.getById id |> ReaderT.hoistOk

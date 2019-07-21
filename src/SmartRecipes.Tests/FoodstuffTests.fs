@@ -11,7 +11,7 @@ module Tests.Foodstuffs
     // Use case tests
     
     let getFakeCreateDao foodstuffOptions =
-        Fake.environment WithToken WithUser foodstuffOptions Map.empty
+        FakeEnvironment(WithToken, WithUser, foodstuffOptions, Map.empty)
     
     let parameters = {
         name = Fake.foodstuff.name

@@ -2,19 +2,15 @@ namespace SmartRecipes.UseCases
 
 module Recipes =
     open System
-    open SmartRecipes.DataAccess.Foodstuffs
+    open SmartRecipes.DataAccess
     open FSharpPlus.Data
     open Infrastructure
     open FSharpPlus
-    open SmartRecipes.DataAccess.Recipes
     open SmartRecipes.Domain
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.NonEmptyString
     open SmartRecipes.Domain.NaturalNumber
-    open SmartRecipes.Domain.NonNegativeFloat
     open SmartRecipes.Domain.Recipe
-    open Environment
-    open FSharpPlus
                 
     // Get all by account
     
@@ -22,7 +18,7 @@ module Recipes =
         | Unauthorized
         
     let private getRecipes accountId = 
-        ReaderT(fun env -> env.IO.Recipes.getByAccount accountId |> Ok)
+        Recipes.getByAccount accountId |> ReaderT.hoistOk
         
     let getMyRecipes accessToken =
         Users.authorize Unauthorized accessToken
@@ -34,7 +30,7 @@ module Recipes =
         | Unauthorized
 
     let private getRecipesByIds ids = 
-        ReaderT(fun env -> env.IO.Recipes.getByIds ids |> Ok)
+        Recipes.getByIds ids |> ReaderT.hoistOk
         
     let getByIds accessToken ids = 
         Users.authorize Unauthorized accessToken
@@ -46,7 +42,7 @@ module Recipes =
         | Unauthorized
         
     let private searchFoodstuff query = 
-        ReaderT(fun env -> env.IO.Recipes.search query |> Ok)
+        Recipes.search query |> ReaderT.hoistOk
         
     let search accessToken query =
         Users.authorize Unauthorized accessToken
@@ -104,8 +100,8 @@ module Recipes =
         NutritionPerServing = nutrition
     }
 
-    let private getFoodstuff parameters =
-        Reader(fun env -> Seq.map (fun i -> i.FoodstuffId) parameters |> env.IO.Foodstuffs.getByIds)
+    let private getFoodstuffs parameters =
+        Foodstuffs.getByIds <| Seq.map (fun i -> i.FoodstuffId) parameters
 
     let mkFoodstuffId guid (foodstuffMap: Map<_, Foodstuff> ) = 
         match Map.tryFind guid foodstuffMap with
@@ -135,7 +131,7 @@ module Recipes =
         |> ReaderT.id
             
     let private createIngredients parameters =
-        getFoodstuff parameters
+        getFoodstuffs parameters
         |> ReaderT.hoist
         |> ReaderT.bind (mkIngredients parameters)
 
@@ -155,7 +151,7 @@ module Recipes =
             parameters.Rating
 
     let private addToDatabase recipe = 
-        ReaderT(fun env -> env.IO.Recipes.add recipe |> Ok)
+        Recipes.add recipe |> ReaderT.hoistOk
         
     let create accessToken parameters = monad {
         let! accountId = Users.authorize Unauthorized accessToken

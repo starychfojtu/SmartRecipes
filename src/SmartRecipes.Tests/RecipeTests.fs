@@ -5,10 +5,9 @@ module Tests.Recipes
     open Tests
     open Xunit
     open Fake
-    open Tests
     
     let getCreateDao () =
-        Fake.environment WithToken WithUser WithFoodstuff Map.empty
+        FakeEnvironment(WithToken, WithUser, WithFoodstuff, Map.empty)
     
     let apiIngredientParameter: Api.Recipes.IngredientParameter = {
         foodstuffId = Fake.foodstuff.id.value

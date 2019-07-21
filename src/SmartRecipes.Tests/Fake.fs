@@ -2,6 +2,7 @@ module Tests.Fake
     open SmartRecipes.DataAccess.Foodstuffs
     open SmartRecipes.DataAccess.Recipes
     open SmartRecipes.Domain
+    open SmartRecipes.UseCases.DateTimeProvider
     open Infrastructure
     open System
     open System.Net.Mail
@@ -9,13 +10,11 @@ module Tests.Fake
     open SmartRecipes.DataAccess.Users
     open SmartRecipes.DataAccess.Tokens
     open SmartRecipes.DataAccess.ShoppingLists
-    open SmartRecipes.Domain.NonEmptyString
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.Recipe
     open SmartRecipes.Domain.ShoppingList
     open SmartRecipes.Domain.Token
     open FSharpPlus.Data
-    open SmartRecipes.UseCases.Environment
     
     // Data
     
@@ -93,83 +92,61 @@ module Tests.Fake
         recipes = Map.empty
     }
         
-    // Dao
+    // Environment
     
     type FakeUserDaoOptions =
         | WithUser
         | WithoutUser
     
-    let usersDao options = {
-        getByEmail =
-            match options with
-            | WithUser -> fun v -> Some account
-            | WithoutUser -> fun v -> None
-        getById =
-            match options with
-            | WithUser -> fun v -> Some account
-            | WithoutUser -> fun v -> None
-        add = fun a -> a
-    }
-    
     type FakeTokenDaoOptions =
         | WithToken
         | WithoutToken
-    
-    let tokensDao withToken = {
-        get =
-            match withToken with
-            | WithToken -> fun v -> Some accessToken
-            | WithoutToken -> fun v -> None
-        add = fun t -> t
-    }
-    
-    let shoppingListsDao () = {
-        add = fun s -> s
-        update = fun s -> s
-        get = fun a -> raise (NotImplementedException())
-    }
     
     type FakeFoodstuffDaoOptions =
         | WithFoodstuff
         | WithoutFoodstuff
     
-    let foodstuffsDao = function
-        | WithFoodstuff ->
-            {
-                getByIds = fun ids -> seq { yield foodstuff }
-                getById = fun id -> Some foodstuff
-                search =fun name -> seq { yield foodstuff }
-                add = fun f -> f
-            }
-        | WithoutFoodstuff ->
-            {
-                getByIds = fun ids -> Seq.empty
-                getById = fun id -> None
-                search = fun name -> Seq.empty
-                add = fun f -> f
-            }
-    
-    let recipesDao: RecipesDao = {
-        getByAccount = fun a -> Seq.empty
-        getByIds = fun ids -> Seq.empty
-        search = fun q -> Seq.empty
-        getById = fun id -> None
-        add = fun r -> r
-    }
-    
-    let shoppingListDao items: ShoppingsListsDao = {
-        add = fun s -> s
-        get = fun a -> { shoppingList with items = items }
-        update = fun s -> s
-    }
-
-    let environment tokenOptions userOptions foodstuffOptions shoppingListItems : Environment = {
-        IO = {
-            Tokens = tokensDao tokenOptions
-            Users = usersDao userOptions
-            Recipes = recipesDao
-            Foodstuffs = foodstuffsDao foodstuffOptions
-            ShoppingLists = shoppingListDao shoppingListItems
-        }
-        NowUtc = DateTime.UtcNow
-    }
+    type FakeEnvironment(tokenOptions, userOptions, foodstuffOptions, shoppingListItems) =
+        
+        interface IUserDao with 
+            member e.getById id =
+                match userOptions with
+                | WithUser -> Some account
+                | WithoutUser -> None
+            member e.getByEmail email =
+                match userOptions with
+                | WithUser -> Some account
+                | WithoutUser -> None
+            member e.add u = u
+            
+        interface ITokensDao with 
+            member e.get v =
+                match tokenOptions with
+                | WithToken -> Some accessToken
+                | WithoutToken -> None    
+            member e.add t = t
+            
+        interface IFoodstuffDao with 
+            member e.getByIds ids = 
+                match foodstuffOptions with 
+                | WithFoodstuff -> seq { yield foodstuff }
+                | WithoutFoodstuff -> Seq.empty
+            member e.search q =
+                match foodstuffOptions with 
+                | WithFoodstuff -> seq { yield foodstuff }
+                | WithoutFoodstuff -> Seq.empty
+            member e.add f = f
+            
+        interface IRecipesDao with 
+            member e.getByIds ids = Seq.empty
+            member e.getByAccount acc = Seq.empty
+            member e.search q = Seq.empty
+            member e.add r = r
+            
+        interface IShoppingsListsDao with 
+            member e.getByAccount acc = { shoppingList with items = shoppingListItems }
+            member e.update l = l
+            member e.add l = l
+            
+        interface IDateTimeProvider with
+            member p.nowUtc () = DateTime.UtcNow
