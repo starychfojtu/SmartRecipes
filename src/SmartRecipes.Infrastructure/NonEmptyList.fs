@@ -1,6 +1,7 @@
 module Infrastructure.NonEmptyList
+
     open FSharpPlus.Data
-    open FSharpPlus.Data
+    open FSharpPlus.Operators
     
     type NonEmptyListError =
         | SequenceIsEmpty
@@ -14,3 +15,4 @@ module Infrastructure.NonEmptyList
         let list = NonEmptyList.toList nonEmptyList
         List.length list = (List.distinct list |> List.length)
         
+      

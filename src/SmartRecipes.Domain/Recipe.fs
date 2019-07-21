@@ -1,10 +1,12 @@
 namespace SmartRecipes.Domain
+
 open NonNegativeFloat
 
 module Recipe =
     open Account
     open System
     open FSharpPlus.Data
+    open FSharpPlus
     open Foodstuff
     open NaturalNumber
     open NonEmptyString
@@ -15,6 +17,8 @@ module Recipe =
         DisplayLine: NonEmptyString option // Original unstructured input.
         Comment: NonEmptyString option // Additional comments about the ingredient, e.g. fresh
     }
+       
+    let inline _foodstuffId f ingredient = map (fun v -> { ingredient with FoodstuffId = v }) (f ingredient.FoodstuffId) 
     
     let createIngredient foodstuffId amount displayLine comment = {
         FoodstuffId = foodstuffId
@@ -104,6 +108,8 @@ module Recipe =
         Rating: Rating option
         NutritionPerServing: NutritionPerServing
     }
+    
+    let inline _ingredients f recipe = map (fun v -> { recipe with Ingredients = v }) (f recipe.Ingredients) 
     
     let create name creatorId personCount ingredients description cookingTime nutrition difficulty tags imageUrl url rating  = {
         Id = RecipeId(Guid.NewGuid ())

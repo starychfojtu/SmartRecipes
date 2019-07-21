@@ -5,7 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Library.fs" />
+        <Compile Include="Input.fs" />
+        <Compile Include="Distance.fs" />
+        <Compile Include="Recommendation.fs" />
     </ItemGroup>
 
     <ItemGroup>
