@@ -1,31 +1,36 @@
 namespace SmartRecipes.DataAccess
+open FSharpPlus
 open MongoDB.Bson
+open SmartRecipes.Domain.Foodstuff
 open SmartRecipes.Domain.NaturalNumber
 open SmartRecipes.Domain.Recipe
 open SmartRecipes.Domain.SearchQuery
 
 module Recipes =
     open FSharpPlus.Data
+    open FSharpPlus.Lens
     open System
     open SmartRecipes.Domain
     open SmartRecipes.Domain.Account
     open Model
     open SmartRecipes.Domain.NonEmptyString
-    open SmartRecipes.Domain.Foodstuff
+    open SmartRecipes.Domain.Foodstuff.FoodstuffId
     open MongoDB.Driver
     open Utils
     open Infrastructure.NonEmptyList
     
     type IRecipesDao = 
-        abstract member getByIds: seq<Guid> -> seq<Recipe>
-        abstract member search: SearchQuery -> seq<Recipe>
-        abstract member getByAccount: AccountId -> seq<Recipe>
+        abstract member getByIds: Guid seq -> Recipe seq
+        abstract member search: SearchQuery -> Recipe seq
+        abstract member getByAccount: AccountId -> Recipe seq
         abstract member add: Recipe -> Recipe
+        abstract member getRecommendedationCandidates: FoodstuffId seq -> Recipe seq
             
     let getByIds<'e when 'e :> IRecipesDao> ids = Reader(fun (e : 'e) -> e.getByIds ids)
     let getByAccount<'e when 'e :> IRecipesDao> accountId = Reader(fun (e : 'e) -> e.getByAccount accountId)
     let search<'e when 'e :> IRecipesDao> query = Reader(fun (e : 'e) -> e.search query)
     let add<'e when 'e :> IRecipesDao> recipe = Reader(fun (e : 'e) -> e.add recipe)
+    let getRecommendedationCandidates<'e when 'e :> IRecipesDao> foodstuffIds = Reader(fun (e : 'e) -> e.getRecommendedationCandidates foodstuffIds)
     
     module Mongo = 
     
@@ -154,3 +159,9 @@ module Recipes =
         let add recipe =
             toDb recipe |> collection.InsertOne |> ignore
             recipe
+           
+        let getRecommendedationCandidates foodstuffIds =
+            let foodstuffIdValues = Seq.map (view _value) foodstuffIds
+            let ingredientFilter = Builders<DbIngredient>.Filter.In((fun i -> i.foodstuffId), foodstuffIdValues);
+            let filter = Builders<DbRecipe>.Filter.ElemMatch((fun r -> r.Ingredients), ingredientFilter);
+            collection.FindSync(filter).ToEnumerable() |> Seq.map toModel

@@ -2,6 +2,7 @@ namespace SmartRecipes.UseCases
 
 module ShoppingLists =
     open SmartRecipes.Domain
+    open SmartRecipes.Recommendations
     open SmartRecipes.DataAccess
     open SmartRecipes.Domain.ShoppingList
     open FSharpPlus.Data
@@ -87,3 +88,20 @@ module ShoppingLists =
     
     let removeRecipes accessToken recipeIds = 
         shoppingListAction accessToken Unauthorized (removeRecipesFromList recipeIds)
+        
+    // Recommend
+    
+    type RecommendError =
+        | Unaturhorized
+        
+    let private getRecommendedRecipes (shoppingList: ShoppingList) =
+        let foodstuffIds = shoppingList.items |> Map.toSeq |> Seq.map fst |> Seq.toList
+        let sort = Recommendations.sort { Input.FoodstuffIds = foodstuffIds }
+        Recipes.getRecommendedationCandidates foodstuffIds
+        |> Reader.map sort
+        |> ReaderT.hoistOk
+    
+    let recommend accessToken =
+        Users.authorize Unaturhorized accessToken
+        >>= getShoppingList
+        >>= getRecommendedRecipes

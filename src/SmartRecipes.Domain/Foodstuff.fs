@@ -27,6 +27,9 @@ module Foodstuff =
     
     type FoodstuffId = | FoodstuffId of Guid
         with member i.value = match i with FoodstuffId v -> v
+        
+    module FoodstuffId = 
+        let inline _value f (FoodstuffId id) = map FoodstuffId (f id)
     
     type Foodstuff = {
         id: FoodstuffId

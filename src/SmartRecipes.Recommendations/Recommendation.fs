@@ -1,7 +1,7 @@
 namespace SmartRecipes.Recommendations
 
-module Recommendation =
+module Recommendations =
     
-    let sortByRecommendation input =
+    let sort input =
         Seq.sortByDescending (Distance.evaluate input)
 
