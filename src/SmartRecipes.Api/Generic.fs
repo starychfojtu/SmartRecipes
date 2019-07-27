@@ -60,7 +60,7 @@ module Environment =
             member e.getByAccount acc = Recipes.Mongo.getByAccount acc
             member e.search q = Recipes.Mongo.search q
             member e.add r = Recipes.Mongo.add r
-            member e.getRecommendedationCandidates ids = Recipes.Mongo.getRecommendedationCandidates ids
+            member e.getRecommendationCandidates ids = Recipes.Mongo.getRecommendedationCandidates ids
             
         interface IShoppingsListsDao with 
             member e.getByAccount acc = ShoppingLists.Mongo.getByAccount acc

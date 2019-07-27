@@ -21,6 +21,7 @@ module App =
                     route "/shoppingList" >=> ShoppingLists.getHandler
                     route "/foodstuffs" >=> Foodstuffs.GetByIds.handler
                     route "/foodstuffs/search" >=> Foodstuffs.Search.handler
+                    route "/shoppingList/recommend" >=> ShoppingLists.Recommend.handler
                 ]  
             POST >=>
                 choose [

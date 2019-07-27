@@ -24,13 +24,13 @@ module Recipes =
         abstract member search: SearchQuery -> Recipe seq
         abstract member getByAccount: AccountId -> Recipe seq
         abstract member add: Recipe -> Recipe
-        abstract member getRecommendedationCandidates: FoodstuffId seq -> Recipe seq
+        abstract member getRecommendationCandidates: FoodstuffId seq -> Recipe seq
             
     let getByIds<'e when 'e :> IRecipesDao> ids = Reader(fun (e : 'e) -> e.getByIds ids)
     let getByAccount<'e when 'e :> IRecipesDao> accountId = Reader(fun (e : 'e) -> e.getByAccount accountId)
     let search<'e when 'e :> IRecipesDao> query = Reader(fun (e : 'e) -> e.search query)
     let add<'e when 'e :> IRecipesDao> recipe = Reader(fun (e : 'e) -> e.add recipe)
-    let getRecommendedationCandidates<'e when 'e :> IRecipesDao> foodstuffIds = Reader(fun (e : 'e) -> e.getRecommendedationCandidates foodstuffIds)
+    let getRecommendationCandidates<'e when 'e :> IRecipesDao> foodstuffIds = Reader(fun (e : 'e) -> e.getRecommendationCandidates foodstuffIds)
     
     module Mongo = 
     

@@ -142,7 +142,7 @@ module Tests.Fake
             member e.getByAccount acc = Seq.empty
             member e.search q = Seq.empty
             member e.add r = r
-            member e.getRecommendedationCandidates ids = Seq.empty
+            member e.getRecommendationCandidates ids = Seq.empty
             
         interface IShoppingsListsDao with 
             member e.getByAccount acc = { shoppingList with items = shoppingListItems }

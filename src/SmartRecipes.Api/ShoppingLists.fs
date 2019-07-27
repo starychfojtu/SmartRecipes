@@ -25,7 +25,7 @@ module ShoppingLists =
     }
         
     let private serializeGet =
-        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) (function GetShoppingListError.Unauthorized -> error "Unaturhorized.")
+        Result.bimap (fun sl -> { ShoppingList = serializeShoppingList sl }) (function GetShoppingListError.Unauthorized -> error "Unauthorized.")
         
     let getHandler<'a> = 
         authorizedGetHandler (fun token _ -> ShoppingLists.get token) serializeGet
@@ -289,3 +289,18 @@ module ShoppingLists =
         
     let removeRecipesHandler<'a> = 
         authorizedPostHandler removeRecipes serializeRemoveRecipes
+    
+    module Recommend =
+        
+        type Error =
+            | BusinessError of ShoppingLists.RecommendError
+            
+        type Response = {
+            Recipes: RecipeDto list
+        }
+        
+        let private serialize =
+            Result.bimap (fun rs -> { Recipes = Seq.map serializeRecipe rs |> Seq.toList }) (function RecommendError.Unaturhorized -> error "Uauthorized.")
+            
+        let handler<'a> = 
+            authorizedGetHandler (fun token _ -> ShoppingLists.recommend token) serialize
