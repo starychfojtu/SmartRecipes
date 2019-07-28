@@ -12,9 +12,6 @@
     <Compile Include="ShoppingLists.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\SmartRecipes.DataAccess\SmartRecipes.DataAccess.fsproj" />
     <ProjectReference Include="..\SmartRecipes.Domain\SmartRecipes.Domain.fsproj" />
     <ProjectReference Include="..\SmartRecipes.Recommendations\SmartRecipes.Recommendations.fsproj" />

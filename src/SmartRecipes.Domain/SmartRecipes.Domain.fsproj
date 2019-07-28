@@ -22,10 +22,7 @@
     <Compile Include="ShoppingList.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="FSharpPlus" Version="1.1.0-CI00208" />
+    <PackageReference Include="FSharpPlus" Version="1.1.0-CI00252" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SmartRecipes.Infrastructure\SmartRecipes.Infrastructure.fsproj" />
