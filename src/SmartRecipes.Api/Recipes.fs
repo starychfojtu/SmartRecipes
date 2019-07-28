@@ -33,7 +33,7 @@ module Recipes =
     module GetByIds =
         [<CLIMutable>]
         type Parameters = {
-            Ids: Guid list
+            ids: Guid list
         }
         
         type Response = {
@@ -44,7 +44,7 @@ module Recipes =
             Result.bimap (fun fs -> { Recipes = Seq.map serializeRecipe fs |> Seq.toList }) (function Recipes.GetByIdsError.Unauthorized -> error "Unauthorized.")
             
         let private getByIds accessToken parameters =
-            Recipes.getByIds accessToken parameters.Ids
+            Recipes.getByIds accessToken parameters.ids
 
         let handler<'a> = 
             authorizedGetHandler getByIds serialize

@@ -13,9 +13,9 @@ module Users =
     open SmartRecipes.UseCases.Users
     
     module SignUp =
-        type Paramters = {
-            Email: string
-            Password: string
+        type Parameters = {
+            email: string
+            password: string
         }
         
         type Response = {
@@ -35,12 +35,12 @@ module Users =
         }
 
         let handler<'a> =
-            postHandler (fun p -> Users.signUp p.Email p.Password) (Result.bimap serializeResponse serializeError)
+            postHandler (fun p -> Users.signUp p.email p.password) (Result.bimap serializeResponse serializeError)
         
     module SignIn =
         type Parameters = {
-            Email: string
-            Password: string
+            email: string
+            password: string
         }
         
         type Response = {
@@ -55,5 +55,5 @@ module Users =
         }
              
         let handler<'a> =
-            postHandler (fun p -> Users.signIn p.Email p.Password) (Result.bimap serializeResponse serializeError)
+            postHandler (fun p -> Users.signIn p.email p.password) (Result.bimap serializeResponse serializeError)
         
