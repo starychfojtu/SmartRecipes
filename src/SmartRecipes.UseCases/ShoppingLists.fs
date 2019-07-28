@@ -98,7 +98,7 @@ module ShoppingLists =
         let foodstuffIds = shoppingList.items |> Map.toSeq |> Seq.map fst |> Seq.toList
         let sort = Recommendations.sort { Input.FoodstuffIds = foodstuffIds }
         Recipes.getRecommendationCandidates foodstuffIds
-        |> Reader.map (sort >> Seq.take 10)
+        |> Reader.map (sort >> Seq.truncate 10)
         |> ReaderT.hoistOk
     
     let recommend accessToken =
