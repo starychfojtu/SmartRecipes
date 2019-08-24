@@ -65,11 +65,13 @@ module Dto =
     type IngredientDto = {
         foodstuffId: string
         amount: AmountDto option
+        displayLine: string
     }
     
     let serializeIngredient (ingredient: Ingredient) = {
         foodstuffId = ingredient.FoodstuffId.value.ToString ()
         amount = Option.map serializeAmount ingredient.Amount
+        displayLine = ingredient.DisplayLine.Value
     }
     
     type CookingTimeDto = {

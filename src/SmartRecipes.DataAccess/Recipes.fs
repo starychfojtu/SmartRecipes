@@ -46,14 +46,14 @@ module Recipes =
             FoodstuffId = FoodstuffId(dbIngredient.foodstuffId)
             Amount = Option.ofObj dbIngredient.amount |> Option.map amountToModel
             Comment = nonEmptyStringOptionToModel dbIngredient.comment
-            DisplayLine = nonEmptyStringOptionToModel dbIngredient.displayLine
+            DisplayLine = toNonEmptyStringModel dbIngredient.displayLine
         }
         
         let private ingredientToDb (ingredient: Ingredient): DbIngredient = {
             foodstuffId = ingredient.FoodstuffId.value
             amount = Option.map amountToDb ingredient.Amount |> Option.toObj
             comment = nonEmptyStringOptionToDb ingredient.Comment
-            displayLine = nonEmptyStringOptionToDb ingredient.DisplayLine
+            displayLine = ingredient.DisplayLine.Value
         }
     
         let private difficultyToModel = function

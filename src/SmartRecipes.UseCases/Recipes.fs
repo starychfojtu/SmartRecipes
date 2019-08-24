@@ -62,7 +62,7 @@ module Recipes =
         FoodstuffId: Guid
         Amount: Amount option
         Comment: NonEmptyString option
-        DisplayLine: NonEmptyString option
+        DisplayLine: NonEmptyString
     }
     
     let createIngredientParameters foodstuffId amount comment displayLine = {

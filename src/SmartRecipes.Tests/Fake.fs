@@ -15,6 +15,7 @@ module Tests.Fake
     open SmartRecipes.Domain.ShoppingList
     open SmartRecipes.Domain.Token
     open FSharpPlus.Data
+    open SmartRecipes.Domain
     
     // Data
     
@@ -52,7 +53,7 @@ module Tests.Fake
         FoodstuffId = foodstuff.id
         Amount = Some foodstuff.baseAmount
         Comment = None
-        DisplayLine = None
+        DisplayLine = NonEmptyString.create "test" |> Option.get
     }
     
     let recipe = {

@@ -16,7 +16,7 @@ module Tests.Recipes
             unit = "liter"
         }
         comment = Some "test"
-        displayLine = Some "10 tests"
+        displayLine = "10 tests"
     }
     
     let apiParameters: Api.Recipes.CreateParameters = {
@@ -52,7 +52,7 @@ module Tests.Recipes
             unit = ""
         }
         comment = Some ""
-        displayLine = Some ""
+        displayLine = ""
     }
         
     let apiIncorrectParameters: Api.Recipes.CreateParameters = {

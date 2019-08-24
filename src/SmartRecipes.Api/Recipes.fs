@@ -95,7 +95,7 @@ module Recipes =
         foodstuffId: Guid
         amount: AmountParameters option
         comment: string option
-        displayLine: string option
+        displayLine: string
     }
     
     [<CLIMutable>]
@@ -171,7 +171,7 @@ module Recipes =
             Recipes.createIngredientParameters parameter.foodstuffId
             <!> parseIngredientAmount parameter.amount
             <*> Parse.nonEmptyStringOption [CommentOfIngredientIsProvidedButEmpty] parameter.comment
-            <*> Parse.nonEmptyStringOption [DisplayLineOfIngredientIsProvidedButEmpty] parameter.displayLine
+            <*> Parse.nonEmptyString [DisplayLineOfIngredientIsProvidedButEmpty] parameter.displayLine
         
         let private toNonEmpty ingredients = 
             NonEmptyList.mkNonEmptyList ingredients 
