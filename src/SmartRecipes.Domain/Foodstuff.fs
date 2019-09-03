@@ -34,7 +34,12 @@ module Foodstuff =
     type Foodstuff = {
         id: FoodstuffId
         name: NonEmptyString
+        // Default amount for shopping list. The average amount people put in shopping basket.
+        // E.g. for milk it is 1 liter.
         baseAmount: Amount
+        // The average amount of adjusting the default one.
+        // E.g. default amount for chicken breasts is 0.8kg, because people usually buy 4 brests,
+        // but they adjust it by 1, so amount step would be 0.2kg
         amountStep: NonNegativeFloat
     }
     

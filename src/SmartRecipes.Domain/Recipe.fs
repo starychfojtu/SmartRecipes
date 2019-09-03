@@ -13,9 +13,12 @@ module Recipe =
     
     type Ingredient = {
         FoodstuffId: FoodstuffId
-        Amount: Amount option // Sometimes it is not specified how much of it should be used, eg. 'Olive oil'.
-        DisplayLine: NonEmptyString // Original unstructured input.
-        Comment: NonEmptyString option // Additional comments about the ingredient, e.g. fresh
+        // Sometimes it is not specified how much of it should be used, eg. 'Olive oil'.
+        Amount: Amount option
+        // Original unstructured input.
+        DisplayLine: NonEmptyString
+        // Additional comments about the ingredient, e.g. fresh
+        Comment: NonEmptyString option 
     }
        
     let inline _foodstuffId f ingredient = map (fun v -> { ingredient with FoodstuffId = v }) (f ingredient.FoodstuffId) 
