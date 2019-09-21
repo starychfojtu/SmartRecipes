@@ -36,6 +36,12 @@ module Parse =
 module Environment =     
 
     open System
+    open SmartRecipes.IO
+    open SmartRecipes.IO.Users
+    open SmartRecipes.IO.Tokens
+    open SmartRecipes.IO.Foodstuffs
+    open SmartRecipes.IO.Recipes
+    open SmartRecipes.IO.ShoppingLists
     open SmartRecipes.DataAccess
     open SmartRecipes.UseCases.DateTimeProvider
 

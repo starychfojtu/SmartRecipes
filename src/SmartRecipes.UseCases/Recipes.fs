@@ -2,7 +2,7 @@ namespace SmartRecipes.UseCases
 
 module Recipes =
     open System
-    open SmartRecipes.DataAccess
+    open SmartRecipes.IO
     open FSharpPlus.Data
     open Infrastructure
     open FSharpPlus

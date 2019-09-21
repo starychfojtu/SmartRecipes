@@ -3,7 +3,7 @@ namespace SmartRecipes.UseCases
 module ShoppingLists =
     open SmartRecipes.Domain
     open SmartRecipes.Recommendations
-    open SmartRecipes.DataAccess
+    open SmartRecipes.IO
     open SmartRecipes.Domain.ShoppingList
     open FSharpPlus.Data
     open Infrastructure

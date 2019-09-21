@@ -1,7 +1,7 @@
 namespace SmartRecipes.UseCases
 
 module Users =
-    open SmartRecipes.DataAccess
+    open SmartRecipes.IO
     open FSharpPlus
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
@@ -21,7 +21,7 @@ module Users =
     let private signUpAccount email password =
         Account.create email password 
         |> Result.mapError InvalidParameters 
-        |> ReaderT.id
+        |> SmartRecipes.IO.IO.fromResult
             
     let private verifyAccountNotExists account =
         Users.getByEmail account.credentials.email
@@ -29,7 +29,7 @@ module Users =
         |> ReaderT.fromReader
             
     let private addAccountToDb account = 
-        Users.add account |> ReaderT.hoistOk
+        Users.add account |> IO.success
         
     let private addEmptyShoppingList account =
         let shoppingList = ShoppingList.create account.id

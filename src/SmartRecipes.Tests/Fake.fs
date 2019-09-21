@@ -1,15 +1,15 @@
 module Tests.Fake
-    open SmartRecipes.DataAccess.Foodstuffs
-    open SmartRecipes.DataAccess.Recipes
+    open SmartRecipes.IO.Foodstuffs
+    open SmartRecipes.IO.Recipes
     open SmartRecipes.Domain
     open SmartRecipes.UseCases.DateTimeProvider
     open Infrastructure
     open System
     open System.Net.Mail
     open SmartRecipes.Domain.Account
-    open SmartRecipes.DataAccess.Users
-    open SmartRecipes.DataAccess.Tokens
-    open SmartRecipes.DataAccess.ShoppingLists
+    open SmartRecipes.IO.Users
+    open SmartRecipes.IO.Tokens
+    open SmartRecipes.IO.ShoppingLists
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.Recipe
     open SmartRecipes.Domain.ShoppingList

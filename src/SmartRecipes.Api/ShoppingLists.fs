@@ -76,7 +76,7 @@ module ShoppingLists =
     // Add foodstuffs
     
     let addFoodstuffs accessToken parameters =
-        addItems ShoppingLists.addFoodstuffs accessToken parameters (List.toSeq >> DataAccess.Foodstuffs.getByIds)
+        addItems ShoppingLists.addFoodstuffs accessToken parameters (List.toSeq >> IO.Foodstuffs.getByIds)
         
     let addFoodstuffsHandler<'a> =
         authorizedPostHandler addFoodstuffs serializeAddItems
@@ -84,7 +84,7 @@ module ShoppingLists =
     // Add recipes
     
     let addRecipes accessToken parameters =
-        addItems ShoppingLists.addRecipes accessToken parameters (List.toSeq >> DataAccess.Recipes.getByIds)
+        addItems ShoppingLists.addRecipes accessToken parameters (List.toSeq >> IO.Recipes.getByIds)
         
     let addRecipesHandler<'a> =
         authorizedPostHandler addRecipes serializeAddItems
@@ -103,7 +103,7 @@ module ShoppingLists =
         | BusinessError of ShoppingLists.ChangeAmountError
         
     let private getFoodstuff id =
-        DataAccess.Foodstuffs.getByIds [id]
+        IO.Foodstuffs.getByIds [id]
         |> Reader.map (Seq.tryHead >> Option.toResult FoodstuffNotFound)
         |> ReaderT.fromReader
         
@@ -153,7 +153,7 @@ module ShoppingLists =
         | BusinessError of ShoppingLists.ChangeAmountError
         
     let private getRecipe id e =
-        DataAccess.Recipes.getByIds [id]
+        IO.Recipes.getByIds [id]
         |> Reader.map (Seq.tryHead >> Option.toResult e)
         |> ReaderT.fromReader
         

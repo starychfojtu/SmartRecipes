@@ -9,16 +9,7 @@ module ShoppingLists =
     open SmartRecipes.Domain.Recipe
     open SmartRecipes.Domain.ShoppingList
     open MongoDB.Driver
-    
-    type IShoppingsListsDao = 
-        abstract member getByAccount: AccountId -> ShoppingList
-        abstract member update: ShoppingList -> ShoppingList
-        abstract member add: ShoppingList -> ShoppingList
-        
-    let getByAccount<'e when 'e :> IShoppingsListsDao> id = Reader(fun (shoppingLists : 'e) -> shoppingLists.getByAccount id)
-    let update<'e when 'e :> IShoppingsListsDao> shoppingList = Reader(fun (shoppingLists : 'e) -> shoppingLists.update shoppingList)
-    let add<'e when 'e :> IShoppingsListsDao> shoppingList = Reader(fun (shoppingLists : 'e) -> shoppingLists.add shoppingList)
-    
+
     module Mongo =
         
         let private collection = Database.getCollection<DbShoppingList> ()

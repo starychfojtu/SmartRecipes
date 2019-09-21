@@ -10,7 +10,7 @@ module Foodstuffs =
     open FSharpPlus.Data
     open FSharpPlus.Data.Validation
     open Infrastracture
-    open SmartRecipes.DataAccess
+    open SmartRecipes.IO
     open SmartRecipes.UseCases
     open SmartRecipes.UseCases.Foodstuffs
     open SmartRecipes

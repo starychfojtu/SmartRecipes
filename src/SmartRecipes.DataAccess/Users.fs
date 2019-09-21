@@ -8,15 +8,6 @@ module Users =
     open SmartRecipes.Domain.Password
     open MongoDB.Driver
     
-    type IUserDao = 
-        abstract member getById: AccountId -> Account option
-        abstract member getByEmail: MailAddress -> Account option
-        abstract member add: Account -> Account
-        
-    let getById<'e when 'e :> IUserDao> id = Reader(fun (users : 'e) -> users.getById id)
-    let getByEmail<'e when 'e :> IUserDao> email = Reader(fun (users : 'e) -> users.getByEmail email)
-    let add<'e when 'e :> IUserDao> account = Reader(fun (users : 'e) -> users.add account)
-    
     module Mongo =
         
         let private collection = Database.getCollection<DbAccount> ()

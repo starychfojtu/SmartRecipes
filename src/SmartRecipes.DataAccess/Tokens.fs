@@ -8,13 +8,6 @@ module Tokens =
     open SmartRecipes.Domain.Token
     open MongoDB.Driver
     
-    type ITokensDao =
-        abstract member get: string -> AccessToken option
-        abstract member add: AccessToken -> AccessToken
-        
-    let get<'e when 'e :> ITokensDao> value = Reader(fun (tokens : 'e) -> tokens.get value)
-    let add<'e when 'e :> ITokensDao> token = Reader(fun (tokens : 'e) -> tokens.add token)
-    
     module Mongo = 
    
         let private collection = Database.getCollection<DbAccessToken> ()

@@ -46,6 +46,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SmartRecipes.DataAccess\SmartRecipes.DataAccess.fsproj" />
     <ProjectReference Include="..\SmartRecipes.UseCases\SmartRecipes.UseCases.fsproj" />
   </ItemGroup>
 </Project>

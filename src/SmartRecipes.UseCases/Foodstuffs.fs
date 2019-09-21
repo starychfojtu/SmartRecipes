@@ -1,10 +1,11 @@
 namespace SmartRecipes.UseCases
+
 open SmartRecipes.Domain
 
 module Foodstuffs =
     open FSharpPlus.Data
     open Infrastructure
-    open SmartRecipes.DataAccess
+    open SmartRecipes.IO
     open SmartRecipes.Domain.Foodstuff
     open SmartRecipes.Domain.NonEmptyString
     open SmartRecipes.Domain.NonNegativeFloat
