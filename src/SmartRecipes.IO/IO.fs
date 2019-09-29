@@ -10,9 +10,9 @@ module IO =
 
     let success r: IO<'a, 'env, 'error> = ReaderT.hoistOk r
     
-    let toSuccessEIO (io: IO<'a, 'env>): IO<'a, 'env, Void>  = ReaderT.mapDirect Ok (ReaderT.fromReader io)
-    
     let toEIO (f: 'a -> Result<'b, 'e>) (io: IO<'a, 'env>): IO<'b, 'env, 'e> = ReaderT.mapDirect f (ReaderT.fromReader io)
+    
+    let toSuccessEIO (io: IO<'a, 'env>): IO<'a, 'env, 'e>  = toEIO Ok io
     
     let fromResult r: IO<'a, 'env, 'error> = ReaderT.id r 
     

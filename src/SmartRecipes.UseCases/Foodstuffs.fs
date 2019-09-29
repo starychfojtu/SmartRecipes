@@ -14,31 +14,19 @@ module Foodstuffs =
     
     type GetByIdsError = 
         | Unauthorized
-
-    let private getFoodstuffsByIds ids =
-        Foodstuffs.getByIds ids
-        |> ReaderT.hoistOk
         
     let getByIds accessToken ids = 
         Users.authorize Unauthorized accessToken
-        >>= (fun _ -> getFoodstuffsByIds ids)
+        >>= (fun _ -> Foodstuffs.getByIds ids |> IO.toSuccessEIO)
     
     // Search
     
     type SearchError = 
         | Unauthorized
         
-    let private searchFoodstuff query =
-        Foodstuffs.search query
-        |> ReaderT.hoistOk
-        
-    let private searchFoodstuff2 query =
-        Foodstuffs.search query
-        |> ReaderT.hoistOk
-        
     let search accessToken query =
         Users.authorize Unauthorized accessToken
-        >>= fun _ -> searchFoodstuff query
+        >>= fun _ -> Foodstuffs.search query |> IO.toSuccessEIO
 
     // Create
 
@@ -60,18 +48,13 @@ module Foodstuffs =
 
     let private ensureDoesntAlreadyExists (foodstuff: Foodstuff) =
         Foodstuffs.search (SearchQuery.create foodstuff.name)
-        |> Reader.map (fun f -> 
+        |> IO.toEIO (fun f -> 
             if Seq.isEmpty f
                 then Ok foodstuff
-                else Error FoodstuffAlreadyExists
-        )
-        |> ReaderT.fromReader
-        
-    let private addToDatabase foodstuff = 
-        Foodstuffs.add foodstuff |> ReaderT.hoistOk
+                else Error FoodstuffAlreadyExists)
 
     let create accessToken parameters = 
         Users.authorize CreateError.Unauthorized accessToken
         >>= fun _ -> createFoodstuff parameters
         >>= ensureDoesntAlreadyExists
-        >>= addToDatabase
+        >>= (Foodstuffs.add >> IO.toSuccessEIO)

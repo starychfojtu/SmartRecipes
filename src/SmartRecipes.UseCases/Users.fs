@@ -4,8 +4,6 @@ module Users =
     open SmartRecipes.IO
     open FSharpPlus
     open FSharpPlus.Data
-    open FSharpPlus.Data.Validation
-    open Infrastructure.Validation
     open Infrastructure
     open SmartRecipes.Domain
     open SmartRecipes.Domain.Account
@@ -49,8 +47,8 @@ module Users =
         
     let private validateEmail email = 
         Email.mkEmail email
-        |> mapFailure (fun _ -> SignInError.InvalidCredentials)
-        |> toResult
+        |> Validation.mapFailure (fun _ -> SignInError.InvalidCredentials)
+        |> Validation.toResult
         |> IO.fromResult
         
     let private getAccount email = 
@@ -60,21 +58,17 @@ module Users =
     let private authenticate password account =
         DateTimeProvider.nowUtc
         |> IO.toEIO (fun nowUtc -> Token.authenticate nowUtc account password)
-        
-    let private addTokenToDb token = 
-        Tokens.add token
-        |> IO.toEIO Ok
        
     let signIn email password =
         validateEmail email
         >>= getAccount
         >>= authenticate password
-        >>= addTokenToDb
+        >>= (Tokens.add >> IO.toSuccessEIO)
         
     // Authorize
 
     let authorize error (accessTokenValue: string) =
-        let result = Builders.monad {
+        let result = monad {
             let! token = Tokens.get accessTokenValue
             let! nowUtc = DateTimeProvider.nowUtc
             return token
@@ -82,10 +76,7 @@ module Users =
                 |> Option.map (fun t -> t.accountId)
         }
         IO.toEIO (Option.toResult error) result
-    
-    let getUserById id =
-        Users.getById id |> IO.toEIO Ok
         
     let authorizeWithAccount error (accessTokenValue: string) =
         authorize error accessTokenValue
-        >>= getUserById
+        >>= (Users.getById >> IO.toSuccessEIO)
