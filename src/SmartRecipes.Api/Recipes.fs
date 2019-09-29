@@ -4,6 +4,7 @@ module Recipes =
     open Dto
     open Generic
     open Errors
+    open SmartRecipes
     open SmartRecipes.DataAccess
     open System
     open Infrastructure
@@ -15,6 +16,7 @@ module Recipes =
     open Infrastructure.NonEmptyList
     open SmartRecipes.Domain.Recipe
     open AmountParameters
+    open SmartRecipes.IO
             
     module GetMyRecipes =
         type Response = {
@@ -44,7 +46,7 @@ module Recipes =
             Result.bimap (fun fs -> { Recipes = Seq.map serializeRecipe fs |> Seq.toList }) (function Recipes.GetByIdsError.Unauthorized -> error "Unauthorized.")
             
         let private getByIds accessToken parameters =
-            Recipes.getByIds accessToken parameters.ids
+           UseCases.Recipes.getByIds accessToken parameters.ids
 
         let handler<'a> = 
             authorizedGetHandler getByIds serialize
@@ -77,11 +79,12 @@ module Recipes =
         let private parseQuery parameters =
             Parse.nonEmptyString QueryIsEmpty parameters.query 
             |> Validation.map SearchQuery.create
-            |> Validation.toResult 
-            |> ReaderT.id
+            |> Validation.toResult
+            |> IO.fromResult
             
         let searchFoodstuffs accessToken query =
-            Recipes.search accessToken query |> ReaderT.mapError BusinessError
+            UseCases.Recipes.search accessToken query
+            |> IO.mapError BusinessError
             
         let search accessToken parameters = 
             parseQuery parameters
@@ -231,10 +234,13 @@ module Recipes =
                 <*> Parse.option parseRating parameters.Rating
                 <*> NutritionPerServingParameters.parse parameters.Nutrition
 
-            parsedParameters |> Validation.toResult |> Result.mapError ParameterErrors |> ReaderT.id
+            parsedParameters
+            |> Validation.toResult
+            |> Result.mapError ParameterErrors
+            |> IO.fromResult
         
     let private createRecipe accessToken = 
-        Recipes.create accessToken >> (ReaderT.mapError BusinessError)
+        Recipes.create accessToken >> (IO.mapError BusinessError)
         
     let private serializeCreateParameterError = function 
         | NameCannotBeEmpty -> { message = "Cannot be empty."; parameter = "Name" }

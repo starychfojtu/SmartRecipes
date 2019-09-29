@@ -12,6 +12,6 @@ module Foodstuffs =
         abstract member search: SearchQuery -> seq<Foodstuff>
         abstract member add: Foodstuff -> Foodstuff
             
-    let getByIds<'e when 'e :> IFoodstuffDao> ids = Reader(fun (e : 'e) -> e.getByIds ids)
-    let search<'e when 'e :> IFoodstuffDao> query = Reader(fun (e : 'e) -> e.search query)
-    let add<'e when 'e :> IFoodstuffDao> foodstuff = Reader(fun (e : 'e) -> e.add foodstuff)
+    let getByIds<'e when 'e :> IFoodstuffDao> ids = IO.operation (fun (e : 'e) -> e.getByIds ids)
+    let search<'e when 'e :> IFoodstuffDao> query = IO.operation (fun (e : 'e) -> e.search query)
+    let add<'e when 'e :> IFoodstuffDao> foodstuff = IO.operation (fun (e : 'e) -> e.add foodstuff)

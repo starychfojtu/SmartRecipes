@@ -8,7 +8,6 @@ module Foodstuffs =
     open SmartRecipes.Domain
     open FSharpPlus
     open FSharpPlus.Data
-    open FSharpPlus.Data.Validation
     open Infrastracture
     open SmartRecipes.IO
     open SmartRecipes.UseCases
@@ -64,10 +63,10 @@ module Foodstuffs =
             Parse.nonEmptyString QueryIsEmpty parameters.query 
             |> Validation.map SearchQuery.create
             |> Validation.toResult 
-            |> ReaderT.id
+            |> IO.fromResult
             
         let private searchFoodstuffs accessToken query =
-            Foodstuffs.search accessToken query |> ReaderT.mapError BusinessError
+            Foodstuffs.search accessToken query |> IO.mapError BusinessError
             
         let private search accessToken parameters = 
             parseQuery parameters
@@ -115,10 +114,14 @@ module Foodstuffs =
                 <*> Parse.option parseBaseAmount parameters.baseAmount
                 <*> Parse.option (Parse.nonNegativeFloat [AmountStepCannotBeNegative]) parameters.amountStep
                 
-            parsedParameters |> toResult |> Result.mapError ParameterErrors |> ReaderT.id 
+            parsedParameters
+            |> Validation.toResult
+            |> Result.mapError ParameterErrors
+            |> IO.fromResult
 
         let private createFoodstuff token parameters =
-            Foodstuffs.create token parameters |> ReaderT.mapError BusinessError
+            Foodstuffs.create token parameters
+            |> IO.mapError BusinessError
             
         let private serializeParameterError = function
             | NameCannotBeEmpty -> { message =  "Cannot be empty."; parameter = "Name" }
@@ -128,13 +131,13 @@ module Foodstuffs =
                 | AmountParameters.Error.UnitCannotBeEmpty -> { message =  "Cannot be empty."; parameter = "Unit" }
                 | AmountParameters.Error.ValueCannotBeNegative -> { message =  "Cannot be negative."; parameter = "Base amount" }
                 
-        let private serializaBusinessError = function
+        let private serializeBusinessError = function
             | Unauthorized -> "Unauthorized."
             | FoodstuffAlreadyExists -> "Foodstuff already exists."
             
         let private serializeError = function
             | ParameterErrors es -> List.map serializeParameterError es |> invalidParameters
-            | BusinessError e -> serializaBusinessError e |> error 
+            | BusinessError e -> serializeBusinessError e |> error 
                 
         let private serialize<'a> =
             Result.bimap (fun f -> { Foodstuff = serializeFoodstuff f }) (serializeError)

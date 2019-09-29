@@ -3,6 +3,7 @@ namespace SmartRecipes.Api
 open FSharpPlus
 open SmartRecipes.Domain.Foodstuff
 open SmartRecipes.Domain.Recipe
+open SmartRecipes.IO
 
 module ShoppingLists =
     open Dto
@@ -44,15 +45,14 @@ module ShoppingLists =
     let getItems parameters getByIds =
         let itemIds = parameters.itemIds
         getByIds itemIds
-        |> Reader.map (fun items -> 
+        |> IO.toEIO (fun items -> 
             let foundAll = Seq.length items = Seq.length itemIds
             if foundAll
                 then Ok items
                 else Error InvalidIds)
-        |> ReaderT.fromReader
         
-    let private addItemsToShoppingList accesstToken action items = 
-        action accesstToken items
+    let private addItemsToShoppingList accessToken action items = 
+        action accessToken items
         |> ReaderT.mapError BusinessError
         
     let private serializeAddItemsBusinessError = function
@@ -104,17 +104,16 @@ module ShoppingLists =
         
     let private getFoodstuff id =
         IO.Foodstuffs.getByIds [id]
-        |> Reader.map (Seq.tryHead >> Option.toResult FoodstuffNotFound)
-        |> ReaderT.fromReader
+        |> IO.toEIO (Seq.tryHead >> Option.toResult FoodstuffNotFound)
         
     let private parseAmount amount = 
         NonNegativeFloat.create amount
         |> Option.toResult AmountMustBePositive
         |> ReaderT.id
         
-    let private changeFoodtuffAmount accessToken foodstuff amount =
+    let private changeFoodstuffAmount accessToken foodstuff amount =
         changeAmount accessToken foodstuff amount
-        |> ReaderT.mapError BusinessError
+        |> IO.mapError BusinessError
         
     let private serializeChangeAmountError = function
         | FoodstuffNotFound -> invalidParameters [{ message = "Not found."; parameter = "Foodstuff" }]
@@ -133,7 +132,7 @@ module ShoppingLists =
     let changeAmount accessToken parameters = monad {
         let! foodstuff = getFoodstuff parameters.foodstuffId
         let! amount = parseAmount parameters.amount
-        return! changeFoodtuffAmount accessToken foodstuff.id amount
+        return! changeFoodstuffAmount accessToken foodstuff.id amount
     }
 
     let changeAmountHandler<'a> =
@@ -154,13 +153,12 @@ module ShoppingLists =
         
     let private getRecipe id e =
         IO.Recipes.getByIds [id]
-        |> Reader.map (Seq.tryHead >> Option.toResult e)
-        |> ReaderT.fromReader
+        |> IO.toEIO (Seq.tryHead >> Option.toResult e)
         
     let private parsePersonCount personCount = 
         NaturalNumber.create personCount
         |> Option.toResult PersonCountMustBePositive
-        |> ReaderT.id
+        |> IO.fromResult
         
     let private changeRecipePersonCount accessToken recipe amount =
         changePersonCount accessToken recipe amount
@@ -201,8 +199,8 @@ module ShoppingLists =
         
     let private getFoodstuffIds accessToken parameters =
        Foodstuffs.getByIds accessToken parameters.ids
-       |> ReaderT.mapError GetByIdsBusinessError
-       |> ReaderT.map (Seq.map (fun (f: Foodstuff) -> f.id))
+       |> IO.mapError GetByIdsBusinessError
+       |> IO.map (Seq.map (fun (f: Foodstuff) -> f.id))
 
     let private checkAllFoodstuffsFound parameters foodstuffIds =
         let result =
@@ -210,11 +208,11 @@ module ShoppingLists =
                then Error FoodstuffNotFound
                else Ok foodstuffIds
             
-        ReaderT.id result
+        IO.fromResult result
     
     let private removeFoodstuffsFromList accessToken foodstuffIds = 
         ShoppingLists.removeFoodstuffs accessToken foodstuffIds
-        |> ReaderT.mapError BusinessError
+        |> IO.mapError BusinessError
         
     let private serializeRemoveFoodstuffsError = function 
         | FoodstuffNotFound -> invalidParameters [{ message = "Invalid."; parameter = "Foodstuff id" }]
@@ -252,8 +250,8 @@ module ShoppingLists =
         
     let private getRecipeIds accessToken parameters =
        Recipes.getByIds accessToken parameters.ids
-       |> ReaderT.mapError GetByIdsBusinessError
-       |> ReaderT.map (Seq.map (fun (f: Recipe) -> f.Id))
+       |> IO.mapError GetByIdsBusinessError
+       |> IO.map (Seq.map (fun (f: Recipe) -> f.Id))
 
     let private checkAllRecipesFound parameters recipeIds =
         let result =
@@ -261,11 +259,11 @@ module ShoppingLists =
                then Error RecipeNotFound
                else Ok recipeIds
             
-        ReaderT.id result
+        IO.fromResult result
     
     let private removeRecipesFromList accessToken recipes = 
         ShoppingLists.removeRecipes accessToken recipes
-        |> ReaderT.mapError BusinessError
+        |> IO.mapError BusinessError
         
     let private serializeRemoveRecipesError = function 
         | RecipeNotFound -> invalidParameters [{ message = "Invalid."; parameter = "Recipe id" }]

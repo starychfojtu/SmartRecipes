@@ -11,6 +11,6 @@ module ShoppingLists =
         abstract member update: ShoppingList -> ShoppingList
         abstract member add: ShoppingList -> ShoppingList
         
-    let getByAccount<'e when 'e :> IShoppingsListsDao> id = Reader(fun (shoppingLists : 'e) -> shoppingLists.getByAccount id)
-    let update<'e when 'e :> IShoppingsListsDao> shoppingList = Reader(fun (shoppingLists : 'e) -> shoppingLists.update shoppingList)
+    let getByAccount<'e when 'e :> IShoppingsListsDao> id = IO.operation (fun (shoppingLists : 'e) -> shoppingLists.getByAccount id)
+    let update<'e when 'e :> IShoppingsListsDao> shoppingList = IO.operation (fun (shoppingLists : 'e) -> shoppingLists.update shoppingList)
     let add<'e when 'e :> IShoppingsListsDao> shoppingList = IO.operation (fun (shoppingLists : 'e) -> shoppingLists.add shoppingList)
