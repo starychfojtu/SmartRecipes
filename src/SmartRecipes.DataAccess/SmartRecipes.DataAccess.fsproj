@@ -18,8 +18,10 @@
     <ProjectReference Include="..\SmartRecipes.Domain\SmartRecipes.Domain.fsproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
     <PackageReference Include="mongocsharpdriver" Version="2.8.1" />
     <PackageReference Include="MongoDB.FSharp" Version="0.1.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FSharpPlus" Version="1.0.0" />
