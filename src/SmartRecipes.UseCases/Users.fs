@@ -21,21 +21,23 @@ module Users =
     let private signUpAccount email password =
         Account.create email password 
         |> Result.mapError InvalidParameters 
-        |> SmartRecipes.IO.IO.fromResult
+        |> IO.fromResult
             
     let private verifyAccountNotExists account =
         Users.getByEmail account.credentials.email
-        |> Reader.map (function | Some _ -> Error AccountAlreadyExits | None -> Ok account)
-        |> ReaderT.fromReader
+        |> IO.toEIO (fun existingAccount ->
+            match existingAccount with
+            | Some _ -> Error AccountAlreadyExits
+            | None -> Ok account)
             
     let private addAccountToDb account = 
-        Users.add account |> IO.success
+        Users.add account
+        |> IO.toEIO (fun _ -> Ok account)
         
     let private addEmptyShoppingList account =
-        let shoppingList = ShoppingList.create account.id
-        ShoppingLists.add shoppingList
-        |> Reader.map (fun _ -> Ok account)
-        |> ReaderT.fromReader
+        ShoppingList.create account.id
+        |> ShoppingLists.add
+        |> IO.toEIO (fun _ -> Ok account)
     
     let signUp email password =
         signUpAccount email password
@@ -49,20 +51,19 @@ module Users =
         Email.mkEmail email
         |> mapFailure (fun _ -> SignInError.InvalidCredentials)
         |> toResult
-        |> ReaderT.id
+        |> IO.fromResult
         
     let private getAccount email = 
         Users.getByEmail email 
-        |> Reader.map (Option.toResult SignInError.InvalidCredentials) 
-        |> ReaderT.fromReader
+        |> IO.toEIO (Option.toResult SignInError.InvalidCredentials)
         
     let private authenticate password account =
         DateTimeProvider.nowUtc
-        |> Reader.map (fun nowUtc -> Token.authenticate nowUtc account password)
-        |> ReaderT.fromReader
+        |> IO.toEIO (fun nowUtc -> Token.authenticate nowUtc account password)
         
     let private addTokenToDb token = 
-        Tokens.add token |> ReaderT.hoistOk
+        Tokens.add token
+        |> IO.toEIO Ok
        
     let signIn email password =
         validateEmail email
@@ -72,17 +73,19 @@ module Users =
         
     // Authorize
 
-    let authorize error (accessTokenValue: string) = 
+    let authorize error (accessTokenValue: string) =
         let result = Builders.monad {
             let! token = Tokens.get accessTokenValue
             let! nowUtc = DateTimeProvider.nowUtc
             return token
                 |> Option.filter (Token.isFresh nowUtc)
                 |> Option.map (fun t -> t.accountId)
-                |> Option.toResult error
         }
-        ReaderT.fromReader result 
-   
+        IO.toEIO (Option.toResult error) result
+    
+    let getUserById id =
+        Users.getById id |> IO.toEIO Ok
+        
     let authorizeWithAccount error (accessTokenValue: string) =
         authorize error accessTokenValue
-        >>= fun id -> Users.getById id |> ReaderT.hoistOk
+        >>= getUserById

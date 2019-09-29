@@ -10,6 +10,7 @@
     <Compile Include="Result.fs" />
     <Compile Include="Validation.fs" />
     <Compile Include="Seq.fs" />
+    <Compile Include="Void.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BCrypt-Official" Version="0.1.109" />

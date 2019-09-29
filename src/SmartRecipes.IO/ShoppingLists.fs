@@ -13,4 +13,4 @@ module ShoppingLists =
         
     let getByAccount<'e when 'e :> IShoppingsListsDao> id = Reader(fun (shoppingLists : 'e) -> shoppingLists.getByAccount id)
     let update<'e when 'e :> IShoppingsListsDao> shoppingList = Reader(fun (shoppingLists : 'e) -> shoppingLists.update shoppingList)
-    let add<'e when 'e :> IShoppingsListsDao> shoppingList = Reader(fun (shoppingLists : 'e) -> shoppingLists.add shoppingList)
+    let add<'e when 'e :> IShoppingsListsDao> shoppingList = IO.operation (fun (shoppingLists : 'e) -> shoppingLists.add shoppingList)
