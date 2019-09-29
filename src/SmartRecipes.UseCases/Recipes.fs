@@ -16,37 +16,28 @@ module Recipes =
     
     type GetMyRecipesError =
         | Unauthorized
-        
-    let private getRecipes accountId = 
-        Recipes.getByAccount accountId |> ReaderT.hoistOk
-        
+
     let getMyRecipes accessToken =
         Users.authorize Unauthorized accessToken
-        >>= getRecipes
+        >>= (Recipes.getByAccount >> IO.toSuccessEIO)
     
     // Get by ids
     
     type GetByIdsError = 
         | Unauthorized
 
-    let private getRecipesByIds ids = 
-        Recipes.getByIds ids |> ReaderT.hoistOk
-        
     let getByIds accessToken ids = 
         Users.authorize Unauthorized accessToken
-        >>= (fun _ -> getRecipesByIds ids)
+        >>= fun _ -> Recipes.getByIds ids |> IO.toSuccessEIO
         
     // Search
     
     type SearchError = 
         | Unauthorized
-        
-    let private searchFoodstuff query = 
-        Recipes.search query |> ReaderT.hoistOk
-        
+
     let search accessToken query =
         Users.authorize Unauthorized accessToken
-        >>= fun _ -> searchFoodstuff query
+        >>= fun _ -> Recipes.search query |> IO.toSuccessEIO
         
     // Create
     
@@ -86,14 +77,14 @@ module Recipes =
         NutritionPerServing: NutritionPerServing
     }
     
-    let createParameters name personCount imageUrl url description ingredients diffuculty cookingTime tags rating nutrition = {
+    let createParameters name personCount imageUrl url description ingredients difficulty cookingTime tags rating nutrition = {
         Name = name
         PersonCount = personCount
         ImageUrl = imageUrl
         Url = url
         Description = description
         Ingredients = ingredients
-        Difficulty = diffuculty
+        Difficulty = difficulty
         CookingTime = cookingTime
         Tags = tags
         Rating = rating
@@ -101,7 +92,9 @@ module Recipes =
     }
 
     let private getFoodstuffs parameters =
-        Foodstuffs.getByIds <| Seq.map (fun i -> i.FoodstuffId) parameters
+        Seq.map (fun i -> i.FoodstuffId) parameters
+        |> Foodstuffs.getByIds
+        |> IO.toSuccessEIO
 
     let mkFoodstuffId guid (foodstuffMap: Map<_, Foodstuff> ) = 
         match Map.tryFind guid foodstuffMap with
@@ -128,12 +121,11 @@ module Recipes =
         |> Validation.bind checkIngredientsNotDuplicate
         |> Validation.mapFailure InvalidIngredients
         |> Validation.toResult
-        |> ReaderT.id
+        |> IO.fromResult
             
     let private createIngredients parameters =
         getFoodstuffs parameters
-        |> ReaderT.hoist
-        |> ReaderT.bind (mkIngredients parameters)
+        >>= (mkIngredients parameters)
 
     let private createRecipe parameters ingredients accountId = 
         Recipe.create
@@ -149,15 +141,12 @@ module Recipes =
             parameters.ImageUrl
             parameters.Url
             parameters.Rating
-
-    let private addToDatabase recipe = 
-        Recipes.add recipe |> ReaderT.hoistOk
         
     let create accessToken parameters = monad {
         let! accountId = Users.authorize Unauthorized accessToken
         let! ingredients = createIngredients parameters.Ingredients
         let recipe = createRecipe parameters ingredients accountId
-        return! addToDatabase recipe
+        return! Recipes.add recipe |> IO.toSuccessEIO
     }
     
     // Update
