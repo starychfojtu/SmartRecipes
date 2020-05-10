@@ -12,7 +12,7 @@ module ShoppingLists =
 
     module Mongo =
         
-        let private collection = Database.getCollection<DbShoppingList> ()
+        let private collection = Mongo.getCollection<DbShoppingList> ()
         
         let private listItemToModel (dbListItem: DbListItem): ListItem = {
             foodstuffId = FoodstuffId(dbListItem.foodstuffId)

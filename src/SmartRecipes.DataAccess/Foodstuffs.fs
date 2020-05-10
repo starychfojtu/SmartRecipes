@@ -14,7 +14,7 @@ module Foodstuffs =
         
     module Mongo = 
     
-        let private collection = Database.getCollection<DbFoodstuff> ()
+        let private collection = Mongo.getCollection<DbFoodstuff> ()
                     
         let internal toDb foodstuff : DbFoodstuff = {
             id = match foodstuff.id with FoodstuffId id -> id

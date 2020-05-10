@@ -10,7 +10,7 @@ module Tokens =
     
     module Mongo = 
    
-        let private collection = Database.getCollection<DbAccessToken> ()
+        let private collection = Mongo.getCollection<DbAccessToken> ()
 
         let private toDb accessToken: DbAccessToken = {
             id = Guid.NewGuid()

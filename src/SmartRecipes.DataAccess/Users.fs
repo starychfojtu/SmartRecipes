@@ -10,7 +10,7 @@ module Users =
     
     module Mongo =
         
-        let private collection = Database.getCollection<DbAccount> ()
+        let private collection = Mongo.getCollection<DbAccount> ()
     
         let private toDb account: DbAccount = {
             id = match account.id with AccountId id -> id

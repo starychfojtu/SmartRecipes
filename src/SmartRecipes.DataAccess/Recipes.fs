@@ -21,7 +21,7 @@ module Recipes =
 
     module Mongo = 
     
-        let private collection = Database.getCollection<DbRecipe> ()
+        let private collection = Mongo.getCollection<DbRecipe> ()
             
         let private nonEmptyStringOptionToModel =
             Option.ofObj >> Option.map (create >> Option.get)

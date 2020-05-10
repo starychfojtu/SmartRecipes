@@ -5,7 +5,7 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Database.fs" />
+    <Compile Include="Mongo.fs" />
     <Compile Include="Model.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Users.fs" />
