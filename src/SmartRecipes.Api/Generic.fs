@@ -61,11 +61,11 @@ module Environment =
             member e.add f = failwith "Not implemented"
 
         interface IRecipesDao with
-            member e.getByIds ids = Recipes.Mongo.getByIds ids
-            member e.getByAccount acc = Recipes.Mongo.getByAccount acc
-            member e.search q = Recipes.Mongo.search q
-            member e.add r = Recipes.Mongo.add r
-            member e.getRecommendationCandidates ids = Recipes.Mongo.getRecommendedationCandidates ids
+            member e.getByIds ids = Recipes.Postgres.getByIds e.Conn ids |> List.toSeq
+            member e.getByAccount acc = failwith "Not implemented"
+            member e.search q = Recipes.Postgres.search e.Conn q |> List.toSeq
+            member e.add r = failwith "Not implemented"
+            member e.getRecommendationCandidates ids = failwith "Not implemented"
 
         interface IShoppingsListsDao with
             member e.getByAccount acc = ShoppingLists.Postgres.getByAccount e.Conn acc

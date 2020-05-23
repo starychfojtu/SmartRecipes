@@ -17,10 +17,10 @@ module Foodstuffs =
             id = FoodstuffId <| read.uuid "id"
             name = toNonEmptyStringModel <| read.string "name"
             baseAmount = {
-                unit = MetricUnit.MetricUnit <| toNonEmptyStringModel "pieces"
-                value = toNonNegativeFloatModel 1.0
+                unit = MetricUnit.MetricUnit <| toNonEmptyStringModel "grams"
+                value = toNonNegativeFloatModel 100.0
             }
-            amountStep = toNonNegativeFloatModel 1.0
+            amountStep = toNonNegativeFloatModel 100.0
         }
 
         let getByIds conn ids =
