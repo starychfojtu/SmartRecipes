@@ -47,8 +47,8 @@ module ShoppingLists =
             |> Sql.parameters [
                 "id", Sql.uuid shoppingList.id.value
                 "accountid", Sql.uuid shoppingList.accountId.value
-                "items", (shoppingList.items |> Map.toSeq |> Seq.map (fun (k, v) -> listItemToDb v) |> Json.serialize |> Sql.jsonb)
-                "recipes", (shoppingList.recipes |> Map.toSeq |> Seq.map (fun (k, v) -> recipeListItemToDb v) |> Json.serialize |> Sql.jsonb)
+                "items", (shoppingList.items |> Map.toList |> List.map (fun (k, v) -> listItemToDb v) |> Json.serialize |> Sql.jsonb)
+                "recipes", (shoppingList.recipes |> Map.toList |> List.map (fun (k, v) -> recipeListItemToDb v) |> Json.serialize |> Sql.jsonb)
             ]
             |> Sql.executeNonQuery
             |> fun _ -> shoppingList
@@ -65,8 +65,8 @@ module ShoppingLists =
             |> Sql.query "UPDATE dbo.shoppinglist SET items = @items, recipes = @recipes WHERE id = @id"
             |> Sql.parameters [
                 "id", Sql.uuid shoppingList.id.value
-                "items", (shoppingList.items |> Map.toSeq |> Seq.map (fun (k, v) -> listItemToDb v) |> Json.serialize |> Sql.jsonb)
-                "recipes", (shoppingList.recipes |> Map.toSeq |> Seq.map (fun (k, v) -> recipeListItemToDb v) |> Json.serialize |> Sql.jsonb)
+                "items", (shoppingList.items |> Map.toList |> List.map (fun (k, v) -> listItemToDb v) |> Json.serialize |> Sql.jsonb)
+                "recipes", (shoppingList.recipes |> Map.toList |> List.map (fun (k, v) -> recipeListItemToDb v) |> Json.serialize |> Sql.jsonb)
             ]
             |> Sql.executeNonQuery
             |> fun _ -> shoppingList

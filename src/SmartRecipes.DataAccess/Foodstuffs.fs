@@ -25,15 +25,15 @@ module Foodstuffs =
 
         let getByIds conn ids =
             conn
-            |> Sql.query "SELECT * From dbo.foodstuff WHERE id IN @ids"
+            |> Sql.query "SELECT * From dbo.foodstuff WHERE id = ANY(@ids)"
             |> Sql.parameters [ "ids", Sql.uuidArray <| Seq.toArray ids ]
             |> Sql.execute readFoodstuff
             |> function | Ok l -> l | Error e -> failwith e.Message
 
         let search conn (query: SearchQuery) =
             conn
-            |> Sql.query "SELECT * From dbo.foodstuff WHERE name LIKE '%@query%'"
-            |> Sql.parameters [ "query", Sql.string query.Value ]
+            |> Sql.query "SELECT * From dbo.foodstuff WHERE name LIKE @query"
+            |> Sql.parameters [ "query", Sql.string ("%" + query.Value + "%") ]
             |> Sql.execute readFoodstuff
             |> function | Ok l -> l | Error e -> failwith e.Message
 

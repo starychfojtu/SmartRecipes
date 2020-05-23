@@ -13,7 +13,7 @@ module Tokens =
 
     module Postgres =
         let readToken (read: RowReader): AccessToken = {
-            accountId = AccountId <| read.uuid "id"
+            accountId = AccountId <| read.uuid "accountid"
             value = Token <| read.text "value"
             expirationUtc = read.dateTime "expirationutc"
         }
