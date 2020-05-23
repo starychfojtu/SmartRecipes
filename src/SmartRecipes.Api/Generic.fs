@@ -56,9 +56,9 @@ module Environment =
             member e.add user = Tokens.Postgres.add e.Conn user
 
         interface IFoodstuffDao with
-            member e.getByIds ids = Foodstuffs.Mongo.getByIds ids
-            member e.search q = Foodstuffs.Mongo.search q
-            member e.add f = Foodstuffs.Mongo.add f
+            member e.getByIds ids = Foodstuffs.Postgres.getByIds e.Conn ids |> List.toSeq
+            member e.search q = Foodstuffs.Postgres.search e.Conn q |> List.toSeq
+            member e.add f = failwith "Not implemented"
 
         interface IRecipesDao with
             member e.getByIds ids = Recipes.Mongo.getByIds ids
