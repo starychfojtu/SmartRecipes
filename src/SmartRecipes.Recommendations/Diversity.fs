@@ -1,7 +1,6 @@
 module SmartRecipes.Playground.Diversity
 
 open SmartRecipes.Recommendations.Library
-open SmartRecipes.Recommendations.Model
 
 let tryMax list =
     try

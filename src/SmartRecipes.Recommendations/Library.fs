@@ -1,7 +1,19 @@
 module SmartRecipes.Recommendations.Library
 
+open SmartRecipes.Domain.Recipe
+open SmartRecipes.Domain.Foodstuff
 open System
 open System.Diagnostics
+
+type FoodstuffAmount = {
+    FoodstuffId: FoodstuffId
+    Amount: Amount option
+}
+
+type RecipeInfo = {
+    Recipe: Recipe
+    InputSimilarity: float
+}
 
 let mapSecond f (fst, snd) = (fst, f snd)
 let first (fst, _) = fst
@@ -42,7 +54,7 @@ let euclideanDistance v1 v2 =
     |> Seq.sum
     |> Math.Sqrt
 
-type Vector = Map<Guid, float>
+type Vector = Map<FoodstuffId, float>
 
 let profilePerformance f =
     let sw = Stopwatch.StartNew ()

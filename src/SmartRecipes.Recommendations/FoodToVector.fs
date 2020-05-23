@@ -1,8 +1,9 @@
 module SmartRecipes.Recommendations.FoodToVector
 
+open SmartRecipes.Domain.Recipe
+open SmartRecipes.Recommendations.Library
 open System
 open System.IO
-open SmartRecipes.Recommendations.Model
 
 let magnitude vector =
     vector
@@ -41,11 +42,12 @@ type WeightedFoodstuff = {
 
 let vectorize foodstuffVectors weight foodstuffAmounts  =
     foodstuffAmounts
-    |> List.map (fun (a: FoodstuffAmount) -> { Vector = Map.find a.FoodstuffId foodstuffVectors; Weight = weight a })
+    |> Seq.map (fun (a: FoodstuffAmount) -> { Vector = Map.find a.FoodstuffId foodstuffVectors; Weight = weight a })
+    |> Seq.toList
     |> mean
 
 let vectorizeRecipe foodstuffVectors weight r =
-    let foodstuffAmounts = r.Ingredients |> List.map (fun i -> i.Amount)
+    let foodstuffAmounts = r.Ingredients |> Seq.map (fun i -> { FoodstuffId = i.FoodstuffId; Amount = i.Amount })
     vectorize foodstuffVectors weight foodstuffAmounts
 
 let recipeSimilarity foodstuffVectors weight r1 r2 =

@@ -6,10 +6,8 @@
 
     <ItemGroup>
         <Compile Include="Library.fs" />
-        <Compile Include="Model.fs" />
         <Compile Include="JaccardSimilarity.fs" />
         <Compile Include="TfIdf.fs" />
-        <Compile Include="TextTfIdf.fs" />
         <Compile Include="Calibration.fs" />
         <Compile Include="Diversity.fs" />
         <Compile Include="FoodToVector.fs" />

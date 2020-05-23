@@ -1,6 +1,7 @@
 module SmartRecipes.Recommendations.Calibration
 
-open SmartRecipes.Recommendations.Model
+open SmartRecipes.Recommendations.Library
+open SmartRecipes.Domain.Recipe
 
 type FoodstuffAmountInfo = {
     Amount: FoodstuffAmount
@@ -9,8 +10,8 @@ type FoodstuffAmountInfo = {
 } with
     member this.Weight = this.InitialWeight / this.WeightModifier
 
-let relevance recipe foodstuffAmount =
-    let ingredient = Map.tryFind foodstuffAmount.FoodstuffId recipe.IngredientByFoodstuffId
+let relevance (recipe: Recipe) (foodstuffAmount: FoodstuffAmount) =
+    let ingredient = recipe.Ingredients |> Seq.filter (fun i -> i.FoodstuffId = foodstuffAmount.FoodstuffId) |> Seq.tryHead
     ingredient
     |> Option.map (fun i -> TfIdf.termFrequency i.Amount)
     |> Option.defaultValue 0.0

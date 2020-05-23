@@ -1,8 +1,11 @@
 module SmartRecipes.Recommendations.JaccardSimilarity
 
+open FSharpPlus.Data
 open SmartRecipes.Recommendations
-open Model
 open Library
+open SmartRecipes.Domain.Recipe
+open FSharpPlus.Lens
+open Infrastructure
 
 // This method is just a reference point for the others.
 // Has no way of distinguishing importance of foodstuff (no amount factor, no relevance in the whole dataset factor).
@@ -17,7 +20,7 @@ let recommend recipes inputs =
     let inputSet = Set.ofList inputs
     let recommendations =
         recipes
-        |> Seq.map (fun r -> (r, r.Ingredients |> List.map (fun i -> i.Amount.FoodstuffId) |> Set.ofList |> jaccardDistance inputSet))
+        |> Seq.map (fun r -> (r, (r.Ingredients |> Seq.map (fun i -> i.FoodstuffId) |> Set.ofSeq |> jaccardDistance inputSet)))
         |> Seq.sortByDescending second
         |> Seq.map first
 
