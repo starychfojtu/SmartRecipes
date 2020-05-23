@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="FSharp.Json" Version="0.4.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
     <PackageReference Include="mongocsharpdriver" Version="2.8.1" />
     <PackageReference Include="MongoDB.FSharp" Version="0.1.0" />

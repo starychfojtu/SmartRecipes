@@ -68,23 +68,23 @@ module Environment =
             member e.getRecommendationCandidates ids = Recipes.Mongo.getRecommendedationCandidates ids
 
         interface IShoppingsListsDao with
-            member e.getByAccount acc = ShoppingLists.Mongo.getByAccount acc
-            member e.update l = ShoppingLists.Mongo.update l
-            member e.add l = ShoppingLists.Mongo.add l
+            member e.getByAccount acc = ShoppingLists.Postgres.getByAccount e.Conn acc
+            member e.update l = ShoppingLists.Postgres.update e.Conn l
+            member e.add l = ShoppingLists.Postgres.add e.Conn l
 
         interface IDateTimeProvider with
             member p.nowUtc () = DateTime.UtcNow
 
     let getEnvironment () =
         let vars = System.Environment.GetEnvironmentVariables ()
-        let postgresPassword = string vars.["POSTGRES_PASSWORD"]
+        let postgresPassword = "50EGJAlMzCQOD7gU5h9f" //string vars.["POSTGRES_PASSWORD"]
         let postgres  =
             Sql.host "postgresql-9457-0.cloudclusters.net"
             |> Sql.port 9472
             |> Sql.username "admin"
             |> Sql.password postgresPassword
             |> Sql.database "smartrecipes"
-            |> Sql.sslMode SslMode.Require
+            |> Sql.sslMode SslMode.Disable
             |> Sql.connectFromConfig
 
         ProductionEnvironment(postgres)
