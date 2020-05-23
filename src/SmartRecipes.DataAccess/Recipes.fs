@@ -1,6 +1,7 @@
 namespace SmartRecipes.DataAccess
 open System
 open FSharpPlus
+open Infrastructure
 open MongoDB.Bson
 open Npgsql.FSharp
 open SmartRecipes.Domain.Foodstuff
@@ -22,43 +23,77 @@ module Recipes =
     open Infrastructure.NonEmptyList
 
     module Postgres =
-        let readRecipe (read: RowReader): Recipe = {
-            Id = RecipeId <| read.uuid "id"
-            Name = toNonEmptyStringModel <| read.string "name"
-            CreatorId = None
-            PersonCount = toNaturalNumberModel <| read.int "personcount"
-            ImageUrl = Option.map Uri <| read.stringOrNone "imageurl"
-            Url = Option.map Uri <| read.stringOrNone "url"
-            Description = Option.map toNonEmptyStringModel <| read.stringOrNone "description"
-            Ingredients = failwith "test"
-            Difficulty = None
-            CookingTime = read.stringOrNone "cookingtime" |> Option.map (fun t -> { Text = toNonEmptyStringModel t })
-            Tags = Seq.empty
-            Rating = None
-            NutritionPerServing = {
-                Calories = None
-                Fat = None
-                SaturatedFat = None
-                Sugars = None
-                Salt = None
-                Protein = None
-                Carbs = None
-                Fibre = None
+        let readRecipe ingredients (read: RowReader): Recipe =
+            let recipeId = RecipeId <| read.uuid "id"
+            {
+                Id = recipeId
+                Name = toNonEmptyStringModel <| read.string "name"
+                CreatorId = None
+                PersonCount = toNaturalNumberModel <| read.int "personcount"
+                ImageUrl = Option.map Uri <| read.stringOrNone "imageurl"
+                Url = Option.map Uri <| read.stringOrNone "url"
+                Description = Option.map toNonEmptyStringModel <| read.stringOrNone "description"
+                Ingredients = Map.find recipeId ingredients
+                Difficulty = None
+                CookingTime = read.stringOrNone "cookingtime" |> Option.map (fun t -> { Text = toNonEmptyStringModel t })
+                Tags = Seq.empty
+                Rating = None
+                NutritionPerServing = {
+                    Calories = None
+                    Fat = None
+                    SaturatedFat = None
+                    Sugars = None
+                    Salt = None
+                    Protein = None
+                    Carbs = None
+                    Fibre = None
+                }
             }
-        }
 
-        let getByIds conn ids =
+        let readIngredient (read: RowReader): RecipeId * Ingredient =
+            let ingredient = {
+                FoodstuffId = FoodstuffId <| read.uuid "foodstuffid"
+                Amount =
+                    match (read.floatOrNone "amount", read.stringOrNone "unit") with
+                    | Some a, Some u -> Some { unit = MetricUnit.MetricUnit <| toNonEmptyStringModel u; value = toNonNegativeFloatModel (float a) }
+                    | Some _, _ -> failwith "db error"
+                    | _, Some _ -> failwith "db error"
+                    | None, None -> None
+                DisplayLine = toNonEmptyStringModel <| read.string "displayline"
+                Comment = Option.map toNonEmptyStringModel <| read.stringOrNone "comment"
+            }
+            RecipeId <| read.uuid "recipeid", ingredient
+
+//        let getByIds conn ids =
+//            conn
+//            |> Sql.query "SELECT * From dbo.recipe WHERE id = ANY(@ids)"
+//            |> Sql.parameters [ "ids", Sql.uuidArray <| Seq.toArray ids ]
+//            |> Sql.execute readRecipe
+//            |> function | Ok l -> l | Error e -> failwith e.Message
+//
+//        let search conn (query: SearchQuery) =
+//            conn
+//            |> Sql.query "SELECT * From dbo.recipe WHERE name LIKE @query"
+//            |> Sql.parameters [ "query", Sql.string ("%" + query.Value + "%") ]
+//            |> Sql.execute readRecipe
+//            |> function | Ok l -> l | Error e -> failwith e.Message
+
+        let getAllIngredients conn =
             conn
-            |> Sql.query "SELECT * From dbo.recipe WHERE id = ANY(@ids)"
-            |> Sql.parameters [ "ids", Sql.uuidArray <| Seq.toArray ids ]
-            |> Sql.execute readRecipe
+            |> Sql.query "SELECT * From dbo.ingredient"
+            |> Sql.execute readIngredient
             |> function | Ok l -> l | Error e -> failwith e.Message
 
-        let search conn (query: SearchQuery) =
+        let getAllRecipes conn =
+            let ingredients =
+                getAllIngredients conn
+                |> List.groupBy (fun (recipeId, _) -> recipeId)
+                |> List.map (fun (k, v) -> (k, v |> List.map (fun (_, ingredient) -> ingredient) |> mkNonEmptyList |> Validation.forceSucces))
+                |> Map.ofList
+
             conn
-            |> Sql.query "SELECT * From dbo.recipe WHERE name LIKE @query"
-            |> Sql.parameters [ "query", Sql.string ("%" + query.Value + "%") ]
-            |> Sql.execute readRecipe
+            |> Sql.query "SELECT * From dbo.recipe"
+            |> Sql.execute (readRecipe ingredients)
             |> function | Ok l -> l | Error e -> failwith e.Message
 
     module Mongo =

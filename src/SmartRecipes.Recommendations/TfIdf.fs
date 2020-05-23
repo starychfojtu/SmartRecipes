@@ -11,6 +11,7 @@ type DataSetStatistics = {
     NumberOfRecipes: float
     FoodstuffFrequencies: Map<FoodstuffId, float>
     InverseIndex: Map<FoodstuffId, Recipe list>
+    Recipes: Recipe list
 }
 
 // Term frequency ~ ingredient frequency in single recipe is 1 by default, but for chosen and most used unit, its amount is taken if present
@@ -60,6 +61,7 @@ let computeStatistics (recipes: Recipe list) =
         NumberOfRecipes = recipeCount
         FoodstuffFrequencies = foodstuffFrequencies
         InverseIndex = inverseIndex
+        Recipes = recipes
     }
 
 let vectorizeRecipe statistics recipe =

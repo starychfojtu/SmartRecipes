@@ -42,9 +42,10 @@ module Environment =
     open SmartRecipes.DataAccess
     open SmartRecipes.UseCases.DateTimeProvider
 
-    type ProductionEnvironment(conn) =
+    type ProductionEnvironment(conn, recipeStatistics) =
 
         member this.Conn = conn
+        member this.RecipeStatistics: SmartRecipes.Recommendations.TfIdf.DataSetStatistics = recipeStatistics
 
         interface IUserDao with
             member e.getById id = Users.Postgres.getById e.Conn id
@@ -62,11 +63,14 @@ module Environment =
             member e.getVectors () = failwith "Not implemented"
 
         interface IRecipesDao with
-            member e.getByIds ids = Recipes.Postgres.getByIds e.Conn ids |> List.toSeq
+            member e.getByIds ids =
+                let idList = Seq.toList ids
+                e.RecipeStatistics.Recipes |> Seq.filter (fun r -> List.contains r.Id.value idList)
             member e.getByAccount acc = failwith "Not implemented"
-            member e.search q = Recipes.Postgres.search e.Conn q |> List.toSeq
+            member e.search q =
+                e.RecipeStatistics.Recipes |> Seq.filter (fun r -> r.Name.Value.Contains(q.Value))
             member e.add r = failwith "Not implemented"
-            member e.getRecommendationStatistics () = failwith "Not implemented"
+            member e.getRecommendationStatistics () = e.RecipeStatistics
 
         interface IShoppingsListsDao with
             member e.getByAccount acc = ShoppingLists.Postgres.getByAccount e.Conn acc
@@ -76,19 +80,24 @@ module Environment =
         interface IDateTimeProvider with
             member p.nowUtc () = DateTime.UtcNow
 
-    let getEnvironment () =
+    let getConnection () =
         let vars = System.Environment.GetEnvironmentVariables ()
         let postgresPassword = string vars.["POSTGRES_PASSWORD"]
-        let postgres  =
-            Sql.host "postgresql-9457-0.cloudclusters.net"
-            |> Sql.port 9472
-            |> Sql.username "admin"
-            |> Sql.password postgresPassword
-            |> Sql.database "smartrecipes"
-            |> Sql.sslMode SslMode.Disable
-            |> Sql.connectFromConfig
+        Sql.host "postgresql-9457-0.cloudclusters.net"
+        |> Sql.port 9472
+        |> Sql.username "admin"
+        |> Sql.password postgresPassword
+        |> Sql.database "smartrecipes"
+        |> Sql.sslMode SslMode.Disable
+        |> Sql.connectFromConfig
 
-        ProductionEnvironment(postgres)
+    let recipeStatistics =
+        let connection = getConnection ()
+        let recipes = Recipes.Postgres.getAllRecipes connection
+        SmartRecipes.Recommendations.TfIdf.computeStatistics recipes
+
+    let getEnvironment () =
+        ProductionEnvironment(getConnection (), recipeStatistics)
 
 module Generic =
     open Giraffe

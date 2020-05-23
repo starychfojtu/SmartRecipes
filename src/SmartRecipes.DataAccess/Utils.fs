@@ -21,7 +21,6 @@ module Utils =
     let toNonNegativeFloatModel =
         NonNegativeFloat.create >> Option.get
 
-
     let internal amountToDb (amount: Amount) =
         DbAmount(
             amount.unit.Value.Value,
