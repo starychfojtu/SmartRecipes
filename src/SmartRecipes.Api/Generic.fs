@@ -77,7 +77,7 @@ module Environment =
 
     let getEnvironment () =
         let vars = System.Environment.GetEnvironmentVariables ()
-        let postgresPassword = "50EGJAlMzCQOD7gU5h9f" //string vars.["POSTGRES_PASSWORD"]
+        let postgresPassword = string vars.["POSTGRES_PASSWORD"]
         let postgres  =
             Sql.host "postgresql-9457-0.cloudclusters.net"
             |> Sql.port 9472
