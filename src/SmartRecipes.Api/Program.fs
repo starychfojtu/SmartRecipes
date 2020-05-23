@@ -60,7 +60,7 @@ module App =
             else 
                 "mongodb://localhost"
         let database = MongoClient(connStr).GetDatabase("SmartRecipes")
-        Database.database <- database // TODO: I am ugly, refactor me
+        Mongo.database <- database // TODO: I am ugly, refactor me
     
     let configureApp (app : IApplicationBuilder) =
         let env = app.ApplicationServices.GetService<IHostingEnvironment>()

@@ -2,7 +2,7 @@ namespace SmartRecipes.DataAccess
 
 module Model =
     open System
-    
+
     type DbAccount = {
         id: Guid
         email: string
@@ -15,7 +15,7 @@ module Model =
         value: string
         expiration: DateTime
     }
-    
+
     [<AllowNullLiteral>]
     type DbAmount(unit: string, value: float) =
         member val unit = unit with get, set
@@ -27,29 +27,29 @@ module Model =
         baseAmount: DbAmount
         amountStep: float
     }
-    
+
     type DbIngredient = {
         foodstuffId: Guid
         amount: DbAmount
         comment: string
         displayLine: string
     }
-    
+
     type DbDifficulty =
         | Unspecified = 0
         | Easy = 1
         | Normal = 2
         | Hard = 3
-    
+
     [<AllowNullLiteral>]
     type DbCookingTime(text: string) =
         member val text = text with get, set
-    
+
     [<AllowNullLiteral>]
     type DbNutritionInfo(grams: float, percents: Nullable<int>) =
         member val grams = grams with get, set
         member val percents = percents with get, set
-    
+
     type DbNutritionPerServing = {
         Calories: Nullable<int>
         Fat: DbNutritionInfo
@@ -60,11 +60,11 @@ module Model =
         Carbs: DbNutritionInfo
         Fibre: DbNutritionInfo
     }
-    
+
     type DbRecipe = {
         Id: Guid
         Name: string
-        CreatorId: Guid
+        CreatorId: Nullable<Guid>
         PersonCount: int
         ImageUrl: string
         Url: string
@@ -76,17 +76,17 @@ module Model =
         Rating: Nullable<int>
         NutritionPerServing: DbNutritionPerServing
     }
-    
+
     type DbListItem = {
         foodstuffId: Guid
         amount: float
     }
-    
+
     type DbRecipeListItem = {
         recipeId: Guid
         personCount: int
     }
-    
+
     type DbShoppingList = {
         id: Guid
         accountId: Guid
