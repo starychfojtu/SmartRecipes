@@ -113,7 +113,7 @@ module ShoppingLists =
         select { FoodstuffId = f.id; Amount = Some { unit = f.baseAmount.unit; value = amount } }
     }
 
-    let private getRecommendedRecipes foodstuffAmounts (shoppingList: ShoppingList) = monad {
+    let private getRecommendedRecipes foodstuffAmounts = monad {
         let! statistics = Recipes.recommendationStatistics |> IO.success
         let! vectors = Foodstuffs.vectors |> IO.success
         return Recommendations.calibratedWord2Vec statistics vectors foodstuffAmounts
@@ -122,9 +122,13 @@ module ShoppingLists =
     let recommend accessToken = monad {
         let! accountId = Users.authorize Unaturhorized accessToken
         let! shoppingList = ShoppingLists.getByAccount accountId |> IO.toSuccessEIO
-        let foodstuffIds = shoppingList.items |> Seq.map (fun kvp -> kvp.Key.value)
-        let! foodstuffs = Foodstuffs.getByIds foodstuffIds |> IO.toSuccessEIO
-        let foodstuffAmounts = getFoodstuffAmounts foodstuffs shoppingList |> Seq.toList
-        let! recommendations = getRecommendedRecipes foodstuffAmounts shoppingList
-        return recommendations
+        if Map.count shoppingList.items = 0
+            then []
+            else
+                let foodstuffIds = shoppingList.items |> Seq.map (fun kvp -> kvp.Key.value)
+                let! foodstuffs = Foodstuffs.getByIds foodstuffIds |> IO.toSuccessEIO
+                let foodstuffAmounts = getFoodstuffAmounts foodstuffs shoppingList |> Seq.toList
+
+                let! recommendations = getRecommendedRecipes foodstuffAmounts
+                return recommendations
     }
