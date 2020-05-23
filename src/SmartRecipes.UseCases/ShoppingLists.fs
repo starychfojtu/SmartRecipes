@@ -1,13 +1,19 @@
 namespace SmartRecipes.UseCases
 
-module ShoppingLists =
-    open SmartRecipes.Domain
-    open SmartRecipes.Recommendations
-    open SmartRecipes.IO
-    open SmartRecipes.Domain.ShoppingList
-    open FSharpPlus.Data
-    open Infrastructure
+open System.Linq
+open FSharpPlus
+open FSharpPlus.Lens
+open SmartRecipes.Domain
+open SmartRecipes.IO
+open SmartRecipes.Domain.ShoppingList
+open FSharpPlus.Data
+open SmartRecipes.Domain.Foodstuff
+open SmartRecipes.Domain.Foodstuff
+open SmartRecipes.IO
+open SmartRecipes.Recommendations
+open SmartRecipes.Recommendations.Library
 
+module ShoppingLists =
     let private shoppingListAction accessToken authorizeError action =
         Users.authorize authorizeError accessToken
         >>= (ShoppingLists.getByAccount >> IO.toSuccessEIO)
@@ -100,14 +106,25 @@ module ShoppingLists =
     type RecommendError =
         | Unaturhorized
 
-    let private getRecommendedRecipes (shoppingList: ShoppingList) =
-        let foodstuffIds = shoppingList.items |> Map.toSeq |> Seq.map fst |> Seq.toList
-        let sort = Recommendations.sort
-        Recipes.getRecommendationCandidates foodstuffIds
-        |> Reader.map (sort >> Seq.truncate 10)
-        |> ReaderT.hoistOk
+    let private getFoodstuffAmounts (foodstuffs: Foodstuff seq) shoppingList = query {
+        for f in foodstuffs.AsQueryable() do
+        join i in shoppingList.items on (f.id = i.Key)
+        let amount = i.Value.amount.Value * f.baseAmount.value.Value |> NonNegativeFloat.create |> Option.get
+        select { FoodstuffId = f.id; Amount = Some { unit = f.baseAmount.unit; value = amount } }
+    }
 
-    let recommend accessToken =
-        Users.authorize Unaturhorized accessToken
-        >>= (ShoppingLists.getByAccount >> IO.toSuccessEIO)
-        >>= getRecommendedRecipes
+    let private getRecommendedRecipes foodstuffAmounts (shoppingList: ShoppingList) = monad {
+        let! statistics = Recipes.recommendationStatistics |> IO.success
+        let! vectors = Foodstuffs.vectors |> IO.success
+        return Recommendations.calibratedWord2Vec statistics vectors foodstuffAmounts
+    }
+
+    let recommend accessToken = monad {
+        let! accountId = Users.authorize Unaturhorized accessToken
+        let! shoppingList = ShoppingLists.getByAccount accountId |> IO.toSuccessEIO
+        let foodstuffIds = shoppingList.items |> Seq.map (fun kvp -> kvp.Key.value)
+        let! foodstuffs = Foodstuffs.getByIds foodstuffIds |> IO.toSuccessEIO
+        let foodstuffAmounts = getFoodstuffAmounts foodstuffs shoppingList |> Seq.toList
+        let! recommendations = getRecommendedRecipes foodstuffAmounts shoppingList
+        return recommendations
+    }

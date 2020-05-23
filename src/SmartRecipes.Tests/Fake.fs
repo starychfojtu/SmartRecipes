@@ -137,13 +137,14 @@ module Tests.Fake
                 | WithFoodstuff -> seq { yield foodstuff }
                 | WithoutFoodstuff -> Seq.empty
             member e.add f = f
+            member e.getVectors () = failwith "Not implemented"
 
         interface IRecipesDao with
             member e.getByIds ids = Seq.empty
             member e.getByAccount acc = Seq.empty
             member e.search q = Seq.empty
             member e.add r = r
-            member e.getRecommendationCandidates ids = Seq.empty
+            member e.getRecommendationStatistics () = failwith "Not implemented"
 
         interface IShoppingsListsDao with
             member e.getByAccount acc = { shoppingList with items = shoppingListItems }

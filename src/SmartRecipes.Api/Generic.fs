@@ -59,13 +59,14 @@ module Environment =
             member e.getByIds ids = Foodstuffs.Postgres.getByIds e.Conn ids |> List.toSeq
             member e.search q = Foodstuffs.Postgres.search e.Conn q |> List.toSeq
             member e.add f = failwith "Not implemented"
+            member e.getVectors () = failwith "Not implemented"
 
         interface IRecipesDao with
             member e.getByIds ids = Recipes.Postgres.getByIds e.Conn ids |> List.toSeq
             member e.getByAccount acc = failwith "Not implemented"
             member e.search q = Recipes.Postgres.search e.Conn q |> List.toSeq
             member e.add r = failwith "Not implemented"
-            member e.getRecommendationCandidates ids = failwith "Not implemented"
+            member e.getRecommendationStatistics () = failwith "Not implemented"
 
         interface IShoppingsListsDao with
             member e.getByAccount acc = ShoppingLists.Postgres.getByAccount e.Conn acc
