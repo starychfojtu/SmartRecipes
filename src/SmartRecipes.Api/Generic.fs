@@ -98,7 +98,7 @@ module Environment =
         SmartRecipes.Recommendations.TfIdf.computeStatistics recipes
 
     let foodstuffVectors =
-        SmartRecipes.Recommendations.FoodToVector.Data.loadFoodstuffVectors "vectors.txt"
+        SmartRecipes.Recommendations.FoodToVector.Data.loadFoodstuffVectors "vectors-256.txt"
         |> Seq.map (fun kvp -> (SmartRecipes.Domain.Foodstuff.FoodstuffId kvp.Key, kvp.Value))
         |> Map.ofSeq
 

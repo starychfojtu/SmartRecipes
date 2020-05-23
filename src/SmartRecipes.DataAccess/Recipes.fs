@@ -54,8 +54,8 @@ module Recipes =
             let ingredient = {
                 FoodstuffId = FoodstuffId <| read.uuid "foodstuffid"
                 Amount =
-                    match (read.floatOrNone "amount", read.stringOrNone "unit") with
-                    | Some a, Some u -> Some { unit = MetricUnit.MetricUnit <| toNonEmptyStringModel u; value = toNonNegativeFloatModel (float a) }
+                    match (read.doubleOrNone "amount", read.stringOrNone "unit") with
+                    | Some a, Some u -> Some { unit = MetricUnit.MetricUnit <| toNonEmptyStringModel u; value = toNonNegativeFloatModel a }
                     | Some _, _ -> failwith "db error"
                     | _, Some _ -> failwith "db error"
                     | None, None -> None

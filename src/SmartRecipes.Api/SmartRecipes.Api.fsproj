@@ -44,6 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="web.config" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="vectors-32.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="vectors-256.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="WebRoot\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
