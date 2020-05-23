@@ -16,6 +16,7 @@
     <ItemGroup>
       <ProjectReference Include="..\SmartRecipes.Domain\SmartRecipes.Domain.fsproj" />
       <ProjectReference Include="..\SmartRecipes.Infrastructure\SmartRecipes.Infrastructure.fsproj" />
+      <ProjectReference Include="..\SmartRecipes.Recommendations\SmartRecipes.Recommendations.fsproj" />
     </ItemGroup>
 
 </Project>

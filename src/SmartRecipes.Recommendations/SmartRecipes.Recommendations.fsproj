@@ -5,8 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Input.fs" />
-        <Compile Include="Distance.fs" />
+        <Compile Include="Library.fs" />
+        <Compile Include="JaccardSimilarity.fs" />
+        <Compile Include="TfIdf.fs" />
+        <Compile Include="Calibration.fs" />
+        <Compile Include="Diversity.fs" />
+        <Compile Include="FoodToVector.fs" />
         <Compile Include="Recommendation.fs" />
     </ItemGroup>
 
