@@ -42,10 +42,11 @@ module Environment =
     open SmartRecipes.DataAccess
     open SmartRecipes.UseCases.DateTimeProvider
 
-    type ProductionEnvironment(conn, recipeStatistics) =
+    type ProductionEnvironment(conn, recipeStatistics, foodstuffVectors) =
 
         member this.Conn = conn
         member this.RecipeStatistics: SmartRecipes.Recommendations.TfIdf.DataSetStatistics = recipeStatistics
+        member this.FoodstuffVectors = foodstuffVectors
 
         interface IUserDao with
             member e.getById id = Users.Postgres.getById e.Conn id
@@ -60,7 +61,7 @@ module Environment =
             member e.getByIds ids = Foodstuffs.Postgres.getByIds e.Conn ids |> List.toSeq
             member e.search q = Foodstuffs.Postgres.search e.Conn q |> List.toSeq
             member e.add f = failwith "Not implemented"
-            member e.getVectors () = failwith "Not implemented"
+            member e.getVectors () = e.FoodstuffVectors
 
         interface IRecipesDao with
             member e.getByIds ids =
@@ -96,8 +97,13 @@ module Environment =
         let recipes = Recipes.Postgres.getAllRecipes connection
         SmartRecipes.Recommendations.TfIdf.computeStatistics recipes
 
+    let foodstuffVectors =
+        SmartRecipes.Recommendations.FoodToVector.Data.loadFoodstuffVectors "vectors.txt"
+        |> Seq.map (fun kvp -> (SmartRecipes.Domain.Foodstuff.FoodstuffId kvp.Key, kvp.Value))
+        |> Map.ofSeq
+
     let getEnvironment () =
-        ProductionEnvironment(getConnection (), recipeStatistics)
+        ProductionEnvironment(getConnection (), recipeStatistics, foodstuffVectors)
 
 module Generic =
     open Giraffe
