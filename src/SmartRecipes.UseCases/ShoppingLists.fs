@@ -128,7 +128,6 @@ module ShoppingLists =
                 let foodstuffIds = shoppingList.items |> Seq.map (fun kvp -> kvp.Key.value)
                 let! foodstuffs = Foodstuffs.getByIds foodstuffIds |> IO.toSuccessEIO
                 let foodstuffAmounts = getFoodstuffAmounts foodstuffs shoppingList |> Seq.toList
-
                 let! recommendations = getRecommendedRecipes foodstuffAmounts
                 return recommendations
     }
