@@ -24,10 +24,13 @@ let adjustInfo bestRecipe info =
     }
 
 let calibrateStep similarity (recipes, foodstuffInfos, recommendations: Recipe list) =
-    let bestRecipe = recipes |> List.maxBy (similarity foodstuffInfos)
-    let newFoodstuffInfos = foodstuffInfos |> List.map (adjustInfo bestRecipe)
-    let newRecipeInfos = List.except [bestRecipe] recipes
-    (newRecipeInfos, newFoodstuffInfos, bestRecipe::recommendations)
+    if List.length recipes = 0
+        then (recipes, foodstuffInfos, recommendations)
+        else
+            let bestRecipe = recipes |> List.maxBy (similarity foodstuffInfos)
+            let newFoodstuffInfos = foodstuffInfos |> List.map (adjustInfo bestRecipe)
+            let newRecipes = List.except [bestRecipe] recipes
+            (newRecipes, newFoodstuffInfos, bestRecipe::recommendations)
 
 let toInitialInfo weight amount =
     {
