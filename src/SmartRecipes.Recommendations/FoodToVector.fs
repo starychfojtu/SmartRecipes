@@ -90,7 +90,7 @@ let recommend foodstuffVectors weight inverseIndex foodstuffAmounts =
     let inputVector = vectorize foodstuffVectors weight foodstuffAmounts
     let relevantRecipes =
         foodstuffAmounts
-        |> List.collect (fun a -> Map.find a.FoodstuffId inverseIndex)
+        |> List.collect (fun a -> Map.tryFind a.FoodstuffId inverseIndex |> Option.defaultValue [])
         |> List.distinctBy (fun r -> r.Id)
 
     relevantRecipes
