@@ -92,7 +92,7 @@ module Recipes =
                 |> Map.ofList
 
             conn
-            |> Sql.query "SELECT * From dbo.recipe LIMIT 3000"
+            |> Sql.query "SELECT * From dbo.recipe LIMIT 2000"
             |> Sql.execute (readRecipe ingredients)
             |> function | Ok l -> l | Error e -> failwith e.Message
 
