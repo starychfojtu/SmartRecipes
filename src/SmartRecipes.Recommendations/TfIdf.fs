@@ -29,7 +29,7 @@ let termFrequency = function
     | None -> 1.0
 
 let tfIdf statistics (foodstuffAmount: FoodstuffAmount) =
-    let documentFrequency = Map.find foodstuffAmount.FoodstuffId statistics.FoodstuffFrequencies
+    let documentFrequency = Map.tryFind foodstuffAmount.FoodstuffId statistics.FoodstuffFrequencies |> Option.defaultValue 1.0
     let idf = Math.Log10(statistics.NumberOfRecipes / documentFrequency)
     let tf = termFrequency foodstuffAmount.Amount
     foodstuffAmount.FoodstuffId, idf * tf
